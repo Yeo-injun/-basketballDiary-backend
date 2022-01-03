@@ -18,4 +18,9 @@ public class TestController {
         TestDTO result = testService.testSQL();
         return result;
     }
+
+    @GetMapping("/test2")
+    public String testTwo() {
+        return "성주 바보바!!";
+    }
 }
