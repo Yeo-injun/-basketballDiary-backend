@@ -5,6 +5,6 @@ import org.apache.ibatis.annotations.Mapper;
 import java.util.Map;
 
 @Mapper
-public interface LoginRepository {
-
+public interface MemberRepository {
+    void saveMember(Map<String,Object> sqlParam);
 }
