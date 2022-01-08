@@ -10,11 +10,17 @@ public class Address {
      */
     private String city;
     /**
-     * 거리
+     * 시도코드
      */
-    private String street;
+    private Long sidoCod;
     /**
-     * 우편번호
+     * 시군구코드
      */
-    private String zipCode;
+    private Long sggCod;
+
+    public Address(String city, Long sidoCod, Long sggCod) {
+        this.city = city;
+        this.sidoCod = sidoCod;
+        this.sggCod = sggCod;
+    }
 }
