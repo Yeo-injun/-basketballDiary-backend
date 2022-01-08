@@ -7,7 +7,7 @@
     <select id="testSelect" resultType="com.threeNerds.basketballDiary.mvc.dto.TestDTO">
         /* TestSQL. */
         SELECT *
-          FROM member
+          FROM user
          LIMIT 1
     </select>
 
