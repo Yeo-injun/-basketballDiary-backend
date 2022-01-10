@@ -1,12 +1,10 @@
-package com.threeNerds.basketballDiary.mvc.service.impl;
+package com.threeNerds.basketballDiary.mvc.service;
 
-import com.threeNerds.basketballDiary.mvc.domain.Address;
 import com.threeNerds.basketballDiary.mvc.domain.User;
 import com.threeNerds.basketballDiary.mvc.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
@@ -51,15 +49,12 @@ public class UserService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("YYYY-MM_DD");
         sqlParam.put("regDate", user.getRegDate().format(formatter));
         sqlParam.put("updateDate",user.getUpdateDate().format(formatter));
-        sqlParam.put("userYn",user.getUserRegYn());
+        sqlParam.put("userRegYn",user.getUserRegYn());
 
-        sqlParam.put("city",user.getAddress().getCity());
-        sqlParam.put("sidoCod",user.getAddress().getSidoCod());
-        sqlParam.put("sggCod",user.getAddress().getSggCod());
+        sqlParam.put("sidoCode",user.getSidoCode());
+        sqlParam.put("sigunguCode",user.getSigunguCode());
+        sqlParam.put("positionCode",user.getPositionCode());
 
-        //임시
-        sqlParam.put("userSeq",2);
-
-        userRepository.saveMember(sqlParam);
+        userRepository.saveUser(sqlParam);
     }
 }

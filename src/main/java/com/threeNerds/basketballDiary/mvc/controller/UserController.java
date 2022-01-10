@@ -1,9 +1,8 @@
 package com.threeNerds.basketballDiary.mvc.controller;
 
-import com.threeNerds.basketballDiary.mvc.domain.Address;
 import com.threeNerds.basketballDiary.mvc.domain.User;
 import com.threeNerds.basketballDiary.mvc.dto.UserDTO;
-import com.threeNerds.basketballDiary.mvc.service.impl.UserService;
+import com.threeNerds.basketballDiary.mvc.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,11 +15,11 @@ public class UserController {
 
     private final UserService userService;
 
-    @GetMapping("/members/new")
+    @GetMapping("/users/new")
     public String createForm(){
         return "members/createForm";
     }
-    @PostMapping("/members/new")
+    @PostMapping("/users/new")
     public String create(@RequestBody @Valid UserDTO userDTO){
         User user = new User();
         user.setUserId(userDTO.getUserId());
@@ -35,8 +34,9 @@ public class UserController {
         user.setUpdateDate(today);
         user.setUserRegYn("Y");
 
-        Address address = new Address(userDTO.getCity(), userDTO.getSidoCod(), userDTO.getSggCod());
-        user.setAddress(address);
+        user.setSidoCode(userDTO.getSidoCode());
+        user.setSigunguCode(userDTO.getSigunguCode());
+        user.setPositionCode(userDTO.getPositionCode());
 
         userService.createMember(user);
         return "/";
