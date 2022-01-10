@@ -26,9 +26,9 @@ public class User {
      */
     private String userName;
     /**
-     * 주소
+     * 포지션 코드
      */
-    private Address address;
+    private String positionCode;
     /**
      * 이메일
      */
@@ -57,4 +57,12 @@ public class User {
      * 회원/비회원
      */
     private String userRegYn;
+    /**
+     * 시도코드
+     */
+    private String sidoCode;
+    /**
+     * 시군구코드
+     */
+    private String sigunguCode;
 }

@@ -1,11 +1,9 @@
 package com.threeNerds.basketballDiary.mvc.dto;
 
-import com.threeNerds.basketballDiary.mvc.domain.Address;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Getter @Setter
 public class UserDTO {
@@ -22,11 +20,9 @@ public class UserDTO {
      */
     private String userName;
     /**
-     * 주소
+     * 포지션 코드
      */
-    private String city;
-    private Long sidoCod;
-    private Long sggCod;
+    private String positionCode;
     /**
      * 이메일
      */
@@ -43,4 +39,16 @@ public class UserDTO {
      * 몸무게
      */
     private double weight;
+    /**
+     * 회원/비회원
+     */
+    private String userRegYn;
+    /**
+     * 시도코드
+     */
+    private String sidoCode;
+    /**
+     * 시군구코드
+     */
+    private String sigunguCode;
 }

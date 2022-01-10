@@ -7,5 +7,5 @@ import java.util.Map;
 @Mapper
 public interface UserRepository {
     Map<String,Object> findUser(Long id);
-    void saveMember(Map<String,Object> sqlParam);
+    void saveUser(Map<String,Object> sqlParam);
 }
