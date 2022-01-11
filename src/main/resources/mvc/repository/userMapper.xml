@@ -4,8 +4,8 @@
 <mapper namespace="com.threeNerds.basketballDiary.mvc.repository.UserRepository">
 
     <insert id="saveUser">
-        INSERT INTO USER(USER_SEQ,USER_ID,PWD,NAME,EMAIL,REG_DATE,UPDATE_DATE,USER_REG_YN,GENDER,HEIGHT,WEIGHT,SIDO_CODE,SIGUNGU_CODE,POSITION_CODE)
-        VALUES(1,#{userId},#{password},#{userName},#{email},#{regDate},#{updateDate},#{userRegYn},#{gender},#{height},#{weight},#{sidoCode},#{sigunguCode},#{positionCode})
+        INSERT INTO USER(USER_ID,PWD,NAME,EMAIL,REG_DATE,UPDATE_DATE,USER_REG_YN,GENDER,HEIGHT,WEIGHT,SIDO_CODE,SIGUNGU_CODE,POSITION_CODE)
+        VALUES(#{userId},#{password},#{userName},#{email},#{regDate},#{updateDate},#{userRegYn},#{gender},#{height},#{weight},#{sidoCode},#{sigunguCode},#{positionCode})
     </insert>
 
 </mapper>
