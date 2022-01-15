@@ -3,6 +3,11 @@
 
 <mapper namespace="com.threeNerds.basketballDiary.mvc.repository.UserRepository">
 
+    <select id="findUser" resultType="com.threeNerds.basketballDiary.mvc.domain.User">
+        SELECT USER_SEQ,USER_ID,NAME AS USERNAME,PWD AS PASSWORD,EMAIL,REG_DATE,UPDATE_DATE,USER_REG_YN,GENDER,HEIGHT,WEIGHT,SIDO_CODE,SIGUNGU_CODE,POSITION_CODE
+        FROM USER
+        WHERE USER_SEQ=#{id}
+    </select>
     <insert id="saveUser">
         INSERT INTO USER(USER_ID,PWD,NAME,EMAIL,REG_DATE,UPDATE_DATE,USER_REG_YN,GENDER,HEIGHT,WEIGHT,SIDO_CODE,SIGUNGU_CODE,POSITION_CODE)
         VALUES(#{userId},#{password},#{userName},#{email},#{regDate},#{updateDate},#{userRegYn},#{gender},#{height},#{weight},#{sidoCode},#{sigunguCode},#{positionCode})
