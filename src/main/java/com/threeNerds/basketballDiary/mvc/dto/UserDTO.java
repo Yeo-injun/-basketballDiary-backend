@@ -20,10 +20,6 @@ public class UserDTO {
      */
     private String userName;
     /**
-     * 포지션 코드
-     */
-    private String positionCode;
-    /**
      * 이메일
      */
     private String email;
@@ -40,10 +36,6 @@ public class UserDTO {
      */
     private double weight;
     /**
-     * 회원/비회원
-     */
-    private String userRegYn;
-    /**
      * 시도코드
      */
     private String sidoCode;
@@ -51,4 +43,8 @@ public class UserDTO {
      * 시군구코드
      */
     private String sigunguCode;
+    /**
+     * 포지션 코드
+     */
+    private String positionCode;
 }
