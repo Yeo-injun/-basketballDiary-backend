@@ -47,9 +47,7 @@ public class UserController {
     @GetMapping("/members/myInfo")
     //@SessionAttribute(value = LOGIN_MEMBER, required = false)SessionDTO sessionDTO,
     public User myInfo(@RequestParam Long id){
-        //User user = userService.findUser(sessionDTO.getUserSeq());
-        User user = userService.findUser(id);
-        return user;
+        return userService.findUser(id);
     }
     @GetMapping("/members/myInfo/change")
     public String changeForm(){

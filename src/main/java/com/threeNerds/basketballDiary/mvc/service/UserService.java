@@ -3,22 +3,29 @@ package com.threeNerds.basketballDiary.mvc.service;
 import com.threeNerds.basketballDiary.mvc.domain.User;
 import com.threeNerds.basketballDiary.mvc.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
+@Transactional
 public class UserService {
 
     private final UserRepository userRepository;
 
+    @Transactional
     public User findUser(Long id) {
         return userRepository.findUser(id);
     }
-    public void createMember(User user) {
+    @Transactional
+    public Long createMember(User user) {
         userRepository.saveUser(user);
+        return user.getUserSeq();
     }
 }
