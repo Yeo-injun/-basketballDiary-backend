@@ -10,4 +10,8 @@ public class SessionDTO {
 
     private String userId;
 
+    public SessionDTO(Long userSeq, String userId) {
+        this.userSeq = userSeq;
+        this.userId = userId;
+    }
 }

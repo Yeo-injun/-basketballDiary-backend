@@ -20,14 +20,11 @@ public class UserService {
     private final UserRepository userRepository;
 
     @Transactional
-
     public User findUser(Long id) {
         return userRepository.findUser(id);
     }
     @Transactional
     public Long createMember(User user) {
-        userRepository.saveUser(user);
-        return user.getUserSeq();
-
+        return userRepository.saveUser(user);
     }
 }

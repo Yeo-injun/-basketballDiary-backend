@@ -7,8 +7,7 @@ import java.util.Map;
 
 @Mapper
 public interface UserRepository {
-
     User findUser(Long id);
-
-    void saveUser(User user);
+    Long saveUser(User user);
+    User loginFindUser(String userId, String password);
 }
