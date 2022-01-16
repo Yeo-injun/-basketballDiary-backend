@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -24,7 +25,7 @@ public class LoginController {
     private final LoginService loginService;
 
     @PostMapping("/login")
-    public SessionDTO login(LoginUserRequest loginUserRequest,HttpSession session){
+    public SessionDTO login(@RequestBody LoginUserRequest loginUserRequest, HttpSession session){
         SessionDTO sessionDTO = loginService.login(loginUserRequest.getUserId(), loginUserRequest.getPassword())
                 .map(u -> new SessionDTO(u.getUserSeq(), u.getUserId()))
                 .orElse(null);
