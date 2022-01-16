@@ -5,17 +5,20 @@ import com.threeNerds.basketballDiary.mvc.repository.UserRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 @SpringBootTest
+@Transactional
 class UserServiceTest {
 
     @Autowired public UserService userService;
 
-    public static final Long MEMBER_SEQ = 1L;
     @Test
     void createUserTest(){
         //given
@@ -23,22 +26,21 @@ class UserServiceTest {
         //when
         Long id = userService.createMember(user);
         //then
-        assertEquals(id,user.getUserSeq());
+        assertEquals(userService.findUser(id).getUserId(),user.getUserId());
     }
 
     @Test
     void findUserTest(){
         //given
         User user = getUser();
-        userService.createMember(user);
+        Long id = userService.createMember(user);
         //when
-        User retUser = userService.findUser(MEMBER_SEQ);
+        User retUser = userService.findUser(id);
         //then
-        assertEquals(retUser.getUserSeq(),user.getUserSeq());
+        assertEquals(retUser.getUserSeq(),id);
     }
     private User getUser() {
         User user = new User();
-        user.setUserSeq(MEMBER_SEQ);
         user.setUserId("User");
         user.setPassword("1111");
         user.setUserName("Lee");

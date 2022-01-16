@@ -25,7 +25,6 @@ public class UserService {
     }
     @Transactional
     public Long createMember(User user) {
-        userRepository.saveUser(user);
-        return user.getUserSeq();
+        return userRepository.saveUser(user);
     }
 }

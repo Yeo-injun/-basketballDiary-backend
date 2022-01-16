@@ -1,15 +1,13 @@
 package com.threeNerds.basketballDiary.mvc.service;
 
 import com.threeNerds.basketballDiary.mvc.domain.User;
-import com.threeNerds.basketballDiary.mvc.repository.LoginRepository;
 import com.threeNerds.basketballDiary.mvc.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Map;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -17,12 +15,13 @@ import java.util.Map;
 @Transactional
 public class LoginService {
 
-    private final LoginRepository loginRepository;
+    private final UserRepository userRepository;
 
     //@Transactional
-    public User login(String userId,String password){
-        User user = loginRepository.loginFindUser(userId, password);
+    public Optional<User> login(String userId, String password){
+        User user = userRepository.loginFindUser(userId, password);
         log.info("User id={}",user.getUserId());
-        return user;
+        //null 인지 null이 아닌지 확신이 들지 않을때 사용 : ofNullable(null 이면 Optional.empty() 반환)
+        return Optional.ofNullable(user);
     }
 }
