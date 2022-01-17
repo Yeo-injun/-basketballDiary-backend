@@ -1,6 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.controller;
 
-import com.threeNerds.basketballDiary.mvc.dto.SessionDTO;
+import com.threeNerds.basketballDiary.session.SessionDTO;
 import com.threeNerds.basketballDiary.mvc.service.LoginService;
 import com.threeNerds.basketballDiary.session.SessionConst;
 import lombok.Data;
@@ -20,7 +20,7 @@ public class LoginController {
     private final LoginService loginService;
 
     @PostMapping("/login")
-    public SessionDTO login(@RequestBody LoginUserRequest loginUserRequest, HttpSession session){
+    public SessionDTO login(@RequestBody LoginUserRequest loginUserRequest, HttpSession session) {
         SessionDTO sessionDTO = loginService.login(loginUserRequest)
                 .map(u -> new SessionDTO(u.getUserSeq(), u.getUserId()))
                 .orElse(null);

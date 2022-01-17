@@ -1,4 +1,4 @@
-package com.threeNerds.basketballDiary.mvc.dto;
+package com.threeNerds.basketballDiary.session;
 
 import lombok.Getter;
 import lombok.Setter;
