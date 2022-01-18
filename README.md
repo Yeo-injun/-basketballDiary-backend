@@ -29,3 +29,7 @@
 - postman을 사용하여 JSESSIONID 값이 쿠키에 저장되는 것을 확인한 후 회원조회 성공
 - 인터셉터(Interceptor) 와 어노테이션(Annotation)을 사용한 권한 처리 미구현
 - LoginUserServiceTest 구현 : Mock 을 사용하여 테스트 진행(MockHttpSession) , 아직 테스트 코드를 작성하는 것이 익숙하지 않음
+
+2022/01/19 - 이성주
+
+로그인과 권한 처리 Interceptor 추가
