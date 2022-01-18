@@ -1,17 +1,19 @@
 package com.threeNerds.basketballDiary.mvc.controller;
 
 import com.threeNerds.basketballDiary.mvc.domain.User;
-import com.threeNerds.basketballDiary.mvc.dto.SessionDTO;
+import com.threeNerds.basketballDiary.session.SessionDTO;
 import com.threeNerds.basketballDiary.mvc.dto.UserDTO;
 import com.threeNerds.basketballDiary.mvc.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
 
 import static com.threeNerds.basketballDiary.session.SessionConst.LOGIN_MEMBER;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -47,17 +49,18 @@ public class UserController {
         return "/";
     }
     @GetMapping("/members/myInfo")
-    //@SessionAttribute(value = LOGIN_MEMBER, required = false)SessionDTO sessionDTO,
-    public User myInfo(@RequestParam Long id){
-        return userService.findUser(id);
+    public UserDTO myInfo(@SessionAttribute(value = LOGIN_MEMBER, required = false) SessionDTO sessionDTO, UserDTO userDTO){
+        Long id = sessionDTO.getUserSeq();
+        User user = userService.findUser(id);
+        UserDTO userDto = new UserDTO();
+
+        BeanUtils.copyProperties(user,userDto);
+        return userDto;
     }
-    @GetMapping("/members/myInfo/change")
-    public String changeForm(){
-        return "/";
-    }
+    //put?patch??? 뭘 선택해야 하는지....
     @PatchMapping("/members/modify")
     public String change(@RequestBody @Valid UserDTO userDTO){
-        //User user = userService.findUser(id);
+
         return "/";
     }
 }
