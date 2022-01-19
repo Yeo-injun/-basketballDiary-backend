@@ -1,6 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.controller;
 
 import com.threeNerds.basketballDiary.mvc.domain.User;
+import com.threeNerds.basketballDiary.session.SessionConst;
 import com.threeNerds.basketballDiary.session.SessionDTO;
 import com.threeNerds.basketballDiary.mvc.dto.UserDTO;
 import com.threeNerds.basketballDiary.mvc.service.UserService;
@@ -48,7 +49,7 @@ public class UserController {
         userService.createMember(user);
         return "/";
     }
-    @GetMapping("/members/myInfo")
+    @GetMapping("/users/myInfo")
     public UserDTO myInfo(@SessionAttribute(value = LOGIN_MEMBER, required = false) SessionDTO sessionDTO, UserDTO userDTO){
         Long id = sessionDTO.getUserSeq();
         User user = userService.findUser(id);
@@ -58,9 +59,14 @@ public class UserController {
         return userDto;
     }
     //put?patch??? 뭘 선택해야 하는지....
-    @PatchMapping("/members/modify")
-    public String change(@RequestBody @Valid UserDTO userDTO){
+    //put 인거 같음 왜냐면 회원정보 수정버튼을 눌렀을때 기존 이 회원의 모든 정보들을 표현해 주기 때문에
+    @PutMapping("/users/modifyMyInfo")
+    public User change(@SessionAttribute(value = LOGIN_MEMBER,required = false) SessionDTO sessionDTO,@RequestBody @Valid UserDTO userDTO){
+        Long id = sessionDTO.getUserSeq();
+        User user = userService.findUser(id);
 
-        return "/";
+        BeanUtils.copyProperties(userDTO,user);
+        userService.updateUser(user);
+        return user;
     }
 }

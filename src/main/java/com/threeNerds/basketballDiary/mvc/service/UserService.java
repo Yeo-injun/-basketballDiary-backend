@@ -23,4 +23,8 @@ public class UserService {
     public Long createMember(User user) {
         return userRepository.saveUser(user);
     }
+    @Transactional
+    public Long updateUser(User user){
+        return userRepository.updateUser(user);
+    }
 }

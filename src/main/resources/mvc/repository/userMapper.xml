@@ -21,4 +21,11 @@
         FROM USER
         WHERE USER_ID=#{userId} AND PWD=#{password}
     </select>
+
+    <update id="updateUser">
+        UPDATE USER
+        SET NAME AS USERNAME=#{userName}, PWD AS PASSWORD=#{password}, EMAIL=#{email}, GENDER=#{gender}, HEIGHT=#{height}, WEIGHT=#{weight}
+            , SIDO_CODE=#{sidoCode}, SIGUNGU_CODE=#{sigunguCode}, POSITION_CODE=#{positionCode}
+        WHERE USER_SEQ=#{userSeq}
+    </update>
 </mapper>
