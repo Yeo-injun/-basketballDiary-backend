@@ -25,6 +25,7 @@ public class UserService {
     }
     @Transactional
     public Long updateUser(User user){
-        return userRepository.updateUser(user);
+        String aLong = userRepository.updateUser(user);
+        return 1L;
     }
 }

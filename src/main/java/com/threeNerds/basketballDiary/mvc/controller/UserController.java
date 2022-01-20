@@ -66,7 +66,9 @@ public class UserController {
         User user = userService.findUser(id);
 
         BeanUtils.copyProperties(userDTO,user);
-        userService.updateUser(user);
-        return user;
+        Long retId = userService.updateUser(user);
+
+        //return userService.findUser(retId);
+        return null;
     }
 }
