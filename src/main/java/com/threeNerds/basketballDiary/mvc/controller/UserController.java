@@ -22,11 +22,9 @@ public class UserController {
 
     private final UserService userService;
 
-    @GetMapping("/users/new")
-    public String createForm(){
-        log.info("UserController : createForm");
-        return "members/createForm";
-    }
+    /**
+     * 회원가입
+     */
     @PostMapping("/users/new")
     public String create(@RequestBody @Valid UserDTO userDTO){
         User user = new User();
@@ -47,8 +45,12 @@ public class UserController {
         user.setPositionCode(userDTO.getPositionCode());
 
         userService.createMember(user);
-        return "/";
+        return "createOk";
     }
+
+    /**
+     * 내정보 확인
+     */
     @GetMapping("/users/myInfo")
     public UserDTO myInfo(@SessionAttribute(value = LOGIN_MEMBER, required = false) SessionDTO sessionDTO, UserDTO userDTO){
         Long id = sessionDTO.getUserSeq();
@@ -58,17 +60,18 @@ public class UserController {
         BeanUtils.copyProperties(user,userDto);
         return userDto;
     }
-    //put?patch??? 뭘 선택해야 하는지....
-    //put 인거 같음 왜냐면 회원정보 수정버튼을 눌렀을때 기존 이 회원의 모든 정보들을 표현해 주기 때문에
+
+    /**
+     * 회원수정
+     */
     @PutMapping("/users/modifyMyInfo")
-    public User change(@SessionAttribute(value = LOGIN_MEMBER,required = false) SessionDTO sessionDTO,@RequestBody @Valid UserDTO userDTO){
+    public String change(@SessionAttribute(value = LOGIN_MEMBER,required = false) SessionDTO sessionDTO,@RequestBody @Valid UserDTO userDTO){
         Long id = sessionDTO.getUserSeq();
         User user = userService.findUser(id);
 
         BeanUtils.copyProperties(userDTO,user);
-        Long retId = userService.updateUser(user);
+        userService.updateUser(user);
 
-        //return userService.findUser(retId);
-        return null;
+        return "updateOk";
     }
 }

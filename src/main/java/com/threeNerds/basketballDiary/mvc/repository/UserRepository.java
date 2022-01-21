@@ -9,5 +9,5 @@ public interface UserRepository {
     User findUser(Long id);
     Long saveUser(User user);
     User loginFindUser(LoginController.LoginUserRequest loginUserRequest);
-    String updateUser(User user);
+    void updateUser(User user);
 }

@@ -11,6 +11,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.util.Map;
 
 @Slf4j
 public class loginInterceptor implements HandlerInterceptor {
@@ -40,9 +41,12 @@ public class loginInterceptor implements HandlerInterceptor {
         }
         //3. 각 권한 분기처리(팀장,임원,팀원)
         SessionDTO memberDto = (SessionDTO) session.getAttribute(SessionConst.LOGIN_MEMBER);
-        //User에 권한 컬럼은 없는 것 인가?
-        /*MemberStatus status = memberDto.getMemberStatus().get(1L);
-        if(auth.role().equals(LEADER)){
+
+        Map<Long, String> userAuth = memberDto.getUserAuth();
+        if(userAuth==null){
+
+        }
+        /*if(auth.role().equals(LEADER)){
             log.info("@Auth : LEADER");
             if(!LEADER.equals(status)){
                 log.info("Your don't access here");
