@@ -1,6 +1,8 @@
 package com.threeNerds.basketballDiary.mvc.controller;
 
+import com.threeNerds.basketballDiary.interceptor.Auth;
 import com.threeNerds.basketballDiary.mvc.domain.User;
+import com.threeNerds.basketballDiary.session.SessionConst;
 import com.threeNerds.basketballDiary.session.SessionDTO;
 import com.threeNerds.basketballDiary.mvc.dto.UserDTO;
 import com.threeNerds.basketballDiary.mvc.service.UserService;
@@ -21,11 +23,9 @@ public class UserController {
 
     private final UserService userService;
 
-    @GetMapping("/users/new")
-    public String createForm(){
-        log.info("UserController : createForm");
-        return "members/createForm";
-    }
+    /**
+     * 회원가입
+     */
     @PostMapping("/users/new")
     public String create(@RequestBody @Valid UserDTO userDTO){
         User user = new User();
@@ -46,9 +46,13 @@ public class UserController {
         user.setPositionCode(userDTO.getPositionCode());
 
         userService.createMember(user);
-        return "/";
+        return "createOk";
     }
-    @GetMapping("/members/myInfo")
+
+    /**
+     * 내정보 확인
+     */
+    @GetMapping("/users/myInfo")
     public UserDTO myInfo(@SessionAttribute(value = LOGIN_MEMBER, required = false) SessionDTO sessionDTO, UserDTO userDTO){
         Long id = sessionDTO.getUserSeq();
         User user = userService.findUser(id);
@@ -57,10 +61,34 @@ public class UserController {
         BeanUtils.copyProperties(user,userDto);
         return userDto;
     }
-    //put?patch??? 뭘 선택해야 하는지....
-    @PatchMapping("/members/modify")
-    public String change(@RequestBody @Valid UserDTO userDTO){
 
-        return "/";
+    /**
+     * 회원수정
+     */
+    @PutMapping("/users/modifyMyInfo")
+    public String change(@SessionAttribute(value = LOGIN_MEMBER,required = false) SessionDTO sessionDTO,@RequestBody @Valid UserDTO userDTO){
+        Long id = sessionDTO.getUserSeq();
+        User user = userService.findUser(id);
+
+        BeanUtils.copyProperties(userDTO,user);
+        userService.updateUser(user);
+
+        return "updateOk";
+    }
+
+    /**
+     * 회원탈퇴
+     */
+    @DeleteMapping("/users/deleteUser")
+    public String delete(@SessionAttribute(value = LOGIN_MEMBER,required = false) SessionDTO sessionDTO){
+        Long id = sessionDTO.getUserSeq();
+        userService.deleteUser(id);
+        return "deleteOk";
+    }
+
+    @Auth(GRADE = 1)
+    @GetMapping("/testAnnotation")
+    public void test(){
+        log.info("Auth : 1");
     }
 }
