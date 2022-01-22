@@ -16,15 +16,24 @@ public class UserService {
     private final UserRepository userRepository;
 
     @Transactional
+    public Long findSeq(String userId){
+        return userRepository.findSeq(userId);
+    }
+    @Transactional
     public User findUser(Long id) {
         return userRepository.findUser(id);
     }
     @Transactional
-    public Long createMember(User user) {
-        return userRepository.saveUser(user);
+    public void createMember(User user) {
+        userRepository.saveUser(user);
     }
     @Transactional
     public void updateUser(User user){
         userRepository.updateUser(user);
+    }
+
+    @Transactional
+    public void deleteUser(Long id) {
+        userRepository.deleteUser(id);
     }
 }

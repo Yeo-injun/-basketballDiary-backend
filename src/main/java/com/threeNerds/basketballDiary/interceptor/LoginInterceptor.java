@@ -14,7 +14,7 @@ import javax.servlet.http.HttpSession;
 import java.util.Map;
 
 @Slf4j
-public class loginInterceptor implements HandlerInterceptor {
+public class LoginInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
@@ -24,7 +24,7 @@ public class loginInterceptor implements HandlerInterceptor {
         HandlerMethod hm = (HandlerMethod) handler;
 
         Auth auth = hm.getMethodAnnotation(Auth.class);
-        //1. @Auth 가 없는 경우는 인증이 별도로 필요없음(비회원도 접근 가능)
+        //1. @Auth 가 없는 경우는 인증이 별도로 필요없음(팀에 속하지 않는 회원에 해당)
         if(auth==null){
             return true;
         }
@@ -42,33 +42,14 @@ public class loginInterceptor implements HandlerInterceptor {
         //3. 각 권한 분기처리(팀장,임원,팀원)
         SessionDTO memberDto = (SessionDTO) session.getAttribute(SessionConst.LOGIN_MEMBER);
 
-        Map<Long, String> userAuth = memberDto.getUserAuth();
-        if(userAuth==null){
+        //팀 id , 권한
+        Map<Long, Long> userAuth = memberDto.getUserAuth();
 
-        }
-        /*if(auth.role().equals(LEADER)){
-            log.info("@Auth : LEADER");
-            if(!LEADER.equals(status)){
-                log.info("Your don't access here");
-                response.sendRedirect("/notAccess");
-                return false;
-            }
-        }
-        else if(auth.role().equals(MANAGER)){
-            log.info("@Auth : MANAGER");
-            if(!LEADER.equals(status) && !MANAGER.equals(status)){
-                log.info("Your don't access here");
-                response.sendRedirect("/notAccess");
-                return false;
-            }
-        }
-        else if(auth.role().equals(TEAM_MEMBER)){
-            log.info("@Auth : TEAM_MEMBER");
-            if(!LEADER.equals(status) && !MANAGER.equals(status)&&!TEAM_MEMBER.equals(status)){
-                log.info("Your don't access here");
-                response.sendRedirect("/notAccess");
-                return false;
-            }
+        int grade = auth.GRADE();
+        //현재 나의 권한보다 접근할 수 있는 권한이 더 높으면 접근 불가
+        /*if(userAuth.get() < grade){
+            log.info("접근 불가");
+            return false;
         }*/
         return true;
     }

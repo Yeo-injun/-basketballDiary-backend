@@ -6,8 +6,10 @@ import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface UserRepository {
+    Long findSeq(String userId);
     User findUser(Long id);
-    Long saveUser(User user);
+    void saveUser(User user);
     User loginFindUser(LoginController.LoginUserRequest loginUserRequest);
     void updateUser(User user);
+    void deleteUser(Long id);
 }

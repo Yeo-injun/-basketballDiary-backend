@@ -1,5 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.controller;
 
+import com.threeNerds.basketballDiary.interceptor.Auth;
 import com.threeNerds.basketballDiary.mvc.domain.User;
 import com.threeNerds.basketballDiary.session.SessionConst;
 import com.threeNerds.basketballDiary.session.SessionDTO;
@@ -73,5 +74,21 @@ public class UserController {
         userService.updateUser(user);
 
         return "updateOk";
+    }
+
+    /**
+     * 회원탈퇴
+     */
+    @DeleteMapping("/users/deleteUser")
+    public String delete(@SessionAttribute(value = LOGIN_MEMBER,required = false) SessionDTO sessionDTO){
+        Long id = sessionDTO.getUserSeq();
+        userService.deleteUser(id);
+        return "deleteOk";
+    }
+
+    @Auth(GRADE = 1)
+    @GetMapping("/testAnnotation")
+    public void test(){
+        log.info("Auth : 1");
     }
 }

@@ -13,7 +13,7 @@ public class SessionDTO {
 
     private String userId;
 
-    private Map<Long,String> userAuth = new HashMap<>();
+    private Map<Long,Long> userAuth = new HashMap<>();
 
     public SessionDTO(Long userSeq, String userId) {
         this.userSeq = userSeq;
