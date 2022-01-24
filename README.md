@@ -48,3 +48,11 @@
 LonginController 수정
 - SessionDTO 에 권한필드값(Map<Long,Long>)을 추가해주었음.
 - 로그인에 성공했을시 1) 로그인을 할 수 있는 지 확인, session에 저장해줄 userSeq와 userId를 조회 2)그 후 TEAM_MEMBER 테이블에서 해당 유저가 속한 <팀id,권한> List들을 조회
+
+2022/01/23 - 이성주
+
+- 화면에 존재하는 teamID 값을 어떤식으로 서버로 넘겨줄 것인지 정해야됨.(일단 url에 쿼리파라미터로 넘겨 Interceptor 에서 getParmeter() 메소드로 값을 뽑아왔음)
+
+로그인과 로그아웃 그리고 권한처리 완성
+- 어노테이션을 사용하여 각 api 마다 정의만 해주면 됨
+- 권한 처리 필드값 int->long 으로 변경
