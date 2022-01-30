@@ -18,8 +18,18 @@ public class SessionDTO {
 
     private Map<Long,Long> userAuth = new HashMap<>();
 
+    public SessionDTO(Map<Long, Long> userAuth) {
+        this.userAuth = userAuth;
+    }
+
     public SessionDTO(Long userSeq, String userId) {
         this.userSeq = userSeq;
         this.userId = userId;
+    }
+
+    public SessionDTO(Long userSeq, String userId, Map<Long, Long> userAuth) {
+        this.userSeq = userSeq;
+        this.userId = userId;
+        this.userAuth = userAuth;
     }
 }

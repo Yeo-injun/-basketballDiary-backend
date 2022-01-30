@@ -2,10 +2,9 @@ package com.threeNerds.basketballDiary.mvc.controller;
 
 import com.threeNerds.basketballDiary.interceptor.Auth;
 import com.threeNerds.basketballDiary.mvc.domain.User;
-import com.threeNerds.basketballDiary.session.SessionConst;
-import com.threeNerds.basketballDiary.session.SessionDTO;
 import com.threeNerds.basketballDiary.mvc.dto.UserDTO;
 import com.threeNerds.basketballDiary.mvc.service.UserService;
+import com.threeNerds.basketballDiary.session.SessionDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -26,7 +25,7 @@ public class UserController {
     /**
      * 회원가입
      */
-    @PostMapping("/users/new")
+    @PostMapping("/user/new")
     public String create(@RequestBody @Valid UserDTO userDTO){
         User user = new User();
         user.setUserId(userDTO.getUserId());
@@ -52,7 +51,7 @@ public class UserController {
     /**
      * 내정보 확인
      */
-    @GetMapping("/users/myInfo")
+    @GetMapping("/user/myInfo")
     public UserDTO myInfo(@SessionAttribute(value = LOGIN_MEMBER, required = false) SessionDTO sessionDTO, UserDTO userDTO){
         Long id = sessionDTO.getUserSeq();
         User user = userService.findUser(id);
@@ -65,7 +64,7 @@ public class UserController {
     /**
      * 회원수정
      */
-    @PutMapping("/users/modifyMyInfo")
+    @PutMapping("/user/modifyMyInfo")
     public String change(@SessionAttribute(value = LOGIN_MEMBER,required = false) SessionDTO sessionDTO,@RequestBody @Valid UserDTO userDTO){
         Long id = sessionDTO.getUserSeq();
         User user = userService.findUser(id);
@@ -79,14 +78,14 @@ public class UserController {
     /**
      * 회원탈퇴
      */
-    @DeleteMapping("/users/deleteUser")
+    @DeleteMapping("/user/deleteUser")
     public String delete(@SessionAttribute(value = LOGIN_MEMBER,required = false) SessionDTO sessionDTO){
         Long id = sessionDTO.getUserSeq();
         userService.deleteUser(id);
         return "deleteOk";
     }
 
-    @Auth(GRADE = 1)
+    @Auth(GRADE = 2L)
     @GetMapping("/testAnnotation")
     public void test(){
         log.info("Auth : 1");

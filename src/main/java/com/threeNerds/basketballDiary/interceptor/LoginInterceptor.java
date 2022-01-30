@@ -3,7 +3,6 @@ package com.threeNerds.basketballDiary.interceptor;
 import com.threeNerds.basketballDiary.session.SessionConst;
 import com.threeNerds.basketballDiary.session.SessionDTO;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.plugin.Interceptor;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -43,14 +42,15 @@ public class LoginInterceptor implements HandlerInterceptor {
         SessionDTO memberDto = (SessionDTO) session.getAttribute(SessionConst.LOGIN_MEMBER);
 
         //팀 id , 권한
+        Long teamId = Long.parseLong(request.getParameter("teamId"));
         Map<Long, Long> userAuth = memberDto.getUserAuth();
 
-        int grade = auth.GRADE();
+        Long grade = auth.GRADE();
         //현재 나의 권한보다 접근할 수 있는 권한이 더 높으면 접근 불가
-        /*if(userAuth.get() < grade){
+        if(userAuth.get(teamId) < grade){
             log.info("접근 불가");
             return false;
-        }*/
+        }
         return true;
     }
 

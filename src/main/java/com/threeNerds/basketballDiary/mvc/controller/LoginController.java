@@ -1,16 +1,19 @@
 package com.threeNerds.basketballDiary.mvc.controller;
 
-import com.threeNerds.basketballDiary.session.SessionDTO;
 import com.threeNerds.basketballDiary.mvc.service.LoginService;
 import com.threeNerds.basketballDiary.session.SessionConst;
+import com.threeNerds.basketballDiary.session.SessionDTO;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.SessionAttribute;
 
 import javax.servlet.http.HttpSession;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -21,11 +24,22 @@ public class LoginController {
 
     @PostMapping("/login")
     public SessionDTO login(@RequestBody LoginUserRequest loginUserRequest, HttpSession session) {
+        log.info("로그인");
         SessionDTO sessionDTO = loginService.login(loginUserRequest)
-                .map(u -> new SessionDTO(u.getUserSeq(), u.getUserId()))
+                .map(u -> {
+                    Map<Long, Long> userAuth = loginService.findAuthList(loginUserRequest).stream()
+                            .collect(Collectors.toMap(i -> Long.parseLong(i.getTeamSeq()), i -> Long.parseLong(i.getTeamAuthCode())));
+                    return new SessionDTO(u.getUserSeq(), u.getUserId(),userAuth);
+                })
                 .orElse(null);
         session.setAttribute(SessionConst.LOGIN_MEMBER,sessionDTO);
         return sessionDTO;
+    }
+    @PostMapping("/logout")
+    public String logout(HttpSession session){
+        log.info("로그아웃");
+        session.invalidate();
+        return "logoutOk";
     }
 
     @Data
@@ -33,4 +47,5 @@ public class LoginController {
         private String userId;
         private String password;
     }
+
 }
