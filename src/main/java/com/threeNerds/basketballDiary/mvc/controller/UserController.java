@@ -4,6 +4,7 @@ import com.threeNerds.basketballDiary.interceptor.Auth;
 import com.threeNerds.basketballDiary.mvc.domain.User;
 import com.threeNerds.basketballDiary.mvc.dto.UserDTO;
 import com.threeNerds.basketballDiary.mvc.service.UserService;
+import com.threeNerds.basketballDiary.mvc.service.UserTeamManagerService;
 import com.threeNerds.basketballDiary.session.SessionDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,12 +16,24 @@ import java.time.LocalDate;
 
 import static com.threeNerds.basketballDiary.session.SessionConst.LOGIN_MEMBER;
 
+/**
+ * ... 수행하는 Controller
+ * @author 책임자 작성
+ *
+ * issue and history
+ * <pre>
+ * 2022.02.08 여인준 : 소스코드 생성
+ * </pre>
+ */
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+// @RequestMapping("/api/user") // url수정요망
 public class UserController {
 
     private final UserService userService;
+    private final UserTeamManagerService userTeamManagerService;
 
     /**
      * 회원가입
