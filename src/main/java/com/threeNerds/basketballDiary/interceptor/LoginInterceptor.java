@@ -42,7 +42,7 @@ public class LoginInterceptor implements HandlerInterceptor {
         SessionDTO memberDto = (SessionDTO) session.getAttribute(SessionConst.LOGIN_MEMBER);
 
         //팀 id , 권한
-        Long teamId = Long.parseLong(request.getParameter("teamId"));
+        Long teamId = Long.parseLong(request.getParameter("teamId"));   //=>pathVariable 로 바꾸어야됨
         Map<Long, Long> userAuth = memberDto.getUserAuth();
 
         Long grade = auth.GRADE();
