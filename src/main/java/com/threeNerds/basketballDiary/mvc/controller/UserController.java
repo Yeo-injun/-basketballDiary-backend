@@ -98,8 +98,8 @@ public class UserController {
         return "deleteOk";
     }
 
-    @Auth(GRADE = 2L)
-    @GetMapping("/testAnnotation")
+    @Auth(GRADE = 3L)
+    @GetMapping("/testAnnotation/{teamId}")
     public void test(){
         log.info("Auth : 1");
     }
