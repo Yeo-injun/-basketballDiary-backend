@@ -121,4 +121,6 @@ public class UserController {
         userTeamManagerService.sendJoinRequestToTeam(teamJoinRequest);
         return "Ok";
     }
+
+    // TODO HTTP메세지 생성 메서드 추가해주기
 }
