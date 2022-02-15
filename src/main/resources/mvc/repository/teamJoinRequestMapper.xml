@@ -10,7 +10,6 @@
             , JOIN_REQUEST_TYPE_CODE
             , JOIN_REQUEST_STATE_CODE
             , REQUEST_DATE
-            , CONFIRMATION_DATE
         )
         VALUES (
             #{teamSeq}
@@ -18,8 +17,16 @@
             , #{joinRequestTypeCode}
             , #{joinRequestStateCode}
             , CURRENT_TIMESTAMP
-            , CURRENT_TIMESTAMP
         )
     </insert>
 
+    <select id="checkJoinRequest" resultType="com.threeNerds.basketballDiary.mvc.domain.TeamJoinRequest">
+        SELECT JOIN_REQUEST_TYPE_CODE /* 가입요청유형코드 */
+               , REQUEST_DATE
+          FROM TEAM_JOIN_REQUEST
+         WHERE 1=1
+           AND TEAM_SEQ = #{teamSeq}
+           AND USER_SEQ = #{userSeq}
+           AND JOIN_REQUEST_STATE_CODE = #{joinRequestStateCode}  /* 대기중(01)인 경우에만 체크 */
+    </select>
 </mapper>
