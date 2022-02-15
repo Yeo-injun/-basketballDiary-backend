@@ -7,4 +7,6 @@ import org.apache.ibatis.annotations.Mapper;
 public interface TeamJoinRequestRepository {
 
     int createJoinRequest(TeamJoinRequest teamJoinRequest);
+
+    TeamJoinRequest checkJoinRequest(TeamJoinRequest invitationInfo);
 }

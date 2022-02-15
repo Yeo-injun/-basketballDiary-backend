@@ -1,5 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.controller;
 
+import com.threeNerds.basketballDiary.mvc.domain.TeamJoinRequest;
 import com.threeNerds.basketballDiary.mvc.dto.MyTeamDTO;
 import com.threeNerds.basketballDiary.mvc.service.MyTeamService;
 import com.threeNerds.basketballDiary.mvc.service.TeamMemberManagerService;
@@ -22,6 +23,7 @@ import static com.threeNerds.basketballDiary.session.SessionConst.LOGIN_MEMBER;
  * <pre>
  * 2022.02.08 여인준 : 소스코드 생성
  * 2022.02.11 강창기 : 소속팀 목록조회 구현
+ * 2022.02.15 여인준 : 소속팀 선수초대API 구현
  * </pre>
  */
 
@@ -33,6 +35,7 @@ import static com.threeNerds.basketballDiary.session.SessionConst.LOGIN_MEMBER;
 public class MyTeamController {
 
     private final MyTeamService myTeamService;
+    private final TeamMemberManagerService teamMemberManagerService;
 
     // 소속팀 목록 조회
     @GetMapping
@@ -54,5 +57,19 @@ public class MyTeamController {
         return myTeam;
     }
 
-
+    // 소속팀의 선수초대
+    @PostMapping("/{teamSeq}/joinRequestTo/{userSeq}")
+    public String inviteTeamMember(
+            @PathVariable Long teamSeq,
+            @PathVariable Long userSeq
+    )
+    {
+        TeamJoinRequest teamJoinRequest = TeamJoinRequest.builder()
+                                                .teamSeq(teamSeq)
+                                                .userSeq(userSeq)
+                                                .build();
+        log.debug("==> inviteTeamMember 진입");
+        teamMemberManagerService.inviteTeamMember(teamJoinRequest);
+        return "OK"; // TODO 임시로 return값 반영
+    }
 }
