@@ -64,11 +64,12 @@ public class MyTeamController {
             @PathVariable Long userSeq
     )
     {
+        log.debug("--- Controller.inviteTeamMember 진입 ---");
+        log.info("---INFO Controller.inviteTeamMember 진입 ---");
         TeamJoinRequest teamJoinRequest = TeamJoinRequest.builder()
                                                 .teamSeq(teamSeq)
                                                 .userSeq(userSeq)
                                                 .build();
-        log.debug("==> inviteTeamMember 진입");
         teamMemberManagerService.inviteTeamMember(teamJoinRequest);
         return "OK"; // TODO 임시로 return값 반영
     }

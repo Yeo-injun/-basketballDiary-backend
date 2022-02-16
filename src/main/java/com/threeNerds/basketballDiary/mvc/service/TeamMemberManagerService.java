@@ -37,18 +37,36 @@ public class TeamMemberManagerService {
                 .build();
 
         // 초대-가입요청 존재여부 확인 : 대기중인 가입요청 혹은 초대가 있을 경우 중복가입요청 방지
-        TeamJoinRequest prevJoinReq = null; // = teamJoinRequestRepository.checkJoinRequest(invitationInfo);
+        TeamJoinRequest prevJoinReq = teamJoinRequestRepository.checkJoinRequest(invitationInfo);
         boolean isExistJoinRequest = prevJoinReq != null
                                         ? true
                                         : false;
         if (isExistJoinRequest)
         {
-            log.debug("이미 {}이 있습니다.", JoinRequestTypeCode.valueOf(prevJoinReq.getJoinRequestTypeCode()));
+            String reqTypeName = getJoinRequestTypeName(prevJoinReq);
+            log.info("==== 이미 {}가 있습니다. ====", reqTypeName);
             return; // TODO 에러를 던지거나 다른 것을 리턴하기
         }
+
+        // 초대-가입요청이 없을경우에만 INSERT
         teamJoinRequestRepository.createJoinRequest(invitationInfo);
     }
 
+    private String getJoinRequestTypeName(TeamJoinRequest prevJoinReq) {
+        String reqTypeCode = prevJoinReq.getJoinRequestTypeCode();
+        String reqTypeName = "";
+
+        // TODO Java8 문법 적용해서 Stream으로 처리 요망
+        JoinRequestTypeCode[] reqTypeEnum = JoinRequestTypeCode.values();
+        for (JoinRequestTypeCode reqType : reqTypeEnum)
+        {
+            if (reqType.getCode().equals(reqTypeCode))
+            {
+                reqTypeName = reqType.getName();
+            }
+        }
+        return reqTypeName;
+    }
 
 
 }
