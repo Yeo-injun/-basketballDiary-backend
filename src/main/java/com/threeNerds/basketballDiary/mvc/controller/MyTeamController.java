@@ -106,7 +106,7 @@ public class MyTeamController {
     /**
      * API010 : 소속팀의 가입요청 거절
      */
-    @PatchMapping("/{teamSeq}/joinRequestFrom/{teamJoinRequestSeq}/rejection}")
+    @PatchMapping("/{teamSeq}/joinRequestFrom/{teamJoinRequestSeq}/rejection")
     public String rejectJoinRequest(
             @PathVariable Long teamSeq,
             @PathVariable Long teamJoinRequestSeq
