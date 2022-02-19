@@ -1,4 +1,4 @@
-package com.threeNerds.basketballDiary.mvc.domain;
+package com.threeNerds.basketballDiary.constant;
 
 import lombok.Getter;
 
@@ -6,6 +6,8 @@ import lombok.Getter;
  * 참고자료 : https://velog.io/@kyle/%EC%9E%90%EB%B0%94-Enum-%EA%B8%B0%EB%B3%B8-%EB%B0%8F-%ED%99%9C%EC%9A%A9 (Enum을 통한 Code값 관리)
  * 가입요청 유형 코드 관리
  */
+
+/* 22.02.16 인준 제안  - domain하위에 code Package구조 추가 */
 @Getter
 public enum JoinRequestTypeCode {
 

@@ -9,4 +9,6 @@ public interface TeamJoinRequestRepository {
     int createJoinRequest(TeamJoinRequest teamJoinRequest);
 
     TeamJoinRequest checkJoinRequest(TeamJoinRequest invitationInfo);
+
+    int updateJoinRequestState(TeamJoinRequest approvalInfo);
 }

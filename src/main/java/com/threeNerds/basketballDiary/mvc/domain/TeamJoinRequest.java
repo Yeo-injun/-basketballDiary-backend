@@ -14,7 +14,7 @@ import java.util.Date;
 @NoArgsConstructor
 public class TeamJoinRequest {
     // 팀가입요청Seq
-    private Long teamJoinSeq;
+    private Long teamJoinRequestSeq;
 
     // 팀Seq
     private Long teamSeq;

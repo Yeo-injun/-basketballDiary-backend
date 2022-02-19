@@ -3,6 +3,7 @@ package com.threeNerds.basketballDiary.mvc.controller;
 import com.threeNerds.basketballDiary.interceptor.Auth;
 import com.threeNerds.basketballDiary.mvc.domain.TeamJoinRequest;
 import com.threeNerds.basketballDiary.mvc.domain.User;
+import com.threeNerds.basketballDiary.mvc.dto.JoinRequestDTO;
 import com.threeNerds.basketballDiary.mvc.dto.UserDTO;
 import com.threeNerds.basketballDiary.mvc.service.UserService;
 import com.threeNerds.basketballDiary.mvc.service.UserTeamManagerService;
@@ -99,20 +100,23 @@ public class UserController {
         log.info("Auth : 1");
     }
 
-    /** 농구팀 가입요청 API */
+    /**
+     *  API농구팀 가입요청 API
+     *
+     **/
     // TODO 클래스단위의 url 매핑정보 수정에 따라 root url 수정 필요
     // TODO 로그인 여부 체크하는 동작 필요 - checkLogin 어노테이션 적용 요망
     @PostMapping("/api/users/{userSeq}/joinRequestTo/{teamSeq}")
     public String joinRequestToTeam(
-            @PathVariable("userSeq") String userSeq,
-            @PathVariable("teamSeq") String teamSeq
+            @PathVariable("userSeq") Long userSeq,
+            @PathVariable("teamSeq") Long teamSeq
     )
     {
-        TeamJoinRequest teamJoinRequest = TeamJoinRequest.builder()
-                                            .teamSeq(Long.parseLong(teamSeq))
-                                            .userSeq(Long.parseLong(userSeq)).build();
+        JoinRequestDTO joinRequest = new JoinRequestDTO()
+                                            .teamSeq(teamSeq)
+                                            .userSeq(userSeq);
 
-        userTeamManagerService.sendJoinRequestToTeam(teamJoinRequest);
+        userTeamManagerService.sendJoinRequestToTeam(joinRequest);
         return "Ok";
     }
 

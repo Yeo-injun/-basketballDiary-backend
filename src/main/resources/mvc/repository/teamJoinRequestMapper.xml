@@ -28,4 +28,14 @@
            AND USER_SEQ = #{userSeq}
            AND JOIN_REQUEST_STATE_CODE = #{joinRequestStateCode}  /* 대기중(01)인 경우에만 체크 */
     </select>
+
+    <update id="updateJoinRequestState" parameterType="com.threeNerds.basketballDiary.mvc.domain.TeamJoinRequest">
+        UPDATE TEAM_JOIN_REQUEST
+           SET JOIN_REQUEST_STATE_CODE = #{joinRequestStateCode}
+             , CONFIRMATION_DATE = CURRENT_TIMESTAMP
+         WHERE 1=1
+           AND TEAM_JOIN_REQUEST_SEQ = #{teamJoinRequestSeq}
+           AND TEAM_SEQ = #{teamSeq}
+    </update>
+
 </mapper>
