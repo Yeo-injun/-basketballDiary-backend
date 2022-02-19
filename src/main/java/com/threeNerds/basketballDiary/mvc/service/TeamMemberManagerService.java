@@ -77,14 +77,40 @@ public class TeamMemberManagerService {
      * 소속팀 가입요청 승인 API
      * @param joinRequest
      */
-    public String approveJoinRequest(JoinRequestDTO joinRequest) {
+    public boolean approveJoinRequest(JoinRequestDTO joinRequest) {
         TeamJoinRequest approvalInfo = TeamJoinRequest.builder()
                 .teamJoinRequestSeq(joinRequest.getTeamJoinRequestSeq())
                 .teamSeq(joinRequest.getTeamSeq())
                 .joinRequestStateCode(JoinRequestStateCode.APPROVAL.getCode())
                 .build();
 
-        teamJoinRequestRepository.updateJoinRequestState(approvalInfo);
-        return "";
+        boolean isApprovalSuccess = teamJoinRequestRepository.updateJoinRequestState(approvalInfo) == 1 ? true : false;
+        if (!isApprovalSuccess)
+        {
+            log.info("==== 해당 가입요청은 승인할 수 없는 가입요청입니다. ====");
+            return isApprovalSuccess; // TODO 에러를 던지는 것으로 코드 바꾸기
+        }
+
+        return isApprovalSuccess;
+    }
+
+    /**
+     * 소속팀 가입요청 거절 API
+     * @param joinRequest
+     */
+    public boolean rejectJoinRequest(JoinRequestDTO joinRequest) {
+        TeamJoinRequest rejectionInfo = TeamJoinRequest.builder()
+                .teamJoinRequestSeq(joinRequest.getTeamJoinRequestSeq())
+                .teamSeq(joinRequest.getTeamSeq())
+                .joinRequestStateCode(JoinRequestStateCode.REJECTION.getCode())
+                .build();
+
+        boolean isRejectionSuccess = teamJoinRequestRepository.updateJoinRequestState(rejectionInfo) == 1 ? true : false;
+        if (!isRejectionSuccess)
+        {
+            log.info("==== 해당 가입요청은 거절할 수 없는 가입요청입니다. ====");
+            return isRejectionSuccess; // TODO 에러를 던지는 것으로 코드 바꾸기
+        }
+        return isRejectionSuccess;
     }
 }

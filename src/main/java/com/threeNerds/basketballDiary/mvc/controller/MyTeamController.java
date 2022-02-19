@@ -66,7 +66,7 @@ public class MyTeamController {
             @PathVariable Long teamSeq
             // 쿼리 스트링을 받을 수 있도록 어노테이션 추가 필요
     ) {
-        
+        // TODO 구현예정
         return "searchInvitedPlayer";
     }
     
@@ -111,7 +111,11 @@ public class MyTeamController {
             @PathVariable Long teamSeq,
             @PathVariable Long teamJoinRequestSeq
     ) {
-        
+        JoinRequestDTO joinRequest = new JoinRequestDTO()
+                .teamSeq(teamSeq)
+                .teamJoinRequestSeq(teamJoinRequestSeq);
+
+        teamMemberManagerService.rejectJoinRequest(joinRequest);
         
         return "";
     }

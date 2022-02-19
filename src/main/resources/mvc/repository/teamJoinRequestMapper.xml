@@ -36,6 +36,7 @@
          WHERE 1=1
            AND TEAM_JOIN_REQUEST_SEQ = #{teamJoinRequestSeq}
            AND TEAM_SEQ = #{teamSeq}
+           AND JOIN_REQUEST_STATE_CODE = '01' /* 팀가입요청상태코드 - 대기중인 상태만 변경가능 */
     </update>
 
 </mapper>
