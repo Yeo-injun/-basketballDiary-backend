@@ -1,8 +1,9 @@
 package com.threeNerds.basketballDiary.mvc.service;
 
-import com.threeNerds.basketballDiary.mvc.domain.JoinRequestStateCode;
-import com.threeNerds.basketballDiary.mvc.domain.JoinRequestTypeCode;
+import com.threeNerds.basketballDiary.constant.JoinRequestStateCode;
+import com.threeNerds.basketballDiary.constant.JoinRequestTypeCode;
 import com.threeNerds.basketballDiary.mvc.domain.TeamJoinRequest;
+import com.threeNerds.basketballDiary.mvc.dto.JoinRequestDTO;
 import com.threeNerds.basketballDiary.mvc.repository.TeamJoinRequestRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,11 +28,14 @@ public class TeamMemberManagerService {
 
     private final TeamJoinRequestRepository teamJoinRequestRepository;
 
-    // 팀원 초대 API
-    public void inviteTeamMember(TeamJoinRequest teamJoinRequest) {
+    /**
+     * 팀원 초대 API
+     * @param joinRequest
+     */
+    public void inviteTeamMember(JoinRequestDTO joinRequest) {
         TeamJoinRequest invitationInfo = TeamJoinRequest.builder()
-                .teamSeq(teamJoinRequest.getTeamSeq())
-                .userSeq(teamJoinRequest.getUserSeq())
+                .teamSeq(joinRequest.getTeamSeq())
+                .userSeq(joinRequest.getUserSeq())
                 .joinRequestTypeCode(JoinRequestTypeCode.INVITATION.getCode())
                 .joinRequestStateCode(JoinRequestStateCode.WAITING.getCode())
                 .build();
@@ -70,10 +74,10 @@ public class TeamMemberManagerService {
 
 
     /**
-     * 소속팀 가입요청 승인
+     * 소속팀 가입요청 승인 API
      * @param joinRequest
      */
-    public String approveJoinRequest(TeamJoinRequest joinRequest) {
+    public String approveJoinRequest(JoinRequestDTO joinRequest) {
         TeamJoinRequest approvalInfo = TeamJoinRequest.builder()
                 .teamJoinRequestSeq(joinRequest.getTeamJoinRequestSeq())
                 .teamSeq(joinRequest.getTeamSeq())
