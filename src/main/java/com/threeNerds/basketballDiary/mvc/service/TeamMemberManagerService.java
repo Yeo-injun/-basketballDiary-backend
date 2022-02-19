@@ -69,4 +69,18 @@ public class TeamMemberManagerService {
     }
 
 
+    /**
+     * 소속팀 가입요청 승인
+     * @param joinRequest
+     */
+    public String approveJoinRequest(TeamJoinRequest joinRequest) {
+        TeamJoinRequest approvalInfo = TeamJoinRequest.builder()
+                .teamJoinRequestSeq(joinRequest.getTeamJoinRequestSeq())
+                .teamSeq(joinRequest.getTeamSeq())
+                .joinRequestStateCode(JoinRequestStateCode.APPROVAL.getCode())
+                .build();
+
+        teamJoinRequestRepository.updateJoinRequestState(approvalInfo);
+        return "";
+    }
 }

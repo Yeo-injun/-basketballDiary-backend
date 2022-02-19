@@ -57,7 +57,7 @@ public class MyTeamController {
         return myTeam;
     }
 
-    // 소속팀의 선수초대
+    // API007 소속팀의 선수초대
     @PostMapping("/{teamSeq}/joinRequestTo/{userSeq}")
     public String inviteTeamMember(
             @PathVariable Long teamSeq,
@@ -72,5 +72,20 @@ public class MyTeamController {
                                                 .build();
         teamMemberManagerService.inviteTeamMember(teamJoinRequest);
         return "OK"; // TODO 임시로 return값 반영
+    }
+
+    // API009 소속팀 가입요청 승인
+    @PatchMapping("/{teamSeq}/joinRequestFrom/{teamJoinRequestSeq}/approval")
+    public String approveJoinRequest(
+        @PathVariable Long teamSeq,
+        @PathVariable Long teamJoinRequestSeq
+    )
+    {
+        TeamJoinRequest joinRequest = TeamJoinRequest.builder()
+                .teamSeq(teamSeq)
+                .teamJoinRequestSeq(teamJoinRequestSeq)
+                .build();
+        teamMemberManagerService.approveJoinRequest(joinRequest);
+        return "API009";
     }
 }
