@@ -1,4 +1,4 @@
-package com.threeNerds.basketballDiary.mvc.domain;
+package com.threeNerds.basketballDiary.constant;
 
 import lombok.Getter;
 

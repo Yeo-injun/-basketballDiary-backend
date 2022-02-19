@@ -1,6 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.controller;
 
 import com.threeNerds.basketballDiary.mvc.domain.TeamJoinRequest;
+import com.threeNerds.basketballDiary.mvc.dto.JoinRequestDTO;
 import com.threeNerds.basketballDiary.mvc.dto.MyTeamDTO;
 import com.threeNerds.basketballDiary.mvc.service.MyTeamService;
 import com.threeNerds.basketballDiary.mvc.service.TeamMemberManagerService;
@@ -57,35 +58,62 @@ public class MyTeamController {
         return myTeam;
     }
 
-    // API007 소속팀의 선수초대
+    /**
+     * API005 : 소속팀의 초대한 선수목록 조회
+     */
+    @GetMapping("/{teamSeq}/joinRequestTo")
+    public String searchInvitedPlayer(
+            @PathVariable Long teamSeq
+            // 쿼리 스트링을 받을 수 있도록 어노테이션 추가 필요
+    ) {
+        
+        return "searchInvitedPlayer";
+    }
+    
+    /**
+     * API007 : 소속팀의 선수초대
+     */
     @PostMapping("/{teamSeq}/joinRequestTo/{userSeq}")
     public String inviteTeamMember(
             @PathVariable Long teamSeq,
             @PathVariable Long userSeq
-    )
-    {
-        log.debug("--- Controller.inviteTeamMember 진입 ---");
+    ) {
         log.info("---INFO Controller.inviteTeamMember 진입 ---");
-        TeamJoinRequest teamJoinRequest = TeamJoinRequest.builder()
-                                                .teamSeq(teamSeq)
-                                                .userSeq(userSeq)
-                                                .build();
-        teamMemberManagerService.inviteTeamMember(teamJoinRequest);
+        JoinRequestDTO joinRequest = new JoinRequestDTO()
+                                            .teamSeq(teamSeq)
+                                            .userSeq(userSeq);
+
+        teamMemberManagerService.inviteTeamMember(joinRequest);
         return "OK"; // TODO 임시로 return값 반영
     }
 
-    // API009 소속팀 가입요청 승인
+    /**
+     * API009 : 소속팀의 가입요청 승인
+     */
     @PatchMapping("/{teamSeq}/joinRequestFrom/{teamJoinRequestSeq}/approval")
     public String approveJoinRequest(
-        @PathVariable Long teamSeq,
-        @PathVariable Long teamJoinRequestSeq
-    )
-    {
-        TeamJoinRequest joinRequest = TeamJoinRequest.builder()
+            @PathVariable Long teamSeq,
+            @PathVariable Long teamJoinRequestSeq
+    ) {
+        JoinRequestDTO joinRequest = new JoinRequestDTO()
                 .teamSeq(teamSeq)
-                .teamJoinRequestSeq(teamJoinRequestSeq)
-                .build();
+                .teamJoinRequestSeq(teamJoinRequestSeq);
+
         teamMemberManagerService.approveJoinRequest(joinRequest);
         return "API009";
     }
+
+    /**
+     * API010 : 소속팀의 가입요청 거절
+     */
+    @PatchMapping("/{teamSeq}/joinRequestFrom/{teamJoinRequestSeq}/rejection}")
+    public String rejectJoinRequest(
+            @PathVariable Long teamSeq,
+            @PathVariable Long teamJoinRequestSeq
+    ) {
+        
+        
+        return "";
+    }
+    
 }
