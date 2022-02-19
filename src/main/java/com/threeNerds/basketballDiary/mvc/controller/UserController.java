@@ -41,22 +41,16 @@ public class UserController {
      */
     @PostMapping("/user/new")
     public String create(@RequestBody @Valid UserDTO userDTO){
-        User user = new User();
-        user.setUserId(userDTO.getUserId());
-        user.setPassword(userDTO.getPassword());
-        user.setUserName(userDTO.getUserName());
-        user.setEmail(userDTO.getEmail());
-        user.setGender(userDTO.getGender());
-        user.setWeight(userDTO.getWeight());
-
         LocalDate today = LocalDate.now();
-        user.setRegDate(today);
-        user.setUpdateDate(today);
-        user.setUserRegYn("Y");
 
-        user.setSidoCode(userDTO.getSidoCode());
-        user.setSigunguCode(userDTO.getSigunguCode());
-        user.setPositionCode(userDTO.getPositionCode());
+        User user = new User.Builder(userDTO.getUserId(),userDTO.getPassword(),userDTO.getUserName(),userDTO.getEmail(),
+                "Y",userDTO.getGender(),userDTO.getHeight(),userDTO.getWeight())
+                .withPositionCode(userDTO.getPositionCode())
+                .withRegDate(today)
+                .withUpdateDate(today)
+                .withSidoCode(userDTO.getSidoCode())
+                .withSigunduCode(userDTO.getSigunguCode())
+                .build();
 
         userService.createMember(user);
         return "createOk";

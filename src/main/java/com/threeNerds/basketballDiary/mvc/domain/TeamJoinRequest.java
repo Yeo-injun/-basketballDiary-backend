@@ -28,7 +28,7 @@ public class TeamJoinRequest {
     private String joinRequestStateCode;
 
     // 가입요청일시
-    private Date requestDate; // TODO sql패키지와 util패키지의 Date차이는??
+    private Date requestDate; // TODO sql패키지와 util패키지의 Date차이는?? => LocalDate 로 수정하는 것이 좋음
     // 요청확정일시
     private Date confirmationDate;
 
