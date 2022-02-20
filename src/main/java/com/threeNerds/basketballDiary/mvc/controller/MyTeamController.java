@@ -3,6 +3,8 @@ package com.threeNerds.basketballDiary.mvc.controller;
 import com.threeNerds.basketballDiary.mvc.domain.TeamJoinRequest;
 import com.threeNerds.basketballDiary.mvc.dto.JoinRequestDTO;
 import com.threeNerds.basketballDiary.mvc.dto.MyTeamDTO;
+import com.threeNerds.basketballDiary.mvc.dto.PlayerDTO;
+import com.threeNerds.basketballDiary.mvc.dto.PlayerSearchDTO;
 import com.threeNerds.basketballDiary.mvc.service.MyTeamService;
 import com.threeNerds.basketballDiary.mvc.service.TeamMemberManagerService;
 import com.threeNerds.basketballDiary.session.SessionDTO;
@@ -61,15 +63,20 @@ public class MyTeamController {
     /**
      * API005 : 소속팀의 초대한 선수목록 조회
      */
-    @GetMapping("/{teamSeq}/joinRequestTo")
-    public String searchInvitedPlayer(
-            @PathVariable Long teamSeq
-            // 쿼리 스트링을 받을 수 있도록 어노테이션 추가 필요
+    @GetMapping("/{teamSeq}/joinRequestTo") // TODO URL 마지막에 /users 추가하는 것은 어떤지 (22.02.20 인준의견)
+    public List<PlayerDTO> searchInvitedPlayer(
+            @PathVariable Long teamSeq,
+            @RequestParam(name = "state", defaultValue = "00") String joinRequestStateCode
     ) {
-        // TODO 구현예정
-        return "searchInvitedPlayer";
+        PlayerSearchDTO searchCond = new PlayerSearchDTO()
+                                            .teamSeq(teamSeq)
+                                            .joinRequestStateCode(joinRequestStateCode);
+
+        List<PlayerDTO> playerList = teamMemberManagerService.searchInvitedPlayer(searchCond);
+        return playerList;
     }
-    
+
+
     /**
      * API007 : 소속팀의 선수초대
      */

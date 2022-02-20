@@ -2,13 +2,19 @@ package com.threeNerds.basketballDiary.mvc.service;
 
 import com.threeNerds.basketballDiary.constant.JoinRequestStateCode;
 import com.threeNerds.basketballDiary.constant.JoinRequestTypeCode;
+import com.threeNerds.basketballDiary.constant.PositionCode;
 import com.threeNerds.basketballDiary.mvc.domain.TeamJoinRequest;
 import com.threeNerds.basketballDiary.mvc.dto.JoinRequestDTO;
+import com.threeNerds.basketballDiary.mvc.dto.PlayerDTO;
+import com.threeNerds.basketballDiary.mvc.dto.PlayerSearchDTO;
+import com.threeNerds.basketballDiary.mvc.repository.PlayerRepository;
 import com.threeNerds.basketballDiary.mvc.repository.TeamJoinRequestRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * 팀관리자가 팀원을 관리하기 위한 업무를 수행하는 Service
@@ -27,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class TeamMemberManagerService {
 
     private final TeamJoinRequestRepository teamJoinRequestRepository;
+    private final PlayerRepository playerRepository;
 
     /**
      * 팀원 초대 API
@@ -112,5 +119,40 @@ public class TeamMemberManagerService {
             return isRejectionSuccess; // TODO 에러를 던지는 것으로 코드 바꾸기
         }
         return isRejectionSuccess;
+    }
+
+    /**
+     * 소속팀에서 초대한 선수목록 조회 API
+     * @param searchCond
+     * @return List<PlayerDTO>
+     */
+    public List<PlayerDTO> searchInvitedPlayer(PlayerSearchDTO searchCond) {
+        searchCond.joinRequestTypeCode(JoinRequestTypeCode.INVITATION.getCode());
+        List<PlayerDTO> players = playerRepository.findPlayers(searchCond);
+
+        // TODO 스트림으로 처리 요망.. 코드값을 가지고 코드명칭으로 바꿔주기
+        for (PlayerDTO player : players)
+        {
+
+            player.positionCodeName(getPositionName(player));
+//                    .joinRequestStateCodeName(getJoinRequestTypeName(player));
+        }
+        return players;
+    }
+
+    private String getPositionName(PlayerDTO player) {
+        String code = player.getPositionCode();
+        String name = "";
+
+        // TODO Java8 문법 적용해서 Stream으로 처리 요망
+        PositionCode[] positionCodeEnum = PositionCode.values();
+        for (PositionCode position : positionCodeEnum)
+        {
+            if (position.getCode().equals(code))
+            {
+                name = position.getName();
+            }
+        }
+        return name;
     }
 }
