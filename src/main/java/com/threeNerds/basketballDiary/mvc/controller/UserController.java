@@ -89,7 +89,7 @@ public class UserController {
      */
     @DeleteMapping("/user/deleteUser")
     public String delete(@SessionAttribute(value = LOGIN_MEMBER,required = false) SessionDTO sessionDTO){
-        Long id = sessionDTO.getUserSeq();
+        String id = sessionDTO.getUserId();
         userService.deleteUser(id);
         return "deleteOk";
     }

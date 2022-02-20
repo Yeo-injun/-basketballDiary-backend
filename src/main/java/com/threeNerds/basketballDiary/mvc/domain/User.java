@@ -1,12 +1,8 @@
 package com.threeNerds.basketballDiary.mvc.domain;
 
 import lombok.Getter;
-import lombok.Setter;
-import org.apache.tomcat.jni.Local;
 
-import javax.swing.plaf.basic.BasicViewportUI;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Getter
 public class User {
