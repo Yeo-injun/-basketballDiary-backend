@@ -54,7 +54,7 @@ public class TeamMemberManagerService {
                                         : false;
         if (isExistJoinRequest)
         {
-            String reqTypeName = getJoinRequestTypeName(prevJoinReq);
+            String reqTypeName = JoinRequestTypeCode.getName(prevJoinReq.getJoinRequestTypeCode());
             log.info("==== 이미 {}가 있습니다. ====", reqTypeName);
             return; // TODO 에러를 던지거나 다른 것을 리턴하기
         }
@@ -62,23 +62,6 @@ public class TeamMemberManagerService {
         // 초대-가입요청이 없을경우에만 INSERT
         teamJoinRequestRepository.createJoinRequest(invitationInfo);
     }
-
-    private String getJoinRequestTypeName(TeamJoinRequest prevJoinReq) {
-        String reqTypeCode = prevJoinReq.getJoinRequestTypeCode();
-        String reqTypeName = "";
-
-        // TODO Java8 문법 적용해서 Stream으로 처리 요망
-        JoinRequestTypeCode[] reqTypeEnum = JoinRequestTypeCode.values();
-        for (JoinRequestTypeCode reqType : reqTypeEnum)
-        {
-            if (reqType.getCode().equals(reqTypeCode))
-            {
-                reqTypeName = reqType.getName();
-            }
-        }
-        return reqTypeName;
-    }
-
 
     /**
      * 소속팀 가입요청 승인 API
@@ -131,28 +114,12 @@ public class TeamMemberManagerService {
         List<PlayerDTO> players = playerRepository.findPlayers(searchCond);
 
         // TODO 스트림으로 처리 요망.. 코드값을 가지고 코드명칭으로 바꿔주기
-        for (PlayerDTO player : players)
-        {
+        players.stream().forEach(player -> {
+                player.positionCodeName(PositionCode.getName(player.getPositionCode()))
+                      .joinRequestStateCodeName(JoinRequestStateCode.getName(player.getJoinRequestStateCode()));
+        });
 
-            player.positionCodeName(getPositionName(player));
-//                    .joinRequestStateCodeName(getJoinRequestTypeName(player));
-        }
         return players;
     }
 
-    private String getPositionName(PlayerDTO player) {
-        String code = player.getPositionCode();
-        String name = "";
-
-        // TODO Java8 문법 적용해서 Stream으로 처리 요망
-        PositionCode[] positionCodeEnum = PositionCode.values();
-        for (PositionCode position : positionCodeEnum)
-        {
-            if (position.getCode().equals(code))
-            {
-                name = position.getName();
-            }
-        }
-        return name;
-    }
 }
