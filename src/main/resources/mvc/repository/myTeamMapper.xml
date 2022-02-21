@@ -46,8 +46,13 @@
         FROM (SELECT * FROM TEAM_MEMBER WHERE WITHDRAWAL_YN != 'Y') A
                  JOIN TEAM B
                       ON A.TEAM_SEQ = B.TEAM_SEQ
-                 JOIN TEAM_REGULAR_EXERCISE C
-                      ON B.TEAM_SEQ = C.TEAM_SEQ
+                 LEFT JOIN (SELECT *
+                            FROM TEAM_REGULAR_EXERCISE
+                            WHERE TEAM_REGULAR_EXERCISE_SEQ = (
+                                SELECT MAX(TEAM_REGULAR_EXERCISE_SEQ)
+                                FROM TEAM_REGULAR_EXERCISE
+                                GROUP BY TEAM_SEQ)) C
+                           ON B.TEAM_SEQ = C.TEAM_SEQ
         WHERE A.USER_SEQ = #{userSeq}
     </select>
 
