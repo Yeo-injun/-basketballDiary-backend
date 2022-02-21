@@ -95,6 +95,22 @@ public class MyTeamController {
     }
 
     /**
+     * API008 : 소속팀이 받은 가입요청목록 조회
+     */
+    @GetMapping("/{teamSeq}/joinRequestFrom") // TODO URL 마지막에 /users 추가하는 것은 어떤지 (22.02.20 인준의견)
+    public List<PlayerDTO> searchJoinRequestPlayer(
+            @PathVariable Long teamSeq,
+            @RequestParam(name = "state", defaultValue = "00") String joinRequestStateCode
+    ) {
+        PlayerSearchDTO searchCond = new PlayerSearchDTO()
+                .teamSeq(teamSeq)
+                .joinRequestStateCode(joinRequestStateCode);
+
+        // TODO 서비스 구현요망
+        List<PlayerDTO> playerList = null; // teamMemberManagerService.searchInvitedPlayer(searchCond);
+        return playerList;
+    }
+    /**
      * API009 : 소속팀의 가입요청 승인
      */
     @PatchMapping("/{teamSeq}/joinRequestFrom/{teamJoinRequestSeq}/approval")
