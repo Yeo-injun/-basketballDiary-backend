@@ -1,7 +1,9 @@
 package com.threeNerds.basketballDiary.mvc.controller;
 
 import com.threeNerds.basketballDiary.interceptor.Auth;
+import com.threeNerds.basketballDiary.mvc.domain.TeamJoinRequest;
 import com.threeNerds.basketballDiary.mvc.domain.User;
+import com.threeNerds.basketballDiary.mvc.dto.JoinRequestDTO;
 import com.threeNerds.basketballDiary.mvc.dto.UserDTO;
 import com.threeNerds.basketballDiary.mvc.service.UserService;
 import com.threeNerds.basketballDiary.mvc.service.UserTeamManagerService;
@@ -40,22 +42,16 @@ public class UserController {
      */
     @PostMapping("/user/new")
     public String create(@RequestBody @Valid UserDTO userDTO){
-        User user = new User();
-        user.setUserId(userDTO.getUserId());
-        user.setPassword(userDTO.getPassword());
-        user.setUserName(userDTO.getUserName());
-        user.setEmail(userDTO.getEmail());
-        user.setGender(userDTO.getGender());
-        user.setWeight(userDTO.getWeight());
-
         LocalDate today = LocalDate.now();
-        user.setRegDate(today);
-        user.setUpdateDate(today);
-        user.setUserRegYn("Y");
 
-        user.setSidoCode(userDTO.getSidoCode());
-        user.setSigunguCode(userDTO.getSigunguCode());
-        user.setPositionCode(userDTO.getPositionCode());
+        User user = new User.Builder(userDTO.getUserId(),userDTO.getPassword(),userDTO.getUserName(),userDTO.getEmail(),
+                "Y",userDTO.getGender(),userDTO.getHeight(),userDTO.getWeight())
+                .withPositionCode(userDTO.getPositionCode())
+                .withRegDate(today)
+                .withUpdateDate(today)
+                .withSidoCode(userDTO.getSidoCode())
+                .withSigunduCode(userDTO.getSigunguCode())
+                .build();
 
         userService.createMember(user);
         return "createOk";
@@ -93,7 +89,7 @@ public class UserController {
      */
     @DeleteMapping("/user/deleteUser")
     public String delete(@SessionAttribute(value = LOGIN_MEMBER,required = false) SessionDTO sessionDTO){
-        Long id = sessionDTO.getUserSeq();
+        String id = sessionDTO.getUserId();
         userService.deleteUser(id);
         return "deleteOk";
     }
@@ -103,4 +99,27 @@ public class UserController {
     public void test(){
         log.info("Auth : 1");
     }
+
+    /**
+     *  API농구팀 가입요청 API
+     *
+     **/
+    // TODO 클래스단위의 url 매핑정보 수정에 따라 root url 수정 필요
+    // TODO 로그인 여부 체크하는 동작 필요 - checkLogin 어노테이션 적용 요망
+    @PostMapping("/api/users/{userSeq}/joinRequestTo/{teamSeq}")
+    public String joinRequestToTeam(
+            @PathVariable("userSeq") Long userSeq,
+            @PathVariable("teamSeq") Long teamSeq
+    )
+    {
+        JoinRequestDTO joinRequest = new JoinRequestDTO()
+                                            .teamSeq(teamSeq)
+                                            .userSeq(userSeq);
+
+        userTeamManagerService.sendJoinRequestToTeam(joinRequest);
+        return "Ok";
+    }
+
+    // TODO HTTP메세지 생성 메서드 추가해주기
+    // TODO remote repo에 PUSH하기 위한 수정
 }

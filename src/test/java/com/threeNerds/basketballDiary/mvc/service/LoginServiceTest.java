@@ -22,7 +22,8 @@ class LoginServiceTest {
     void checkLogin(){
         //given
         MockHttpSession session = new MockHttpSession();
-        User user = new User();
+        User user = new User.Builder("gch03915","test01","KeoDong","keodong123@naver.com","Y","M",168.4,78.6)
+                .build();
         //when
         session.setAttribute(SessionConst.LOGIN_MEMBER,user);
         User result = (User)session.getAttribute(SessionConst.LOGIN_MEMBER);

@@ -14,7 +14,7 @@ public interface UserRepository {
     void saveUser(User user);
     User loginFindUser(LoginController.LoginUserRequest loginUserRequest);
     void updateUser(User user);
-    void deleteUser(Long id);
+    void deleteUser(String id);
 
     List<AuthUserRequestDTO> findAuthList(LoginController.LoginUserRequest loginUserRequest);
 }

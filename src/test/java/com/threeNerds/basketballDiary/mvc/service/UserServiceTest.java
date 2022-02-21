@@ -1,20 +1,20 @@
 package com.threeNerds.basketballDiary.mvc.service;
 
 import com.threeNerds.basketballDiary.mvc.domain.User;
-import com.threeNerds.basketballDiary.mvc.repository.UserRepository;
+import com.threeNerds.basketballDiary.session.SessionConst;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.extension.Extensions;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -22,69 +22,76 @@ import static org.mockito.Mockito.*;
 @Transactional
 class UserServiceTest {
 
-    @Autowired private UserService userService;
+    MockHttpSession mockHttpSession;
 
+    @MockBean
+    private UserService userService;
+
+    User testUser;
+
+    User modifyUser;
+
+    @BeforeEach
+    void setUpEach() {
+        testUser = new User.Builder("User","1111","Lee","Lee00123@naver.com","Y","M",176.6,78.9)
+                .withPositionCode("21")
+                .withRegDate(LocalDate.now())
+                .withUpdateDate(LocalDate.now())
+                .withSidoCode("11")
+                .withSigunduCode("123")
+                .build();
+
+        modifyUser = new User.Builder("User","9876","Kim","Kim00122@naver.com","Y","M",176.6,78.9)
+                .withPositionCode("22")
+                .withRegDate(LocalDate.now())
+                .withUpdateDate(LocalDate.now())
+                .withSidoCode("11")
+                .withSigunduCode("322")
+                .build();
+        mockHttpSession = new MockHttpSession();
+    }
     @Test
     void createUserTest(){
         //given
-        User user = getUser();
+        doNothing().when(userService).createMember(testUser);
         //when
-        userService.createMember(user);
-        Long retSeq = userService.findSeq(user.getUserId());
+        userService.createMember(testUser);
         //then
-        assertEquals(userService.findUser(retSeq).getUserId(),user.getUserId());
+        verify(userService).createMember(testUser);
     }
 
     @Test
     void findUserTest(){
         //given
-        User user = getUser();
-        userService.createMember(user);
-        Long retSeq = userService.findSeq(user.getUserId());
+        Long retSeq = userService.findSeq(testUser.getUserId());
+        when(userService.findUser(retSeq)).thenReturn(testUser);
         //when
         User retUser = userService.findUser(retSeq);
         //then
-        assertEquals(retUser.getUserSeq(),retSeq);
+        assertEquals(retUser.getUserId(),testUser.getUserId());
     }
 
     @Test
     void modifyUserTest(){
         //given
-        User user = getUser();
-        String preName = user.getUserName();
-        userService.createMember(user);
+        mockHttpSession.setAttribute(SessionConst.LOGIN_MEMBER,testUser.getUserId());
+        doNothing().when(userService).updateUser(modifyUser);
+
         //when
-        user.setUserName("kim");
-        userService.updateUser(user);
-        User retUser = userService.findUser(user.getUserSeq());
+        userService.updateUser(modifyUser);
+//        User retUser = userService.findUser(modifyUser.getUserSeq());
         //then
-        assertNotEquals(retUser.getUserName(),preName);
+//        Assertions.assertThat(testUser.getPassword()).isNotEqualTo(retUser.getPassword());
+        verify(userService).updateUser(modifyUser);
     }
     @Test
     void deleteUserTest(){
         //given
-        User user = getUser();
-        Long retSeq = userService.findSeq(user.getUserId());
+        mockHttpSession.setAttribute(SessionConst.LOGIN_MEMBER,testUser.getUserId());
+        doNothing().when(userService).deleteUser(testUser.getUserId());
         //when
-        userService.deleteUser(retSeq);
+        userService.deleteUser(testUser.getUserId());
         //then
-        assertNull(userService.findUser(retSeq));
-    }
-    private User getUser() {
-        User user = new User();
-        user.setUserId("User");
-        user.setPassword("1111");
-        user.setUserName("Lee");
-        user.setPositionCode("22");
-        user.setEmail("User@naver.com");
-        user.setGender("M");
-        user.setHeight(176.6);
-        user.setWeight(78.9);
-        user.setRegDate(LocalDate.now());
-        user.setUpdateDate(LocalDate.now());
-        user.setUserRegYn("Y");
-        user.setSidoCode("11");
-        user.setSigunguCode("173");
-        return user;
+        verify(userService).deleteUser(any(String.class));
     }
 }
