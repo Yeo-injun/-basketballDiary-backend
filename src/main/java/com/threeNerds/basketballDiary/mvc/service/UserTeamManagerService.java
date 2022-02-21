@@ -49,30 +49,13 @@ public class UserTeamManagerService {
                 : false;
         if (isExistJoinRequest)
         {
-            String prevJoinReqTypeName = getJoinRequestTypeName(prevJoinReq);
+            String prevJoinReqTypeName = JoinRequestTypeCode.getName(prevJoinReq.getJoinRequestTypeCode());
             log.info("==== 이미 {}가 있습니다. ====", prevJoinReqTypeName);
             return; // TODO 에러를 던지거나 다른 것을 리턴하기
         }
 
         // 초대-가입요청이 없을경우에만 INSERT
         teamJoinRequestRepository.createJoinRequest(joinRequestInfo);
-    }
-
-    // TODO 코드값으로 ENUM에서 Name 추출하기 함수 만들기
-    private String getJoinRequestTypeName(TeamJoinRequest prevJoinReq) {
-        String reqTypeCode = prevJoinReq.getJoinRequestTypeCode();
-        String reqTypeName = "";
-
-        // TODO Java8 문법 적용해서 Stream으로 처리 요망
-        JoinRequestTypeCode[] reqTypeEnum = JoinRequestTypeCode.values();
-        for (JoinRequestTypeCode reqType : reqTypeEnum)
-        {
-            if (reqType.getCode().equals(reqTypeCode))
-            {
-                reqTypeName = reqType.getName();
-            }
-        }
-        return reqTypeName;
     }
 
 }
