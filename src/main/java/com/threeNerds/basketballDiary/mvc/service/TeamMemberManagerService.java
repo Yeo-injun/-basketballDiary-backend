@@ -23,6 +23,7 @@ import java.util.List;
  * issue and history
  * <pre>
  * 2022.02.08 여인준 : 소스코드 생성
+ * 2022.02.22 여인준 : CodeEnum에서 Code로 Name가져오는 메소드 구현 및 적용 완료
  * </pre>
  */
 
