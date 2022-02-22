@@ -101,8 +101,7 @@ public class UserController {
     }
 
     /**
-     *  API농구팀 가입요청 API
-     *
+     *  API020 : 농구팀 가입요청 보내기
      **/
     // TODO 클래스단위의 url 매핑정보 수정에 따라 root url 수정 필요
     // TODO 로그인 여부 체크하는 동작 필요 - checkLogin 어노테이션 적용 요망
