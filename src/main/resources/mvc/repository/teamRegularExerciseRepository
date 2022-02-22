@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.threeNerds.basketballDiary.mvc.repository.TeamRegularExerciseRepository">
+
+    <select id="findByTeamRegularExerciseSeq" resultType="com.threeNerds.basketballDiary.mvc.domain.TeamRegularExercise">
+        SELECT TEAM_REGULAR_EXERCISE_SEQ
+             , TEAM_SEQ
+             , DAY_OF_THE_WEEK_CODE
+             , START_TIME
+             , END_TIME
+             , EXERCISE_PLACE_ADDRESS
+             , EXERCISE_PLACE_NAME
+        FROM TEAM_REGULAR_EXERCISE
+        WHERE TEAM_SEQ = #{teamRegularExerciseSeq}
+    </select>
+
+    <select id="findByTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.domain.TeamRegularExercise">
+        SELECT TEAM_REGULAR_EXERCISE_SEQ
+             , TEAM_SEQ
+             , DAY_OF_THE_WEEK_CODE
+             , START_TIME
+             , END_TIME
+             , EXERCISE_PLACE_ADDRESS
+             , EXERCISE_PLACE_NAME
+        FROM TEAM_REGULAR_EXERCISE
+        WHERE TEAM_SEQ = #{teamSeq}
+    </select>
+
+</mapper>

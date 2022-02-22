@@ -3,32 +3,7 @@
 
 <mapper namespace="com.threeNerds.basketballDiary.mvc.repository.MyTeamRepository">
 
-    <select id="findByUserSeqAndTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.dto.MyTeamDTO">
-        SELECT A.TEAM_SEQ
-             -- , A.TEAM_AUTH_CODE -- 팀정보 수정 권한을 위해
-             , B.TEAM_NAME
-             , B.TEAM_IMAGE_PATH
-             , B.HOMETOWN
-             , B.SIDO_CODE
-             , B.SIGUNGU_CODE
-             , B.INTRODUCTION
-             -- , COUNT(A.USER_SEQ) OVER(PARTITION BY A.TEAM_SEQ) AS TOT_MEMBER
-             , C.EXERCISE_PLACE_NAME
-             , B.FOUNDATION_YMD
-             , C.DAY_OF_THE_WEEK_CODE
-             , C.START_TIME
-             , C.END_TIME
-             , C.EXERCISE_PLACE_ADDRESS
-        FROM (SELECT * FROM TEAM_MEMBER WHERE WITHDRAWAL_YN != 'Y') A
-                 JOIN TEAM B
-                      ON A.TEAM_SEQ = B.TEAM_SEQ
-                 JOIN TEAM_REGULAR_EXERCISE C
-                      ON B.TEAM_SEQ = C.TEAM_SEQ
-        WHERE A.USER_SEQ = #{userSeq}
-          AND A.TEAM_SEQ = #{teamSeq}
-    </select>
-
-    <select id="findAllByUserSeq" resultType="com.threeNerds.basketballDiary.mvc.dto.MyTeamDTO">
+    <select id="findByUserSeqAndTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.dto.MyTeamInfoDTO">
         SELECT A.TEAM_SEQ
              , A.TEAM_AUTH_CODE -- 팀정보 수정 권한을 위해
              , B.TEAM_NAME
@@ -38,16 +13,28 @@
              , B.SIGUNGU_CODE
              , B.INTRODUCTION
              , COUNT(A.USER_SEQ) OVER(PARTITION BY A.TEAM_SEQ) AS TOT_MEMBER
-             , C.EXERCISE_PLACE_NAME
              , B.FOUNDATION_YMD
-             , C.DAY_OF_THE_WEEK_CODE
-             , C.START_TIME
-             , C.END_TIME
         FROM (SELECT * FROM TEAM_MEMBER WHERE WITHDRAWAL_YN != 'Y') A
                  JOIN TEAM B
                       ON A.TEAM_SEQ = B.TEAM_SEQ
-                 JOIN TEAM_REGULAR_EXERCISE C
-                      ON B.TEAM_SEQ = C.TEAM_SEQ
+        WHERE A.USER_SEQ = #{userSeq}
+          AND A.TEAM_SEQ = #{teamSeq}
+    </select>
+
+    <select id="findAllByUserSeq" resultType="com.threeNerds.basketballDiary.mvc.dto.MyTeamInfoDTO">
+        SELECT A.TEAM_SEQ
+             , A.TEAM_AUTH_CODE -- 팀정보 수정 권한을 위해
+             , B.TEAM_NAME
+             , B.TEAM_IMAGE_PATH
+             , B.HOMETOWN
+             , B.SIDO_CODE
+             , B.SIGUNGU_CODE
+             , B.INTRODUCTION
+             , COUNT(A.USER_SEQ) OVER(PARTITION BY A.TEAM_SEQ) AS TOT_MEMBER
+             , B.FOUNDATION_YMD
+        FROM (SELECT * FROM TEAM_MEMBER WHERE WITHDRAWAL_YN != 'Y') A
+                 JOIN TEAM B
+                      ON A.TEAM_SEQ = B.TEAM_SEQ
         WHERE A.USER_SEQ = #{userSeq}
     </select>
 

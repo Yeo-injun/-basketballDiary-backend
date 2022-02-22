@@ -7,4 +7,51 @@
         INSERT INTO TEAM(LEADER_ID, TEAM_NAME,HOMETOWN,INTRODUCTION,FOUNDATION_YMD,REG_DATE,UPDATE_DATE,SIDO_CODE,SIGUNGU_CODE)
         VALUES (#{leaderId},#{teamName},#{hometown},#{introduction},#{foundationYmd},#{regDate},#{updateDate},#{sidoCode},#{sigunguCode})
     </insert>
+
+    <update id="updateTeam" parameterType="com.threeNerds.basketballDiary.mvc.domain.Team">
+        UPDATE TEAM
+           SET LEADER_ID = #{leaderId}
+             , TEAM_IMAGE_PATH = #{teamImagePath}
+             , TEAM_NAME = #{teamName}
+             , HOMETOWN = #{hometown}
+             , INTRODUCTION = #{introduction}
+             , FOUNDATION_YMD = #{foundationYmd}
+             , UPDATE_DATE = SYSTIMESTAMP
+             , SIDO_CODE = #{sidoCode}
+             , SIGUNGU_CODE = #{sigunguCode}
+         WHERE TEAM_SEQ = #{teamSeq}
+    </update>
+
+    <select id="findByTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.domain.Team">
+        SELECT TEAM_SEQ
+             , LEADER_ID
+             , TEAM_NAME
+             , TEAM_IMAGE_PATH
+             , HOMETOWN
+             , INTRODUCTION
+             , FOUNDATION_YMD
+             , REG_DATE
+             , UPDATE_DATE
+             , SIDO_CODE
+             , SIGUNGU_CODE
+          FROM TEAM
+         WHERE TEAM_SEQ = #{teamSeq}
+    </select>
+
+    <select id="findAll" resultType="com.threeNerds.basketballDiary.mvc.domain.Team">
+        SELECT TEAM_SEQ
+             , LEADER_ID
+             , TEAM_NAME
+             , TEAM_IMAGE_PATH
+             , HOMETOWN
+             , INTRODUCTION
+             , FOUNDATION_YMD
+             , REG_DATE
+             , UPDATE_DATE
+             , SIDO_CODE
+             , SIGUNGU_CODE
+        FROM TEAM
+    </select>
+
+
 </mapper>
