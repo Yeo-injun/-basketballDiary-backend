@@ -151,12 +151,12 @@ public class MyTeamController {
      * API017 : 소속팀 정보 수정
      */
     @PutMapping("/{teamSeq}/info")
-    public void modifyMyTeam(@SessionAttribute(value = LOGIN_MEMBER, required = false) SessionDTO sessionDTO, @PathVariable(value = "teamSeq") Long teamSeq, @RequestBody MyTeamDTO dto) {
+    public MyTeamDTO modifyMyTeam(@SessionAttribute(value = LOGIN_MEMBER, required = false) SessionDTO sessionDTO, @PathVariable(value = "teamSeq") Long teamSeq, @RequestBody MyTeamDTO dto) {
         Long userSeq = sessionDTO.getUserSeq();
 
-        if(userSeq == null)
-            throw new IllegalStateException("세션 정보가 존재하지 않습니다.");
-
         myTeamService.modifyMyTeam(teamSeq, dto);
+        MyTeamDTO myTeam = myTeamService.findTeam(userSeq, teamSeq);
+
+        return myTeam;
     }
 }

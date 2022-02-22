@@ -9,5 +9,6 @@ import java.util.List;
 public interface TeamRegularExerciseRepository {
     TeamRegularExercise findByTeamRegularExerciseSeq(Long teamRegularExerciseSeq);
     List<TeamRegularExercise> findByTeamSeq(Long teamSeq);
-    // List<TeamRegularExercise> findAll();
+    void saveTeamRegularExercise(TeamRegularExercise teamRegularExercise);
+    void updateTeamRegularExercise(TeamRegularExercise teamRegularExercise);
 }
