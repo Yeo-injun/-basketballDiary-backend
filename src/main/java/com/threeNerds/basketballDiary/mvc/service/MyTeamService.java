@@ -78,8 +78,34 @@ public class MyTeamService {
     public void modifyMyTeam(Long teamSeq, MyTeamDTO dto) {
         if(teamSeq == null)
             throw new NullPointerException("팀 PK가 존재하지 않습니다.");
+        if(dto == null)
+            throw new NullPointerException("소속팀 정보가 존재하지 않습니다.");
 
+        // 1. @RequestBody 값 조회
+        MyTeamInfoDTO paramMyTeamInfo = dto.getMyTeamInfoDTO();
+        List<TeamRegularExercise> paramTeamRegularExercise = dto.getTeamRegularExercisesList();
 
+        // 2. 팀정보 수정
+        Team team = teamRepository.findByTeamSeq(teamSeq);
+        BeanUtils.copyProperties(paramMyTeamInfo, team);
+        teamRepository.updateTeam(team);
+
+        // 3. 정기운동 등록 및 수정
+        paramTeamRegularExercise.forEach(param -> {
+            Long teamRegularExerciseSeq = param.getTeamRegularExerciseSeq();
+            // 3.1 팀 정기운동 Seq에 따라 등록 및 수정 분기
+            if(teamRegularExerciseSeq != null) {
+                // Seq가 있으므로 조회 후 수정내역 update
+                TeamRegularExercise teamRegularExercise = teamRegularExerciseRepository.findByTeamRegularExerciseSeq(teamRegularExerciseSeq);
+                BeanUtils.copyProperties(param, teamRegularExercise);
+                teamRegularExerciseRepository.updateTeamRegularExercise(teamRegularExercise);
+            } else {
+                // Seq가 없으므로 신규내역 insert
+                TeamRegularExercise teamRegularExercise = new TeamRegularExercise();
+                BeanUtils.copyProperties(param, teamRegularExercise);
+                teamRegularExercise.setTeamSeq(teamSeq);
+                teamRegularExerciseRepository.saveTeamRegularExercise(teamRegularExercise);
+            }
+        });
     }
-
 }
