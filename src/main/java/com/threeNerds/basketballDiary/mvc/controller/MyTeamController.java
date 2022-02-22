@@ -86,8 +86,7 @@ public class MyTeamController {
                 .teamSeq(teamSeq)
                 .joinRequestStateCode(joinRequestStateCode);
 
-        // TODO 서비스 구현요망
-        List<PlayerDTO> playerList = null; // teamMemberManagerService.searchInvitedPlayer(searchCond);
+        List<PlayerDTO> playerList = teamMemberManagerService.searchJoinRequestPlayer(searchCond);
         return playerList;
     }
     /**

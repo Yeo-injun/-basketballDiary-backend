@@ -114,10 +114,26 @@ public class TeamMemberManagerService {
         searchCond.joinRequestTypeCode(JoinRequestTypeCode.INVITATION.getCode());
         List<PlayerDTO> players = playerRepository.findPlayers(searchCond);
 
-        // TODO 스트림으로 처리 요망.. 코드값을 가지고 코드명칭으로 바꿔주기
         players.stream().forEach(player -> {
                 player.positionCodeName(PositionCode.getName(player.getPositionCode()))
                       .joinRequestStateCodeName(JoinRequestStateCode.getName(player.getJoinRequestStateCode()));
+        });
+
+        return players;
+    }
+
+    /**
+     * 소속팀에 가입요청한 선수목록 조회 API
+     * @param searchCond
+     * @return List<PlayerDTO>
+     */
+    public List<PlayerDTO> searchJoinRequestPlayer(PlayerSearchDTO searchCond) {
+        searchCond.joinRequestTypeCode(JoinRequestTypeCode.JOIN_REQUEST.getCode());
+        List<PlayerDTO> players = playerRepository.findPlayers(searchCond);
+
+        players.stream().forEach(player -> { player
+                                                .positionCodeName(PositionCode.getName(player.getPositionCode()))
+                                                .joinRequestStateCodeName(JoinRequestStateCode.getName(player.getJoinRequestStateCode()));
         });
 
         return players;

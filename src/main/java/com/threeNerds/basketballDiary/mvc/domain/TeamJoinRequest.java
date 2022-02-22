@@ -32,6 +32,4 @@ public class TeamJoinRequest {
     // 요청확정일시
     private Date confirmationDate;
 
-
-
 }

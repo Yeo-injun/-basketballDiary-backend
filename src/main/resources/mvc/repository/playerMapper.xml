@@ -6,12 +6,13 @@
     <select id="findPlayers" resultType="com.threeNerds.basketballDiary.mvc.dto.PlayerDTO">
         SELECT A.TEAM_JOIN_REQUEST_SEQ
                , A.REQUEST_DATE
+               , A.JOIN_REQUEST_STATE_CODE
+               , A.CONFIRMATION_DATE
                , B.NAME
                , B.EMAIL
                , B.POSITION_CODE
                , B.HEIGHT
                , B.WEIGHT
-               , A.JOIN_REQUEST_STATE_CODE
           FROM TEAM_JOIN_REQUEST A
          INNER JOIN USER B
             ON A.USER_SEQ = B.USER_SEQ
