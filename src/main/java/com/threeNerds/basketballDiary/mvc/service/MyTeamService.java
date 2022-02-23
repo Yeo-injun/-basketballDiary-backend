@@ -108,4 +108,11 @@ public class MyTeamService {
             }
         });
     }
+
+    public void deleteMyTeam(Long teamSeq) {
+        if (teamSeq == null)
+            throw new NullPointerException("teamSeq");
+
+        teamRepository.deleteById(teamSeq);
+    }
 }

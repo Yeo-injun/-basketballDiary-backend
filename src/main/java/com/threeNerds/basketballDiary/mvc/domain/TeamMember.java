@@ -9,7 +9,7 @@ import java.util.Date;
 @Setter
 public class TeamMember {
     /* PK */
-    private Long teamMember;
+    private Long teamMemberSeq;
     /* FK : 유저Seq */
     private Long userSeq;
     /* FK : 팀Seq */

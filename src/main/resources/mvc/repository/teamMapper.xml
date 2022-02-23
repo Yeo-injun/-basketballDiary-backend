@@ -53,5 +53,8 @@
         FROM TEAM
     </select>
 
+    <delete id="deleteById">
+        DELETE FROM TEAM WHERE TEAM_SEQ = #{teamSeq}
+    </delete>
 
 </mapper>
