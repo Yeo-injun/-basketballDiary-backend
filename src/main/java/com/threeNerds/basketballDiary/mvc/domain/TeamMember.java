@@ -1,15 +1,16 @@
 package com.threeNerds.basketballDiary.mvc.domain;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Date;
 
 @Getter
-@Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class TeamMember {
     /* PK */
-    private Long teamMember;
+    private Long teamMemberSeq;
     /* FK : 유저Seq */
     private Long userSeq;
     /* FK : 팀Seq */
@@ -17,7 +18,7 @@ public class TeamMember {
     /* 멤버이미지경로 */
     private String memberImagePath;
     /* 가입일자 */
-    private Date joinYmd;
+    private String joinYmd;
     /* 팀권한코드 */
     private String teamAuthCode;
     /* 등번호 */

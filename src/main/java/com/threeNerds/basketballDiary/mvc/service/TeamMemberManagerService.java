@@ -3,17 +3,21 @@ package com.threeNerds.basketballDiary.mvc.service;
 import com.threeNerds.basketballDiary.constant.JoinRequestStateCode;
 import com.threeNerds.basketballDiary.constant.JoinRequestTypeCode;
 import com.threeNerds.basketballDiary.constant.PositionCode;
+import com.threeNerds.basketballDiary.constant.TeamAuthCode;
 import com.threeNerds.basketballDiary.mvc.domain.TeamJoinRequest;
+import com.threeNerds.basketballDiary.mvc.domain.TeamMember;
 import com.threeNerds.basketballDiary.mvc.dto.JoinRequestDTO;
 import com.threeNerds.basketballDiary.mvc.dto.PlayerDTO;
 import com.threeNerds.basketballDiary.mvc.dto.PlayerSearchDTO;
 import com.threeNerds.basketballDiary.mvc.repository.PlayerRepository;
 import com.threeNerds.basketballDiary.mvc.repository.TeamJoinRequestRepository;
+import com.threeNerds.basketballDiary.mvc.repository.TeamMemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -34,6 +38,7 @@ import java.util.List;
 public class TeamMemberManagerService {
 
     private final TeamJoinRequestRepository teamJoinRequestRepository;
+    private final TeamMemberRepository teamMemberRepository;
     private final PlayerRepository playerRepository;
 
     /**
@@ -41,9 +46,12 @@ public class TeamMemberManagerService {
      * @param joinRequest
      */
     public void inviteTeamMember(JoinRequestDTO joinRequest) {
+        Long teamSeq = joinRequest.getTeamSeq();
+        Long userSeq = joinRequest.getUserSeq();
+
         TeamJoinRequest invitationInfo = TeamJoinRequest.builder()
-                .teamSeq(joinRequest.getTeamSeq())
-                .userSeq(joinRequest.getUserSeq())
+                .teamSeq(teamSeq)
+                .userSeq(userSeq)
                 .joinRequestTypeCode(JoinRequestTypeCode.INVITATION.getCode())
                 .joinRequestStateCode(JoinRequestStateCode.WAITING.getCode())
                 .build();
@@ -59,9 +67,9 @@ public class TeamMemberManagerService {
             log.info("==== 이미 {}가 있습니다. ====", reqTypeName);
             return; // TODO 에러를 던지거나 다른 것을 리턴하기
         }
-
         // 초대-가입요청이 없을경우에만 INSERT
         teamJoinRequestRepository.createJoinRequest(invitationInfo);
+
     }
 
     /**
@@ -69,11 +77,26 @@ public class TeamMemberManagerService {
      * @param joinRequest
      */
     public boolean approveJoinRequest(JoinRequestDTO joinRequest) {
+        Long teamSeq = joinRequest.getTeamSeq();
+        Long userSeq = joinRequest.getUserSeq();
+
         TeamJoinRequest approvalInfo = TeamJoinRequest.builder()
                 .teamJoinRequestSeq(joinRequest.getTeamJoinRequestSeq())
-                .teamSeq(joinRequest.getTeamSeq())
+                .teamSeq(teamSeq)
                 .joinRequestStateCode(JoinRequestStateCode.APPROVAL.getCode())
                 .build();
+
+        String currentYmd = LocalDate.now().toString().replace("-", "");
+        TeamMember teamMember = new TeamMember().builder()
+                .teamSeq(teamSeq)
+                .userSeq(userSeq)
+                .teamAuthCode(TeamAuthCode.TEAM_MEMBER.getCode())
+                .joinYmd(currentYmd)
+                .withdrawalYn("Y").build();
+        // TeamMember 테이블에 데이터 넣기
+        // TODO 중복된 가입요청 방지필요 (소속팀에 가입요청 혹은 초대가 없어야 하고, 들어왔다고 해도 테이블에 2건 이상이 추가 되지 않도록 막아야 함)
+        teamMemberRepository.saveTeamMemeber(teamMember);
+
 
         boolean isApprovalSuccess = teamJoinRequestRepository.updateJoinRequestState(approvalInfo) == 1 ? true : false;
         if (!isApprovalSuccess)
@@ -81,6 +104,7 @@ public class TeamMemberManagerService {
             log.info("==== 해당 가입요청은 승인할 수 없는 가입요청입니다. ====");
             return isApprovalSuccess; // TODO 에러를 던지는 것으로 코드 바꾸기
         }
+
 
         return isApprovalSuccess;
     }

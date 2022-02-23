@@ -90,7 +90,7 @@ public class MyTeamController {
         return playerList;
     }
     /**
-     * API009 : 소속팀의 가입요청 승인
+     * API009 : 소속팀이 사용자의 가입요청 승인
      */
     @PatchMapping("/{teamSeq}/joinRequestFrom/{teamJoinRequestSeq}/approval")
     public String approveJoinRequest(
