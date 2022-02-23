@@ -11,4 +11,5 @@ public interface TeamRepository {
     void updateTeam(Team team);
     Team findByTeamSeq(Long teamSeq);
     List<Team> findAll();
+    void deleteById(Long teamSeq);
 }
