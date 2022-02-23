@@ -87,21 +87,25 @@ public class MyTeamController {
                 .teamSeq(teamSeq)
                 .joinRequestStateCode(joinRequestStateCode);
 
-        // TODO 서비스 구현요망
-        List<PlayerDTO> playerList = null; // teamMemberManagerService.searchInvitedPlayer(searchCond);
+        List<PlayerDTO> playerList = teamMemberManagerService.searchJoinRequestPlayer(searchCond);
         return playerList;
     }
     /**
-     * API009 : 소속팀의 가입요청 승인
+     * API009 : 소속팀이 사용자의 가입요청 승인
+     * TODO URL 변경 건의 : /api/myTeams/{teamSeq}/joinRequestFrom/{userSeq}/approval/{teamJoinRequestSeq}로!
+     * 위와 같이 바꾸지 않는다면 userSeq를 requestBody에 넣어서 객체로 보내줘야 함. 기본적으로 key는 Url에, key가 아닌 값은 requestBody에 넣는 방식으로 통일하는 것은?
+
      */
-    @PatchMapping("/{teamSeq}/joinRequestFrom/{teamJoinRequestSeq}/approval")
+    @PatchMapping("/{teamSeq}/joinRequestFrom/{userSeq}/approval/{teamJoinRequestSeq}")
     public String approveJoinRequest(
+            @PathVariable Long teamJoinRequestSeq,
             @PathVariable Long teamSeq,
-            @PathVariable Long teamJoinRequestSeq
+            @PathVariable Long userSeq
     ) {
         JoinRequestDTO joinRequest = new JoinRequestDTO()
+                .teamJoinRequestSeq(teamJoinRequestSeq)
                 .teamSeq(teamSeq)
-                .teamJoinRequestSeq(teamJoinRequestSeq);
+                .userSeq(userSeq);
 
         teamMemberManagerService.approveJoinRequest(joinRequest);
         return "API009";

@@ -12,6 +12,9 @@ public class PlayerDTO {
     // 가입요청일시
     private Date requestDate;
 
+    // 확정일시
+    private Date confirmationDate;
+
     // 이름
     private String name;
 
@@ -43,6 +46,11 @@ public class PlayerDTO {
 
     public PlayerDTO requestDate (Date requestDate) {
         this.requestDate = requestDate;
+        return this;
+    }
+
+    public PlayerDTO confirmationDate (Date confirmationDate) {
+        this.confirmationDate = confirmationDate;
         return this;
     }
 
