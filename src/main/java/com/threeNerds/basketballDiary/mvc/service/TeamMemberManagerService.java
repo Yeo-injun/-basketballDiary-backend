@@ -34,7 +34,7 @@ import java.util.List;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@Transactional
+@Transactional // TODO 공부할 거리 - AOP적용한 어노테이션?!!!
 public class TeamMemberManagerService {
 
     private final TeamJoinRequestRepository teamJoinRequestRepository;
@@ -80,14 +80,9 @@ public class TeamMemberManagerService {
         Long teamSeq = joinRequest.getTeamSeq();
         Long userSeq = joinRequest.getUserSeq();
 
-        TeamJoinRequest approvalInfo = TeamJoinRequest.builder()
-                .teamJoinRequestSeq(joinRequest.getTeamJoinRequestSeq())
-                .teamSeq(teamSeq)
-                .joinRequestStateCode(JoinRequestStateCode.APPROVAL.getCode())
-                .build();
-
+        /** 팀원 추가 - 예외처리 필요 */
         String currentYmd = LocalDate.now().toString().replace("-", "");
-        TeamMember teamMember = new TeamMember().builder()
+        TeamMember teamMemberInfo = new TeamMember().builder()
                 .teamSeq(teamSeq)
                 .userSeq(userSeq)
                 .teamAuthCode(TeamAuthCode.TEAM_MEMBER.getCode())
@@ -95,8 +90,18 @@ public class TeamMemberManagerService {
                 .withdrawalYn("Y").build();
         // TeamMember 테이블에 데이터 넣기
         // TODO 중복된 가입요청 방지필요 (소속팀에 가입요청 혹은 초대가 없어야 하고, 들어왔다고 해도 테이블에 2건 이상이 추가 되지 않도록 막아야 함)
-        teamMemberRepository.saveTeamMemeber(teamMember);
+        boolean isExistTeamMember = teamMemberRepository.checkTeamMember(teamMemberInfo) > 0 ? true : false;
+        if (isExistTeamMember) {
+            log.info("해당 선수는 이미 팀원으로 등록되어 있습니다.");
+            return false; // TODO 오류 던지기
+        }
+        teamMemberRepository.saveTeamMemeber(teamMemberInfo);
 
+        /** 가입요청 상태 업데이트 하기 */
+        TeamJoinRequest approvalInfo = TeamJoinRequest.builder()
+                .teamJoinRequestSeq(joinRequest.getTeamJoinRequestSeq())
+                .joinRequestStateCode(JoinRequestStateCode.APPROVAL.getCode())
+                .build();
 
         boolean isApprovalSuccess = teamJoinRequestRepository.updateJoinRequestState(approvalInfo) == 1 ? true : false;
         if (!isApprovalSuccess)
@@ -104,8 +109,6 @@ public class TeamMemberManagerService {
             log.info("==== 해당 가입요청은 승인할 수 없는 가입요청입니다. ====");
             return isApprovalSuccess; // TODO 에러를 던지는 것으로 코드 바꾸기
         }
-
-
         return isApprovalSuccess;
     }
 
