@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.threeNerds.basketballDiary.mvc.repository.TeamMemberRepository">
+    <insert id="saveTeamMemeber" parameterType="com.threeNerds.basketballDiary.mvc.domain.TeamMember">
+        INSERT INTO TEAM_MEMBER (
+            TEAM_SEQ
+            , USER_SEQ
+            , TEAM_AUTH_CODE
+            , JOIN_YMD
+            , WITHDRAWAL_YN
+        )
+        VALUES (
+            #{teamSeq}
+            , #{userSeq}
+            , #{teamAuthCode}
+            , #{joinYmd}
+            , #{withdrawalYn}
+        )
+    </insert>
+
+    <select id="checkTeamMember" resultType="int">
+        SELECT COUNT(*)
+          FROM TEAM_MEMBER
+         WHERE TEAM_SEQ = #{teamSeq}
+           AND USER_SEQ = #{userSeq}
+    </select>
+</mapper>
