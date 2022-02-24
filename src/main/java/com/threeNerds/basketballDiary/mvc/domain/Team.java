@@ -1,11 +1,13 @@
 package com.threeNerds.basketballDiary.mvc.domain;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 
-@Getter @Setter
+@Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Team {
 
     private String leaderId;

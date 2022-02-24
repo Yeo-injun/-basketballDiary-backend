@@ -1,10 +1,11 @@
 package com.threeNerds.basketballDiary.mvc.domain;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
-@Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class TeamRegularExercise {
     /* PK */
     private Long teamRegularExerciseSeq;

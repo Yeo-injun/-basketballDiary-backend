@@ -37,25 +37,25 @@ public class UserController {
     private final UserService userService;
     private final UserTeamManagerService userTeamManagerService;
 
-    /**
-     * 회원가입
-     */
-    @PostMapping("/user/new")
-    public String create(@RequestBody @Valid UserDTO userDTO){
-        LocalDate today = LocalDate.now();
-
-        User user = new User.Builder(userDTO.getUserId(),userDTO.getPassword(),userDTO.getUserName(),userDTO.getEmail(),
-                "Y",userDTO.getGender(),userDTO.getHeight(),userDTO.getWeight())
-                .withPositionCode(userDTO.getPositionCode())
-                .withRegDate(today)
-                .withUpdateDate(today)
-                .withSidoCode(userDTO.getSidoCode())
-                .withSigunduCode(userDTO.getSigunguCode())
-                .build();
-
-        userService.createMember(user);
-        return "createOk";
-    }
+//    /**
+//     * 회원가입
+//     */
+//    @PostMapping("/user/new")
+//    public String create(@RequestBody @Valid UserDTO userDTO){
+//        LocalDate today = LocalDate.now();
+//
+//        User user = new User.Builder(userDTO.getUserId(),userDTO.getPassword(),userDTO.getUserName(),userDTO.getEmail(),
+//                "Y",userDTO.getGender(),userDTO.getHeight(),userDTO.getWeight())
+//                .withPositionCode(userDTO.getPositionCode())
+//                .withRegDate(today)
+//                .withUpdateDate(today)
+//                .withSidoCode(userDTO.getSidoCode())
+//                .withSigunduCode(userDTO.getSigunguCode())
+//                .build();
+//
+//        userService.createMember(user);
+//        return "createOk";
+//    }
 
     /**
      * 내정보 확인
