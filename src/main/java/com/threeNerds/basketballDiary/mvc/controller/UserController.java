@@ -1,13 +1,12 @@
 package com.threeNerds.basketballDiary.mvc.controller;
 
 import com.threeNerds.basketballDiary.interceptor.Auth;
-import com.threeNerds.basketballDiary.mvc.domain.TeamJoinRequest;
 import com.threeNerds.basketballDiary.mvc.domain.User;
 import com.threeNerds.basketballDiary.mvc.dto.JoinRequestDTO;
 import com.threeNerds.basketballDiary.mvc.dto.UserDTO;
 import com.threeNerds.basketballDiary.mvc.service.UserService;
 import com.threeNerds.basketballDiary.mvc.service.UserTeamManagerService;
-import com.threeNerds.basketballDiary.session.SessionDTO;
+import com.threeNerds.basketballDiary.session.SessionUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -61,8 +60,8 @@ public class UserController {
      * 내정보 확인
      */
     @GetMapping("/user/myInfo")
-    public UserDTO myInfo(@SessionAttribute(value = LOGIN_MEMBER, required = false) SessionDTO sessionDTO, UserDTO userDTO){
-        Long id = sessionDTO.getUserSeq();
+    public UserDTO myInfo(@SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser, UserDTO userDTO){
+        Long id = sessionUser.getUserSeq();
         User user = userService.findUser(id);
         UserDTO userDto = new UserDTO();
 
@@ -74,8 +73,8 @@ public class UserController {
      * 회원수정
      */
     @PutMapping("/user/modifyMyInfo")
-    public String change(@SessionAttribute(value = LOGIN_MEMBER,required = false) SessionDTO sessionDTO,@RequestBody @Valid UserDTO userDTO){
-        Long id = sessionDTO.getUserSeq();
+    public String change(@SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionUser, @RequestBody @Valid UserDTO userDTO){
+        Long id = sessionUser.getUserSeq();
         User user = userService.findUser(id);
 
         BeanUtils.copyProperties(userDTO,user);
@@ -88,8 +87,8 @@ public class UserController {
      * 회원탈퇴
      */
     @DeleteMapping("/user/deleteUser")
-    public String delete(@SessionAttribute(value = LOGIN_MEMBER,required = false) SessionDTO sessionDTO){
-        String id = sessionDTO.getUserId();
+    public String delete(@SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionUser){
+        String id = sessionUser.getUserId();
         userService.deleteUser(id);
         return "deleteOk";
     }
