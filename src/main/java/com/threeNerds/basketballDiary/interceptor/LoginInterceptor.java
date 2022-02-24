@@ -1,7 +1,7 @@
 package com.threeNerds.basketballDiary.interceptor;
 
 import com.threeNerds.basketballDiary.session.SessionConst;
-import com.threeNerds.basketballDiary.session.SessionDTO;
+import com.threeNerds.basketballDiary.session.SessionUser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -40,7 +40,7 @@ public class LoginInterceptor implements HandlerInterceptor {
             return false;
         }
         //3. 각 권한 분기처리(팀장,임원,팀원)
-        SessionDTO memberDto = (SessionDTO) session.getAttribute(SessionConst.LOGIN_MEMBER);
+        SessionUser memberDto = (SessionUser) session.getAttribute(SessionConst.LOGIN_MEMBER);
 
         //팀 id , 권한
         //Long teamId = Long.parseLong(request.getParameter("teamId"));   //=>pathVariable 로 바꾸어야됨

@@ -18,4 +18,11 @@ public interface TeamMemberRepository {
      * @return
      */
     int checkTeamMember(TeamMember teamMemberInfo);
+
+    /**
+     * 팀원 단건조회(팀원SEQ로)
+     * @param teamMemberInfo
+     * @return
+     */
+    TeamMember findByTeamMemberSeq(Long teamMemberSeq);
 }

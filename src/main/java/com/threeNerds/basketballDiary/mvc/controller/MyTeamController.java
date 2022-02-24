@@ -1,19 +1,18 @@
 package com.threeNerds.basketballDiary.mvc.controller;
 
-import com.threeNerds.basketballDiary.mvc.domain.TeamJoinRequest;
+import com.threeNerds.basketballDiary.interceptor.Auth;
 import com.threeNerds.basketballDiary.mvc.dto.JoinRequestDTO;
 import com.threeNerds.basketballDiary.mvc.dto.MyTeamDTO;
 import com.threeNerds.basketballDiary.mvc.dto.PlayerDTO;
 import com.threeNerds.basketballDiary.mvc.dto.PlayerSearchDTO;
 import com.threeNerds.basketballDiary.mvc.service.MyTeamService;
 import com.threeNerds.basketballDiary.mvc.service.TeamMemberManagerService;
-import com.threeNerds.basketballDiary.session.SessionDTO;
+import com.threeNerds.basketballDiary.session.SessionUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 import static com.threeNerds.basketballDiary.session.SessionConst.LOGIN_MEMBER;
 
@@ -131,9 +130,8 @@ public class MyTeamController {
      * API014 : 소속팀 목록 조회
      */
     @GetMapping
-    public List<MyTeamDTO> searchTeams(@SessionAttribute(value = LOGIN_MEMBER, required = false) SessionDTO sessionDTO) {
-        Long userSeq = sessionDTO.getUserSeq();
-
+    public List<MyTeamDTO> searchTeams(@SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser) {
+        Long userSeq = sessionUser.getUserSeq();
         List<MyTeamDTO> myTeamList = myTeamService.findTeams(userSeq);
 
         return myTeamList;
@@ -142,10 +140,10 @@ public class MyTeamController {
     /**
      * API016 : 소속팀 정보 수정데이터 단건 조회
      */
-    @GetMapping("/{teamSeq}/info")
-    public MyTeamDTO searchTeam(@SessionAttribute(value = LOGIN_MEMBER, required = false) SessionDTO sessionDTO, @PathVariable(value = "teamSeq") Long teamSeq) {
-        Long userSeq = sessionDTO.getUserSeq();
-
+    @Auth(GRADE = 2L)
+    @GetMapping("/{teamId}/info")
+    public MyTeamDTO searchTeam(@SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser, @PathVariable(value = "teamId") Long teamSeq) {
+        Long userSeq = sessionUser.getUserSeq();
         MyTeamDTO myTeam = myTeamService.findTeam(userSeq, teamSeq);
 
         return myTeam;
@@ -154,13 +152,23 @@ public class MyTeamController {
     /**
      * API017 : 소속팀 정보 수정
      */
-    @PutMapping("/{teamSeq}/info")
-    public MyTeamDTO modifyMyTeam(@SessionAttribute(value = LOGIN_MEMBER, required = false) SessionDTO sessionDTO, @PathVariable(value = "teamSeq") Long teamSeq, @RequestBody MyTeamDTO dto) {
-        Long userSeq = sessionDTO.getUserSeq();
-
+    @Auth(GRADE = 3L)
+    @PutMapping("/{teamId}/info")
+    public MyTeamDTO modifyMyTeam(@SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser, @PathVariable(value = "teamId") Long teamSeq, @RequestBody MyTeamDTO dto) {
+        Long userSeq = sessionUser.getUserSeq();
         myTeamService.modifyMyTeam(teamSeq, dto);
         MyTeamDTO myTeam = myTeamService.findTeam(userSeq, teamSeq);
 
         return myTeam;
     }
+
+    /**
+     * API018 : 소속팀 정보 삭제
+     */
+    @Auth(GRADE = 4L)
+    @DeleteMapping("/{teamId}")
+    public void removeMyTeam(@PathVariable(value = "teamId") Long teamSeq) {
+        myTeamService.deleteMyTeam(teamSeq);
+    }
+
 }
