@@ -28,6 +28,10 @@ public class UserDTO {
      */
     private String gender;
     /**
+     * 생년월일
+     */
+    private String birthYmd;
+    /**
      * 키
      */
     private Double height;

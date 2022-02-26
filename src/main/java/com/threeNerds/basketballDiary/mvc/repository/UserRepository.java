@@ -11,7 +11,7 @@ import java.util.List;
 public interface UserRepository {
     Long findSeq(String userId);
     User findUser(Long id);
-    void saveUser(User user);
+    Long saveUser(User user);
     User loginFindUser(LoginController.LoginUserRequest loginUserRequest);
     void updateUser(User user);
     void deleteUser(String id);
