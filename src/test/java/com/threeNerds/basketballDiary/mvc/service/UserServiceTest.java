@@ -7,6 +7,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,18 +32,19 @@ class UserServiceTest {
 
     MockHttpSession mockHttpSession;
 
-    @Mock
+    @InjectMocks
     private UserService userService;
     @Mock
     private UserRepository userRepository;
 
     User testUser;
 
-    User modifyUser;
+    User testUser2;
 
     @BeforeEach
     void setUpEach() {
         testUser = User.builder()
+                .userSeq(1L)
                 .userId("User")
                 .password("1111")
                 .userName("Lee")
@@ -57,7 +59,8 @@ class UserServiceTest {
                 .sigunguCode("31")
                 .build();
 
-        modifyUser = User.builder()
+        testUser2 = User.builder()
+                .userSeq(1L)
                 .userId("User")
                 .password("9876")
                 .userName("Kim")
@@ -76,46 +79,41 @@ class UserServiceTest {
     @Test
     void createUserTest(){
         //given
-        when(userService.createMember(testUser)).thenReturn(1L);
+
         //when
-        Long ret = userService.createMember(testUser);
+        when(userRepository.saveUser(testUser)).thenReturn(1L);
         //then
-        assertThat(ret).isEqualTo(1L);
-        verify(userService).createMember(testUser);
+        assertThat(userService.createMember(testUser)).isEqualTo(1L);
     }
 
     @Test
     void findUserTest(){
         //given
-        Long retSeq = userService.findSeq(testUser.getUserId());
-        when(userService.findUser(retSeq)).thenReturn(testUser);
+
         //when
-        User retUser = userService.findUser(retSeq);
+        when(userRepository.findUser(1L)).thenReturn(testUser);
         //then
-        //assertEquals(retUser.getUserId(),testUser.getUserId());
+        assertThat(userService.findUser(1L)).isNotEqualTo(testUser2);
+        verify(userRepository).findUser(1L);
     }
 
     @Test
     void modifyUserTest(){
         //given
-        mockHttpSession.setAttribute(SessionConst.LOGIN_MEMBER,testUser.getUserId());
-        doNothing().when(userService).updateUser(modifyUser);
 
         //when
-        userService.updateUser(modifyUser);
-//        User retUser = userService.findUser(modifyUser.getUserSeq());
+        userRepository.updateUser(testUser2);
         //then
-//        Assertions.assertThat(testUser.getPassword()).isNotEqualTo(retUser.getPassword());
-        verify(userService).updateUser(modifyUser);
+        verify(userRepository).updateUser(testUser2);
     }
+
     @Test
     void deleteUserTest(){
         //given
-        mockHttpSession.setAttribute(SessionConst.LOGIN_MEMBER,testUser.getUserId());
-        doNothing().when(userService).deleteUser(testUser.getUserId());
+
         //when
         userService.deleteUser(testUser.getUserId());
         //then
-        verify(userService).deleteUser(any(String.class));
+        verify(userRepository).deleteUser(testUser.getUserId());
     }
 }

@@ -18,6 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Transactional
 class LoginServiceTest {
 
+    MockHttpSession session;
     @Autowired
     private LoginService loginService;
 
@@ -39,11 +40,11 @@ class LoginServiceTest {
                 .sidoCode("11")
                 .sigunguCode("31")
                 .build();
+        session = new MockHttpSession();
     }
     @Test
     void checkLogin(){
         //given
-        MockHttpSession session = new MockHttpSession();
 
         //when
         session.setAttribute(SessionConst.LOGIN_MEMBER,user);
@@ -59,7 +60,6 @@ class LoginServiceTest {
     @Test
     void checkLogout(){
         //given
-        MockHttpSession session = new MockHttpSession();
         UserDTO userDTO = new UserDTO();
         //when
         session.setAttribute(SessionConst.LOGIN_MEMBER,userDTO);
