@@ -38,4 +38,21 @@
         WHERE A.USER_SEQ = #{userSeq}
     </select>
 
+    <select id="findManagerByTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.dto.ManagerDTO">
+        SELECT A.USER_SEQ
+             , B.TEAM_AUTH_CODE
+             , A.NAME
+             , A.BIRTH_YMD
+             , A.HEIGHT
+             , A.WEIGHT
+             , B.BACK_NUMBER
+             , B.JOIN_YMD
+        FROM USER A
+                 JOIN TEAM_MEMBER B
+                      ON A.USER_SEQ = B.USER_SEQ
+        WHERE B.TEAM_AUTH_CODE > 1 -- 관리자(임원) 이상 조회
+          AND B.WITHDRAWAL_YN != 'Y'
+          AND B.TEAM_SEQ = #{teamSeq}
+    </select>
+
 </mapper>

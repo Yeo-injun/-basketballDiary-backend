@@ -1,9 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.controller;
 
-import com.threeNerds.basketballDiary.constant.State;
 import com.threeNerds.basketballDiary.interceptor.Auth;
-import com.threeNerds.basketballDiary.mvc.domain.Team;
-import com.threeNerds.basketballDiary.mvc.domain.TeamMember;
+import com.threeNerds.basketballDiary.mvc.domain.User;
 import com.threeNerds.basketballDiary.mvc.dto.*;
 import com.threeNerds.basketballDiary.mvc.service.MyTeamService;
 import com.threeNerds.basketballDiary.mvc.service.TeamMemberManagerService;
@@ -26,6 +24,9 @@ import static com.threeNerds.basketballDiary.session.SessionConst.LOGIN_MEMBER;
  * 2022.02.08 여인준 : 소스코드 생성
  * 2022.02.11 강창기 : 소속팀 목록조회 구현
  * 2022.02.15 여인준 : 소속팀 선수초대API 구현
+ * 2022.02.23 강창기 : 소속팀 정보 수정 구현
+ * 2022.02.24 강창기 : 소속팀 정보 삭제 구현
+ * 2022.02.26 강창기 : 소속팀 운영진 조회 구현
  * </pre>
  */
 
@@ -38,6 +39,33 @@ public class MyTeamController {
 
     private final MyTeamService myTeamService;
     private final TeamMemberManagerService teamMemberManagerService;
+
+    /**
+     * API001 : 소속팀 운영진 조회
+     */
+    @Auth(GRADE = 2L)
+    @GetMapping("/{teamSeq}/managers")
+    public List<ManagerDTO> searchManagers(
+            @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser,
+            @PathVariable(value = "teamSeq") Long teamSeq
+    ) {
+        List<ManagerDTO> managerList = myTeamService.findManagers(teamSeq);
+
+        return managerList;
+    }
+
+    /**
+     * API002 : 소속팀 팀원목록 조회
+     */
+    @Auth(GRADE = 2L)
+    @GetMapping("/{teamSeq}/members")
+    public List<User> searchMembers(
+            @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser,
+            @PathVariable(value = "teamSeq") Long teamSeq
+    ) {
+        Long userSeq = sessionUser.getUserSeq();
+        return null;
+    }
 
     /**
      * API004 : 소속팀 회원 강퇴시키기
@@ -143,7 +171,9 @@ public class MyTeamController {
      * API014 : 소속팀 목록 조회
      */
     @GetMapping
-    public List<MyTeamDTO> searchTeams(@SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser) {
+    public List<MyTeamDTO> searchTeams(
+            @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser
+    ) {
         Long userSeq = sessionUser.getUserSeq();
         List<MyTeamDTO> myTeamList = myTeamService.findTeams(userSeq);
 
@@ -151,11 +181,14 @@ public class MyTeamController {
     }
 
     /**
-     * API016 : 소속팀 정보 수정데이터 단건 조회
+     * API016 : 소속팀 정보 단건 조회
      */
     @Auth(GRADE = 2L)
-    @GetMapping("/{teamId}/info")
-    public MyTeamDTO searchTeam(@SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser, @PathVariable(value = "teamId") Long teamSeq) {
+    @GetMapping("/{teamSeq}/info")
+    public MyTeamDTO searchTeam(
+            @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser,
+            @PathVariable(value = "teamSeq") Long teamSeq
+    ) {
         Long userSeq = sessionUser.getUserSeq();
         MyTeamDTO myTeam = myTeamService.findTeam(userSeq, teamSeq);
 
@@ -165,9 +198,13 @@ public class MyTeamController {
     /**
      * API017 : 소속팀 정보 수정
      */
-    @Auth(GRADE = 3L)
-    @PutMapping("/{teamId}/info")
-    public MyTeamDTO modifyMyTeam(@SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser, @PathVariable(value = "teamId") Long teamSeq, @RequestBody MyTeamDTO dto) {
+    @Auth(GRADE = 2L)
+    @PutMapping("/{teamSeq}/info")
+    public MyTeamDTO modifyMyTeam(
+            @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser,
+            @PathVariable(value = "teamSeq") Long teamSeq,
+            @RequestBody MyTeamDTO dto
+    ) {
         Long userSeq = sessionUser.getUserSeq();
         myTeamService.modifyMyTeam(teamSeq, dto);
         MyTeamDTO myTeam = myTeamService.findTeam(userSeq, teamSeq);
@@ -179,8 +216,10 @@ public class MyTeamController {
      * API018 : 소속팀 정보 삭제
      */
     @Auth(GRADE = 4L)
-    @DeleteMapping("/{teamId}")
-    public void removeMyTeam(@PathVariable(value = "teamId") Long teamSeq) {
+    @DeleteMapping("/{teamSeq}")
+    public void removeMyTeam(
+            @PathVariable(value = "teamSeq") Long teamSeq
+    ) {
         myTeamService.deleteMyTeam(teamSeq);
     }
 
