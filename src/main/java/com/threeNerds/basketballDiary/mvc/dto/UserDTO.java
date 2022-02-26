@@ -30,11 +30,11 @@ public class UserDTO {
     /**
      * 키
      */
-    private double height;
+    private Double height;
     /**
      * 몸무게
      */
-    private double weight;
+    private Double weight;
     /**
      * 시도코드
      */

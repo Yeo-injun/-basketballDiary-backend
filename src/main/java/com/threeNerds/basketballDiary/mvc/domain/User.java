@@ -27,9 +27,9 @@ public class User {
     /* 성별 */
     private String gender;
     /* 키 */
-    private double height;
+    private Double height;
     /* 몸무게 */
-    private double weight;
+    private Double weight;
     /* 등록일자 */
     private LocalDate regDate;
     /* 업데이트 일자 */
