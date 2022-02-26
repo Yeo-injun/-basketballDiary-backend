@@ -28,13 +28,17 @@ public class UserDTO {
      */
     private String gender;
     /**
+     * 생년월일
+     */
+    private String birthYmd;
+    /**
      * 키
      */
-    private double height;
+    private Double height;
     /**
      * 몸무게
      */
-    private double weight;
+    private Double weight;
     /**
      * 시도코드
      */

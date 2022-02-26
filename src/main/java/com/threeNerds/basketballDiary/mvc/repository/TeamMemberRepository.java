@@ -21,8 +21,15 @@ public interface TeamMemberRepository {
 
     /**
      * 팀원 단건조회(팀원SEQ로)
-     * @param teamMemberInfo
+     * @param teamMemberSeq
      * @return
      */
     TeamMember findByTeamMemberSeq(Long teamMemberSeq);
+
+    /**
+     * 팀원 강퇴상태로 수정
+     * @param teamMember
+     * @return
+     */
+    int updateWithdrawalState(TeamMember teamMember);
 }

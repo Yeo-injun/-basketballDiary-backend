@@ -3,6 +3,7 @@ package com.threeNerds.basketballDiary.mvc.domain;
 import lombok.*;
 
 @Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor

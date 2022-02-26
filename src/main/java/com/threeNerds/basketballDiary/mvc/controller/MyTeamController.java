@@ -1,7 +1,5 @@
 package com.threeNerds.basketballDiary.mvc.controller;
 
-import com.threeNerds.basketballDiary.constant.PositionCode;
-import com.threeNerds.basketballDiary.constant.TeamAuthCode;
 import com.threeNerds.basketballDiary.interceptor.Auth;
 import com.threeNerds.basketballDiary.mvc.domain.User;
 import com.threeNerds.basketballDiary.mvc.dto.*;
@@ -70,6 +68,19 @@ public class MyTeamController {
     }
 
     /**
+     * API004 : 소속팀 회원 강퇴시키기
+     */
+    @DeleteMapping("/members/{teamMemberSeq}")
+    public String removeTeamMember(
+            @PathVariable Long teamMemberSeq
+    ) {
+        KeyDTO.TeamMember teamMemberKey = new KeyDTO.TeamMember()
+                                .teamMemberSeq(teamMemberSeq);
+        teamMemberManagerService.removeTeamMember(teamMemberKey);
+        return "";
+    }
+
+    /**
      * API005 : 소속팀의 초대한 선수목록 조회
      */
     @GetMapping("/{teamSeq}/joinRequestTo") // TODO URL 마지막에 /users 추가하는 것은 어떤지 (22.02.20 인준의견)
@@ -118,11 +129,11 @@ public class MyTeamController {
         List<PlayerDTO> playerList = teamMemberManagerService.searchJoinRequestPlayer(searchCond);
         return playerList;
     }
+
     /**
      * API009 : 소속팀이 사용자의 가입요청 승인
      * TODO URL 변경 건의 : /api/myTeams/{teamSeq}/joinRequestFrom/{userSeq}/approval/{teamJoinRequestSeq}로!
      * 위와 같이 바꾸지 않는다면 userSeq를 requestBody에 넣어서 객체로 보내줘야 함. 기본적으로 key는 Url에, key가 아닌 값은 requestBody에 넣는 방식으로 통일하는 것은?
-
      */
     @PatchMapping("/{teamSeq}/joinRequestFrom/{userSeq}/approval/{teamJoinRequestSeq}")
     public String approveJoinRequest(

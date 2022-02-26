@@ -25,4 +25,10 @@
          WHERE TEAM_SEQ = #{teamSeq}
            AND USER_SEQ = #{userSeq}
     </select>
+
+    <update id="updateWithdrawalState">
+        UPDATE TEAM_MEMBER
+           SET WITHDRAWAL_YN = #{withdrawalYn}
+         WHERE TEAM_MEMBER_SEQ = #{teamMemberSeq}
+    </update>
 </mapper>

@@ -1,12 +1,10 @@
 package com.threeNerds.basketballDiary.mvc.service;
 
-import com.threeNerds.basketballDiary.constant.JoinRequestStateCode;
-import com.threeNerds.basketballDiary.constant.JoinRequestTypeCode;
-import com.threeNerds.basketballDiary.constant.PositionCode;
-import com.threeNerds.basketballDiary.constant.TeamAuthCode;
+import com.threeNerds.basketballDiary.constant.*;
 import com.threeNerds.basketballDiary.mvc.domain.TeamJoinRequest;
 import com.threeNerds.basketballDiary.mvc.domain.TeamMember;
 import com.threeNerds.basketballDiary.mvc.dto.JoinRequestDTO;
+import com.threeNerds.basketballDiary.mvc.dto.KeyDTO;
 import com.threeNerds.basketballDiary.mvc.dto.PlayerDTO;
 import com.threeNerds.basketballDiary.mvc.dto.PlayerSearchDTO;
 import com.threeNerds.basketballDiary.mvc.repository.PlayerRepository;
@@ -166,4 +164,19 @@ public class TeamMemberManagerService {
         return players;
     }
 
+    /**
+     * 소속팀 회원 강퇴시키기
+     * @param teamMemberKey
+     * @return List<PlayerDTO>
+     */
+    public void removeTeamMember(KeyDTO.TeamMember teamMemberKey)
+    {
+        TeamMember teamMember = TeamMember.builder()
+                .teamMemberSeq(teamMemberKey.getTeamMemberSeq())
+                .withdrawalYn(State.Withdrawal.Y)
+                .build();
+        // TODO 팀멤버 테이블에 있는 정보를 건들지 않고 퇴장여부 상태값만 바꾸는 것으로 할지 판단 필요
+        teamMemberRepository.updateWithdrawalState(teamMember);
+
+    }
 }
