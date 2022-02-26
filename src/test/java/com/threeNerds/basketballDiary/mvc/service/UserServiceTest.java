@@ -79,22 +79,21 @@ class UserServiceTest {
     @Test
     void createUserTest(){
         //given
-
-        //when
         when(userRepository.saveUser(testUser)).thenReturn(1L);
+        //when
+        Long id = userService.createMember(testUser);
         //then
-        assertThat(userService.createMember(testUser)).isEqualTo(1L);
+        assertThat(id).isEqualTo(1L);
     }
 
     @Test
     void findUserTest(){
         //given
-
-        //when
         when(userRepository.findUser(1L)).thenReturn(testUser);
+        //when
+        User user = userService.findUser(1L);
         //then
-        assertThat(userService.findUser(1L)).isNotEqualTo(testUser2);
-        verify(userRepository).findUser(1L);
+        assertThat(user).isNotEqualTo(testUser2);
     }
 
     @Test
