@@ -1,6 +1,8 @@
 package com.threeNerds.basketballDiary.mvc.repository;
 
+import com.threeNerds.basketballDiary.mvc.controller.UserController;
 import com.threeNerds.basketballDiary.mvc.domain.TeamMember;
+import com.threeNerds.basketballDiary.mvc.dto.ResponseMyTeamProfileDTO;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
@@ -39,4 +41,11 @@ public interface TeamMemberRepository {
      * @return int
      */
     int updateTeamAuth(TeamMember teamMember);
+
+    /**
+     * 소속팀 프로필 조회
+     * @param userDto
+     * @return
+     */
+    ResponseMyTeamProfileDTO findMyTeamProfile(UserController.FindMyTeamProfileDTO userDto);
 }

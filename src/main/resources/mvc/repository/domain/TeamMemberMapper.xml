@@ -39,4 +39,11 @@
         WHERE TEAM_MEMBER_SEQ = #{teamMemberSeq}
           AND TEAM_SEQ = #{teamSeq}
     </update>
+
+    <select id="findMyTeamProfile" resultType="com.threeNerds.basketballDiary.mvc.dto.ResponseMyTeamProfileDTO">
+        SELECT C.NAME AS USERNAME,B.TEAM_NAME AS TEAMNAME,A.BACK_NUMBER AS BACKNUMBER
+        FROM TEAM_MEMBER A join TEAM B on A.TEAM_SEQ=B.TEAM_SEQ
+            join USER C on A.USER_SEQ=C.USER_SEQ
+        where A.User_seq=#{userSeq} and A.team_seq =#{teamSeq};
+    </select>
 </mapper>

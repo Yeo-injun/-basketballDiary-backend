@@ -31,20 +31,17 @@ public class TeamController {
 
     @PostMapping("/new")
     public String create(TeamDto teamDto){
-        Team team = new Team();
-
-        team.setLeaderId(teamDto.getLeaderId());
-        team.setTeamName(teamDto.getTeamName());
-        team.setHometown(teamDto.getHometown());
-        team.setIntroduction(teamDto.getIntroduction());
-
-        LocalDate today = LocalDate.now();
-        team.setFoundationYmd(today);
-        team.setRegDate(today);
-        team.setUpdateDate(today);
-
-        team.setSidoCode(teamDto.getSidoCode());
-        team.setSigunguCode(teamDto.getSigunguCode());
+        Team team = Team.builder()
+                .leaderId(teamDto.getLeaderId())
+                .teamName(teamDto.getTeamName())
+                .hometown(teamDto.getHometown())
+                .introduction(teamDto.getIntroduction())
+                .foundationYmd(LocalDate.now())
+                .regDate(LocalDate.now())
+                .updateDate(LocalDate.now())
+                .sidoCode(teamDto.getSidoCode())
+                .sigunguCode(teamDto.getSigunguCode())
+                .build();
 
         teamService.createTeam(team);
         return "ok";

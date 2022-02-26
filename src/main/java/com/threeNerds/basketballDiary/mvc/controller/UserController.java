@@ -3,13 +3,15 @@ package com.threeNerds.basketballDiary.mvc.controller;
 import com.threeNerds.basketballDiary.interceptor.Auth;
 import com.threeNerds.basketballDiary.mvc.domain.User;
 import com.threeNerds.basketballDiary.mvc.dto.JoinRequestDTO;
+import com.threeNerds.basketballDiary.mvc.dto.ResponseMyTeamProfileDTO;
 import com.threeNerds.basketballDiary.mvc.dto.UserDTO;
+import com.threeNerds.basketballDiary.mvc.service.TeamMemberService;
 import com.threeNerds.basketballDiary.mvc.service.UserService;
 import com.threeNerds.basketballDiary.mvc.service.UserTeamManagerService;
 import com.threeNerds.basketballDiary.session.SessionUser;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.jni.Local;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,14 +37,14 @@ import static com.threeNerds.basketballDiary.session.SessionConst.LOGIN_MEMBER;
 public class UserController {
 
     private final UserService userService;
+    private final TeamMemberService teamMemberService;
     private final UserTeamManagerService userTeamManagerService;
 
     /**
      * 회원가입
      */
     @PostMapping("/new")
-    public String create(@RequestBody @Valid UserDTO userDTO){
-        LocalDate today = LocalDate.now();
+    public String createUser(@RequestBody @Valid UserDTO userDTO){
 
         User user = User.builder()
                 .userId(userDTO.getUserId())
@@ -65,8 +67,9 @@ public class UserController {
         return "createOk";
     }
 
-    @GetMapping("/myInfo")
+    @GetMapping("/profile")
     public UserDTO myInfo(@SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionDTO, UserDTO userDTO){
+
         Long id = sessionDTO.getUserSeq();
 
         User user = userService.findUser(id);
@@ -80,8 +83,9 @@ public class UserController {
      * 회원수정
      */
 
-    @PutMapping("/modifyMyInfo")
-    public String change(@SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO,@RequestBody @Valid UserDTO userDTO){
+    @PutMapping("/profile")
+    public String updateUser(@SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO,@RequestBody @Valid UserDTO userDTO){
+
         Long id = sessionDTO.getUserSeq();
 
         User user = userService.findUser(id);
@@ -96,8 +100,9 @@ public class UserController {
      * 회원탈퇴
      */
 
-    @DeleteMapping("/deleteUser")
-    public String delete(@SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO){
+    @DeleteMapping("/profile")
+    public String deleteUser(@SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO){
+
         String id = sessionDTO.getUserId();
 
         userService.deleteUser(id);
@@ -107,29 +112,48 @@ public class UserController {
     /**
      * 소속팀 개인프로필 수정데이터 조회
      */
-    @GetMapping("/myteams/{teamSeq}/profile")
-    public UserDTO findMyTeamsProfile(@SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO,@PathVariable Long teamSeq){
-        Long id = sessionDTO.getUserSeq();
-        User user = userService.findUser(id);
+    @GetMapping("/myTeams/{teamSeq}/profile")
+    public ResponseMyTeamProfileDTO findMyTeamsProfile(@SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO,@PathVariable Long teamSeq){
 
-        UserDTO userDTO = new UserDTO();
-        BeanUtils.copyProperties(user,userDTO);
-        return userDTO;
+        Long id = sessionDTO.getUserSeq();
+
+        FindMyTeamProfileDTO findMyTeamProfileDTO = new FindMyTeamProfileDTO()
+                                                            .userSeq(id)
+                                                            .teamSeq(teamSeq);
+
+        ResponseMyTeamProfileDTO myTeamProfileDTO = teamMemberService.findProfile(findMyTeamProfileDTO);
+
+        return myTeamProfileDTO;
+    }
+    @Getter
+    public class FindMyTeamProfileDTO {
+        private Long userSeq;
+        private Long teamSeq;
+
+        public FindMyTeamProfileDTO userSeq(Long userSeq){
+            this.userSeq=userSeq;
+            return this;
+        }
+        public FindMyTeamProfileDTO teamSeq(Long teamSeq){
+            this.teamSeq=teamSeq;
+            return this;
+        }
     }
 
     /**
      * 소속팀 개인프로필 수정
      */
-    @PutMapping("/myteams/{teamSeq}/profile")
-    public String modifyMyTeamsProfile(){
+    @PutMapping("/myTeams/{teamSeq}/profile")
+    public String modifyMyTeamsProfile(@PathVariable Long teamSeq){
+
         return null;
     }
 
     /**
      * 소속팀 탈퇴
      */
-    @DeleteMapping("/myteams/{teamSeq}")
-    public String deleteMyTeamsProfile(){
+    @DeleteMapping("/myTeams/{teamSeq}")
+    public String deleteMyTeamsProfile(@PathVariable Long teamSeq){
         return null;
     }
 
