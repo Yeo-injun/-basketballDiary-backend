@@ -32,4 +32,11 @@ public interface TeamMemberRepository {
      * @return
      */
     int updateWithdrawalState(TeamMember teamMember);
+
+    /**
+     * 팀원 권한정보 수정
+     * @param teamMember
+     * @return int
+     */
+    int updateTeamAuth(TeamMember teamMember);
 }

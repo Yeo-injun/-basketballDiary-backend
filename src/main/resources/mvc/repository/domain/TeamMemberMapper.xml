@@ -30,5 +30,13 @@
         UPDATE TEAM_MEMBER
            SET WITHDRAWAL_YN = #{withdrawalYn}
          WHERE TEAM_MEMBER_SEQ = #{teamMemberSeq}
+           AND TEAM_SEQ = #{teamSeq}
+    </update>
+
+    <update id="updateTeamAuth">
+        UPDATE TEAM_MEMBER
+        SET TEAM_AUTH_CODE = #{teamAuthCode}
+        WHERE TEAM_MEMBER_SEQ = #{teamMemberSeq}
+          AND TEAM_SEQ = #{teamSeq}
     </update>
 </mapper>
