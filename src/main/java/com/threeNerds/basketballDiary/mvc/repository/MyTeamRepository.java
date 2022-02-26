@@ -1,5 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.repository;
 
+import com.threeNerds.basketballDiary.mvc.dto.ManagerDTO;
 import com.threeNerds.basketballDiary.mvc.dto.MyTeamDTO;
 import com.threeNerds.basketballDiary.mvc.dto.MyTeamInfoDTO;
 import org.apache.ibatis.annotations.Mapper;
@@ -12,5 +13,5 @@ public interface MyTeamRepository {
 
     List<MyTeamInfoDTO> findAllByUserSeq(Long userSeq);
     MyTeamInfoDTO findByUserSeqAndTeamSeq(Long userSeq, Long teamSeq);
-
+    List<ManagerDTO> findManagerByTeamSeq(Long teamSeq);
 }

@@ -2,6 +2,7 @@ package com.threeNerds.basketballDiary.mvc.service;
 
 import com.threeNerds.basketballDiary.mvc.domain.Team;
 import com.threeNerds.basketballDiary.mvc.domain.TeamRegularExercise;
+import com.threeNerds.basketballDiary.mvc.dto.ManagerDTO;
 import com.threeNerds.basketballDiary.mvc.dto.MyTeamDTO;
 import com.threeNerds.basketballDiary.mvc.dto.MyTeamInfoDTO;
 import com.threeNerds.basketballDiary.mvc.dto.PlayerSearchDTO;
@@ -38,6 +39,13 @@ public class MyTeamService {
     private final TeamRepository teamRepository;
     private final TeamRegularExerciseRepository teamRegularExerciseRepository;
 
+    public List<ManagerDTO> findManagers(Long teamSeq) {
+        if(teamSeq == null)
+            throw new NullPointerException("팀 PK가 존재하지 않습니다.");
+
+        return myTeamRepository.findManagerByTeamSeq(teamSeq);
+    }
+
     public List<MyTeamDTO> findTeams(Long userSeq) {
         if (userSeq == null)
             throw new NullPointerException("userSeq");
@@ -47,9 +55,9 @@ public class MyTeamService {
 
         myTeamInfoList.forEach(myTeamInfo -> {
             Long teamSeq = myTeamInfo.getTeamSeq();
-            MyTeamDTO myTeamDTO = new MyTeamDTO();
-            myTeamDTO.setMyTeamInfoDTO(myTeamInfo); // 소속팀정보
-            myTeamDTO.setTeamRegularExercisesList(teamRegularExerciseRepository.findByTeamSeq(teamSeq)); // 정기운동목록
+            MyTeamDTO myTeamDTO = new MyTeamDTO()
+                    .myTeamInfo(myTeamInfo)
+                    .teamRegularExercisesList(teamRegularExerciseRepository.findByTeamSeq(teamSeq));
             resultDTO.add(myTeamDTO);
         });
         return resultDTO;
@@ -67,9 +75,9 @@ public class MyTeamService {
         if (myTeamInfo == null)
             throw new NullPointerException("소속팀의 해당 팀 정보가 존재하지 않습니다.");
 
-        MyTeamDTO resultDTO = new MyTeamDTO();
-        resultDTO.setMyTeamInfoDTO(myTeamInfo);
-        resultDTO.setTeamRegularExercisesList(teamRegularExerciseList);
+        MyTeamDTO resultDTO = new MyTeamDTO()
+                .myTeamInfo(myTeamInfo)
+                .teamRegularExercisesList(teamRegularExerciseList);
 
         log.info("teamName = {}", myTeamInfo.getTeamName());
         return resultDTO;
@@ -82,7 +90,7 @@ public class MyTeamService {
             throw new NullPointerException("소속팀 정보가 존재하지 않습니다.");
 
         // 1. @RequestBody 값 조회
-        MyTeamInfoDTO paramMyTeamInfo = dto.getMyTeamInfoDTO();
+        MyTeamInfoDTO paramMyTeamInfo = dto.getMyTeamInfo();
         List<TeamRegularExercise> paramTeamRegularExercise = dto.getTeamRegularExercisesList();
 
         // 2. 팀정보 수정
@@ -101,9 +109,15 @@ public class MyTeamService {
                 teamRegularExerciseRepository.updateTeamRegularExercise(teamRegularExercise);
             } else {
                 // Seq가 없으므로 신규내역 insert
-                TeamRegularExercise teamRegularExercise = new TeamRegularExercise();
-                BeanUtils.copyProperties(param, teamRegularExercise);
-                teamRegularExercise.setTeamSeq(teamSeq);
+                TeamRegularExercise teamRegularExercise = TeamRegularExercise.builder()
+                        .teamSeq(teamSeq)
+                        .dayOfTheWeekCode(param.getDayOfTheWeekCode())
+                        .startTime(param.getStartTime())
+                        .endTime(param.getEndTime())
+                        .exercisePlaceAddress(param.getExercisePlaceAddress())
+                        .exercisePlaceName(param.getExercisePlaceName())
+                        .build();
+
                 teamRegularExerciseRepository.saveTeamRegularExercise(teamRegularExercise);
             }
         });
