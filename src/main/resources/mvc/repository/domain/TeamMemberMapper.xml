@@ -40,7 +40,10 @@
            AND TEAM_SEQ = #{teamSeq}
            AND WITHDRAWAL_YN = 'N'
         <if test='"1".equals(teamAuthCode)'>
-           AND TEAM_AUTH_CODE = '2'
+           AND TEAM_AUTH_CODE = '2' /* 관리자를 팀원으로 */
+        </if>
+        <if test='"2".equals(teamAuthCode)'>
+            AND TEAM_AUTH_CODE = '1' /* 팀원을 관리자로 */
         </if>
     </update>
 
