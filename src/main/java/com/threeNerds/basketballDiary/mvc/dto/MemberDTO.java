@@ -2,8 +2,13 @@ package com.threeNerds.basketballDiary.mvc.dto;
 
 import lombok.Getter;
 
+/**
+ * Author: 강창기
+ * 설명: 소속팀 Controller에서 팀원 및 운영진의 정보를 관리하는 DTO
+ */
+
 @Getter
-public class ManagerDTO {
+public class MemberDTO {
 
     /* 유저 pk */
     private Long userSeq;
@@ -21,45 +26,51 @@ public class ManagerDTO {
     private String backNumber;
     /* 가입일자 */
     private String joinYmd;
+    /* 경기참여횟수 */
+    private Integer totGame;
 
-
-    public ManagerDTO userSeq (Long userSeq) {
+    public MemberDTO userSeq (Long userSeq) {
         this.userSeq = userSeq;
         return this;
     }
 
-    public ManagerDTO teamAuthCode (Long teamAuthCode) {
+    public MemberDTO teamAuthCode (Long teamAuthCode) {
         this.teamAuthCode = teamAuthCode;
         return this;
     }
 
-    public ManagerDTO name (String name) {
+    public MemberDTO name (String name) {
         this.name = name;
         return this;
     }
 
-    public ManagerDTO birthYmd (String birthYmd) {
+    public MemberDTO birthYmd (String birthYmd) {
         this.birthYmd = birthYmd;
         return this;
     }
 
-    public ManagerDTO height (String height) {
+    public MemberDTO height (String height) {
         this.height = height;
         return this;
     }
 
-    public ManagerDTO weight (String weight) {
+    public MemberDTO weight (String weight) {
         this.weight = weight;
         return this;
     }
 
-    public ManagerDTO backNumber (String backNumber) {
+    public MemberDTO backNumber (String backNumber) {
         this.backNumber = backNumber;
         return this;
     }
 
-    public ManagerDTO joinYmd (String joinYmd) {
+    public MemberDTO joinYmd (String joinYmd) {
         this.joinYmd = joinYmd;
+        return this;
+    }
+
+    public MemberDTO totGame (Integer totGame) {
+        this.totGame = totGame;
         return this;
     }
 }
