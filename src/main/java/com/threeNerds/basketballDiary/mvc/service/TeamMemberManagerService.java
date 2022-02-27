@@ -189,11 +189,7 @@ public class TeamMemberManagerService {
      */
     public void appointManager(KeyDTO.TeamMember teamMemberKey)
     {
-        TeamMember teamMember = TeamMember.builder()
-                .teamMemberSeq(teamMemberKey.getTeamMemberSeq())
-                .teamSeq(teamMemberKey.getTeamSeq())
-                .teamAuthCode(TeamAuthCode.MANGER.getCode())
-                .build();
+        TeamMember teamMember = TeamMember.toManager(teamMemberKey);
 
         boolean isSuccess = teamMemberRepository.updateTeamAuth(teamMember) == 1 ? true : false;
         if (!isSuccess)
@@ -210,11 +206,7 @@ public class TeamMemberManagerService {
      */
     public void dismissManager(KeyDTO.TeamMember teamMemberKeys)
     {
-        TeamMember teamMember = TeamMember.builder()
-                .teamMemberSeq(teamMemberKeys.getTeamMemberSeq())
-                .teamSeq(teamMemberKeys.getTeamSeq())
-                .teamAuthCode(TeamAuthCode.TEAM_MEMBER.getCode())
-                .build();
+        TeamMember teamMember = TeamMember.toMember(teamMemberKeys);
 
         boolean isSuccess = teamMemberRepository.updateTeamAuth(teamMember) == 1 ? true : false;
         if (!isSuccess)
