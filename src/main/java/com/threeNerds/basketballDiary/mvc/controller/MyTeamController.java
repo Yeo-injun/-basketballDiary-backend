@@ -62,9 +62,10 @@ public class MyTeamController {
     @GetMapping("/{teamSeq}/members")
     public List<MemberDTO> searchMembers(
             @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser,
-            @PathVariable(value = "teamSeq") Long teamSeq
+            @PathVariable(value = "teamSeq") Long teamSeq,
+            @RequestParam(name = "pageNo", defaultValue = "0") Integer pageNo
     ) {
-        List<MemberDTO> memberList = myTeamService.findMembers(teamSeq);
+        List<MemberDTO> memberList = myTeamService.findMembers(teamSeq, pageNo);
 
         return memberList;
     }
