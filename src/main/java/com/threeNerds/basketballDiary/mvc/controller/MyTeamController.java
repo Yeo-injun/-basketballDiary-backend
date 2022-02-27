@@ -27,6 +27,7 @@ import static com.threeNerds.basketballDiary.session.SessionConst.LOGIN_MEMBER;
  * 2022.02.23 강창기 : 소속팀 정보 수정 구현
  * 2022.02.24 강창기 : 소속팀 정보 삭제 구현
  * 2022.02.26 강창기 : 소속팀 운영진 조회 구현
+ * 2022.02.27 강창기 : 소속팀 팀원 조회 구현
  * </pre>
  */
 
@@ -45,11 +46,11 @@ public class MyTeamController {
      */
     @Auth(GRADE = 2L)
     @GetMapping("/{teamSeq}/managers")
-    public List<ManagerDTO> searchManagers(
+    public List<MemberDTO> searchManagers(
             @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser,
             @PathVariable(value = "teamSeq") Long teamSeq
     ) {
-        List<ManagerDTO> managerList = myTeamService.findManagers(teamSeq);
+        List<MemberDTO> managerList = myTeamService.findManagers(teamSeq);
 
         return managerList;
     }
@@ -59,12 +60,13 @@ public class MyTeamController {
      */
     @Auth(GRADE = 2L)
     @GetMapping("/{teamSeq}/members")
-    public List<User> searchMembers(
+    public List<MemberDTO> searchMembers(
             @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser,
             @PathVariable(value = "teamSeq") Long teamSeq
     ) {
-        Long userSeq = sessionUser.getUserSeq();
-        return null;
+        List<MemberDTO> memberList = myTeamService.findMembers(teamSeq);
+
+        return memberList;
     }
 
     /**

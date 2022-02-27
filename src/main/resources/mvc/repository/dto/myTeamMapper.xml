@@ -38,7 +38,7 @@
         WHERE A.USER_SEQ = #{userSeq}
     </select>
 
-    <select id="findManagerByTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.dto.ManagerDTO">
+    <select id="findAllManagerByTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.dto.MemberDTO">
         SELECT A.USER_SEQ
              , B.TEAM_AUTH_CODE
              , A.NAME
@@ -51,6 +51,28 @@
                  JOIN TEAM_MEMBER B
                       ON A.USER_SEQ = B.USER_SEQ
         WHERE B.TEAM_AUTH_CODE > 1 -- 관리자(임원) 이상 조회
+          AND B.WITHDRAWAL_YN != 'Y'
+          AND B.TEAM_SEQ = #{teamSeq}
+    </select>
+
+    <select id="findAllMemberByTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.dto.MemberDTO">
+        SELECT A.USER_SEQ
+             , B.TEAM_AUTH_CODE
+             , A.NAME
+             , A.BIRTH_YMD
+             , A.HEIGHT
+             , A.WEIGHT
+             , B.BACK_NUMBER
+             , B.JOIN_YMD
+             , IFNULL(C.TOT_MATCH, 0) TOT_GAME
+        FROM USER A
+                 JOIN TEAM_MEMBER B
+                      ON A.USER_SEQ = B.USER_SEQ
+                 LEFT JOIN (SELECT TEAM_MEMBER_SEQ, COUNT(*) AS "TOT_MATCH"
+                            FROM GAME_JOIN_PLAYER
+                            GROUP BY TEAM_MEMBER_SEQ) C
+                           ON B.TEAM_MEMBER_SEQ = C.TEAM_MEMBER_SEQ
+        WHERE B.TEAM_AUTH_CODE <![CDATA[<]]> 2 -- 관리자(임원) 이상 조회
           AND B.WITHDRAWAL_YN != 'Y'
           AND B.TEAM_SEQ = #{teamSeq}
     </select>
