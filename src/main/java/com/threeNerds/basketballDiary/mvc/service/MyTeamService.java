@@ -47,11 +47,14 @@ public class MyTeamService {
         return myTeamRepository.findAllManagerByTeamSeq(teamSeq);
     }
 
-    public List<MemberDTO> findMembers(Long teamSeq) {
+    public List<MemberDTO> findMembers(Long teamSeq, Integer pageNo) {
         if(teamSeq == null)
             throw new NullPointerException("팀 PK가 존재하지 않습니다.");
 
-        return myTeamRepository.findAllMemberByTeamSeq(teamSeq);
+        PagerVO pagerVO = new PagerVO().pageNo(pageNo*4).offset(4);
+        MemberDTO memberDTO = new MemberDTO().teamSeq(teamSeq).pagerVO(pagerVO);
+
+        return myTeamRepository.findPagingMemberByTeamSeq(memberDTO);
     }
 
     public List<MyTeamDTO> findTeams(Long userSeq) {

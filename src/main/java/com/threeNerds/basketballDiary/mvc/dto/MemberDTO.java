@@ -12,6 +12,10 @@ public class MemberDTO {
 
     /* 유저 pk */
     private Long userSeq;
+    /* 팀멤버 pk */
+    private Long teamMemberSeq;
+    /* 팀 pk */
+    private Long teamSeq;
     /* 팀권한코드 */
     private Long teamAuthCode;
     /* 이름 */
@@ -29,8 +33,21 @@ public class MemberDTO {
     /* 경기참여횟수 */
     private Integer totGame;
 
+    /* 페이징 처리를 위한 VO */
+    private PagerVO pagerVO;
+
     public MemberDTO userSeq (Long userSeq) {
         this.userSeq = userSeq;
+        return this;
+    }
+
+    public MemberDTO teamMemberSeq (Long teamMemberSeq) {
+        this.teamMemberSeq = teamMemberSeq;
+        return this;
+    }
+
+    public MemberDTO teamSeq (Long teamSeq) {
+        this.teamSeq = teamSeq;
         return this;
     }
 
@@ -71,6 +88,11 @@ public class MemberDTO {
 
     public MemberDTO totGame (Integer totGame) {
         this.totGame = totGame;
+        return this;
+    }
+
+    public MemberDTO pagerVO (PagerVO pagerVO) {
+        this.pagerVO = pagerVO;
         return this;
     }
 }

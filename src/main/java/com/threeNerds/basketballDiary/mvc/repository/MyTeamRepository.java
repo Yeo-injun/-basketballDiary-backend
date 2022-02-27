@@ -4,6 +4,7 @@ import com.threeNerds.basketballDiary.mvc.dto.MemberDTO;
 import com.threeNerds.basketballDiary.mvc.dto.MyTeamInfoDTO;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.lang.reflect.Member;
 import java.util.List;
 
 @Mapper
@@ -13,4 +14,5 @@ public interface MyTeamRepository {
     MyTeamInfoDTO findByUserSeqAndTeamSeq(Long userSeq, Long teamSeq);
     List<MemberDTO> findAllManagerByTeamSeq(Long teamSeq);
     List<MemberDTO> findAllMemberByTeamSeq(Long teamSeq);
+    List<MemberDTO> findPagingMemberByTeamSeq(MemberDTO memberDTO);
 }
