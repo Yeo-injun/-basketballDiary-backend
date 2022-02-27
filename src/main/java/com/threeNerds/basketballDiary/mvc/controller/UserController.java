@@ -68,7 +68,10 @@ public class UserController {
     }
 
     @GetMapping("/profile")
-    public UserDTO myInfo(@SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionDTO, UserDTO userDTO){
+    public UserDTO myInfo(
+            @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionDTO,
+            UserDTO userDTO)
+    {
 
         Long id = sessionDTO.getUserSeq();
 
@@ -84,7 +87,10 @@ public class UserController {
      */
 
     @PutMapping("/profile")
-    public String updateUser(@SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO,@RequestBody @Valid UserDTO userDTO){
+    public String updateUser(
+            @SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO,
+            @RequestBody @Valid UserDTO userDTO)
+    {
 
         Long id = sessionDTO.getUserSeq();
 
@@ -113,7 +119,10 @@ public class UserController {
      * 소속팀 개인프로필 수정데이터 조회
      */
     @GetMapping("/myTeams/{teamSeq}/profile")
-    public ResponseMyTeamProfileDTO findMyTeamsProfile(@SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO,@PathVariable Long teamSeq){
+    public ResponseMyTeamProfileDTO findMyTeamsProfile(
+            @SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO,
+            @PathVariable Long teamSeq)
+    {
 
         Long id = sessionDTO.getUserSeq();
 
@@ -143,18 +152,57 @@ public class UserController {
     /**
      * 소속팀 개인프로필 수정
      */
-    @PutMapping("/myTeams/{teamSeq}/profile")
-    public String modifyMyTeamsProfile(@PathVariable Long teamSeq){
+    @PatchMapping("/myTeams/{teamSeq}/profile")
+    public String modifyMyTeamsProfile(
+            @SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO,
+            @PathVariable Long teamSeq,
+            String backNumber)
+    {
 
-        return null;
+        Long id = sessionDTO.getUserSeq();
+
+        FindMyTeamProfileDTO findMyTeamProfileDTO = new FindMyTeamProfileDTO()
+                                                            .userSeq(id)
+                                                            .teamSeq(teamSeq);
+
+        ModifyMyTeamProfileDTO myTeamProfileDTO = new ModifyMyTeamProfileDTO()
+                                                            .findMyTeamProfileDTO(findMyTeamProfileDTO)
+                                                            .backNumber(backNumber);
+
+        teamMemberService.updateMyTeamProfile(myTeamProfileDTO);
+        return "ok";
+    }
+
+    @Getter
+    public class ModifyMyTeamProfileDTO{
+        private FindMyTeamProfileDTO findMyTeamProfileDTO;
+        private String backNumber;
+
+        public ModifyMyTeamProfileDTO findMyTeamProfileDTO(FindMyTeamProfileDTO findMyTeamProfileDTO){
+            this.findMyTeamProfileDTO = findMyTeamProfileDTO;
+            return this;
+        }
+        public ModifyMyTeamProfileDTO backNumber(String backNumber){
+            this.backNumber = backNumber;
+            return this;
+        }
     }
 
     /**
      * 소속팀 탈퇴
      */
     @DeleteMapping("/myTeams/{teamSeq}")
-    public String deleteMyTeamsProfile(@PathVariable Long teamSeq){
-        return null;
+    public String deleteMyTeamsProfile(
+            @SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO,
+            @PathVariable Long teamSeq)
+    {
+        Long id = sessionDTO.getUserSeq();
+
+        FindMyTeamProfileDTO findMyTeamProfileDTO = new FindMyTeamProfileDTO()
+                                                            .userSeq(id)
+                                                            .teamSeq(teamSeq);
+        teamMemberService.deleteMyTeamProfile(findMyTeamProfileDTO);
+        return "ok";
     }
 
     @Auth(GRADE = 3L)
@@ -171,7 +219,10 @@ public class UserController {
     // TODO 클래스단위의 url 매핑정보 수정에 따라 root url 수정 필요
     // TODO 로그인 여부 체크하는 동작 필요 - checkLogin 어노테이션 적용 요망
     @PostMapping("/{userSeq}/joinRequestTo/{teamSeq}")
-    public String joinRequestToTeam( @PathVariable("userSeq") Long userSeq, @PathVariable("teamSeq") Long teamSeq) {
+    public String joinRequestToTeam(
+            @PathVariable("userSeq") Long userSeq,
+            @PathVariable("teamSeq") Long teamSeq)
+    {
         JoinRequestDTO joinRequest = new JoinRequestDTO()
                                             .teamSeq(teamSeq)
                                             .userSeq(userSeq);
