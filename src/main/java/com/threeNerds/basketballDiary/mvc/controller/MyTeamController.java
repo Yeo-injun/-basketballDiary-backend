@@ -201,6 +201,22 @@ public class MyTeamController {
     }
 
     /**
+     * API015 : 소속팀 관리자 제명
+     */
+    @DeleteMapping("/{teamSeq}/members/{teamMemberSeq}/manager")
+    public String dismissManager(
+            @PathVariable Long teamSeq,
+            @PathVariable Long teamMemberSeq
+    ) {
+        KeyDTO.TeamMember teamMemberKeys = new KeyDTO.TeamMember()
+                .teamMemberSeq(teamMemberSeq)
+                .teamSeq(teamSeq);
+
+        teamMemberManagerService.dismissManager(teamMemberKeys);
+        return "Ok";
+    }
+
+    /**
      * API016 : 소속팀 정보 단건 조회
      */
     @Auth(GRADE = 2L)

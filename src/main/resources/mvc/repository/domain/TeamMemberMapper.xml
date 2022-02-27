@@ -35,9 +35,13 @@
 
     <update id="updateTeamAuth">
         UPDATE TEAM_MEMBER
-        SET TEAM_AUTH_CODE = #{teamAuthCode}
-        WHERE TEAM_MEMBER_SEQ = #{teamMemberSeq}
-          AND TEAM_SEQ = #{teamSeq}
+           SET TEAM_AUTH_CODE = #{teamAuthCode}
+         WHERE TEAM_MEMBER_SEQ = #{teamMemberSeq}
+           AND TEAM_SEQ = #{teamSeq}
+           AND WITHDRAWAL_YN = 'N'
+        <if test='"1".equals(teamAuthCode)'>
+           AND TEAM_AUTH_CODE = '2'
+        </if>
     </update>
 
     <select id="findMyTeamProfile" resultType="com.threeNerds.basketballDiary.mvc.dto.ResponseMyTeamProfileDTO">
