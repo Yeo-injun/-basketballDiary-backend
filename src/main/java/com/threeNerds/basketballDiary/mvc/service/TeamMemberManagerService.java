@@ -185,7 +185,7 @@ public class TeamMemberManagerService {
     /**
      * 소속팀 관리자 임명하기
      * @param teamMemberKey
-     * @return List<PlayerDTO>
+     * @return
      */
     public void appointManager(KeyDTO.TeamMember teamMemberKey)
     {
@@ -193,6 +193,27 @@ public class TeamMemberManagerService {
                 .teamMemberSeq(teamMemberKey.getTeamMemberSeq())
                 .teamSeq(teamMemberKey.getTeamSeq())
                 .teamAuthCode(TeamAuthCode.MANGER.getCode())
+                .build();
+
+        boolean isSuccess = teamMemberRepository.updateTeamAuth(teamMember) == 1 ? true : false;
+        if (!isSuccess)
+        {
+            log.info("===== 팀원을 찾을 수 없습니다. =====");
+            return; //TODO 예외처리해서 Exception으로 처리하기
+        }
+    }
+
+    /**
+     * 소속팀 관리자 임명하기
+     * @param teamMemberKeys
+     * @return
+     */
+    public void dismissManager(KeyDTO.TeamMember teamMemberKeys)
+    {
+        TeamMember teamMember = TeamMember.builder()
+                .teamMemberSeq(teamMemberKeys.getTeamMemberSeq())
+                .teamSeq(teamMemberKeys.getTeamSeq())
+                .teamAuthCode(TeamAuthCode.TEAM_MEMBER.getCode())
                 .build();
 
         boolean isSuccess = teamMemberRepository.updateTeamAuth(teamMember) == 1 ? true : false;

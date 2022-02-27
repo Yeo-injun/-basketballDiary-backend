@@ -35,9 +35,13 @@
 
     <update id="updateTeamAuth">
         UPDATE TEAM_MEMBER
-        SET TEAM_AUTH_CODE = #{teamAuthCode}
-        WHERE TEAM_MEMBER_SEQ = #{teamMemberSeq}
-          AND TEAM_SEQ = #{teamSeq}
+           SET TEAM_AUTH_CODE = #{teamAuthCode}
+         WHERE TEAM_MEMBER_SEQ = #{teamMemberSeq}
+           AND TEAM_SEQ = #{teamSeq}
+           AND WITHDRAWAL_YN = 'N'
+        <if test='"1".equals(teamAuthCode)'>
+           AND TEAM_AUTH_CODE = '2'
+        </if>
     </update>
 
     <select id="findMyTeamProfile" resultType="com.threeNerds.basketballDiary.mvc.dto.ResponseMyTeamProfileDTO">
@@ -46,4 +50,14 @@
             join USER C on A.USER_SEQ=C.USER_SEQ
         where A.User_seq=#{userSeq} and A.team_seq =#{teamSeq};
     </select>
+
+    <update id="updateMyTeamProfile">
+        UPDATE TEAM_MEMBER
+        SET BACK_NUMBER = #{BACKNUMBER}
+        WHERE USER_SEQ = #{USERSEQ} AND TEAM_SEQ = #{TEAMSEQ}
+    </update>
+
+    <delete id="deleteMyTeamProfild">
+        DELETE FROM TEAM_MEMBER WHERE USER_SEQ=#{USERSEQ} AND TEAMSEQ=#{TEAMSEQ}
+    </delete>
 </mapper>

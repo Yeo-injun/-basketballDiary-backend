@@ -4,9 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.context.annotation.Description;
 
-import java.util.Date;
+import java.lang.reflect.Field;
+
+import java.lang.reflect.Method;
+import java.util.*;
 
 @Getter
 @Builder
@@ -32,4 +34,41 @@ public class TeamJoinRequest {
     // 요청확정일시
     private Date confirmationDate;
 
+    /**
+     * 1. DTO의 모든 필드의 값을 Entity에 복사한다.
+     * */
+//    public static TeamJoinRequest toEntity(Object dto)
+//    {
+//        // extractGetterMapFromSource()
+//        Map<String, Method> getterMap = new HashMap<String, Method>();
+//        Method[] declaredMethods = dto.getClass().getDeclaredMethods();
+//        Arrays.stream(declaredMethods)
+//                .filter(method -> method.getName().startsWith("get"))
+//                .forEach(method -> getterMap.put(method.getName(), method));
+//
+//        TeamJoinRequest.TeamJoinRequestBuilder targetClass = new TeamJoinRequest.TeamJoinRequestBuilder();
+//        Method[] builderSetterArray = targetClass.getClass().getDeclaredMethods();
+////        Field[] fields = TeamJoinRequest.builder().getClass().getDeclaredFields();
+//        Arrays.stream(builderSetterArray)
+//                .forEach(builderSetter -> {
+//
+//                    builderSetter.invoke();
+//                });
+//
+//
+//    }
+//
+//    private static String makeGetterName (String fieldName)
+//    {
+//        StringBuffer sb = new StringBuffer();
+//        sb.append("get");
+//        sb.append(fieldName.substring(0,1).toUpperCase());
+//        sb.append(fieldName.substring(1));
+//        return sb.toString();
+//    }
+//
+//    private static Method getGetter (Field field, Map<String, Method> getterMap)
+//    {
+//        return getterMap.get(makeGetterName(field.getName()));
+//    }
 }

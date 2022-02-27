@@ -1,6 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.service;
 
 import com.threeNerds.basketballDiary.mvc.controller.UserController;
+import com.threeNerds.basketballDiary.mvc.domain.User;
 import com.threeNerds.basketballDiary.mvc.dto.ResponseMyTeamProfileDTO;
 import com.threeNerds.basketballDiary.mvc.repository.TeamMemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,5 +28,13 @@ public class TeamMemberService {
 
     public ResponseMyTeamProfileDTO findProfile(UserController.FindMyTeamProfileDTO userDto){
         return teamMemberRepository.findMyTeamProfile(userDto);
+    }
+
+    public int updateMyTeamProfile(UserController.ModifyMyTeamProfileDTO userDto){
+        return teamMemberRepository.updateMyTeamProfile(userDto);
+    }
+
+    public void deleteMyTeamProfile(UserController.FindMyTeamProfileDTO userDto){
+        teamMemberRepository.deleteMyTeamProfile(userDto);
     }
 }

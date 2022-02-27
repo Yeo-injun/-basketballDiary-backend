@@ -2,6 +2,7 @@ package com.threeNerds.basketballDiary.mvc.repository;
 
 import com.threeNerds.basketballDiary.mvc.controller.UserController;
 import com.threeNerds.basketballDiary.mvc.domain.TeamMember;
+import com.threeNerds.basketballDiary.mvc.domain.User;
 import com.threeNerds.basketballDiary.mvc.dto.ResponseMyTeamProfileDTO;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -48,4 +49,8 @@ public interface TeamMemberRepository {
      * @return
      */
     ResponseMyTeamProfileDTO findMyTeamProfile(UserController.FindMyTeamProfileDTO userDto);
+
+    int updateMyTeamProfile(UserController.ModifyMyTeamProfileDTO userDto);
+
+    void deleteMyTeamProfile(UserController.FindMyTeamProfileDTO userDto);
 }
