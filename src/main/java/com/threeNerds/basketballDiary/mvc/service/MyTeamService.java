@@ -40,6 +40,11 @@ public class MyTeamService {
     private final TeamRepository teamRepository;
     private final TeamRegularExerciseRepository teamRegularExerciseRepository;
 
+    /**
+     * 소속팀 운영진 목록 조회
+     * @param teamSeq
+     * @return List<MemberDTO>
+     */
     public List<MemberDTO> findManagers(Long teamSeq) {
         if(teamSeq == null)
             throw new NullPointerException("팀 PK가 존재하지 않습니다.");
@@ -47,6 +52,11 @@ public class MyTeamService {
         return myTeamRepository.findAllManagerByTeamSeq(teamSeq);
     }
 
+    /**
+     * 소속팀 팀원 목록 조회
+     * @param teamSeq, pageNo
+     * @return List<MemberDTO>
+     */
     public List<MemberDTO> findMembers(Long teamSeq, Integer pageNo) {
         if(teamSeq == null)
             throw new NullPointerException("팀 PK가 존재하지 않습니다.");
@@ -57,6 +67,11 @@ public class MyTeamService {
         return myTeamRepository.findPagingMemberByTeamSeq(memberDTO);
     }
 
+    /**
+     * 소속팀 목록 조회
+     * @param userSeq
+     * @return List<MyTeamDTO>
+     */
     public List<MyTeamDTO> findTeams(Long userSeq) {
         if (userSeq == null)
             throw new NullPointerException("userSeq");
@@ -74,6 +89,11 @@ public class MyTeamService {
         return resultDTO;
     }
 
+    /**
+     * 소속팀 단건 조회
+     * @param userSeq, teamSeq
+     * @return MyTeamDTO
+     */
     public MyTeamDTO findTeam(Long userSeq, Long teamSeq) {
         if (userSeq == null)
             throw new NullPointerException("userSeq");
@@ -94,6 +114,10 @@ public class MyTeamService {
         return resultDTO;
     }
 
+    /**
+     * 소속팀 수정
+     * @param teamSeq, dto
+     */
     public void modifyMyTeam(Long teamSeq, MyTeamDTO dto) {
         if(teamSeq == null)
             throw new NullPointerException("팀 PK가 존재하지 않습니다.");
@@ -134,6 +158,10 @@ public class MyTeamService {
         });
     }
 
+    /**
+     * 소속팀 삭제
+     * @param teamSeq
+     */
     public void deleteMyTeam(Long teamSeq) {
         if (teamSeq == null)
             throw new NullPointerException("teamSeq");
