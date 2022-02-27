@@ -1,6 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.service;
 
 import com.threeNerds.basketballDiary.constant.*;
+import com.threeNerds.basketballDiary.mvc.domain.Team;
 import com.threeNerds.basketballDiary.mvc.domain.TeamJoinRequest;
 import com.threeNerds.basketballDiary.mvc.domain.TeamMember;
 import com.threeNerds.basketballDiary.mvc.dto.JoinRequestDTO;
@@ -173,10 +174,32 @@ public class TeamMemberManagerService {
     {
         TeamMember teamMember = TeamMember.builder()
                 .teamMemberSeq(teamMemberKey.getTeamMemberSeq())
+                .teamSeq(teamMemberKey.getTeamSeq())
                 .withdrawalYn(State.Withdrawal.Y)
                 .build();
         // TODO 팀멤버 테이블에 있는 정보를 건들지 않고 퇴장여부 상태값만 바꾸는 것으로 할지 판단 필요
         teamMemberRepository.updateWithdrawalState(teamMember);
 
+    }
+
+    /**
+     * 소속팀 관리자 임명하기
+     * @param teamMemberKey
+     * @return List<PlayerDTO>
+     */
+    public void appointManager(KeyDTO.TeamMember teamMemberKey)
+    {
+        TeamMember teamMember = TeamMember.builder()
+                .teamMemberSeq(teamMemberKey.getTeamMemberSeq())
+                .teamSeq(teamMemberKey.getTeamSeq())
+                .teamAuthCode(TeamAuthCode.MANGER.getCode())
+                .build();
+
+        boolean isSuccess = teamMemberRepository.updateTeamAuth(teamMember) == 1 ? true : false;
+        if (!isSuccess)
+        {
+            log.info("===== 팀원을 찾을 수 없습니다. =====");
+            return; //TODO 예외처리해서 Exception으로 처리하기
+        }
     }
 }

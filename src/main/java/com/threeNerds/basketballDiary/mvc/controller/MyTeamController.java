@@ -68,13 +68,30 @@ public class MyTeamController {
     }
 
     /**
-     * API004 : 소속팀 회원 강퇴시키기
+     * API003 : 소속팀 관리자임명
      */
-    @DeleteMapping("/members/{teamMemberSeq}")
-    public String removeTeamMember(
+    @PostMapping("{teamSeq}/members/{teamMemberSeq}/manager")
+    public String appointManager (
+            @PathVariable Long teamSeq,
             @PathVariable Long teamMemberSeq
     ) {
         KeyDTO.TeamMember teamMemberKey = new KeyDTO.TeamMember()
+                .teamSeq(teamSeq)
+                .teamMemberSeq(teamMemberSeq);
+        teamMemberManagerService.appointManager(teamMemberKey);
+        return "Success";
+    }
+
+    /**
+     * API004 : 소속팀 회원 강퇴시키기
+     */
+    @DeleteMapping("{teamSeq}/members/{teamMemberSeq}")
+    public String removeTeamMember(
+            @PathVariable Long teamSeq,
+            @PathVariable Long teamMemberSeq
+    ) {
+        KeyDTO.TeamMember teamMemberKey = new KeyDTO.TeamMember()
+                                .teamSeq(teamSeq)
                                 .teamMemberSeq(teamMemberSeq);
         teamMemberManagerService.removeTeamMember(teamMemberKey);
         return "";
