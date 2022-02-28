@@ -187,16 +187,17 @@ public class TeamMemberManagerService {
      * @param teamMemberKey
      * @return
      */
-    public void appointManager(KeyDTO.TeamMember teamMemberKey)
-    {
+    public boolean appointManager(KeyDTO.TeamMember teamMemberKey) throws Exception {
         TeamMember teamMember = TeamMember.toManager(teamMemberKey);
 
         boolean isSuccess = teamMemberRepository.updateTeamAuth(teamMember) == 1 ? true : false;
         if (!isSuccess)
         {
             log.info("===== 팀원을 찾을 수 없습니다. =====");
-            return; //TODO 예외처리해서 Exception으로 처리하기
+            throw new Exception("팀원을 찾을 수 없습니다.");
+//            return false; //TODO 예외처리해서 Exception으로 처리하기
         }
+        return true;
     }
 
     /**
