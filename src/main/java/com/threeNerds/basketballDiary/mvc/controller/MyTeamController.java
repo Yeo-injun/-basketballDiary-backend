@@ -8,6 +8,8 @@ import com.threeNerds.basketballDiary.mvc.service.TeamMemberManagerService;
 import com.threeNerds.basketballDiary.session.SessionUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -74,15 +76,19 @@ public class MyTeamController {
      * API003 : 소속팀 관리자임명
      */
     @PostMapping("{teamSeq}/members/{teamMemberSeq}/manager")
-    public String appointManager (
+    public ResponseEntity appointManager (
             @PathVariable Long teamSeq,
             @PathVariable Long teamMemberSeq
-    ) {
+    ) throws Exception {
         KeyDTO.TeamMember teamMemberKey = new KeyDTO.TeamMember()
                 .teamSeq(teamSeq)
                 .teamMemberSeq(teamMemberSeq);
-        teamMemberManagerService.appointManager(teamMemberKey);
-        return "Success";
+        boolean isSuccess = teamMemberManagerService.appointManager(teamMemberKey);
+        if (isSuccess)
+        {
+            return new ResponseEntity(HttpStatus.OK);
+        }
+        return new ResponseEntity(HttpStatus.NOT_FOUND);
     }
 
     /**
