@@ -1,7 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.controller;
 
 import com.threeNerds.basketballDiary.interceptor.Auth;
-import com.threeNerds.basketballDiary.mvc.domain.User;
 import com.threeNerds.basketballDiary.mvc.dto.*;
 import com.threeNerds.basketballDiary.mvc.service.MyTeamService;
 import com.threeNerds.basketballDiary.mvc.service.TeamMemberManagerService;
@@ -15,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 import static com.threeNerds.basketballDiary.session.SessionConst.LOGIN_MEMBER;
+import static com.threeNerds.basketballDiary.utils.HttpResponses.*;
 
 /**
  * ... 수행하는 Controller
@@ -42,6 +42,7 @@ public class MyTeamController {
 
     private final MyTeamService myTeamService;
     private final TeamMemberManagerService teamMemberManagerService;
+    private Object HashMap;
 
     /**
      * API001 : 소속팀 운영진 조회
@@ -74,21 +75,30 @@ public class MyTeamController {
 
     /**
      * API003 : 소속팀 관리자임명
+     * @return
      */
     @PostMapping("{teamSeq}/members/{teamMemberSeq}/manager")
-    public ResponseEntity appointManager (
+    public ResponseEntity<?> appointManager (
             @PathVariable Long teamSeq,
             @PathVariable Long teamMemberSeq
-    ) throws Exception {
+    ) throws Exception
+    {
         KeyDTO.TeamMember teamMemberKey = new KeyDTO.TeamMember()
                 .teamSeq(teamSeq)
                 .teamMemberSeq(teamMemberSeq);
-        boolean isSuccess = teamMemberManagerService.appointManager(teamMemberKey);
-        if (isSuccess)
+        // TODO 서비스에서 Exception을 던지면,
+        // 컨트롤러에서는 try.. catch문을 사용해서
+        // 해당 Exception이 발생할때와 그렇지 않을때
+        // 분기처리해서 Http표준 메세지를 return해주기!
+        try
         {
-            return new ResponseEntity(HttpStatus.OK);
+            teamMemberManagerService.appointManager(teamMemberKey);
+            return ResponseEntity.ok(teamMemberKey);
         }
-        return new ResponseEntity(HttpStatus.NOT_FOUND);
+        catch (Exception e)
+        {
+            return RESPONSE_NO_CONTENT;
+        }
     }
 
     /**
@@ -210,16 +220,23 @@ public class MyTeamController {
      * API015 : 소속팀 관리자 제명
      */
     @DeleteMapping("/{teamSeq}/members/{teamMemberSeq}/manager")
-    public String dismissManager(
+    public ResponseEntity<?> dismissManager(
             @PathVariable Long teamSeq,
             @PathVariable Long teamMemberSeq
-    ) {
+    ) throws Exception
+    {
         KeyDTO.TeamMember teamMemberKeys = new KeyDTO.TeamMember()
                 .teamMemberSeq(teamMemberSeq)
                 .teamSeq(teamSeq);
-
-        teamMemberManagerService.dismissManager(teamMemberKeys);
-        return "Ok";
+        try
+        {
+            teamMemberManagerService.dismissManager(teamMemberKeys);
+            return RESPONSE_OK;
+        }
+        catch (Exception e)
+        {
+            return RESPONSE_NO_CONTENT;
+        }
     }
 
     /**
