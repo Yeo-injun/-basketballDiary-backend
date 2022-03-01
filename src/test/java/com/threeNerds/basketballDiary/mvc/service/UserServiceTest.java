@@ -13,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mock.web.MockHttpSession;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -95,7 +96,7 @@ class UserServiceTest {
         //then
         assertThat(user).isNotEqualTo(testUser2);
     }
-
+    /** 수정필요 **/
     @Test
     void modifyUserTest(){
         //given
@@ -105,7 +106,7 @@ class UserServiceTest {
         //then
         verify(userRepository).updateUser(testUser2);
     }
-
+    /** 수정필요 **/
     @Test
     void deleteUserTest(){
         //given
