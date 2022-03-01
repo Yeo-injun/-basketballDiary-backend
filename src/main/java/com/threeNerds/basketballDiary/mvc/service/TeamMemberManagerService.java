@@ -205,15 +205,16 @@ public class TeamMemberManagerService {
      * @param teamMemberKeys
      * @return
      */
-    public void dismissManager(KeyDTO.TeamMember teamMemberKeys)
-    {
+    public boolean dismissManager(KeyDTO.TeamMember teamMemberKeys) throws Exception {
         TeamMember teamMember = TeamMember.toMember(teamMemberKeys);
 
         boolean isSuccess = teamMemberRepository.updateTeamAuth(teamMember) == 1 ? true : false;
         if (!isSuccess)
         {
             log.info("===== 팀원을 찾을 수 없습니다. =====");
-            return; //TODO 예외처리해서 Exception으로 처리하기
+            throw new Exception();
+//            return false; //TODO Exception으로 처리하기 (구체적인 Exception만들기)
         }
+        return true;
     }
 }
