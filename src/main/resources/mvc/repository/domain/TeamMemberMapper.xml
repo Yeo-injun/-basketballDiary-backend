@@ -56,11 +56,11 @@
 
     <update id="updateMyTeamProfile">
         UPDATE TEAM_MEMBER
-        SET BACK_NUMBER = #{BACKNUMBER}
-        WHERE USER_SEQ = #{USERSEQ} AND TEAM_SEQ = #{TEAMSEQ}
+        SET BACK_NUMBER = #{backNumber}
+        WHERE USER_SEQ = #{findMyTeamProfileDTO.userSeq} AND TEAM_SEQ = #{findMyTeamProfileDTO.teamSeq}
     </update>
 
     <delete id="deleteMyTeamProfild">
-        DELETE FROM TEAM_MEMBER WHERE USER_SEQ=#{USERSEQ} AND TEAMSEQ=#{TEAMSEQ}
+        DELETE FROM TEAM_MEMBER WHERE USER_SEQ=#{userSeq} AND TEAMSEQ=#{teamSeq}
     </delete>
 </mapper>

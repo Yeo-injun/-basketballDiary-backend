@@ -11,6 +11,7 @@ import com.threeNerds.basketballDiary.mvc.service.UserTeamManagerService;
 import com.threeNerds.basketballDiary.session.SessionUser;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
@@ -70,8 +71,7 @@ public class UserController {
     @GetMapping("/profile")
     public UserDTO myInfo(
             @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionDTO,
-            UserDTO userDTO)
-    {
+            UserDTO userDTO){
 
         Long id = sessionDTO.getUserSeq();
 
@@ -89,8 +89,7 @@ public class UserController {
     @PutMapping("/profile")
     public String updateUser(
             @SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO,
-            @RequestBody @Valid UserDTO userDTO)
-    {
+            @RequestBody @Valid UserDTO userDTO) {
 
         Long id = sessionDTO.getUserSeq();
 
@@ -121,8 +120,7 @@ public class UserController {
     @GetMapping("/myTeams/{teamSeq}/profile")
     public ResponseMyTeamProfileDTO findMyTeamsProfile(
             @SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO,
-            @PathVariable Long teamSeq)
-    {
+            @PathVariable Long teamSeq){
 
         Long id = sessionDTO.getUserSeq();
 
@@ -156,8 +154,7 @@ public class UserController {
     public String modifyMyTeamsProfile(
             @SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO,
             @PathVariable Long teamSeq,
-            String backNumber)
-    {
+            @RequestBody BackNumber backNumber){
 
         Long id = sessionDTO.getUserSeq();
 
@@ -167,10 +164,15 @@ public class UserController {
 
         ModifyMyTeamProfileDTO myTeamProfileDTO = new ModifyMyTeamProfileDTO()
                                                             .findMyTeamProfileDTO(findMyTeamProfileDTO)
-                                                            .backNumber(backNumber);
+                                                            .backNumber(backNumber.getBackNumber());
 
         teamMemberService.updateMyTeamProfile(myTeamProfileDTO);
         return "ok";
+    }
+
+    @Getter
+    public static class BackNumber{
+        private String backNumber;
     }
 
     @Getter
