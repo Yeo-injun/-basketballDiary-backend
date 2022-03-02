@@ -103,8 +103,8 @@
                                  ON B.TEAM_MEMBER_SEQ = C.TEAM_MEMBER_SEQ
               WHERE B.TEAM_AUTH_CODE <![CDATA[<]]> 2 -- 관리자(임원) 이상 조회
                 AND B.WITHDRAWAL_YN != 'Y'
-           AND B.TEAM_SEQ = #{teamSeq}) ORDERS LIMIT #{pagerVO.offset}
-        OFFSET #{pagerVO.pageNo}
+           AND B.TEAM_SEQ = #{teamSeq}) ORDERS LIMIT #{pagerDTO.offset}
+        OFFSET #{pagerDTO.pageNo}
     </select>
 
 

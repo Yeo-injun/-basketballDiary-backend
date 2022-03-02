@@ -61,8 +61,12 @@ public class MyTeamService {
         if(teamSeq == null)
             throw new NullPointerException("팀 PK가 존재하지 않습니다.");
 
-        PagerVO pagerVO = new PagerVO().pageNo(pageNo*4).offset(4);
-        MemberDTO memberDTO = new MemberDTO().teamSeq(teamSeq).pagerVO(pagerVO);
+        PagerDTO pagerDTO = new PagerDTO()
+                .pageNo(pageNo*4)
+                .offset(4);
+        MemberDTO memberDTO = new MemberDTO()
+                .teamSeq(teamSeq)
+                .pagerVO(pagerDTO);
 
         return myTeamRepository.findPagingMemberByTeamSeq(memberDTO);
     }

@@ -1,7 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.controller;
 
 import com.threeNerds.basketballDiary.mvc.domain.Team;
-import com.threeNerds.basketballDiary.mvc.dto.TeamDto;
+import com.threeNerds.basketballDiary.mvc.dto.TeamDTO;
 import com.threeNerds.basketballDiary.mvc.service.TeamService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +30,7 @@ public class TeamController {
     private final TeamService teamService;
 
     @PostMapping("/new")
-    public String create(TeamDto teamDto){
+    public String create(TeamDTO teamDto){
         Team team = Team.builder()
                 .leaderId(teamDto.getLeaderId())
                 .teamName(teamDto.getTeamName())

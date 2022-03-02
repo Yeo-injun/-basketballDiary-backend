@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
-public class TeamDto {
+public class TeamDTO {
 
     private String leaderId;
 

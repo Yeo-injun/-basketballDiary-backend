@@ -34,7 +34,7 @@ public class MemberDTO {
     private Integer totGame;
 
     /* 페이징 처리를 위한 VO */
-    private PagerVO pagerVO;
+    private PagerDTO pagerDTO;
 
     public MemberDTO userSeq (Long userSeq) {
         this.userSeq = userSeq;
@@ -91,8 +91,8 @@ public class MemberDTO {
         return this;
     }
 
-    public MemberDTO pagerVO (PagerVO pagerVO) {
-        this.pagerVO = pagerVO;
+    public MemberDTO pagerVO (PagerDTO pagerDTO) {
+        this.pagerDTO = pagerDTO;
         return this;
     }
 }
