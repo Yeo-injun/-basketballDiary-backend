@@ -13,8 +13,14 @@ package com.threeNerds.basketballDiary.exception;
  * throw/throws 문법을 통해 예외를 던져서 상위 호출부에서 try ... catch 문으로 예외를 처리해줄 수 있음.
  *
  * [Exception 적용방안]
- * 방안 1. (22.03.03 인준) 서비스 통합 Exception클래스를 생성하여 ENUM으로 Error메세지를 관리하여 Exception클래스의 파라미터로 넘겨주기.
+ * 방안 1. (22.03.03 인준) 서비스 통합 Exception클래스를 생성하여 Error메세지를 파라미터로 넘겨주는 방식.(Error메세지는 ENUM or CONSTANT로 관리)
+ *      - Exception클래스는 1개(모든 서비스 통합 Exception), Exception클래스의 에러 메세지를 Message클래스의 CONSTANT로 관리
  *      - 차세대 구조 참고
+ * 방안 2.(채택) (22.03.03 인준) 예외별로 Exception클래스를 만들어서 사용. Error메세지는 에러를 throw할때 임의로 넣어줌.
+ *      - 메세지 작성이 유연하나, 통합관리가 어려움.
+ *      - Exception마다 클래스를 따로 생성해줘야 하는 번거로움이 있음.
+ *      - 하지만, try ... catch 문에서 예외를 클래스명으로 잡기 때문에 가독성이 좋을 수 있다고 생각됨.
+ *      - 참고자료 : f-lab프로젝트 https://github.com/f-lab-edu/sns-itda/tree/ff7a5152b1b49ad63cf7d9ddc13a3b64a5ea2172/src/main/java/me/liiot/snsserver
  *
  * [고민해봐야 할 이슈]
  * 1. (22.03.03 인준) 예외를 발생시켜야 하는 상황은 어떤 상황인가.
@@ -24,5 +30,13 @@ package com.threeNerds.basketballDiary.exception;
  * 점프 투 자바 : https://wikidocs.net/229
  * 예외클래스의 구조 : https://itmining.tistory.com/9
  */
-public class TeamMemberException extends RuntimeException {
+public class NotExistTeamMemeberException extends RuntimeException {
+
+    public NotExistTeamMemeberException() {
+        super();
+    }
+
+    public NotExistTeamMemeberException(String message) {
+        super(message);
+    }
 }
