@@ -1,5 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.controller;
 
+import com.threeNerds.basketballDiary.exception.NotExistTeamMemeberException;
 import com.threeNerds.basketballDiary.interceptor.Auth;
 import com.threeNerds.basketballDiary.mvc.dto.*;
 import com.threeNerds.basketballDiary.mvc.service.MyTeamService;
@@ -17,7 +18,7 @@ import static com.threeNerds.basketballDiary.session.SessionConst.LOGIN_MEMBER;
 import static com.threeNerds.basketballDiary.utils.HttpResponses.*;
 
 /**
- * ... 수행하는 Controller
+ * 소속팀과 관련된 업무를 처리하는 Controller
  *
  * @author 책임자 작성
  * <p>
@@ -30,6 +31,7 @@ import static com.threeNerds.basketballDiary.utils.HttpResponses.*;
  * 2022.02.24 강창기 : 소속팀 정보 삭제 구현
  * 2022.02.26 강창기 : 소속팀 운영진 조회 구현
  * 2022.02.27 강창기 : 소속팀 팀원 조회 구현
+ * 2022.03.04 여인준 : 책임 API ResponseEntity적용
  * </pre>
  */
 
@@ -81,21 +83,16 @@ public class MyTeamController {
     public ResponseEntity<?> appointManager (
             @PathVariable Long teamSeq,
             @PathVariable Long teamMemberSeq
-    ) throws Exception
-    {
+    ) {
         KeyDTO.TeamMember teamMemberKey = new KeyDTO.TeamMember()
                 .teamSeq(teamSeq)
                 .teamMemberSeq(teamMemberSeq);
-        // TODO 서비스에서 Exception을 던지면,
-        // 컨트롤러에서는 try.. catch문을 사용해서
-        // 해당 Exception이 발생할때와 그렇지 않을때
-        // 분기처리해서 Http표준 메세지를 return해주기!
         try
         {
             teamMemberManagerService.appointManager(teamMemberKey);
-            return ResponseEntity.ok(teamMemberKey);
+            return RESPONSE_OK;
         }
-        catch (Exception e)
+        catch (NotExistTeamMemeberException e)
         {
             return RESPONSE_NO_CONTENT;
         }
@@ -105,7 +102,7 @@ public class MyTeamController {
      * API004 : 소속팀 회원 강퇴시키기
      */
     @DeleteMapping("{teamSeq}/members/{teamMemberSeq}")
-    public String removeTeamMember(
+    public ResponseEntity<?> removeTeamMember(
             @PathVariable Long teamSeq,
             @PathVariable Long teamMemberSeq
     ) {
@@ -113,14 +110,15 @@ public class MyTeamController {
                                 .teamSeq(teamSeq)
                                 .teamMemberSeq(teamMemberSeq);
         teamMemberManagerService.removeTeamMember(teamMemberKey);
-        return "";
+        return RESPONSE_OK;
+        // TODO 예외처리 반영
     }
 
     /**
      * API005 : 소속팀의 초대한 선수목록 조회
      */
     @GetMapping("/{teamSeq}/joinRequestTo") // TODO URL 마지막에 /users 추가하는 것은 어떤지 (22.02.20 인준의견)
-    public List<PlayerDTO> searchInvitedPlayer(
+    public ResponseEntity<?> searchInvitedPlayer(
             @PathVariable Long teamSeq,
             @RequestParam(name = "state", defaultValue = "00") String joinRequestStateCode
     ) {
@@ -129,32 +127,31 @@ public class MyTeamController {
                                             .joinRequestStateCode(joinRequestStateCode);
 
         List<PlayerDTO> playerList = teamMemberManagerService.searchInvitedPlayer(searchCond);
-        return playerList;
+        return ResponseEntity.ok(playerList);
     }
-
 
     /**
      * API007 : 소속팀의 선수초대
      */
     @PostMapping("/{teamSeq}/joinRequestTo/{userSeq}")
-    public String inviteTeamMember(
+    public ResponseEntity<?> inviteTeamMember(
             @PathVariable Long teamSeq,
             @PathVariable Long userSeq
     ) {
-        log.info("---INFO Controller.inviteTeamMember 진입 ---");
         JoinRequestDTO joinRequest = new JoinRequestDTO()
                                             .teamSeq(teamSeq)
                                             .userSeq(userSeq);
 
         teamMemberManagerService.inviteTeamMember(joinRequest);
-        return "OK"; // TODO 임시로 return값 반영
+        return RESPONSE_OK;
+        // TODO 예외처리 반영
     }
 
     /**
      * API008 : 소속팀이 받은 가입요청목록 조회
      */
     @GetMapping("/{teamSeq}/joinRequestFrom") // TODO URL 마지막에 /users 추가하는 것은 어떤지 (22.02.20 인준의견)
-    public List<PlayerDTO> searchJoinRequestPlayer(
+    public ResponseEntity<?> searchJoinRequestPlayer(
             @PathVariable Long teamSeq,
             @RequestParam(name = "state", defaultValue = "00") String joinRequestStateCode
     ) {
@@ -163,7 +160,7 @@ public class MyTeamController {
                 .joinRequestStateCode(joinRequestStateCode);
 
         List<PlayerDTO> playerList = teamMemberManagerService.searchJoinRequestPlayer(searchCond);
-        return playerList;
+        return ResponseEntity.ok(playerList);
     }
 
     /**
@@ -172,7 +169,7 @@ public class MyTeamController {
      * 위와 같이 바꾸지 않는다면 userSeq를 requestBody에 넣어서 객체로 보내줘야 함. 기본적으로 key는 Url에, key가 아닌 값은 requestBody에 넣는 방식으로 통일하는 것은?
      */
     @PatchMapping("/{teamSeq}/joinRequestFrom/{userSeq}/approval/{teamJoinRequestSeq}")
-    public String approveJoinRequest(
+    public ResponseEntity<?> approveJoinRequest(
             @PathVariable Long teamJoinRequestSeq,
             @PathVariable Long teamSeq,
             @PathVariable Long userSeq
@@ -183,14 +180,15 @@ public class MyTeamController {
                 .userSeq(userSeq);
 
         teamMemberManagerService.approveJoinRequest(joinRequest);
-        return "API009";
+        return RESPONSE_OK;
+        // TODO 예외처리 반영
     }
 
     /**
      * API010 : 소속팀의 가입요청 거절
      */
     @PatchMapping("/{teamSeq}/joinRequestFrom/{teamJoinRequestSeq}/rejection")
-    public String rejectJoinRequest(
+    public ResponseEntity<?> rejectJoinRequest(
             @PathVariable Long teamSeq,
             @PathVariable Long teamJoinRequestSeq
     ) {
@@ -199,8 +197,8 @@ public class MyTeamController {
                 .teamJoinRequestSeq(teamJoinRequestSeq);
 
         teamMemberManagerService.rejectJoinRequest(joinRequest);
-        
-        return "";
+        return RESPONSE_OK;
+        // TODO 예외처리 반영
     }
 
     /**
@@ -233,7 +231,7 @@ public class MyTeamController {
             teamMemberManagerService.dismissManager(teamMemberKeys);
             return RESPONSE_OK;
         }
-        catch (Exception e)
+        catch (NotExistTeamMemeberException e)
         {
             return RESPONSE_NO_CONTENT;
         }

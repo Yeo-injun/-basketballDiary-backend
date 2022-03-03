@@ -1,6 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.service;
 
 import com.threeNerds.basketballDiary.constant.*;
+import com.threeNerds.basketballDiary.exception.NotExistTeamMemeberException;
 import com.threeNerds.basketballDiary.mvc.domain.Team;
 import com.threeNerds.basketballDiary.mvc.domain.TeamJoinRequest;
 import com.threeNerds.basketballDiary.mvc.domain.TeamMember;
@@ -187,15 +188,14 @@ public class TeamMemberManagerService {
      * @param teamMemberKey
      * @return
      */
-    public boolean appointManager(KeyDTO.TeamMember teamMemberKey) throws Exception {
+    public boolean appointManager(KeyDTO.TeamMember teamMemberKey) throws NotExistTeamMemeberException {
         TeamMember teamMember = TeamMember.toManager(teamMemberKey);
 
         boolean isSuccess = teamMemberRepository.updateTeamAuth(teamMember) == 1 ? true : false;
         if (!isSuccess)
         {
             log.info("===== 팀원을 찾을 수 없습니다. =====");
-            throw new Exception("팀원을 찾을 수 없습니다.");
-//            return false; //TODO 예외처리해서 Exception으로 처리하기
+            throw new NotExistTeamMemeberException("팀원을 찾을 수 없습니다.");
         }
         return true;
     }
@@ -211,9 +211,7 @@ public class TeamMemberManagerService {
         boolean isSuccess = teamMemberRepository.updateTeamAuth(teamMember) == 1 ? true : false;
         if (!isSuccess)
         {
-            log.info("===== 팀원을 찾을 수 없습니다. =====");
-            throw new Exception();
-//            return false; //TODO Exception으로 처리하기 (구체적인 Exception만들기)
+            throw new NotExistTeamMemeberException("해당되는 팀원이 없습니다.");
         }
         return true;
     }
