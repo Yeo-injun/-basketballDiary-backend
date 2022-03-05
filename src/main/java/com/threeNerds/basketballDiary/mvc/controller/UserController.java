@@ -11,15 +11,17 @@ import com.threeNerds.basketballDiary.mvc.service.UserTeamManagerService;
 import com.threeNerds.basketballDiary.session.SessionUser;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
+import java.util.List;
 
 import static com.threeNerds.basketballDiary.session.SessionConst.LOGIN_MEMBER;
+import static com.threeNerds.basketballDiary.utils.HttpResponses.*;
 
 /**
  * ... 수행하는 Controller
@@ -222,18 +224,31 @@ public class UserController {
     // TODO 클래스단위의 url 매핑정보 수정에 따라 root url 수정 필요
     // TODO 로그인 여부 체크하는 동작 필요 - checkLogin 어노테이션 적용 요망
     @PostMapping("/{userSeq}/joinRequestTo/{teamSeq}")
-    public String joinRequestToTeam(
+    public ResponseEntity<?> sendJoinRequestToTeam(
             @PathVariable("userSeq") Long userSeq,
-            @PathVariable("teamSeq") Long teamSeq)
+            @PathVariable("teamSeq") Long teamSeq
+    )
     {
         JoinRequestDTO joinRequest = new JoinRequestDTO()
                                             .teamSeq(teamSeq)
                                             .userSeq(userSeq);
 
         userTeamManagerService.sendJoinRequestToTeam(joinRequest);
-        return "Ok";
+        return RESPONSE_CREATED;
     }
 
-    // TODO HTTP메세지 생성 메서드 추가해주기
-    // TODO remote repo에 PUSH하기 위한 수정
+    /**
+     *  API022 : 농구팀 가입요청 및 초대 목록 조회
+     **/
+    @GetMapping("/{userSeq}/joinRequestsAll")
+    public ResponseEntity<?> searchJoinRequestsAll(
+            @PathVariable Long userSeq
+    )
+    {
+        JoinRequestDTO joinRequestDTO = new JoinRequestDTO()
+                .userSeq(userSeq);
+
+        List<JoinRequestDTO> result = userTeamManagerService.searchJoinRequestsAll(joinRequestDTO);
+        return ResponseEntity.ok(result);
+    }
 }

@@ -5,9 +5,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.lang.reflect.Field;
-
-import java.lang.reflect.Method;
 import java.util.*;
 
 @Getter
@@ -26,11 +23,13 @@ public class TeamJoinRequest {
 
     // 가입요청 유형코드
     private String joinRequestTypeCode;
+
     // 가입요청상태 코드
     private String joinRequestStateCode;
 
     // 가입요청일시
     private Date requestDate; // TODO sql패키지와 util패키지의 Date차이는?? => LocalDate 로 수정하는 것이 좋음
+
     // 요청확정일시
     private Date confirmationDate;
 

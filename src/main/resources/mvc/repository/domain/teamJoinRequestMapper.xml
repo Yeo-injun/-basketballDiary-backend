@@ -39,4 +39,20 @@
            AND JOIN_REQUEST_STATE_CODE = '01' /* 팀가입요청상태코드 - 대기중인 상태만 변경가능 */
     </update>
 
+    <select id="findAllJoinRequests" resultType="com.threeNerds.basketballDiary.mvc.dto.JoinRequestDTO">
+        SELECT A.TEAM_JOIN_REQUEST_SEQ  /* 팀가입요청SEQ */
+             , A.JOIN_REQUEST_TYPE_CODE /* 팀가입요청유형코드 */
+             , A.REQUEST_DATE           /* 가입요청일시 */
+             , B.TEAM_NAME              /* 팀명 */
+             , B.HOMETOWN               /* 연고지 */
+             , B.FOUNDATION_YMD         /* 창립일자 */
+             , C.NAME AS LEADER_NAME    /* 팀장이름 */
+          FROM TEAM_JOIN_REQUEST A
+         INNER JOIN TEAM B
+            ON A.TEAM_SEQ = B.TEAM_SEQ
+         INNER JOIN USER C
+            ON B.LEADER_ID = C.USER_SEQ
+         WHERE 1=1
+           AND A.USER_SEQ = #{userSeq}
+    </select>
 </mapper>

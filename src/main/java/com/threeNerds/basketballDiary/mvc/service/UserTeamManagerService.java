@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 /**
  * 사용자가 팀의 구성원으로서 관련된 업무를 수행하기 위한 Service
  * @author 여인준
@@ -59,4 +61,11 @@ public class UserTeamManagerService {
         teamJoinRequestRepository.createJoinRequest(joinRequestInfo);
     }
 
+    // 농구팀 가입요청 및 초대목록 조회하기
+    public List<JoinRequestDTO> searchJoinRequestsAll(JoinRequestDTO joinRequestDTO)
+    {
+        // TODO 코드명 할당하기
+        List<JoinRequestDTO> joinRequestDTOList = teamJoinRequestRepository.findAllJoinRequests(joinRequestDTO);
+        return joinRequestDTOList;
+    }
 }
