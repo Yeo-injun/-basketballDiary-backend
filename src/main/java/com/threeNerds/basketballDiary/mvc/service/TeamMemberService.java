@@ -1,5 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.service;
 
+import com.threeNerds.basketballDiary.mvc.controller.ProfileController;
 import com.threeNerds.basketballDiary.mvc.controller.UserController;
 import com.threeNerds.basketballDiary.mvc.domain.User;
 import com.threeNerds.basketballDiary.mvc.dto.ResponseMyTeamProfileDTO;
@@ -26,15 +27,15 @@ import org.springframework.transaction.annotation.Transactional;
 public class TeamMemberService {
     private final TeamMemberRepository teamMemberRepository;
 
-    public ResponseMyTeamProfileDTO findProfile(UserController.FindMyTeamProfileDTO userDto){
+    public ResponseMyTeamProfileDTO findProfile(ProfileController.FindMyTeamProfileDTO userDto){
         return teamMemberRepository.findMyTeamProfile(userDto);
     }
 
-    public int updateMyTeamProfile(UserController.ModifyMyTeamProfileDTO userDto){
+    public int updateMyTeamProfile(ProfileController.ModifyMyTeamProfileDTO userDto){
         return teamMemberRepository.updateMyTeamProfile(userDto);
     }
 
-    public void deleteMyTeamProfile(UserController.FindMyTeamProfileDTO userDto){
+    public void deleteMyTeamProfile(ProfileController.FindMyTeamProfileDTO userDto){
         teamMemberRepository.deleteMyTeamProfile(userDto);
     }
 }
