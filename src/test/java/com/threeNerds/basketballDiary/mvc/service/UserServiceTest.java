@@ -100,7 +100,7 @@ class UserServiceTest {
     @Test
     void modifyUserTest(){
         //given
-
+        doNothing().when(userRepository).updateUser(testUser2);
         //when
         userRepository.updateUser(testUser2);
         //then
@@ -110,7 +110,7 @@ class UserServiceTest {
     @Test
     void deleteUserTest(){
         //given
-
+        doNothing().when(userRepository).deleteUser("Uesr");
         //when
         userService.deleteUser(testUser.getUserId());
         //then
