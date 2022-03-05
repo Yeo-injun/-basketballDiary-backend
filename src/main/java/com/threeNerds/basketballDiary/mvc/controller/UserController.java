@@ -77,37 +77,5 @@ public class UserController {
 
     /****************************************************************************************************************/
 
-    /**
-     *  API020 : 농구팀 가입요청 보내기
-     **/
-    // TODO 클래스단위의 url 매핑정보 수정에 따라 root url 수정 필요
-    // TODO 로그인 여부 체크하는 동작 필요 - checkLogin 어노테이션 적용 요망
-    @PostMapping("/{userSeq}/joinRequestTo/{teamSeq}")
-    public ResponseEntity<?> sendJoinRequestToTeam(
-            @PathVariable("userSeq") Long userSeq,
-            @PathVariable("teamSeq") Long teamSeq
-    )
-    {
-        JoinRequestDTO joinRequest = new JoinRequestDTO()
-                                            .teamSeq(teamSeq)
-                                            .userSeq(userSeq);
 
-        userTeamManagerService.sendJoinRequestToTeam(joinRequest);
-        return RESPONSE_CREATED;
-    }
-
-    /**
-     *  API022 : 농구팀 가입요청 및 초대 목록 조회
-     **/
-    @GetMapping("/{userSeq}/joinRequestsAll")
-    public ResponseEntity<?> searchJoinRequestsAll(
-            @PathVariable Long userSeq
-    )
-    {
-        JoinRequestDTO joinRequestDTO = new JoinRequestDTO()
-                .userSeq(userSeq);
-
-        List<JoinRequestDTO> result = userTeamManagerService.searchJoinRequestsAll(joinRequestDTO);
-        return ResponseEntity.ok(result);
-    }
 }

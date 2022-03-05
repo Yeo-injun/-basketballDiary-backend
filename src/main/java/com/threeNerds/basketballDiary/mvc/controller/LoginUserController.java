@@ -1,20 +1,26 @@
 package com.threeNerds.basketballDiary.mvc.controller;
 
 import com.threeNerds.basketballDiary.mvc.domain.User;
+import com.threeNerds.basketballDiary.mvc.dto.JoinRequestDTO;
 import com.threeNerds.basketballDiary.mvc.dto.ResponseMyTeamProfileDTO;
 import com.threeNerds.basketballDiary.mvc.dto.UserDTO;
 import com.threeNerds.basketballDiary.mvc.service.TeamMemberService;
 import com.threeNerds.basketballDiary.mvc.service.UserService;
+import com.threeNerds.basketballDiary.mvc.service.UserTeamManagerService;
 import com.threeNerds.basketballDiary.session.SessionUser;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+import java.util.List;
+
 import static com.threeNerds.basketballDiary.session.SessionConst.LOGIN_MEMBER;
+import static com.threeNerds.basketballDiary.utils.HttpResponses.RESPONSE_CREATED;
 
 @Slf4j
 @RestController
@@ -23,6 +29,43 @@ import static com.threeNerds.basketballDiary.session.SessionConst.LOGIN_MEMBER;
 public class LoginUserController {
 
     private final UserService userService; // TODO UserTeamManagerService로 변경
+    private final UserTeamManagerService userTeamManagerService;
+
+    /**
+     *  API020 : 농구팀 가입요청 보내기
+     **/
+    // TODO 클래스단위의 url 매핑정보 수정에 따라 root url 수정 필요
+    // TODO 로그인 여부 체크하는 동작 필요 - checkLogin 어노테이션 적용 요망
+    @PostMapping("/joinRequestTo/{teamSeq}")
+    public ResponseEntity<?> sendJoinRequestToTeam(
+            @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser,
+            @PathVariable("teamSeq") Long teamSeq
+    )
+    {
+        Long userSeq = sessionUser.getUserSeq();
+        JoinRequestDTO joinRequest = new JoinRequestDTO()
+                .teamSeq(teamSeq)
+                .userSeq(userSeq);
+
+        userTeamManagerService.sendJoinRequestToTeam(joinRequest);
+        return RESPONSE_CREATED;
+    }
+
+    /**
+     *  API022 : 농구팀 가입요청 및 초대 목록 조회
+     **/
+    @GetMapping("/joinRequestsAll")
+    public ResponseEntity<?> searchJoinRequestsAll(
+            @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser
+    )
+    {
+        Long userSeq = sessionUser.getUserSeq();
+        JoinRequestDTO joinRequestDTO = new JoinRequestDTO()
+                .userSeq(userSeq);
+
+        List<JoinRequestDTO> result = userTeamManagerService.searchJoinRequestsAll(joinRequestDTO);
+        return ResponseEntity.ok(result);
+    }
 
     /**
      * API025 회원정보 수정데이터 조회
