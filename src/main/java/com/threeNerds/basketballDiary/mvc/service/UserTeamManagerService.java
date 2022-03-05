@@ -64,8 +64,16 @@ public class UserTeamManagerService {
     // 농구팀 가입요청 및 초대목록 조회하기
     public List<JoinRequestDTO> searchJoinRequestsAll(JoinRequestDTO joinRequestDTO)
     {
-        // TODO 코드명 할당하기
         List<JoinRequestDTO> joinRequestDTOList = teamJoinRequestRepository.findAllJoinRequests(joinRequestDTO);
+        for (JoinRequestDTO joinRequest : joinRequestDTOList)
+        {
+            String typeCode = joinRequest.getJoinRequestTypeCode();
+            String stateCode = joinRequest.getJoinRequestStateCode();
+
+            // TODO 코드Util을 만들어서 코드값이 있으면 해당코드값에 대한 코드명을 넣어주기
+            joinRequest.joinRequestTypeCodeName(typeCode);
+            joinRequest.joinRequestStateCodeName(stateCode);
+        }
         return joinRequestDTOList;
     }
 }
