@@ -36,7 +36,7 @@ public class TeamController {
                 .teamName(teamDto.getTeamName())
                 .hometown(teamDto.getHometown())
                 .introduction(teamDto.getIntroduction())
-                .foundationYmd(LocalDate.now())
+                .foundationYmd(LocalDate.now().toString())
                 .regDate(LocalDate.now())
                 .updateDate(LocalDate.now())
                 .sidoCode(teamDto.getSidoCode())

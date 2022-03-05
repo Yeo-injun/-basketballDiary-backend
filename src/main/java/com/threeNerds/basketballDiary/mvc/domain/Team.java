@@ -25,7 +25,7 @@ public class Team {
     private String introduction;
 
     // 창단일자
-    private LocalDate foundationYmd;
+    private String foundationYmd;
 
     // 등록일자
     private LocalDate regDate;
