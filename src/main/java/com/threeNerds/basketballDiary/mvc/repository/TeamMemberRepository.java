@@ -1,5 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.repository;
 
+import com.threeNerds.basketballDiary.mvc.controller.ProfileController;
 import com.threeNerds.basketballDiary.mvc.controller.UserController;
 import com.threeNerds.basketballDiary.mvc.domain.TeamMember;
 import com.threeNerds.basketballDiary.mvc.domain.User;
@@ -48,9 +49,9 @@ public interface TeamMemberRepository {
      * @param userDto
      * @return
      */
-    ResponseMyTeamProfileDTO findMyTeamProfile(UserController.FindMyTeamProfileDTO userDto);
+    ResponseMyTeamProfileDTO findMyTeamProfile(ProfileController.FindMyTeamProfileDTO userDto);
 
-    int updateMyTeamProfile(UserController.ModifyMyTeamProfileDTO userDto);
+    int updateMyTeamProfile(ProfileController.ModifyMyTeamProfileDTO userDto);
 
-    void deleteMyTeamProfile(UserController.FindMyTeamProfileDTO userDto);
+    void deleteMyTeamProfile(ProfileController.FindMyTeamProfileDTO userDto);
 }
