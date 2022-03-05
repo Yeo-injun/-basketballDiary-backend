@@ -1,6 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.service;
 
-import com.threeNerds.basketballDiary.mvc.controller.ProfileController;
+import com.threeNerds.basketballDiary.mvc.controller.LoginUserController;
+import com.threeNerds.basketballDiary.mvc.controller.MyTeamController;
 import com.threeNerds.basketballDiary.mvc.controller.UserController;
 import com.threeNerds.basketballDiary.mvc.repository.TeamMemberRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,7 +29,7 @@ class TeamMemberServiceTest {
 
     @BeforeEach
     void setUpEach(){
-        ProfileController.FindMyTeamProfileDTO findMyTeamProfileDTO = new ProfileController.FindMyTeamProfileDTO()
+        MyTeamController.FindMyTeamProfileDTO findMyTeamProfileDTO = new MyTeamController.FindMyTeamProfileDTO()
                 .userSeq(1L)
                 .teamSeq(3L);
 
