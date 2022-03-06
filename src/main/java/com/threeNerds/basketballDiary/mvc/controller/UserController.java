@@ -120,6 +120,12 @@ public class UserController {
         log.info("Auth : 1");
     }
 
+    @Auth(GRADE = 2L)
+    @GetMapping("/testAnnotation2/{teamId}")
+    public void test2(){
+        log.info("Auth : 2");
+    }
+
     /****************************************************************************************************************/
 
     /**
