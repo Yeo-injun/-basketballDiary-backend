@@ -30,13 +30,13 @@ package com.threeNerds.basketballDiary.exception;
  * 점프 투 자바 : https://wikidocs.net/229
  * 예외클래스의 구조 : https://itmining.tistory.com/9
  */
-public class NotExistTeamMemeberException extends RuntimeException {
+public class NotExistException extends RuntimeException {
 
-    public NotExistTeamMemeberException() {
+    public NotExistException() {
         super();
     }
 
-    public NotExistTeamMemeberException(String message) {
+    public NotExistException(String message) {
         super(message);
     }
 }

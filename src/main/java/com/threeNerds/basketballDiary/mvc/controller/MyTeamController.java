@@ -1,6 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.controller;
 
-import com.threeNerds.basketballDiary.exception.NotExistTeamMemeberException;
+import com.threeNerds.basketballDiary.exception.AlreadyExsitException;
+import com.threeNerds.basketballDiary.exception.NotExistException;
 import com.threeNerds.basketballDiary.interceptor.Auth;
 import com.threeNerds.basketballDiary.mvc.dto.*;
 import com.threeNerds.basketballDiary.mvc.service.MyTeamService;
@@ -94,7 +95,7 @@ public class MyTeamController {
             teamMemberManagerService.appointManager(teamMemberKey);
             return RESPONSE_OK;
         }
-        catch (NotExistTeamMemeberException e)
+        catch (NotExistException e)
         {
             return RESPONSE_NO_CONTENT;
         }
@@ -167,23 +168,25 @@ public class MyTeamController {
 
     /**
      * API009 : 소속팀이 사용자의 가입요청 승인
-     * TODO URL 변경 건의 : /api/myTeams/{teamSeq}/joinRequestFrom/{userSeq}/approval/{teamJoinRequestSeq}로!
-     * 위와 같이 바꾸지 않는다면 userSeq를 requestBody에 넣어서 객체로 보내줘야 함. 기본적으로 key는 Url에, key가 아닌 값은 requestBody에 넣는 방식으로 통일하는 것은?
      */
-    @PatchMapping("/{teamSeq}/joinRequestFrom/{userSeq}/approval/{teamJoinRequestSeq}")
+    @PatchMapping("/{teamSeq}/joinRequestFrom/{teamJoinRequestSeq}/approval")
     public ResponseEntity<?> approveJoinRequest(
             @PathVariable Long teamJoinRequestSeq,
-            @PathVariable Long teamSeq,
-            @PathVariable Long userSeq
+            @PathVariable Long teamSeq
     ) {
         JoinRequestDTO joinRequest = new JoinRequestDTO()
                 .teamJoinRequestSeq(teamJoinRequestSeq)
-                .teamSeq(teamSeq)
-                .userSeq(userSeq);
-
-        teamMemberManagerService.approveJoinRequest(joinRequest);
-        return RESPONSE_OK;
-        // TODO 예외처리 반영
+                .teamSeq(teamSeq);
+        try
+        {
+            teamMemberManagerService.approveJoinRequest(joinRequest);
+            return RESPONSE_CREATED;
+        }
+        catch (AlreadyExsitException | NotExistException e)
+        {
+            // TODO 참고자료(왜 409에러로 처리했는지) : https://deveric.tistory.com/62
+            return RESPONSE_CONFLICT;
+        }
     }
 
     /**
@@ -327,7 +330,7 @@ public class MyTeamController {
             teamMemberManagerService.dismissManager(teamMemberKeys);
             return RESPONSE_OK;
         }
-        catch (NotExistTeamMemeberException e)
+        catch (NotExistException e)
         {
             return RESPONSE_NO_CONTENT;
         }

@@ -9,6 +9,8 @@ import java.util.List;
 @Mapper
 public interface TeamJoinRequestRepository {
 
+    JoinRequestDTO findUserByTeamJoinRequestSeq(JoinRequestDTO joinRequestDTO);
+
     int createJoinRequest(TeamJoinRequest teamJoinRequest);
 
     TeamJoinRequest checkJoinRequest(TeamJoinRequest invitationInfo);
