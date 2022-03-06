@@ -8,5 +8,15 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface Auth {
-    long GRADE() default 0;
+    /** annotation member**/
+    /**
+     * 1. primitive
+     * 2. String
+     * 3. an Enum
+     * 4. another Annotation
+     * 5. Class
+     * 6. an array of any of the above
+     * => don't use 'wrapper class'
+     */
+    long GRADE() default 0L;
 }
