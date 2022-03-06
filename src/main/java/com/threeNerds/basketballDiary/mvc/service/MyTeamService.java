@@ -13,7 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 소속팀에서 팀원관리 및 소속팀정보 관리 등의 업무를 수행하는 Service
@@ -46,10 +48,9 @@ public class MyTeamService {
      * @return List<MemberDTO>
      */
     public List<MemberDTO> findManagers(Long teamSeq) {
-        if(teamSeq == null)
-            throw new NullPointerException("팀 PK가 존재하지 않습니다.");
-
-        return myTeamRepository.findAllManagerByTeamSeq(teamSeq);
+        // 운영진은 반드시 1명 이상 존재해야 하므로(팀장), 아무도 존재하지 않을 경우 Exception 처리.
+        return Optional.ofNullable(myTeamRepository.findAllManagerByTeamSeq(teamSeq))
+                .orElseThrow(() -> new NullPointerException("운영진 정보가 존재하지 않습니다."));
     }
 
     /**
@@ -58,9 +59,6 @@ public class MyTeamService {
      * @return List<MemberDTO>
      */
     public List<MemberDTO> findMembers(Long teamSeq, Integer pageNo) {
-        if(teamSeq == null)
-            throw new NullPointerException("팀 PK가 존재하지 않습니다.");
-
         PagerDTO pagerDTO = new PagerDTO()
                 .pageNo(pageNo*4)
                 .offset(4);
@@ -68,7 +66,8 @@ public class MyTeamService {
                 .teamSeq(teamSeq)
                 .pagerVO(pagerDTO);
 
-        return myTeamRepository.findPagingMemberByTeamSeq(memberDTO);
+        List<MemberDTO> memberList = myTeamRepository.findPagingMemberByTeamSeq(memberDTO);
+        return memberList.isEmpty() ? Collections.emptyList() : memberList;
     }
 
     /**
@@ -77,17 +76,17 @@ public class MyTeamService {
      * @return List<MyTeamDTO>
      */
     public List<MyTeamDTO> findTeams(Long userSeq) {
-        if (userSeq == null)
-            throw new NullPointerException("userSeq");
-
         List<MyTeamDTO> resultDTO = new ArrayList<MyTeamDTO>();
-        List<MyTeamInfoDTO> myTeamInfoList = myTeamRepository.findAllByUserSeq(userSeq);
+        List<MyTeamInfoDTO> myTeamInfoList = Optional.ofNullable(myTeamRepository.findAllByUserSeq(userSeq))
+                .orElseThrow(() -> new NullPointerException("소속팀 정보가 존재하지 않습니다."));
 
         myTeamInfoList.forEach(myTeamInfo -> {
             Long teamSeq = myTeamInfo.getTeamSeq();
+            List<TeamRegularExercise> exerciseList = teamRegularExerciseRepository.findByTeamSeq(teamSeq);
             MyTeamDTO myTeamDTO = new MyTeamDTO()
                     .myTeamInfo(myTeamInfo)
-                    .teamRegularExercisesList(teamRegularExerciseRepository.findByTeamSeq(teamSeq));
+                    .teamRegularExercisesList(exerciseList.isEmpty() ? Collections.emptyList() : exerciseList);
+
             resultDTO.add(myTeamDTO);
         });
         return resultDTO;
@@ -99,20 +98,13 @@ public class MyTeamService {
      * @return MyTeamDTO
      */
     public MyTeamDTO findTeam(Long userSeq, Long teamSeq) {
-        if (userSeq == null)
-            throw new NullPointerException("userSeq");
-        if (teamSeq == null)
-            throw new NullPointerException("teamSeq");
-
-        MyTeamInfoDTO myTeamInfo = myTeamRepository.findByUserSeqAndTeamSeq(userSeq, teamSeq);
+        MyTeamInfoDTO myTeamInfo = Optional.ofNullable(myTeamRepository.findByUserSeqAndTeamSeq(userSeq, teamSeq))
+                .orElseThrow(() -> new NullPointerException("소속팀의 해당 팀 정보가 존재하지 않습니다."));
         List<TeamRegularExercise> teamRegularExerciseList = teamRegularExerciseRepository.findByTeamSeq(teamSeq);
-
-        if (myTeamInfo == null)
-            throw new NullPointerException("소속팀의 해당 팀 정보가 존재하지 않습니다.");
 
         MyTeamDTO resultDTO = new MyTeamDTO()
                 .myTeamInfo(myTeamInfo)
-                .teamRegularExercisesList(teamRegularExerciseList);
+                .teamRegularExercisesList(teamRegularExerciseList.isEmpty() ? Collections.emptyList() : teamRegularExerciseList);
 
         log.info("teamName = {}", myTeamInfo.getTeamName());
         return resultDTO;
@@ -123,17 +115,13 @@ public class MyTeamService {
      * @param teamSeq, dto
      */
     public void modifyMyTeam(Long teamSeq, MyTeamDTO dto) {
-        if(teamSeq == null)
-            throw new NullPointerException("팀 PK가 존재하지 않습니다.");
-        if(dto == null)
-            throw new NullPointerException("소속팀 정보가 존재하지 않습니다.");
-
         // 1. @RequestBody 값 조회
         MyTeamInfoDTO paramMyTeamInfo = dto.getMyTeamInfo();
         List<TeamRegularExercise> paramTeamRegularExercise = dto.getTeamRegularExercisesList();
 
         // 2. 팀정보 수정
-        Team team = teamRepository.findByTeamSeq(teamSeq);
+        Team team = Optional.ofNullable(teamRepository.findByTeamSeq(teamSeq))
+                .orElseThrow(() -> new NullPointerException("팀 정보가 존재하지 않습니다."));
         BeanUtils.copyProperties(paramMyTeamInfo, team);
         teamRepository.updateTeam(team);
 
@@ -167,9 +155,6 @@ public class MyTeamService {
      * @param teamSeq
      */
     public void deleteMyTeam(Long teamSeq) {
-        if (teamSeq == null)
-            throw new NullPointerException("teamSeq");
-
         teamRepository.deleteById(teamSeq);
     }
 }
