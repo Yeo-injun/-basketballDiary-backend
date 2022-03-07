@@ -2,6 +2,8 @@ package com.threeNerds.basketballDiary.mvc.service;
 
 import com.threeNerds.basketballDiary.constant.*;
 import com.threeNerds.basketballDiary.exception.AlreadyExsitException;
+import com.threeNerds.basketballDiary.exception.CustomException;
+import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.exception.NotExistException;
 import com.threeNerds.basketballDiary.mvc.domain.Team;
 import com.threeNerds.basketballDiary.mvc.domain.TeamJoinRequest;
@@ -86,9 +88,7 @@ public class TeamMemberManagerService {
                                         : false;
         if (isExsistTeamMember)
         {
-            String errorMessage = "해당 선수는 이미 팀원으로 등록되어 있습니다.";
-            log.info(errorMessage);
-            throw new AlreadyExsitException(errorMessage);
+            throw new CustomException(Error.ALREADY_EXIST_TEAM_MEMBER);
         }
         JoinRequestDTO joinRequestInfo = teamJoinRequestRepository.findUserByTeamJoinRequestSeq(joinRequest);
         TeamMember newTeamMember = TeamMember.createNewMember(joinRequestInfo);
@@ -100,9 +100,7 @@ public class TeamMemberManagerService {
         boolean isApprovalSuccess = teamJoinRequestRepository.updateJoinRequestState(joinRequestApproval) == 1 ? true : false;
         if (!isApprovalSuccess)
         {
-            String errorMessage =  "승인할 수 없는 가입요청입니다.";
-            log.info(errorMessage);
-            throw new NotExistException(errorMessage);
+            throw new CustomException(Error.USER_NOT_FOUND);
         }
     }
 
@@ -188,8 +186,7 @@ public class TeamMemberManagerService {
         boolean isSuccess = teamMemberRepository.updateTeamAuth(teamMember) == 1 ? true : false;
         if (!isSuccess)
         {
-            log.info("===== 팀원을 찾을 수 없습니다. =====");
-            throw new NotExistException("팀원을 찾을 수 없습니다.");
+            throw new CustomException(Error.USER_NOT_FOUND);
         }
         return true;
     }

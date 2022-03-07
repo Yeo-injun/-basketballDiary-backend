@@ -1,6 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.controller;
 
 import com.threeNerds.basketballDiary.exception.AlreadyExsitException;
+import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.NotExistException;
 import com.threeNerds.basketballDiary.interceptor.Auth;
 import com.threeNerds.basketballDiary.mvc.dto.*;
@@ -87,19 +88,14 @@ public class MyTeamController {
     public ResponseEntity<?> appointManager (
             @PathVariable Long teamSeq,
             @PathVariable Long teamMemberSeq
-    ) {
+    ) // throws CustomException
+    {
         KeyDTO.TeamMember teamMemberKey = new KeyDTO.TeamMember()
                 .teamSeq(teamSeq)
                 .teamMemberSeq(teamMemberSeq);
-        try
-        {
-            teamMemberManagerService.appointManager(teamMemberKey);
-            return RESPONSE_OK;
-        }
-        catch (NotExistException e)
-        {
-            return RESPONSE_NO_CONTENT;
-        }
+
+        teamMemberManagerService.appointManager(teamMemberKey);
+        return RESPONSE_OK;
     }
 
     /**
