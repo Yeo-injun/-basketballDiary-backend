@@ -2,29 +2,24 @@ package com.threeNerds.basketballDiary.mvc.service;
 
 import com.threeNerds.basketballDiary.mvc.domain.User;
 import com.threeNerds.basketballDiary.mvc.repository.UserRepository;
-import com.threeNerds.basketballDiary.session.SessionConst;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mock.web.MockHttpSession;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 /**
  * @SpringBootTest 와 @Mock을 함께 사용하면 NoSuchMethodError 가 발생한다.
- * 원인 :
- * 해결책 :
+ * 원인 : 못찾음
+ * 해결책 : @SpringBootTest 를 사용할 거면 @Mockmvc 를 이용, 그게 아니라면 @Mock 과 @InjectMocks를 사용
  */
 @ExtendWith(MockitoExtension.class)/**ExtendWith 어노테이션이 있어야 @Mock 이 재대로 작동한다**/
 //@SpringBootTest
@@ -96,7 +91,7 @@ class UserServiceTest {
         //then
         assertThat(user).isNotEqualTo(testUser2);
     }
-    /** 수정필요 **/
+
     @Test
     void modifyUserTest(){
         //given
@@ -106,7 +101,7 @@ class UserServiceTest {
         //then
         verify(userRepository).updateUser(testUser2);
     }
-    /** 수정필요 **/
+
     @Test
     void deleteUserTest(){
         //given

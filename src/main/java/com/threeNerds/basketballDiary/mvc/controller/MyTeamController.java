@@ -266,7 +266,7 @@ public class MyTeamController {
     }
 
     @Getter
-    public class ModifyMyTeamProfileDTO{
+    public static class ModifyMyTeamProfileDTO{
         private MyTeamController.FindMyTeamProfileDTO findMyTeamProfileDTO;
         private String backNumber;
 
