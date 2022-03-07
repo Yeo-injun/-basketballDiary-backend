@@ -2,9 +2,11 @@ package com.threeNerds.basketballDiary.mvc.domain;
 
 import com.threeNerds.basketballDiary.constant.State;
 import com.threeNerds.basketballDiary.constant.TeamAuthCode;
+import com.threeNerds.basketballDiary.mvc.dto.JoinRequestDTO;
 import com.threeNerds.basketballDiary.mvc.dto.KeyDTO;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Getter
@@ -48,4 +50,14 @@ public class TeamMember {
                 .build();
     }
 
+    public static TeamMember createNewMember(JoinRequestDTO joinRequest)
+    {
+        String currentYmd = LocalDate.now().toString().replace("-", "");
+        return TeamMember.builder()
+                .teamSeq(joinRequest.getTeamSeq())
+                .userSeq(joinRequest.getUserSeq())
+                .teamAuthCode(TeamAuthCode.TEAM_MEMBER.getCode())
+                .joinYmd(currentYmd)
+                .withdrawalYn("Y").build();
+    }
 }

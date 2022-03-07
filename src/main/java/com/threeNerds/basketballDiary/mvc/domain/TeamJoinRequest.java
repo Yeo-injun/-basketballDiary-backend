@@ -1,13 +1,14 @@
 package com.threeNerds.basketballDiary.mvc.domain;
 
+import com.threeNerds.basketballDiary.constant.JoinRequestStateCode;
+import com.threeNerds.basketballDiary.mvc.dto.JoinRequestDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.apache.tomcat.jni.Local;
 
-import java.lang.reflect.Field;
-
-import java.lang.reflect.Method;
+import java.time.LocalDate;
 import java.util.*;
 
 @Getter
@@ -26,49 +27,23 @@ public class TeamJoinRequest {
 
     // 가입요청 유형코드
     private String joinRequestTypeCode;
+
     // 가입요청상태 코드
     private String joinRequestStateCode;
 
     // 가입요청일시
-    private Date requestDate; // TODO sql패키지와 util패키지의 Date차이는?? => LocalDate 로 수정하는 것이 좋음
-    // 요청확정일시
-    private Date confirmationDate;
+    private LocalDate requestDate;
 
-    /**
-     * 1. DTO의 모든 필드의 값을 Entity에 복사한다.
-     * */
-//    public static TeamJoinRequest toEntity(Object dto)
-//    {
-//        // extractGetterMapFromSource()
-//        Map<String, Method> getterMap = new HashMap<String, Method>();
-//        Method[] declaredMethods = dto.getClass().getDeclaredMethods();
-//        Arrays.stream(declaredMethods)
-//                .filter(method -> method.getName().startsWith("get"))
-//                .forEach(method -> getterMap.put(method.getName(), method));
-//
-//        TeamJoinRequest.TeamJoinRequestBuilder targetClass = new TeamJoinRequest.TeamJoinRequestBuilder();
-//        Method[] builderSetterArray = targetClass.getClass().getDeclaredMethods();
-////        Field[] fields = TeamJoinRequest.builder().getClass().getDeclaredFields();
-//        Arrays.stream(builderSetterArray)
-//                .forEach(builderSetter -> {
-//
-//                    builderSetter.invoke();
-//                });
-//
-//
-//    }
-//
-//    private static String makeGetterName (String fieldName)
-//    {
-//        StringBuffer sb = new StringBuffer();
-//        sb.append("get");
-//        sb.append(fieldName.substring(0,1).toUpperCase());
-//        sb.append(fieldName.substring(1));
-//        return sb.toString();
-//    }
-//
-//    private static Method getGetter (Field field, Map<String, Method> getterMap)
-//    {
-//        return getterMap.get(makeGetterName(field.getName()));
-//    }
-}
+    // 요청확정일시
+    private LocalDate confirmationDate;
+
+    /** 가입요청 승인처리 */
+    public static TeamJoinRequest approve (JoinRequestDTO joinRequest)
+    {
+        return TeamJoinRequest.builder()
+                .teamJoinRequestSeq(joinRequest.getTeamJoinRequestSeq())
+                .teamSeq(joinRequest.getTeamSeq())
+                .joinRequestStateCode(JoinRequestStateCode.APPROVAL.getCode())
+                .build();
+    }
+ }

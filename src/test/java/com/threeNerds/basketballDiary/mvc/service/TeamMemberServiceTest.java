@@ -1,6 +1,8 @@
 package com.threeNerds.basketballDiary.mvc.service;
 
-import com.threeNerds.basketballDiary.mvc.controller.ProfileController;
+import com.threeNerds.basketballDiary.mvc.controller.LoginUserController;
+import com.threeNerds.basketballDiary.mvc.controller.MyTeamController;
+import com.threeNerds.basketballDiary.mvc.controller.UserController;
 import com.threeNerds.basketballDiary.mvc.dto.ResponseMyTeamProfileDTO;
 import com.threeNerds.basketballDiary.mvc.repository.TeamMemberRepository;
 import org.assertj.core.api.Assertions;
@@ -27,19 +29,20 @@ class TeamMemberServiceTest {
     @Mock
     private TeamMemberRepository teamMemberRepository;
 
-    ProfileController.FindMyTeamProfileDTO findMyTeamProfileDTO;
+    MyTeamController.FindMyTeamProfileDTO findMyTeamProfileDTO;
 
-    ProfileController.ModifyMyTeamProfileDTO modifyMyTeamProfileDTO;
+    MyTeamController.ModifyMyTeamProfileDTO modifyMyTeamProfileDTO;
 
     ResponseMyTeamProfileDTO responseMyTeamProfileDTO;
 
     @BeforeEach
     void setUpEach(){
-        findMyTeamProfileDTO = new ProfileController.FindMyTeamProfileDTO()
+        MyTeamController.FindMyTeamProfileDTO findMyTeamProfileDTO = new MyTeamController.FindMyTeamProfileDTO();
+        findMyTeamProfileDTO = new MyTeamController.FindMyTeamProfileDTO()
                 .userSeq(1L)
                 .teamSeq(3L);
 
-        modifyMyTeamProfileDTO = new ProfileController.ModifyMyTeamProfileDTO()
+        modifyMyTeamProfileDTO = new MyTeamController.ModifyMyTeamProfileDTO()
                 .findMyTeamProfileDTO(findMyTeamProfileDTO)
                 .backNumber("11");
 

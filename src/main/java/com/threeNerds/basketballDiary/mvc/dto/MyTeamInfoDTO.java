@@ -1,7 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.dto;
 
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
 public class MyTeamInfoDTO {
