@@ -51,7 +51,7 @@ public interface TeamMemberRepository {
      */
     ResponseMyTeamProfileDTO findMyTeamProfile(ProfileController.FindMyTeamProfileDTO userDto);
 
-    int updateMyTeamProfile(ProfileController.ModifyMyTeamProfileDTO userDto);
+    void updateMyTeamProfile(ProfileController.ModifyMyTeamProfileDTO userDto);
 
     void deleteMyTeamProfile(ProfileController.FindMyTeamProfileDTO userDto);
 }

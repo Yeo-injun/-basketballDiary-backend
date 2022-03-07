@@ -31,8 +31,8 @@ public class TeamMemberService {
         return teamMemberRepository.findMyTeamProfile(userDto);
     }
 
-    public int updateMyTeamProfile(ProfileController.ModifyMyTeamProfileDTO userDto){
-        return teamMemberRepository.updateMyTeamProfile(userDto);
+    public void updateMyTeamProfile(ProfileController.ModifyMyTeamProfileDTO userDto){
+        teamMemberRepository.updateMyTeamProfile(userDto);
     }
 
     public void deleteMyTeamProfile(ProfileController.FindMyTeamProfileDTO userDto){

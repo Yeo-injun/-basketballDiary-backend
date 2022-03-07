@@ -4,6 +4,7 @@ import com.threeNerds.basketballDiary.mvc.dto.ResponseMyTeamProfileDTO;
 import com.threeNerds.basketballDiary.mvc.service.TeamMemberService;
 import com.threeNerds.basketballDiary.session.SessionUser;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -80,7 +81,7 @@ public class ProfileController {
     }
 
     @Getter
-    public class ModifyMyTeamProfileDTO{
+    public static class ModifyMyTeamProfileDTO{
         private FindMyTeamProfileDTO findMyTeamProfileDTO;
         private String backNumber;
 
