@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.threeNerds.basketballDiary.session.SessionConst.LOGIN_MEMBER;
 import static com.threeNerds.basketballDiary.utils.HttpResponses.*;
@@ -54,13 +55,13 @@ public class MyTeamController {
      */
     @Auth(GRADE = 2L)
     @GetMapping("/{teamSeq}/managers")
-    public List<MemberDTO> searchManagers(
+    public ResponseEntity<List<MemberDTO>> searchManagers(
             @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser,
             @PathVariable(value = "teamSeq") Long teamSeq
     ) {
         List<MemberDTO> managerList = myTeamService.findManagers(teamSeq);
 
-        return managerList;
+        return ResponseEntity.ok().body(managerList);
     }
 
     /**
@@ -68,14 +69,14 @@ public class MyTeamController {
      */
     @Auth(GRADE = 2L)
     @GetMapping("/{teamSeq}/members")
-    public List<MemberDTO> searchMembers(
+    public ResponseEntity<List<MemberDTO>> searchMembers(
             @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser,
             @PathVariable(value = "teamSeq") Long teamSeq,
             @RequestParam(name = "pageNo", defaultValue = "0") Integer pageNo
     ) {
         List<MemberDTO> memberList = myTeamService.findMembers(teamSeq, pageNo);
 
-        return memberList;
+        return ResponseEntity.ok().body(memberList);
     }
 
     /**
@@ -304,13 +305,13 @@ public class MyTeamController {
      * API014 : 소속팀 목록 조회
      */
     @GetMapping
-    public List<MyTeamDTO> searchTeams(
+    public ResponseEntity<List<MyTeamDTO>> searchTeams(
             @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser
     ) {
         Long userSeq = sessionUser.getUserSeq();
         List<MyTeamDTO> myTeamList = myTeamService.findTeams(userSeq);
 
-        return myTeamList;
+        return ResponseEntity.ok().body(myTeamList);
     }
 
     /**
@@ -341,14 +342,14 @@ public class MyTeamController {
      */
     @Auth(GRADE = 2L)
     @GetMapping("/{teamSeq}/info")
-    public MyTeamDTO searchTeam(
+    public ResponseEntity<MyTeamDTO> searchTeam(
             @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser,
             @PathVariable(value = "teamSeq") Long teamSeq
     ) {
         Long userSeq = sessionUser.getUserSeq();
         MyTeamDTO myTeam = myTeamService.findTeam(userSeq, teamSeq);
 
-        return myTeam;
+        return ResponseEntity.ok().body(myTeam);
     }
 
     /**
@@ -356,16 +357,17 @@ public class MyTeamController {
      */
     @Auth(GRADE = 2L)
     @PutMapping("/{teamSeq}/info")
-    public MyTeamDTO modifyMyTeam(
+    public ResponseEntity<?> modifyMyTeam(
             @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser,
             @PathVariable(value = "teamSeq") Long teamSeq,
             @RequestBody MyTeamDTO dto
     ) {
         Long userSeq = sessionUser.getUserSeq();
         myTeamService.modifyMyTeam(teamSeq, dto);
-        MyTeamDTO myTeam = myTeamService.findTeam(userSeq, teamSeq);
+        // MyTeamDTO myTeam = myTeamService.findTeam(userSeq, teamSeq);
 
-        return myTeam;
+        //return new ResponseEntity<>(HttpStatus.OK); 과 동일...
+        return RESPONSE_OK;
     }
 
     /**
@@ -373,10 +375,12 @@ public class MyTeamController {
      */
     @Auth(GRADE = 4L)
     @DeleteMapping("/{teamSeq}")
-    public void removeMyTeam(
+    public ResponseEntity<?> removeMyTeam(
             @PathVariable(value = "teamSeq") Long teamSeq
     ) {
         myTeamService.deleteMyTeam(teamSeq);
+
+        return ResponseEntity.noContent().build();
     }
 
 }
