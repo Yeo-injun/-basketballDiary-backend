@@ -24,6 +24,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import static com.threeNerds.basketballDiary.exception.Error.USER_NOT_FOUND;
+
 /**
  * 팀관리자가 팀원을 관리하기 위한 업무를 수행하는 Service
  * @author 책임자 작성
@@ -100,7 +102,7 @@ public class TeamMemberManagerService {
         boolean isApprovalSuccess = teamJoinRequestRepository.updateJoinRequestState(joinRequestApproval) == 1 ? true : false;
         if (!isApprovalSuccess)
         {
-            throw new CustomException(Error.USER_NOT_FOUND);
+            throw new CustomException(USER_NOT_FOUND);
         }
     }
 
@@ -165,45 +167,39 @@ public class TeamMemberManagerService {
      */
     public void removeTeamMember(KeyDTO.TeamMember teamMemberKey)
     {
-        TeamMember teamMember = TeamMember.builder()
-                .teamMemberSeq(teamMemberKey.getTeamMemberSeq())
-                .teamSeq(teamMemberKey.getTeamSeq())
-                .withdrawalYn(State.Withdrawal.Y)
-                .build();
-        // TODO 팀멤버 테이블에 있는 정보를 건들지 않고 퇴장여부 상태값만 바꾸는 것으로 할지 판단 필요
-        teamMemberRepository.updateWithdrawalState(teamMember);
-
+        TeamMember teamMember = TeamMember.withdrawalMember(teamMemberKey);
+        boolean isWithdrawal = teamMemberRepository.updateWithdrawalState(teamMember) == 1 ? true : false;
+        if (!isWithdrawal)
+        {
+            throw new CustomException(USER_NOT_FOUND);
+        }
     }
 
     /**
      * 소속팀 관리자 임명하기
      * @param teamMemberKey
-     * @return
      */
-    public boolean appointManager(KeyDTO.TeamMember teamMemberKey) {
-        TeamMember teamMember = TeamMember.toManager(teamMemberKey);
+    public void appointManager(KeyDTO.TeamMember teamMemberKey) {
+        TeamMember toManagerMember = TeamMember.toManager(teamMemberKey);
 
-        boolean isSuccess = teamMemberRepository.updateTeamAuth(teamMember) == 1 ? true : false;
+        boolean isSuccess = teamMemberRepository.updateTeamAuth(toManagerMember) == 1 ? true : false;
         if (!isSuccess)
         {
-            throw new CustomException(Error.USER_NOT_FOUND);
+            throw new CustomException(USER_NOT_FOUND);
         }
-        return true;
     }
 
     /**
-     * 소속팀 관리자 임명하기
+     * 소속팀 관리자 해임하기
      * @param teamMemberKeys
-     * @return
      */
-    public boolean dismissManager(KeyDTO.TeamMember teamMemberKeys) {
-        TeamMember teamMember = TeamMember.toMember(teamMemberKeys);
+    public void dismissManager(KeyDTO.TeamMember teamMemberKeys) {
+        TeamMember toMember = TeamMember.toMember(teamMemberKeys);
 
-        boolean isSuccess = teamMemberRepository.updateTeamAuth(teamMember) == 1 ? true : false;
+        boolean isSuccess = teamMemberRepository.updateTeamAuth(toMember) == 1 ? true : false;
         if (!isSuccess)
         {
-            throw new NotExistException("해당되는 팀원이 없습니다.");
+            throw new CustomException(USER_NOT_FOUND);
         }
-        return true;
     }
 }
