@@ -4,10 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @Slf4j
 @RestControllerAdvice
-public class GlobalExceptionHandler {
+public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     /**
      * @ExceptionHandelr에 value로 할당해준 Exception 클래스가 예외로 던져지면 해당 메소드가 호출된다.
@@ -17,9 +18,10 @@ public class GlobalExceptionHandler {
      * HttpResponse 메세지를 만들어서 클라이언트에게 Reponse한다.
      */
     @ExceptionHandler(value = { CustomException.class })
-    protected ResponseEntity<ErrorResponse> handleCustomException (CustomException e)
+    protected ResponseEntity<ErrorResponse> handleCustomException (CustomException ex)
     {
-        log.error("handleCustomException throw CustomException : {}", e.getError());
-        return ErrorResponse.toResponseEntity(e.getError());
+        log.error("handleCustomException throw CustomException : {}", ex.getError());
+        return ErrorResponse.toResponseEntity(ex.getError());
     }
+
 }

@@ -82,14 +82,13 @@ public class MyTeamController {
 
     /**
      * API003 : 소속팀 관리자임명
-     * @return
+     * 22.03.08 인준 : CustomException적용 - 퇴장상태로 업데이트된 결과가 없을 때 USER_NOT_FOUND 예외 발생
      */
     @PostMapping("{teamSeq}/members/{teamMemberSeq}/manager")
     public ResponseEntity<?> appointManager (
             @PathVariable Long teamSeq,
             @PathVariable Long teamMemberSeq
-    ) // throws CustomException
-    {
+    ) {
         KeyDTO.TeamMember teamMemberKey = new KeyDTO.TeamMember()
                 .teamSeq(teamSeq)
                 .teamMemberSeq(teamMemberSeq);
@@ -100,6 +99,7 @@ public class MyTeamController {
 
     /**
      * API004 : 소속팀 회원 강퇴시키기
+     * 22.03.08 인준 : CustomException적용 - 퇴장상태로 업데이트된 결과가 없을 때 USER_NOT_FOUND 예외 발생
      */
     @DeleteMapping("{teamSeq}/members/{teamMemberSeq}")
     public ResponseEntity<?> removeTeamMember(
@@ -111,7 +111,6 @@ public class MyTeamController {
                                 .teamMemberSeq(teamMemberSeq);
         teamMemberManagerService.removeTeamMember(teamMemberKey);
         return RESPONSE_OK;
-        // TODO 예외처리 반영
     }
 
     /**
@@ -312,25 +311,18 @@ public class MyTeamController {
 
     /**
      * API015 : 소속팀 관리자 제명
+     * 22.03.08 인준 : CustomException적용 - 퇴장상태로 업데이트된 결과가 없을 때 USER_NOT_FOUND 예외 발생
      */
     @DeleteMapping("/{teamSeq}/members/{teamMemberSeq}/manager")
     public ResponseEntity<?> dismissManager(
             @PathVariable Long teamSeq,
             @PathVariable Long teamMemberSeq
-    ) throws Exception
-    {
+    ) {
         KeyDTO.TeamMember teamMemberKeys = new KeyDTO.TeamMember()
                 .teamMemberSeq(teamMemberSeq)
                 .teamSeq(teamSeq);
-        try
-        {
-            teamMemberManagerService.dismissManager(teamMemberKeys);
-            return RESPONSE_OK;
-        }
-        catch (NotExistException e)
-        {
-            return RESPONSE_NO_CONTENT;
-        }
+        teamMemberManagerService.dismissManager(teamMemberKeys);
+        return RESPONSE_OK;
     }
 
     /**

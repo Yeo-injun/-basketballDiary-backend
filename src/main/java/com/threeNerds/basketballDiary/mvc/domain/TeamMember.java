@@ -1,6 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.domain;
 
-import com.threeNerds.basketballDiary.constant.State;
+import com.threeNerds.basketballDiary.constant.Constant;
 import com.threeNerds.basketballDiary.constant.TeamAuthCode;
 import com.threeNerds.basketballDiary.mvc.dto.JoinRequestDTO;
 import com.threeNerds.basketballDiary.mvc.dto.KeyDTO;
@@ -58,6 +58,16 @@ public class TeamMember {
                 .userSeq(joinRequest.getUserSeq())
                 .teamAuthCode(TeamAuthCode.TEAM_MEMBER.getCode())
                 .joinYmd(currentYmd)
-                .withdrawalYn("Y").build();
+                .withdrawalYn(Constant.NO)
+                .build();
+    }
+
+    public static TeamMember withdrawalMember(KeyDTO.TeamMember teamMember)
+    {
+        return TeamMember.builder()
+                .teamMemberSeq(teamMember.getTeamMemberSeq())
+                .teamSeq(teamMember.getTeamSeq())
+                .withdrawalYn(Constant.YES)
+                .build();
     }
 }
