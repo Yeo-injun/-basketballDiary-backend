@@ -54,7 +54,7 @@ public class MyTeamController {
     /**
      * API001 : 소속팀 운영진 조회
      */
-    @Auth(GRADE = 2L)
+    @Auth(GRADE = 1L)
     @GetMapping("/{teamSeq}/managers")
     public ResponseEntity<List<MemberDTO>> searchManagers(
             @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser,
@@ -68,7 +68,7 @@ public class MyTeamController {
     /**
      * API002 : 소속팀 팀원목록 조회
      */
-    @Auth(GRADE = 2L)
+    @Auth(GRADE = 1L)
     @GetMapping("/{teamSeq}/members")
     public ResponseEntity<List<MemberDTO>> searchMembers(
             @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser,
@@ -328,7 +328,7 @@ public class MyTeamController {
     /**
      * API016 : 소속팀 정보 단건 조회
      */
-    @Auth(GRADE = 2L)
+    @Auth(GRADE = 1L)
     @GetMapping("/{teamSeq}/info")
     public ResponseEntity<MyTeamDTO> searchTeam(
             @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser,
@@ -361,13 +361,14 @@ public class MyTeamController {
     /**
      * API018 : 소속팀 정보 삭제
      */
-    @Auth(GRADE = 4L)
+    @Auth(GRADE = 3L)
     @DeleteMapping("/{teamSeq}")
     public ResponseEntity<?> removeMyTeam(
             @PathVariable(value = "teamSeq") Long teamSeq
     ) {
         myTeamService.deleteMyTeam(teamSeq);
 
+        // 삭제가 정상적으로 완료된 경우 204 No Content로 응답한다.
         return ResponseEntity.noContent().build();
     }
 
