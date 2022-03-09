@@ -6,6 +6,7 @@ import com.threeNerds.basketballDiary.session.SessionUser;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpSession;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static com.threeNerds.basketballDiary.utils.HttpResponses.RESPONSE_OK;
 
 /**
  * ... 수행하는 Controller
@@ -33,7 +36,7 @@ public class LoginController {
     private final LoginService loginService;
 
     @PostMapping("/login")
-    public SessionUser login(@RequestBody LoginUserRequest loginUserRequest, HttpSession session) {
+    public ResponseEntity<SessionUser> login(@RequestBody LoginUserRequest loginUserRequest, HttpSession session) {
         log.info("로그인");
         SessionUser sessionUser = loginService.login(loginUserRequest)
                 .map(u -> {
@@ -43,13 +46,13 @@ public class LoginController {
                 })
                 .orElse(null);
         session.setAttribute(SessionConst.LOGIN_MEMBER, sessionUser);
-        return sessionUser;
+        return ResponseEntity.ok(sessionUser);
     }
     @PostMapping("/logout")
-    public String logout(HttpSession session){
+    public ResponseEntity<?> logout(HttpSession session){
         log.info("로그아웃");
         session.invalidate();
-        return "logoutOk";
+        return RESPONSE_OK;
     }
 
     @Data
