@@ -1,11 +1,15 @@
 package com.threeNerds.basketballDiary.mvc.controller;
 
-import com.threeNerds.basketballDiary.exception.NotExistTeamMemeberException;
+import com.threeNerds.basketballDiary.exception.AlreadyExsitException;
+import com.threeNerds.basketballDiary.exception.CustomException;
+import com.threeNerds.basketballDiary.exception.NotExistException;
 import com.threeNerds.basketballDiary.interceptor.Auth;
 import com.threeNerds.basketballDiary.mvc.dto.*;
 import com.threeNerds.basketballDiary.mvc.service.MyTeamService;
 import com.threeNerds.basketballDiary.mvc.service.TeamMemberManagerService;
+import com.threeNerds.basketballDiary.mvc.service.TeamMemberService;
 import com.threeNerds.basketballDiary.session.SessionUser;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -44,8 +48,8 @@ import static com.threeNerds.basketballDiary.utils.HttpResponses.*;
 public class MyTeamController {
 
     private final MyTeamService myTeamService;
+    private final TeamMemberService teamMemberService;
     private final TeamMemberManagerService teamMemberManagerService;
-    private Object HashMap;
 
     /**
      * API001 : 소속팀 운영진 조회
@@ -78,7 +82,7 @@ public class MyTeamController {
 
     /**
      * API003 : 소속팀 관리자임명
-     * @return
+     * 22.03.08 인준 : CustomException적용 - 퇴장상태로 업데이트된 결과가 없을 때 USER_NOT_FOUND 예외 발생
      */
     @PostMapping("{teamSeq}/members/{teamMemberSeq}/manager")
     public ResponseEntity<?> appointManager (
@@ -88,19 +92,14 @@ public class MyTeamController {
         KeyDTO.TeamMember teamMemberKey = new KeyDTO.TeamMember()
                 .teamSeq(teamSeq)
                 .teamMemberSeq(teamMemberSeq);
-        try
-        {
-            teamMemberManagerService.appointManager(teamMemberKey);
-            return RESPONSE_OK;
-        }
-        catch (NotExistTeamMemeberException e)
-        {
-            return RESPONSE_NO_CONTENT;
-        }
+
+        teamMemberManagerService.appointManager(teamMemberKey);
+        return RESPONSE_OK;
     }
 
     /**
      * API004 : 소속팀 회원 강퇴시키기
+     * 22.03.08 인준 : CustomException적용 - 퇴장상태로 업데이트된 결과가 없을 때 USER_NOT_FOUND 예외 발생
      */
     @DeleteMapping("{teamSeq}/members/{teamMemberSeq}")
     public ResponseEntity<?> removeTeamMember(
@@ -112,7 +111,6 @@ public class MyTeamController {
                                 .teamMemberSeq(teamMemberSeq);
         teamMemberManagerService.removeTeamMember(teamMemberKey);
         return RESPONSE_OK;
-        // TODO 예외처리 반영
     }
 
     /**
@@ -166,23 +164,25 @@ public class MyTeamController {
 
     /**
      * API009 : 소속팀이 사용자의 가입요청 승인
-     * TODO URL 변경 건의 : /api/myTeams/{teamSeq}/joinRequestFrom/{userSeq}/approval/{teamJoinRequestSeq}로!
-     * 위와 같이 바꾸지 않는다면 userSeq를 requestBody에 넣어서 객체로 보내줘야 함. 기본적으로 key는 Url에, key가 아닌 값은 requestBody에 넣는 방식으로 통일하는 것은?
      */
-    @PatchMapping("/{teamSeq}/joinRequestFrom/{userSeq}/approval/{teamJoinRequestSeq}")
+    @PatchMapping("/{teamSeq}/joinRequestFrom/{teamJoinRequestSeq}/approval")
     public ResponseEntity<?> approveJoinRequest(
             @PathVariable Long teamJoinRequestSeq,
-            @PathVariable Long teamSeq,
-            @PathVariable Long userSeq
+            @PathVariable Long teamSeq
     ) {
         JoinRequestDTO joinRequest = new JoinRequestDTO()
                 .teamJoinRequestSeq(teamJoinRequestSeq)
-                .teamSeq(teamSeq)
-                .userSeq(userSeq);
-
-        teamMemberManagerService.approveJoinRequest(joinRequest);
-        return RESPONSE_OK;
-        // TODO 예외처리 반영
+                .teamSeq(teamSeq);
+        try
+        {
+            teamMemberManagerService.approveJoinRequest(joinRequest);
+            return RESPONSE_CREATED;
+        }
+        catch (AlreadyExsitException | NotExistException e)
+        {
+            // TODO 참고자료(왜 409에러로 처리했는지) : https://deveric.tistory.com/62
+            return RESPONSE_CONFLICT;
+        }
     }
 
     /**
@@ -203,6 +203,100 @@ public class MyTeamController {
     }
 
     /**
+     * API011 소속팀 개인프로필 수정데이터 조회
+     */
+    @GetMapping("/myTeams/{teamSeq}/profile")
+    public ResponseMyTeamProfileDTO findMyTeamsProfile(
+            @SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO,
+            @PathVariable Long teamSeq){
+
+        Long id = sessionDTO.getUserSeq();
+
+        MyTeamController.FindMyTeamProfileDTO findMyTeamProfileDTO = new MyTeamController
+                .FindMyTeamProfileDTO()
+                .userSeq(id)
+                .teamSeq(teamSeq);
+
+        ResponseMyTeamProfileDTO myTeamProfileDTO = teamMemberService.findProfile(findMyTeamProfileDTO);
+
+        return myTeamProfileDTO;
+    }
+    @Getter
+    public static class FindMyTeamProfileDTO {
+        private Long userSeq;
+        private Long teamSeq;
+
+        public MyTeamController.FindMyTeamProfileDTO userSeq(Long userSeq){
+            this.userSeq=userSeq;
+            return this;
+        }
+        public MyTeamController.FindMyTeamProfileDTO teamSeq(Long teamSeq){
+            this.teamSeq=teamSeq;
+            return this;
+        }
+    }
+
+    /**
+     * API012 소속팀 개인프로필 수정
+     */
+    @PatchMapping("/myTeams/{teamSeq}/profile")
+    public String modifyMyTeamsProfile(
+            @SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO,
+            @PathVariable Long teamSeq,
+            @RequestBody MyTeamController.BackNumber backNumber){
+
+        Long id = sessionDTO.getUserSeq();
+
+        MyTeamController.FindMyTeamProfileDTO findMyTeamProfileDTO = new MyTeamController.FindMyTeamProfileDTO()
+                .userSeq(id)
+                .teamSeq(teamSeq);
+
+        MyTeamController.ModifyMyTeamProfileDTO myTeamProfileDTO = new MyTeamController.ModifyMyTeamProfileDTO()
+                .findMyTeamProfileDTO(findMyTeamProfileDTO)
+                .backNumber(backNumber.getBackNumber());
+
+        teamMemberService.updateMyTeamProfile(myTeamProfileDTO);
+        return "ok";
+    }
+
+    @Getter
+    public static class BackNumber{
+        private String backNumber;
+    }
+
+    @Getter
+    public static class ModifyMyTeamProfileDTO{
+        private MyTeamController.FindMyTeamProfileDTO findMyTeamProfileDTO;
+        private String backNumber;
+
+        public MyTeamController.ModifyMyTeamProfileDTO findMyTeamProfileDTO(MyTeamController.FindMyTeamProfileDTO findMyTeamProfileDTO){
+            this.findMyTeamProfileDTO = findMyTeamProfileDTO;
+            return this;
+        }
+        public MyTeamController.ModifyMyTeamProfileDTO backNumber(String backNumber){
+            this.backNumber = backNumber;
+            return this;
+        }
+    }
+
+    /**
+     * API013 소속팀 탈퇴
+     */
+    @DeleteMapping("/myTeams/{teamSeq}")
+    public String deleteMyTeamsProfile(
+            @SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO,
+            @PathVariable Long teamSeq)
+    {
+        Long id = sessionDTO.getUserSeq();
+
+        MyTeamController.FindMyTeamProfileDTO findMyTeamProfileDTO = new MyTeamController.FindMyTeamProfileDTO()
+                .userSeq(id)
+                .teamSeq(teamSeq);
+        teamMemberService.deleteMyTeamProfile(findMyTeamProfileDTO);
+        return "ok";
+    }
+
+    /**
      * API014 : 소속팀 목록 조회
      */
     @GetMapping
@@ -217,25 +311,18 @@ public class MyTeamController {
 
     /**
      * API015 : 소속팀 관리자 제명
+     * 22.03.08 인준 : CustomException적용 - 퇴장상태로 업데이트된 결과가 없을 때 USER_NOT_FOUND 예외 발생
      */
     @DeleteMapping("/{teamSeq}/members/{teamMemberSeq}/manager")
     public ResponseEntity<?> dismissManager(
             @PathVariable Long teamSeq,
             @PathVariable Long teamMemberSeq
-    ) throws Exception
-    {
+    ) {
         KeyDTO.TeamMember teamMemberKeys = new KeyDTO.TeamMember()
                 .teamMemberSeq(teamMemberSeq)
                 .teamSeq(teamSeq);
-        try
-        {
-            teamMemberManagerService.dismissManager(teamMemberKeys);
-            return RESPONSE_OK;
-        }
-        catch (NotExistTeamMemeberException e)
-        {
-            return RESPONSE_NO_CONTENT;
-        }
+        teamMemberManagerService.dismissManager(teamMemberKeys);
+        return RESPONSE_OK;
     }
 
     /**

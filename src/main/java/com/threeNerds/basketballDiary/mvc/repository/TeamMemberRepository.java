@@ -1,11 +1,14 @@
 package com.threeNerds.basketballDiary.mvc.repository;
 
-import com.threeNerds.basketballDiary.mvc.controller.ProfileController;
+import com.threeNerds.basketballDiary.mvc.controller.MyTeamController;
 import com.threeNerds.basketballDiary.mvc.controller.UserController;
 import com.threeNerds.basketballDiary.mvc.domain.TeamMember;
 import com.threeNerds.basketballDiary.mvc.domain.User;
+import com.threeNerds.basketballDiary.mvc.dto.JoinRequestDTO;
 import com.threeNerds.basketballDiary.mvc.dto.ResponseMyTeamProfileDTO;
 import org.apache.ibatis.annotations.Mapper;
+
+import java.util.Optional;
 
 @Mapper
 public interface TeamMemberRepository {
@@ -18,10 +21,10 @@ public interface TeamMemberRepository {
 
     /**
      * 팀원 중복여부 확인
-     * @param teamMemberInfo
-     * @return
+     * @param joinRequest
+     * @return JoinRequestDTO
      */
-    int checkTeamMember(TeamMember teamMemberInfo);
+    JoinRequestDTO checkTeamMember(JoinRequestDTO joinRequest);
 
     /**
      * 팀원 단건조회(팀원SEQ로)
@@ -49,9 +52,9 @@ public interface TeamMemberRepository {
      * @param userDto
      * @return
      */
-    ResponseMyTeamProfileDTO findMyTeamProfile(ProfileController.FindMyTeamProfileDTO userDto);
+    ResponseMyTeamProfileDTO findMyTeamProfile(MyTeamController.FindMyTeamProfileDTO userDto);
 
-    int updateMyTeamProfile(ProfileController.ModifyMyTeamProfileDTO userDto);
+    int updateMyTeamProfile(MyTeamController.ModifyMyTeamProfileDTO userDto);
 
-    void deleteMyTeamProfile(ProfileController.FindMyTeamProfileDTO userDto);
+    void deleteMyTeamProfile(MyTeamController.FindMyTeamProfileDTO userDto);
 }

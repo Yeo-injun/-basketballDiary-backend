@@ -1,7 +1,10 @@
 package com.threeNerds.basketballDiary.mvc.service;
 
 import com.threeNerds.basketballDiary.constant.*;
-import com.threeNerds.basketballDiary.exception.NotExistTeamMemeberException;
+import com.threeNerds.basketballDiary.exception.AlreadyExsitException;
+import com.threeNerds.basketballDiary.exception.CustomException;
+import com.threeNerds.basketballDiary.exception.Error;
+import com.threeNerds.basketballDiary.exception.NotExistException;
 import com.threeNerds.basketballDiary.mvc.domain.Team;
 import com.threeNerds.basketballDiary.mvc.domain.TeamJoinRequest;
 import com.threeNerds.basketballDiary.mvc.domain.TeamMember;
@@ -19,6 +22,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
+
+import static com.threeNerds.basketballDiary.exception.Error.USER_NOT_FOUND;
 
 /**
  * 팀관리자가 팀원을 관리하기 위한 업무를 수행하는 Service
@@ -76,40 +82,28 @@ public class TeamMemberManagerService {
      * 소속팀 가입요청 승인 API
      * @param joinRequest
      */
-    public boolean approveJoinRequest(JoinRequestDTO joinRequest) {
-        Long teamSeq = joinRequest.getTeamSeq();
-        Long userSeq = joinRequest.getUserSeq();
-
-        /** 팀원 추가 - 예외처리 필요 */
-        String currentYmd = LocalDate.now().toString().replace("-", "");
-        TeamMember teamMemberInfo = new TeamMember().builder()
-                .teamSeq(teamSeq)
-                .userSeq(userSeq)
-                .teamAuthCode(TeamAuthCode.TEAM_MEMBER.getCode())
-                .joinYmd(currentYmd)
-                .withdrawalYn("Y").build();
-        // TeamMember 테이블에 데이터 넣기
-        // TODO 중복된 가입요청 방지필요 (소속팀에 가입요청 혹은 초대가 없어야 하고, 들어왔다고 해도 테이블에 2건 이상이 추가 되지 않도록 막아야 함)
-        boolean isExistTeamMember = teamMemberRepository.checkTeamMember(teamMemberInfo) > 0 ? true : false;
-        if (isExistTeamMember) {
-            log.info("해당 선수는 이미 팀원으로 등록되어 있습니다.");
-            return false; // TODO 오류 던지기
+    public void approveJoinRequest(JoinRequestDTO joinRequest)
+    {
+        /** 팀원 추가 - 이미 팀원으로 존재하고 있는 경우 예외처리 */
+        boolean isExsistTeamMember = teamMemberRepository.checkTeamMember(joinRequest) != null
+                                        ? true
+                                        : false;
+        if (isExsistTeamMember)
+        {
+            throw new CustomException(Error.ALREADY_EXIST_TEAM_MEMBER);
         }
-        teamMemberRepository.saveTeamMemeber(teamMemberInfo);
+        JoinRequestDTO joinRequestInfo = teamJoinRequestRepository.findUserByTeamJoinRequestSeq(joinRequest);
+        TeamMember newTeamMember = TeamMember.createNewMember(joinRequestInfo);
+        teamMemberRepository.saveTeamMemeber(newTeamMember);
+
 
         /** 가입요청 상태 업데이트 하기 */
-        TeamJoinRequest approvalInfo = TeamJoinRequest.builder()
-                .teamJoinRequestSeq(joinRequest.getTeamJoinRequestSeq())
-                .joinRequestStateCode(JoinRequestStateCode.APPROVAL.getCode())
-                .build();
-
-        boolean isApprovalSuccess = teamJoinRequestRepository.updateJoinRequestState(approvalInfo) == 1 ? true : false;
+        TeamJoinRequest joinRequestApproval = TeamJoinRequest.approve(joinRequest);
+        boolean isApprovalSuccess = teamJoinRequestRepository.updateJoinRequestState(joinRequestApproval) == 1 ? true : false;
         if (!isApprovalSuccess)
         {
-            log.info("==== 해당 가입요청은 승인할 수 없는 가입요청입니다. ====");
-            return isApprovalSuccess; // TODO 에러를 던지는 것으로 코드 바꾸기
+            throw new CustomException(USER_NOT_FOUND);
         }
-        return isApprovalSuccess;
     }
 
     /**
@@ -173,46 +167,39 @@ public class TeamMemberManagerService {
      */
     public void removeTeamMember(KeyDTO.TeamMember teamMemberKey)
     {
-        TeamMember teamMember = TeamMember.builder()
-                .teamMemberSeq(teamMemberKey.getTeamMemberSeq())
-                .teamSeq(teamMemberKey.getTeamSeq())
-                .withdrawalYn(State.Withdrawal.Y)
-                .build();
-        // TODO 팀멤버 테이블에 있는 정보를 건들지 않고 퇴장여부 상태값만 바꾸는 것으로 할지 판단 필요
-        teamMemberRepository.updateWithdrawalState(teamMember);
-
+        TeamMember teamMember = TeamMember.withdrawalMember(teamMemberKey);
+        boolean isWithdrawal = teamMemberRepository.updateWithdrawalState(teamMember) == 1 ? true : false;
+        if (!isWithdrawal)
+        {
+            throw new CustomException(USER_NOT_FOUND);
+        }
     }
 
     /**
      * 소속팀 관리자 임명하기
      * @param teamMemberKey
-     * @return
      */
-    public boolean appointManager(KeyDTO.TeamMember teamMemberKey) throws NotExistTeamMemeberException {
-        TeamMember teamMember = TeamMember.toManager(teamMemberKey);
+    public void appointManager(KeyDTO.TeamMember teamMemberKey) {
+        TeamMember toManagerMember = TeamMember.toManager(teamMemberKey);
 
-        boolean isSuccess = teamMemberRepository.updateTeamAuth(teamMember) == 1 ? true : false;
+        boolean isSuccess = teamMemberRepository.updateTeamAuth(toManagerMember) == 1 ? true : false;
         if (!isSuccess)
         {
-            log.info("===== 팀원을 찾을 수 없습니다. =====");
-            throw new NotExistTeamMemeberException("팀원을 찾을 수 없습니다.");
+            throw new CustomException(USER_NOT_FOUND);
         }
-        return true;
     }
 
     /**
-     * 소속팀 관리자 임명하기
+     * 소속팀 관리자 해임하기
      * @param teamMemberKeys
-     * @return
      */
-    public boolean dismissManager(KeyDTO.TeamMember teamMemberKeys) throws Exception {
-        TeamMember teamMember = TeamMember.toMember(teamMemberKeys);
+    public void dismissManager(KeyDTO.TeamMember teamMemberKeys) {
+        TeamMember toMember = TeamMember.toMember(teamMemberKeys);
 
-        boolean isSuccess = teamMemberRepository.updateTeamAuth(teamMember) == 1 ? true : false;
+        boolean isSuccess = teamMemberRepository.updateTeamAuth(toMember) == 1 ? true : false;
         if (!isSuccess)
         {
-            throw new NotExistTeamMemeberException("해당되는 팀원이 없습니다.");
+            throw new CustomException(USER_NOT_FOUND);
         }
-        return true;
     }
 }
