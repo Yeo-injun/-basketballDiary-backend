@@ -205,7 +205,7 @@ public class MyTeamController {
     /**
      * API011 소속팀 개인프로필 수정데이터 조회
      */
-    @GetMapping("/myTeams/{teamSeq}/profile")
+    @GetMapping("/{teamSeq}/profile")
     public ResponseEntity<ResponseMyTeamProfileDTO> findMyTeamsProfile(
             @SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO,
             @PathVariable Long teamSeq){
@@ -239,7 +239,7 @@ public class MyTeamController {
     /**
      * API012 소속팀 개인프로필 수정
      */
-    @PatchMapping("/myTeams/{teamSeq}/profile")
+    @PatchMapping("/{teamSeq}/profile")
     public ResponseEntity<?> modifyMyTeamsProfile(
             @SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO,
             @PathVariable Long teamSeq,
@@ -282,7 +282,7 @@ public class MyTeamController {
     /**
      * API013 소속팀 탈퇴
      */
-    @DeleteMapping("/myTeams/{teamSeq}")
+    @DeleteMapping("/{teamSeq}/profile")
     public ResponseEntity<?> deleteMyTeamsProfile(
             @SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO,
             @PathVariable Long teamSeq)

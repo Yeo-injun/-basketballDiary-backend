@@ -72,7 +72,7 @@ public class LoginUserController {
      * API025 회원정보 수정데이터 조회
      */
     @GetMapping("/profile")
-    public UserDTO myInfo(
+    public ResponseEntity<UserDTO> myInfo(
             @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionDTO,
             UserDTO userDTO){
 
@@ -82,7 +82,7 @@ public class LoginUserController {
         UserDTO userDto = new UserDTO();
 
         BeanUtils.copyProperties(user,userDto);
-        return userDto;
+        return ResponseEntity.ok(userDto);
     }
 
     /**
