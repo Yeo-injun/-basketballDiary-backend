@@ -1,5 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.service;
 
+import com.threeNerds.basketballDiary.exception.CustomException;
+import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.mvc.domain.Team;
 import com.threeNerds.basketballDiary.mvc.domain.TeamRegularExercise;
 import com.threeNerds.basketballDiary.mvc.dto.*;
@@ -48,9 +50,17 @@ public class MyTeamService {
      * @return List<MemberDTO>
      */
     public List<MemberDTO> findManagers(Long teamSeq) {
-        // 운영진은 반드시 1명 이상 존재해야 하므로(팀장), 아무도 존재하지 않을 경우 Exception 처리.
-        return Optional.ofNullable(myTeamRepository.findAllManagerByTeamSeq(teamSeq))
-                .orElseThrow(() -> new NullPointerException("운영진 정보가 존재하지 않습니다."));
+        // 소속팀 운영진 정보는 반드시 1건 이상(최소한 팀장이 존재해야함)이어야 하므로,
+        // 조회내역이 존재하지 않으면 404 not found 처리한다.
+
+        // 1. Validation check: 운영진 정보가 Null일 경우 throw
+        List<MemberDTO> resultManagerList = Optional.ofNullable(myTeamRepository.findAllManagerByTeamSeq(teamSeq))
+            .orElseThrow(() -> new CustomException(Error.MANAGER_NOT_FOUND));
+
+        // 2. Validation Check: 운영진 정보가 Null은 아니지만, size가 0일 경우 throw
+        if(resultManagerList.isEmpty()) throw new CustomException(Error.MANAGER_NOT_FOUND);
+
+        return resultManagerList;
     }
 
     /**
@@ -66,8 +76,10 @@ public class MyTeamService {
                 .teamSeq(teamSeq)
                 .pagerVO(pagerDTO);
 
-        List<MemberDTO> memberList = myTeamRepository.findPagingMemberByTeamSeq(memberDTO);
-        return memberList.isEmpty() ? Collections.emptyList() : memberList;
+        // 소속팀은 팀장과 운영진을 제외하므로, 팀원 정보가 존재하지 않더라도 404 처리하지 않는다.
+        List<MemberDTO> resultMemberList = myTeamRepository.findPagingMemberByTeamSeq(memberDTO);
+
+        return resultMemberList.isEmpty() ? Collections.emptyList() : resultMemberList;
     }
 
     /**
@@ -76,9 +88,8 @@ public class MyTeamService {
      * @return List<MyTeamDTO>
      */
     public List<MyTeamDTO> findTeams(Long userSeq) {
-        List<MyTeamDTO> resultDTO = new ArrayList<MyTeamDTO>();
-        List<MyTeamInfoDTO> myTeamInfoList = Optional.ofNullable(myTeamRepository.findAllByUserSeq(userSeq))
-                .orElseThrow(() -> new NullPointerException("소속팀 정보가 존재하지 않습니다."));
+        List<MyTeamDTO> resultMyTeamList = new ArrayList<MyTeamDTO>();
+        List<MyTeamInfoDTO> myTeamInfoList = myTeamRepository.findAllByUserSeq(userSeq);
 
         myTeamInfoList.forEach(myTeamInfo -> {
             Long teamSeq = myTeamInfo.getTeamSeq();
@@ -87,9 +98,10 @@ public class MyTeamService {
                     .myTeamInfo(myTeamInfo)
                     .teamRegularExercisesList(exerciseList.isEmpty() ? Collections.emptyList() : exerciseList);
 
-            resultDTO.add(myTeamDTO);
+            resultMyTeamList.add(myTeamDTO);
         });
-        return resultDTO;
+
+        return resultMyTeamList.isEmpty() ? Collections.emptyList() : resultMyTeamList;
     }
 
     /**
@@ -98,8 +110,10 @@ public class MyTeamService {
      * @return MyTeamDTO
      */
     public MyTeamDTO findTeam(Long userSeq, Long teamSeq) {
+        // 소속되지 않은 팀에 대한 조회는 Interceptor에 의해 처리됨.
+
         MyTeamInfoDTO myTeamInfo = Optional.ofNullable(myTeamRepository.findByUserSeqAndTeamSeq(userSeq, teamSeq))
-                .orElseThrow(() -> new NullPointerException("소속팀의 해당 팀 정보가 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(Error.MY_TEAM_NOT_FOUND));
         List<TeamRegularExercise> teamRegularExerciseList = teamRegularExerciseRepository.findByTeamSeq(teamSeq);
 
         MyTeamDTO resultDTO = new MyTeamDTO()
@@ -121,7 +135,7 @@ public class MyTeamService {
 
         // 2. 팀정보 수정
         Team team = Optional.ofNullable(teamRepository.findByTeamSeq(teamSeq))
-                .orElseThrow(() -> new NullPointerException("팀 정보가 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(Error.MY_TEAM_NOT_FOUND));
         BeanUtils.copyProperties(paramMyTeamInfo, team);
         teamRepository.updateTeam(team);
 
@@ -151,10 +165,23 @@ public class MyTeamService {
     }
 
     /**
-     * 소속팀 삭제
+     * 소속팀 삭제(팀 삭제와 동일)
      * @param teamSeq
      */
     public void deleteMyTeam(Long teamSeq) {
+
+        /**
+         * 1. /:teamSeq 에 가 존재하는 메서드인가? (405)
+         * 2. teamSeq가 유효한 형식인가? (400)
+         * 3. teamSeq에 해당하는 정보가 존재하는가? (404)
+         * 4. 헤더의 인증이 정확한가? (401)
+         * 5. 삭제 권한이 있는가? (403)
+         **/
+
+        // 1. 소속팀이 존재하는지 체크
+        Optional.ofNullable(teamRepository.findByTeamSeq(teamSeq))
+                .orElseThrow(() -> new CustomException(Error.MY_TEAM_NOT_FOUND));
+
         teamRepository.deleteById(teamSeq);
     }
 }
