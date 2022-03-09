@@ -46,7 +46,7 @@ public class UserController {
      * API029 회원가입
      */
     @PostMapping("/registration")
-    public String createUser(@RequestBody @Valid UserDTO userDTO){
+    public ResponseEntity<?> createUser(@RequestBody @Valid UserDTO userDTO){
 
         User user = User.builder()
                 .userId(userDTO.getUserId())
@@ -66,7 +66,7 @@ public class UserController {
                 .build();
 
         userService.createMember(user);
-        return "createOk";
+        return RESPONSE_OK;
     }
 
     @Auth(GRADE = 3L)
@@ -80,8 +80,4 @@ public class UserController {
     public void test2(){
         log.info("Auth : 2");
     }
-
-    /****************************************************************************************************************/
-
-
 }

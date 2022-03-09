@@ -21,6 +21,7 @@ import java.util.List;
 
 import static com.threeNerds.basketballDiary.session.SessionConst.LOGIN_MEMBER;
 import static com.threeNerds.basketballDiary.utils.HttpResponses.RESPONSE_CREATED;
+import static com.threeNerds.basketballDiary.utils.HttpResponses.RESPONSE_OK;
 
 @Slf4j
 @RestController
@@ -88,7 +89,7 @@ public class LoginUserController {
      * API026 회원수정 : update 를 수행한 후 update 된 객체를 리턴시켜주자 => 이래야 TEST CODE 작성시 정확히 update 가 되었는지 확인할 수 있다.
      */
     @PutMapping("/profile")
-    public String updateUser(
+    public ResponseEntity<?> updateUser(
             @SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO,
             @RequestBody @Valid UserDTO userDTO) {
 
@@ -99,7 +100,7 @@ public class LoginUserController {
         BeanUtils.copyProperties(userDTO,user);
         userService.updateUser(user);
 
-        return "updateOk";
+        return RESPONSE_OK;
     }
 
     /**
@@ -107,11 +108,11 @@ public class LoginUserController {
      *          만약 컬럼값 1개만 Y->N 으로 변경했더라면 객체간 비교를 해줄 수 있지만, 아에 테이블에서 삭제를 해버리는 이상 마땅한 방법이 없음
      */
     @DeleteMapping("/profile")
-    public String deleteUser(@SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO){
+    public ResponseEntity<?> deleteUser(@SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO){
 
         String id = sessionDTO.getUserId();
 
         userService.deleteUser(id);
-        return "deleteOk";
+        return RESPONSE_OK;
     }
 }

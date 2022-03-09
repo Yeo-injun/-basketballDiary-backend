@@ -201,12 +201,12 @@ public class MyTeamController {
         return RESPONSE_OK;
         // TODO 예외처리 반영
     }
-
+/*****************************************************************************************************************/
     /**
      * API011 소속팀 개인프로필 수정데이터 조회
      */
     @GetMapping("/myTeams/{teamSeq}/profile")
-    public ResponseMyTeamProfileDTO findMyTeamsProfile(
+    public ResponseEntity<ResponseMyTeamProfileDTO> findMyTeamsProfile(
             @SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO,
             @PathVariable Long teamSeq){
 
@@ -219,7 +219,7 @@ public class MyTeamController {
 
         ResponseMyTeamProfileDTO myTeamProfileDTO = teamMemberService.findProfile(findMyTeamProfileDTO);
 
-        return myTeamProfileDTO;
+        return ResponseEntity.ok(myTeamProfileDTO);
     }
     @Getter
     public static class FindMyTeamProfileDTO {
@@ -240,7 +240,7 @@ public class MyTeamController {
      * API012 소속팀 개인프로필 수정
      */
     @PatchMapping("/myTeams/{teamSeq}/profile")
-    public String modifyMyTeamsProfile(
+    public ResponseEntity<?> modifyMyTeamsProfile(
             @SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO,
             @PathVariable Long teamSeq,
             @RequestBody MyTeamController.BackNumber backNumber){
@@ -256,7 +256,7 @@ public class MyTeamController {
                 .backNumber(backNumber.getBackNumber());
 
         teamMemberService.updateMyTeamProfile(myTeamProfileDTO);
-        return "ok";
+        return RESPONSE_OK;
     }
 
     @Getter
@@ -283,7 +283,7 @@ public class MyTeamController {
      * API013 소속팀 탈퇴
      */
     @DeleteMapping("/myTeams/{teamSeq}")
-    public String deleteMyTeamsProfile(
+    public ResponseEntity<?> deleteMyTeamsProfile(
             @SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO,
             @PathVariable Long teamSeq)
     {
@@ -293,8 +293,10 @@ public class MyTeamController {
                 .userSeq(id)
                 .teamSeq(teamSeq);
         teamMemberService.deleteMyTeamProfile(findMyTeamProfileDTO);
-        return "ok";
+        return RESPONSE_OK;
     }
+
+    /********************************************************************************************************/
 
     /**
      * API014 : 소속팀 목록 조회
