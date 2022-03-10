@@ -1,11 +1,8 @@
 package com.threeNerds.basketballDiary.mvc.service;
 
 import com.threeNerds.basketballDiary.constant.*;
-import com.threeNerds.basketballDiary.exception.AlreadyExsitException;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
-import com.threeNerds.basketballDiary.exception.NotExistException;
-import com.threeNerds.basketballDiary.mvc.domain.Team;
 import com.threeNerds.basketballDiary.mvc.domain.TeamJoinRequest;
 import com.threeNerds.basketballDiary.mvc.domain.TeamMember;
 import com.threeNerds.basketballDiary.mvc.dto.JoinRequestDTO;
@@ -20,9 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 import static com.threeNerds.basketballDiary.exception.Error.USER_NOT_FOUND;
 
@@ -51,18 +46,11 @@ public class TeamMemberManagerService {
      * 팀원 초대 API
      * @param joinRequest
      */
-    public void inviteTeamMember(JoinRequestDTO joinRequest) {
-        Long teamSeq = joinRequest.getTeamSeq();
-        Long userSeq = joinRequest.getUserSeq();
+    public void inviteTeamMember(JoinRequestDTO joinRequest)
+    {
+        TeamJoinRequest invitationInfo = TeamJoinRequest.createInvitation(joinRequest);
 
-        TeamJoinRequest invitationInfo = TeamJoinRequest.builder()
-                .teamSeq(teamSeq)
-                .userSeq(userSeq)
-                .joinRequestTypeCode(JoinRequestTypeCode.INVITATION.getCode())
-                .joinRequestStateCode(JoinRequestStateCode.WAITING.getCode())
-                .build();
-
-        // 초대-가입요청 존재여부 확인 : 대기중인 가입요청 혹은 초대가 있을 경우 중복가입요청 방지
+        /** 초대-가입요청 존재여부 확인 : 대기중인 가입요청 혹은 초대가 있을 경우 중복가입요청 방지 */
         TeamJoinRequest prevJoinReq = teamJoinRequestRepository.checkJoinRequest(invitationInfo);
         boolean isExistJoinRequest = prevJoinReq != null
                                         ? true
@@ -71,11 +59,10 @@ public class TeamMemberManagerService {
         {
             String reqTypeName = JoinRequestTypeCode.getName(prevJoinReq.getJoinRequestTypeCode());
             log.info("==== 이미 {}가 있습니다. ====", reqTypeName);
-            return; // TODO 에러를 던지거나 다른 것을 리턴하기
+            throw new CustomException(Error.ALREADY_EXIST_JOIN_REQUEST);
         }
-        // 초대-가입요청이 없을경우에만 INSERT
+        /** 초대-가입요청이 없을경우에만 INSERT */
         teamJoinRequestRepository.createJoinRequest(invitationInfo);
-
     }
 
     /**
@@ -90,7 +77,7 @@ public class TeamMemberManagerService {
                                         : false;
         if (isExsistTeamMember)
         {
-            throw new CustomException(Error.ALREADY_EXIST_TEAM_MEMBER);
+            throw new CustomException(Error.ALREADY_EXIST_TEAM_MEMBER); // TODO 참고자료(왜 409에러로 처리했는지) : https://deveric.tistory.com/62
         }
         JoinRequestDTO joinRequestInfo = teamJoinRequestRepository.findUserByTeamJoinRequestSeq(joinRequest);
         TeamMember newTeamMember = TeamMember.createNewMember(joinRequestInfo);

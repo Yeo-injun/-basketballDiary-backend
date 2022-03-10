@@ -1,8 +1,5 @@
 package com.threeNerds.basketballDiary.mvc.controller;
 
-import com.threeNerds.basketballDiary.exception.AlreadyExsitException;
-import com.threeNerds.basketballDiary.exception.CustomException;
-import com.threeNerds.basketballDiary.exception.NotExistException;
 import com.threeNerds.basketballDiary.interceptor.Auth;
 import com.threeNerds.basketballDiary.mvc.dto.*;
 import com.threeNerds.basketballDiary.mvc.service.MyTeamService;
@@ -12,12 +9,10 @@ import com.threeNerds.basketballDiary.session.SessionUser;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 import static com.threeNerds.basketballDiary.session.SessionConst.LOGIN_MEMBER;
 import static com.threeNerds.basketballDiary.utils.HttpResponses.*;
@@ -131,6 +126,7 @@ public class MyTeamController {
 
     /**
      * API007 : 소속팀의 선수초대
+     * 22.03.10 : Service Layer에 CustomException 적용
      */
     @PostMapping("/{teamSeq}/joinRequestTo/{userSeq}")
     public ResponseEntity<?> inviteTeamMember(
@@ -143,7 +139,6 @@ public class MyTeamController {
 
         teamMemberManagerService.inviteTeamMember(joinRequest);
         return RESPONSE_OK;
-        // TODO 예외처리 반영
     }
 
     /**
@@ -164,6 +159,7 @@ public class MyTeamController {
 
     /**
      * API009 : 소속팀이 사용자의 가입요청 승인
+     * 22.03.10 : Service Layer에 CustomException 적용
      */
     @PatchMapping("/{teamSeq}/joinRequestFrom/{teamJoinRequestSeq}/approval")
     public ResponseEntity<?> approveJoinRequest(
@@ -173,16 +169,9 @@ public class MyTeamController {
         JoinRequestDTO joinRequest = new JoinRequestDTO()
                 .teamJoinRequestSeq(teamJoinRequestSeq)
                 .teamSeq(teamSeq);
-        try
-        {
-            teamMemberManagerService.approveJoinRequest(joinRequest);
-            return RESPONSE_CREATED;
-        }
-        catch (AlreadyExsitException | NotExistException e)
-        {
-            // TODO 참고자료(왜 409에러로 처리했는지) : https://deveric.tistory.com/62
-            return RESPONSE_CONFLICT;
-        }
+
+        teamMemberManagerService.approveJoinRequest(joinRequest);
+        return RESPONSE_OK;
     }
 
     /**

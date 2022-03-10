@@ -1,6 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.domain;
 
 import com.threeNerds.basketballDiary.constant.JoinRequestStateCode;
+import com.threeNerds.basketballDiary.constant.JoinRequestTypeCode;
 import com.threeNerds.basketballDiary.mvc.dto.JoinRequestDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -44,6 +45,17 @@ public class TeamJoinRequest {
                 .teamJoinRequestSeq(joinRequest.getTeamJoinRequestSeq())
                 .teamSeq(joinRequest.getTeamSeq())
                 .joinRequestStateCode(JoinRequestStateCode.APPROVAL.getCode())
+                .build();
+    }
+
+    /** 가입요청 승인처리 */
+    public static TeamJoinRequest createInvitation (JoinRequestDTO joinRequest)
+    {
+        return TeamJoinRequest.builder()
+                .teamSeq(joinRequest.getTeamSeq())
+                .userSeq(joinRequest.getUserSeq())
+                .joinRequestTypeCode(JoinRequestTypeCode.INVITATION.getCode())
+                .joinRequestStateCode(JoinRequestStateCode.WAITING.getCode())
                 .build();
     }
  }
