@@ -1,5 +1,10 @@
 package com.threeNerds.basketballDiary.mvc.service;
 
+import com.threeNerds.basketballDiary.mvc.controller.MyTeamController;
+import com.threeNerds.basketballDiary.mvc.controller.UserController;
+import com.threeNerds.basketballDiary.mvc.domain.User;
+import com.threeNerds.basketballDiary.mvc.dto.ResponseMyTeamProfileDTO;
+import com.threeNerds.basketballDiary.mvc.repository.TeamMemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,4 +25,17 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional
 public class TeamMemberService {
+    private final TeamMemberRepository teamMemberRepository;
+
+    public ResponseMyTeamProfileDTO findProfile(MyTeamController.FindMyTeamProfileDTO userDto){
+        return teamMemberRepository.findMyTeamProfile(userDto);
+    }
+
+    public int updateMyTeamProfile(MyTeamController.ModifyMyTeamProfileDTO userDto){
+        return teamMemberRepository.updateMyTeamProfile(userDto);
+    }
+
+    public void deleteMyTeamProfile(MyTeamController.FindMyTeamProfileDTO userDto){
+        teamMemberRepository.deleteMyTeamProfile(userDto);
+    }
 }

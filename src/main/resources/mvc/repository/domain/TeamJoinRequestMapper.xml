@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.threeNerds.basketballDiary.mvc.repository.TeamJoinRequestRepository">
+    <select id="findUserByTeamJoinRequestSeq" resultType="com.threeNerds.basketballDiary.mvc.dto.JoinRequestDTO">
+        SELECT TEAM_SEQ
+             , USER_SEQ
+          FROM TEAM_JOIN_REQUEST
+         WHERE TEAM_JOIN_REQUEST_SEQ = #{teamJoinRequestSeq}
+    </select>
+
+    <insert id="createJoinRequest" parameterType="com.threeNerds.basketballDiary.mvc.domain.TeamJoinRequest">
+        INSERT INTO TEAM_JOIN_REQUEST (
+            TEAM_SEQ
+            , USER_SEQ
+            , JOIN_REQUEST_TYPE_CODE
+            , JOIN_REQUEST_STATE_CODE
+            , REQUEST_DATE
+        )
+        VALUES (
+            #{teamSeq}
+            , #{userSeq}
+            , #{joinRequestTypeCode}
+            , #{joinRequestStateCode}
+            , CURRENT_TIMESTAMP
+        )
+    </insert>
+
+    <select id="checkJoinRequest" resultType="com.threeNerds.basketballDiary.mvc.domain.TeamJoinRequest">
+        SELECT JOIN_REQUEST_TYPE_CODE /* 가입요청유형코드 */
+          FROM TEAM_JOIN_REQUEST
+         WHERE 1=1
+           AND TEAM_SEQ = #{teamSeq}
+           AND USER_SEQ = #{userSeq}
+           AND JOIN_REQUEST_STATE_CODE = #{joinRequestStateCode}  /* 대기중(01)인 경우에만 체크 */
+    </select>
+
+    <update id="updateJoinRequestState" parameterType="com.threeNerds.basketballDiary.mvc.domain.TeamJoinRequest">
+        UPDATE TEAM_JOIN_REQUEST
+           SET JOIN_REQUEST_STATE_CODE = #{joinRequestStateCode}
+             , CONFIRMATION_DATE = CURRENT_TIMESTAMP
+         WHERE 1=1
+           AND TEAM_JOIN_REQUEST_SEQ = #{teamJoinRequestSeq}
+           AND TEAM_SEQ = #{teamSeq}
+           AND JOIN_REQUEST_STATE_CODE = '01' /* 팀가입요청상태코드 - 대기중인 상태만 변경가능 */
+    </update>
+
+    <select id="findAllJoinRequests" resultType="com.threeNerds.basketballDiary.mvc.dto.JoinRequestDTO">
+        SELECT A.TEAM_JOIN_REQUEST_SEQ  /* 팀가입요청SEQ */
+             , A.JOIN_REQUEST_TYPE_CODE /* 팀가입요청유형코드 */
+             , A.JOIN_REQUEST_STATE_CODE /* 팀가입요청상태코드 */
+             , A.REQUEST_DATE           /* 가입요청일시 */
+             , B.TEAM_NAME              /* 팀명 */
+             , B.HOMETOWN               /* 연고지 */
+             , B.FOUNDATION_YMD         /* 창립일자 */
+             , C.NAME AS LEADER_NAME    /* 팀장이름 */
+          FROM TEAM_JOIN_REQUEST A
+         INNER JOIN TEAM B
+            ON A.TEAM_SEQ = B.TEAM_SEQ
+         INNER JOIN USER C
+            ON B.LEADER_ID = C.USER_SEQ
+         WHERE 1=1
+           AND A.USER_SEQ = #{userSeq}
+    </select>
+</mapper>

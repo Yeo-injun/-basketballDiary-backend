@@ -2,18 +2,20 @@ package com.threeNerds.basketballDiary.mvc.controller;
 
 import com.threeNerds.basketballDiary.mvc.service.LoginService;
 import com.threeNerds.basketballDiary.session.SessionConst;
-import com.threeNerds.basketballDiary.session.SessionDTO;
+import com.threeNerds.basketballDiary.session.SessionUser;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.SessionAttribute;
 
 import javax.servlet.http.HttpSession;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static com.threeNerds.basketballDiary.utils.HttpResponses.RESPONSE_OK;
 
 /**
  * ... 수행하는 Controller
@@ -34,23 +36,23 @@ public class LoginController {
     private final LoginService loginService;
 
     @PostMapping("/login")
-    public SessionDTO login(@RequestBody LoginUserRequest loginUserRequest, HttpSession session) {
+    public ResponseEntity<SessionUser> login(@RequestBody LoginUserRequest loginUserRequest, HttpSession session) {
         log.info("로그인");
-        SessionDTO sessionDTO = loginService.login(loginUserRequest)
+        SessionUser sessionUser = loginService.login(loginUserRequest)
                 .map(u -> {
                     Map<Long, Long> userAuth = loginService.findAuthList(loginUserRequest).stream()
                             .collect(Collectors.toMap(i -> Long.parseLong(i.getTeamSeq()), i -> Long.parseLong(i.getTeamAuthCode())));
-                    return new SessionDTO(u.getUserSeq(), u.getUserId(),userAuth);
+                    return new SessionUser(u.getUserSeq(), u.getUserId(),userAuth);
                 })
                 .orElse(null);
-        session.setAttribute(SessionConst.LOGIN_MEMBER,sessionDTO);
-        return sessionDTO;
+        session.setAttribute(SessionConst.LOGIN_MEMBER, sessionUser);
+        return ResponseEntity.ok(sessionUser);
     }
     @PostMapping("/logout")
-    public String logout(HttpSession session){
+    public ResponseEntity<?> logout(HttpSession session){
         log.info("로그아웃");
         session.invalidate();
-        return "logoutOk";
+        return RESPONSE_OK;
     }
 
     @Data

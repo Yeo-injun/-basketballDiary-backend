@@ -1,6 +1,9 @@
 spring:
   datasource:
-    url: jdbc:mysql://basketball-diary.comugfwcpzzw.ap-northeast-2.rds.amazonaws.com/basketballDiaryTest
+    ## log4jdbc를 위한 url 및 driver-class-name 변경 (2022.02.26)
+    ## url: jdbc:mysql://basketball-diary.comugfwcpzzw.ap-northeast-2.rds.amazonaws.com/basketballDiaryTest
+    url: jdbc:log4jdbc:mysql://basketball-diary.comugfwcpzzw.ap-northeast-2.rds.amazonaws.com/basketballDiaryTest
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
     username: admin
     password: Basket5199
 

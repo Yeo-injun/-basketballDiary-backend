@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.threeNerds.basketballDiary.mvc.repository.TeamMemberRepository">
+    <insert id="saveTeamMemeber" parameterType="com.threeNerds.basketballDiary.mvc.domain.TeamMember">
+        INSERT INTO TEAM_MEMBER (
+            TEAM_SEQ
+            , USER_SEQ
+            , TEAM_AUTH_CODE
+            , JOIN_YMD
+            , WITHDRAWAL_YN
+        )
+        VALUES (
+            #{teamSeq}
+            , #{userSeq}
+            , #{teamAuthCode}
+            , #{joinYmd}
+            , #{withdrawalYn}
+        )
+    </insert>
+
+    <select id="checkTeamMember" resultType="com.threeNerds.basketballDiary.mvc.dto.JoinRequestDTO">
+        SELECT A.TEAM_SEQ
+             , A.USER_SEQ
+          FROM TEAM_JOIN_REQUEST A
+         INNER JOIN TEAM_MEMBER B
+            ON A.TEAM_SEQ = B.TEAM_SEQ
+           AND A.USER_SEQ = B.USER_SEQ
+         WHERE TEAM_JOIN_REQUEST_SEQ = #{teamJoinRequestSeq}
+    </select>
+
+    <update id="updateWithdrawalState">
+        UPDATE TEAM_MEMBER
+           SET WITHDRAWAL_YN = #{withdrawalYn}
+         WHERE TEAM_MEMBER_SEQ = #{teamMemberSeq}
+           AND TEAM_SEQ = #{teamSeq}
+    </update>
+
+    <update id="updateTeamAuth">
+        UPDATE TEAM_MEMBER
+           SET TEAM_AUTH_CODE = #{teamAuthCode}
+         WHERE TEAM_MEMBER_SEQ = #{teamMemberSeq}
+           AND TEAM_SEQ = #{teamSeq}
+           AND WITHDRAWAL_YN = 'N'
+        <if test='"1".equals(teamAuthCode)'>
+           AND TEAM_AUTH_CODE = '2' /* 관리자를 팀원으로 */
+        </if>
+        <if test='"2".equals(teamAuthCode)'>
+            AND TEAM_AUTH_CODE = '1' /* 팀원을 관리자로 */
+        </if>
+    </update>
+
+    <select id="findMyTeamProfile" resultType="com.threeNerds.basketballDiary.mvc.dto.ResponseMyTeamProfileDTO">
+        SELECT C.NAME AS USERNAME,B.TEAM_NAME AS TEAMNAME,A.BACK_NUMBER AS BACKNUMBER
+        FROM TEAM_MEMBER A join TEAM B on A.TEAM_SEQ=B.TEAM_SEQ
+            join USER C on A.USER_SEQ=C.USER_SEQ
+        where A.User_seq=#{userSeq} and A.team_seq =#{teamSeq};
+    </select>
+
+    <update id="updateMyTeamProfile">
+        UPDATE TEAM_MEMBER
+        SET BACK_NUMBER = #{backNumber}
+        WHERE USER_SEQ = #{findMyTeamProfileDTO.userSeq} AND TEAM_SEQ = #{findMyTeamProfileDTO.teamSeq}
+    </update>
+
+    <delete id="deleteMyTeamProfild">
+        DELETE FROM TEAM_MEMBER WHERE USER_SEQ=#{userSeq} AND TEAMSEQ=#{teamSeq}
+    </delete>
+</mapper>

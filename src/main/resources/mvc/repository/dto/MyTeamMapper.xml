@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.threeNerds.basketballDiary.mvc.repository.MyTeamRepository">
+
+    <select id="findByUserSeqAndTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.dto.MyTeamInfoDTO">
+        SELECT A.TEAM_SEQ
+             , A.TEAM_AUTH_CODE -- 팀정보 수정 권한을 위해
+             , B.TEAM_NAME
+             , B.TEAM_IMAGE_PATH
+             , B.HOMETOWN
+             , B.SIDO_CODE
+             , B.SIGUNGU_CODE
+             , B.INTRODUCTION
+             , COUNT(A.USER_SEQ) OVER(PARTITION BY A.TEAM_SEQ) AS TOT_MEMBER
+             , B.FOUNDATION_YMD
+        FROM (SELECT * FROM TEAM_MEMBER WHERE WITHDRAWAL_YN != 'Y') A
+                 JOIN TEAM B
+                      ON A.TEAM_SEQ = B.TEAM_SEQ
+        WHERE A.USER_SEQ = #{userSeq}
+          AND A.TEAM_SEQ = #{teamSeq}
+    </select>
+
+    <select id="findAllByUserSeq" resultType="com.threeNerds.basketballDiary.mvc.dto.MyTeamInfoDTO">
+        SELECT A.TEAM_SEQ
+             , A.TEAM_AUTH_CODE -- 팀정보 수정 권한을 위해
+             , B.TEAM_NAME
+             , B.TEAM_IMAGE_PATH
+             , B.HOMETOWN
+             , B.SIDO_CODE
+             , B.SIGUNGU_CODE
+             , B.INTRODUCTION
+             , COUNT(A.USER_SEQ) OVER(PARTITION BY A.TEAM_SEQ) AS TOT_MEMBER
+             , B.FOUNDATION_YMD
+        FROM (SELECT * FROM TEAM_MEMBER WHERE WITHDRAWAL_YN != 'Y') A
+                 JOIN TEAM B
+                      ON A.TEAM_SEQ = B.TEAM_SEQ
+        WHERE A.USER_SEQ = #{userSeq}
+    </select>
+
+    <select id="findAllManagerByTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.dto.MemberDTO">
+        SELECT A.USER_SEQ
+             , B.TEAM_MEMBER_SEQ
+             , B.TEAM_SEQ
+             , B.TEAM_AUTH_CODE
+             , A.NAME
+             , A.BIRTH_YMD
+             , A.HEIGHT
+             , A.WEIGHT
+             , B.BACK_NUMBER
+             , B.JOIN_YMD
+        FROM USER A
+                 JOIN TEAM_MEMBER B
+                      ON A.USER_SEQ = B.USER_SEQ
+        WHERE B.TEAM_AUTH_CODE > 1 -- 관리자(임원) 이상 조회
+          AND B.WITHDRAWAL_YN != 'Y'
+          AND B.TEAM_SEQ = #{teamSeq}
+    </select>
+
+    <select id="findAllMemberByTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.dto.MemberDTO">
+        SELECT A.USER_SEQ
+             , B.TEAM_MEMBER_SEQ
+             , B.TEAM_SEQ
+             , B.TEAM_AUTH_CODE
+             , A.NAME
+             , A.BIRTH_YMD
+             , A.HEIGHT
+             , A.WEIGHT
+             , B.BACK_NUMBER
+             , B.JOIN_YMD
+             , IFNULL(C.TOT_MATCH, 0) TOT_GAME
+        FROM USER A
+                 JOIN TEAM_MEMBER B
+                      ON A.USER_SEQ = B.USER_SEQ
+                 LEFT JOIN (SELECT TEAM_MEMBER_SEQ, COUNT(*) AS "TOT_MATCH"
+                            FROM GAME_JOIN_PLAYER
+                            GROUP BY TEAM_MEMBER_SEQ) C
+                           ON B.TEAM_MEMBER_SEQ = C.TEAM_MEMBER_SEQ
+        WHERE B.TEAM_AUTH_CODE <![CDATA[<]]> 2 -- 관리자(임원) 이상 조회
+          AND B.WITHDRAWAL_YN != 'Y'
+          AND B.TEAM_SEQ = #{teamSeq}
+    </select>
+
+    <select id="findPagingMemberByTeamSeq" parameterType="com.threeNerds.basketballDiary.mvc.dto.MemberDTO" resultType="com.threeNerds.basketballDiary.mvc.dto.MemberDTO">
+        SELECT *
+        FROM (SELECT A.USER_SEQ
+                   , B.TEAM_MEMBER_SEQ
+                   , B.TEAM_SEQ
+                   , B.TEAM_AUTH_CODE
+                   , A.NAME
+                   , A.BIRTH_YMD
+                   , A.HEIGHT
+                   , A.WEIGHT
+                   , B.BACK_NUMBER
+                   , B.JOIN_YMD
+                   , IFNULL(C.TOT_MATCH, 0) TOT_GAME
+              FROM USER A
+                       JOIN TEAM_MEMBER B
+                            ON A.USER_SEQ = B.USER_SEQ
+                       LEFT JOIN (SELECT TEAM_MEMBER_SEQ, COUNT(*) AS "TOT_MATCH"
+                                  FROM GAME_JOIN_PLAYER
+                                  GROUP BY TEAM_MEMBER_SEQ) C
+                                 ON B.TEAM_MEMBER_SEQ = C.TEAM_MEMBER_SEQ
+              WHERE B.TEAM_AUTH_CODE <![CDATA[<]]> 2 -- 관리자(임원) 이상 조회
+                AND B.WITHDRAWAL_YN != 'Y'
+           AND B.TEAM_SEQ = #{teamSeq}) ORDERS LIMIT #{pagerDTO.offset}
+        OFFSET #{pagerDTO.pageNo}
+    </select>
+
+
+</mapper>

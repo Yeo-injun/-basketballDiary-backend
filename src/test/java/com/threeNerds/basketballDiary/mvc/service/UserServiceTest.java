@@ -2,89 +2,113 @@ package com.threeNerds.basketballDiary.mvc.service;
 
 import com.threeNerds.basketballDiary.mvc.domain.User;
 import com.threeNerds.basketballDiary.mvc.repository.UserRepository;
-import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.extension.Extensions;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
-@SpringBootTest
+/**
+ * @SpringBootTest 와 @Mock을 함께 사용하면 NoSuchMethodError 가 발생한다.
+ * 원인 : 못찾음
+ * 해결책 : @SpringBootTest 를 사용할 거면 @Mockmvc 를 이용, 그게 아니라면 @Mock 과 @InjectMocks를 사용
+ */
+@ExtendWith(MockitoExtension.class)/**ExtendWith 어노테이션이 있어야 @Mock 이 재대로 작동한다**/
+//@SpringBootTest
 @Transactional
 class UserServiceTest {
 
-    @Autowired private UserService userService;
+    MockHttpSession mockHttpSession;
 
+    @InjectMocks
+    private UserService userService;
+    @Mock
+    private UserRepository userRepository;
+
+    User testUser;
+
+    User testUser2;
+
+    @BeforeEach
+    void setUpEach() {
+        testUser = User.builder()
+                .userSeq(1L)
+                .userId("User")
+                .password("1111")
+                .userName("Lee")
+                .email("Lee00123@naver.com")
+                .gender("M")
+                .height(176.6)
+                .weight(78.9)
+                .regDate(LocalDate.now())
+                .updateDate(LocalDate.now())
+                .userRegYn("Y")
+                .sidoCode("11")
+                .sigunguCode("31")
+                .build();
+
+        testUser2 = User.builder()
+                .userSeq(1L)
+                .userId("User")
+                .password("9876")
+                .userName("Kim")
+                .email("Kim00122@naver.com")
+                .gender("M")
+                .height(176.6)
+                .weight(78.9)
+                .regDate(LocalDate.now())
+                .updateDate(LocalDate.now())
+                .userRegYn("Y")
+                .sidoCode("11")
+                .sigunguCode("311")
+                .build();
+        mockHttpSession = new MockHttpSession();
+    }
     @Test
     void createUserTest(){
         //given
-        User user = getUser();
+        when(userRepository.saveUser(testUser)).thenReturn(1L);
         //when
-        userService.createMember(user);
-        Long retSeq = userService.findSeq(user.getUserId());
+        Long id = userService.createMember(testUser);
         //then
-        assertEquals(userService.findUser(retSeq).getUserId(),user.getUserId());
+        assertThat(id).isEqualTo(1L);
     }
 
     @Test
     void findUserTest(){
         //given
-        User user = getUser();
-        userService.createMember(user);
-        Long retSeq = userService.findSeq(user.getUserId());
+        when(userRepository.findUser(1L)).thenReturn(testUser);
         //when
-        User retUser = userService.findUser(retSeq);
+        User user = userService.findUser(1L);
         //then
-        assertEquals(retUser.getUserSeq(),retSeq);
+        assertThat(user).isNotEqualTo(testUser2);
     }
 
     @Test
     void modifyUserTest(){
         //given
-        User user = getUser();
-        String preName = user.getUserName();
-        userService.createMember(user);
+        doNothing().when(userRepository).updateUser(testUser2);
         //when
-        user.setUserName("kim");
-        userService.updateUser(user);
-        User retUser = userService.findUser(user.getUserSeq());
+        userRepository.updateUser(testUser2);
         //then
-        assertNotEquals(retUser.getUserName(),preName);
+        verify(userRepository).updateUser(testUser2);
     }
+
     @Test
     void deleteUserTest(){
         //given
-        User user = getUser();
-        Long retSeq = userService.findSeq(user.getUserId());
+        doNothing().when(userRepository).deleteUser("Uesr");
         //when
-        userService.deleteUser(retSeq);
+        userService.deleteUser(testUser.getUserId());
         //then
-        assertNull(userService.findUser(retSeq));
-    }
-    private User getUser() {
-        User user = new User();
-        user.setUserId("User");
-        user.setPassword("1111");
-        user.setUserName("Lee");
-        user.setPositionCode("22");
-        user.setEmail("User@naver.com");
-        user.setGender("M");
-        user.setHeight(176.6);
-        user.setWeight(78.9);
-        user.setRegDate(LocalDate.now());
-        user.setUpdateDate(LocalDate.now());
-        user.setUserRegYn("Y");
-        user.setSidoCode("11");
-        user.setSigunguCode("173");
-        return user;
+        verify(userRepository).deleteUser(testUser.getUserId());
     }
 }

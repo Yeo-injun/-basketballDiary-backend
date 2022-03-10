@@ -1,7 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.controller;
 
 import com.threeNerds.basketballDiary.mvc.domain.Team;
-import com.threeNerds.basketballDiary.mvc.dto.TeamDto;
+import com.threeNerds.basketballDiary.mvc.dto.TeamDTO;
 import com.threeNerds.basketballDiary.mvc.service.TeamService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,21 +30,18 @@ public class TeamController {
     private final TeamService teamService;
 
     @PostMapping("/new")
-    public String create(TeamDto teamDto){
-        Team team = new Team();
-
-        team.setLeaderId(teamDto.getLeaderId());
-        team.setTeamName(teamDto.getTeamName());
-        team.setHometown(teamDto.getHometown());
-        team.setIntroduction(teamDto.getIntroduction());
-
-        LocalDate today = LocalDate.now();
-        team.setFoundationYmd(today);
-        team.setRegDate(today);
-        team.setUpdateDate(today);
-
-        team.setSidoCode(teamDto.getSidoCode());
-        team.setSigunguCode(teamDto.getSigunguCode());
+    public String create(TeamDTO teamDto){
+        Team team = Team.builder()
+                .leaderId(teamDto.getLeaderId())
+                .teamName(teamDto.getTeamName())
+                .hometown(teamDto.getHometown())
+                .introduction(teamDto.getIntroduction())
+                .foundationYmd(LocalDate.now().toString())
+                .regDate(LocalDate.now())
+                .updateDate(LocalDate.now())
+                .sidoCode(teamDto.getSidoCode())
+                .sigunguCode(teamDto.getSigunguCode())
+                .build();
 
         teamService.createTeam(team);
         return "ok";

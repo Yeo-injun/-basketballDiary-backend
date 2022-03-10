@@ -34,8 +34,8 @@ public class UserService {
         return userRepository.findUser(id);
     }
     @Transactional
-    public void createMember(User user) {
-        userRepository.saveUser(user);
+    public Long createMember(User user) {
+        return userRepository.saveUser(user);
     }
     @Transactional
     public void updateUser(User user){
@@ -43,7 +43,7 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteUser(Long id) {
+    public void deleteUser(String id) {
         userRepository.deleteUser(id);
     }
 }
