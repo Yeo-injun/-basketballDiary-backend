@@ -51,7 +51,7 @@ public class MyTeamService {
      */
     public List<MemberDTO> findManagers(Long teamSeq) {
         // 소속팀 운영진 정보는 반드시 1건 이상(최소한 팀장이 존재해야함)이어야 하므로,
-        // 조회내역이 존재하지 않으면 404 not found 처리한다.
+        // 조회내역이 존재하지 않으면 200 처리후 메시지를 전달한다.
 
         // 1. Validation check: 운영진 정보가 Null일 경우 throw
         List<MemberDTO> resultManagerList = Optional.ofNullable(myTeamRepository.findAllManagerByTeamSeq(teamSeq))
