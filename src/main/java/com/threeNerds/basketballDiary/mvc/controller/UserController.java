@@ -2,25 +2,17 @@ package com.threeNerds.basketballDiary.mvc.controller;
 
 import com.threeNerds.basketballDiary.interceptor.Auth;
 import com.threeNerds.basketballDiary.mvc.domain.User;
-import com.threeNerds.basketballDiary.mvc.dto.JoinRequestDTO;
-import com.threeNerds.basketballDiary.mvc.dto.ResponseMyTeamProfileDTO;
-import com.threeNerds.basketballDiary.mvc.dto.UserDTO;
-import com.threeNerds.basketballDiary.mvc.service.TeamMemberService;
+import com.threeNerds.basketballDiary.mvc.dto.user.UserDTO;
 import com.threeNerds.basketballDiary.mvc.service.UserService;
 import com.threeNerds.basketballDiary.mvc.service.UserTeamManagerService;
-import com.threeNerds.basketballDiary.session.SessionUser;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
-import java.util.List;
 
-import static com.threeNerds.basketballDiary.session.SessionConst.LOGIN_MEMBER;
 import static com.threeNerds.basketballDiary.utils.HttpResponses.*;
 
 /**

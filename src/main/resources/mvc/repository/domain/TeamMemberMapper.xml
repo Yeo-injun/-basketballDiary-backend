@@ -50,7 +50,7 @@
         </if>
     </update>
 
-    <select id="findMyTeamProfile" resultType="com.threeNerds.basketballDiary.mvc.dto.ResponseMyTeamProfileDTO">
+    <select id="findMyTeamProfile" resultType="com.threeNerds.basketballDiary.mvc.dto.myTeam.ResponseMyTeamProfileDTO">
         SELECT C.NAME AS USERNAME,B.TEAM_NAME AS TEAMNAME,A.BACK_NUMBER AS BACKNUMBER
         FROM TEAM_MEMBER A join TEAM B on A.TEAM_SEQ=B.TEAM_SEQ
             join USER C on A.USER_SEQ=C.USER_SEQ

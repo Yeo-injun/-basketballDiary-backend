@@ -1,6 +1,5 @@
-package com.threeNerds.basketballDiary.mvc.dto;
+package com.threeNerds.basketballDiary.mvc.dto.myTeam;
 
-import com.threeNerds.basketballDiary.mvc.controller.UserController;
 import lombok.Getter;
 
 @Getter
