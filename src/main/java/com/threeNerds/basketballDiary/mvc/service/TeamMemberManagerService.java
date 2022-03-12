@@ -9,6 +9,7 @@ import com.threeNerds.basketballDiary.mvc.dto.JoinRequestDTO;
 import com.threeNerds.basketballDiary.mvc.dto.KeyDTO;
 import com.threeNerds.basketballDiary.mvc.dto.PlayerDTO;
 import com.threeNerds.basketballDiary.mvc.dto.PlayerSearchDTO;
+import com.threeNerds.basketballDiary.mvc.dto.myTeam.MyTeamTempDTO;
 import com.threeNerds.basketballDiary.mvc.repository.PlayerRepository;
 import com.threeNerds.basketballDiary.mvc.repository.TeamJoinRequestRepository;
 import com.threeNerds.basketballDiary.mvc.repository.TeamMemberRepository;
@@ -152,7 +153,7 @@ public class TeamMemberManagerService {
      * @param teamMemberKey
      * @return List<PlayerDTO>
      */
-    public void removeTeamMember(KeyDTO.TeamMember teamMemberKey)
+    public void removeTeamMember(MyTeamTempDTO teamMemberKey)
     {
         TeamMember teamMember = TeamMember.withdrawalMember(teamMemberKey);
         boolean isWithdrawal = teamMemberRepository.updateWithdrawalState(teamMember) == 1 ? true : false;
@@ -166,7 +167,7 @@ public class TeamMemberManagerService {
      * 소속팀 관리자 임명하기
      * @param teamMemberKey
      */
-    public void appointManager(KeyDTO.TeamMember teamMemberKey) {
+    public void appointManager(MyTeamTempDTO teamMemberKey) {
         TeamMember toManagerMember = TeamMember.toManager(teamMemberKey);
 
         boolean isSuccess = teamMemberRepository.updateTeamAuth(toManagerMember) == 1 ? true : false;
@@ -180,7 +181,7 @@ public class TeamMemberManagerService {
      * 소속팀 관리자 해임하기
      * @param teamMemberKeys
      */
-    public void dismissManager(KeyDTO.TeamMember teamMemberKeys) {
+    public void dismissManager(MyTeamTempDTO teamMemberKeys) {
         TeamMember toMember = TeamMember.toMember(teamMemberKeys);
 
         boolean isSuccess = teamMemberRepository.updateTeamAuth(toMember) == 1 ? true : false;

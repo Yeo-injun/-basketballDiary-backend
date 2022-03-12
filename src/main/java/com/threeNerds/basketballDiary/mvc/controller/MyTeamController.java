@@ -2,6 +2,7 @@ package com.threeNerds.basketballDiary.mvc.controller;
 
 import com.threeNerds.basketballDiary.interceptor.Auth;
 import com.threeNerds.basketballDiary.mvc.dto.*;
+import com.threeNerds.basketballDiary.mvc.dto.myTeam.MyTeamTempDTO;
 import com.threeNerds.basketballDiary.mvc.service.MyTeamService;
 import com.threeNerds.basketballDiary.mvc.service.TeamMemberManagerService;
 import com.threeNerds.basketballDiary.mvc.service.TeamMemberService;
@@ -84,7 +85,7 @@ public class MyTeamController {
             @PathVariable Long teamSeq,
             @PathVariable Long teamMemberSeq
     ) {
-        KeyDTO.TeamMember teamMemberKey = new KeyDTO.TeamMember()
+        MyTeamTempDTO teamMemberKey = new MyTeamTempDTO()
                 .teamSeq(teamSeq)
                 .teamMemberSeq(teamMemberSeq);
 
@@ -101,7 +102,7 @@ public class MyTeamController {
             @PathVariable Long teamSeq,
             @PathVariable Long teamMemberSeq
     ) {
-        KeyDTO.TeamMember teamMemberKey = new KeyDTO.TeamMember()
+        MyTeamTempDTO teamMemberKey = new MyTeamTempDTO()
                                 .teamSeq(teamSeq)
                                 .teamMemberSeq(teamMemberSeq);
         teamMemberManagerService.removeTeamMember(teamMemberKey);
@@ -111,7 +112,7 @@ public class MyTeamController {
     /**
      * API005 : 소속팀의 초대한 선수목록 조회
      */
-    @GetMapping("/{teamSeq}/joinRequestTo") // TODO URL 마지막에 /users 추가하는 것은 어떤지 (22.02.20 인준의견)
+    @GetMapping("/{teamSeq}/joinRequestTo")
     public ResponseEntity<?> searchInvitedPlayer(
             @PathVariable Long teamSeq,
             @RequestParam(name = "state", defaultValue = "00") String joinRequestStateCode
@@ -126,7 +127,7 @@ public class MyTeamController {
 
     /**
      * API007 : 소속팀의 선수초대
-     * 22.03.10 : Service Layer에 CustomException 적용
+     * 22.03.10 인준 : Service Layer에 CustomException 적용
      */
     @PostMapping("/{teamSeq}/joinRequestTo/{userSeq}")
     public ResponseEntity<?> inviteTeamMember(
@@ -144,7 +145,7 @@ public class MyTeamController {
     /**
      * API008 : 소속팀이 받은 가입요청목록 조회
      */
-    @GetMapping("/{teamSeq}/joinRequestFrom") // TODO URL 마지막에 /users 추가하는 것은 어떤지 (22.02.20 인준의견)
+    @GetMapping("/{teamSeq}/joinRequestsFrom")
     public ResponseEntity<?> searchJoinRequestPlayer(
             @PathVariable Long teamSeq,
             @RequestParam(name = "state", defaultValue = "00") String joinRequestStateCode
@@ -159,7 +160,7 @@ public class MyTeamController {
 
     /**
      * API009 : 소속팀이 사용자의 가입요청 승인
-     * 22.03.10 : Service Layer에 CustomException 적용
+     * 22.03.10 인준 : Service Layer에 CustomException 적용
      */
     @PatchMapping("/{teamSeq}/joinRequestFrom/{teamJoinRequestSeq}/approval")
     public ResponseEntity<?> approveJoinRequest(
@@ -309,7 +310,7 @@ public class MyTeamController {
             @PathVariable Long teamSeq,
             @PathVariable Long teamMemberSeq
     ) {
-        KeyDTO.TeamMember teamMemberKeys = new KeyDTO.TeamMember()
+        MyTeamTempDTO teamMemberKeys = new MyTeamTempDTO()
                 .teamMemberSeq(teamMemberSeq)
                 .teamSeq(teamSeq);
         teamMemberManagerService.dismissManager(teamMemberKeys);

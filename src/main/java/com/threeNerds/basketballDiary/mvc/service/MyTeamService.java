@@ -146,6 +146,9 @@ public class MyTeamService {
             if(teamRegularExerciseSeq != null) {
                 // Seq가 있으므로 조회 후 수정내역 update
                 TeamRegularExercise teamRegularExercise = teamRegularExerciseRepository.findByTeamRegularExerciseSeq(teamRegularExerciseSeq);
+                // TODO param의 필드 중에 seq가 null이면 teamRegularExcercise도 null로 변경되는거 아닌지 확인 필요...?
+                // TODO 같은 클래스의 객체를 BeanUtils.copyProperties하면 source객체와 target객체의 필드명이 같은 것은 target객체의 필드값 null여부에 상관없이 복사됨.
+                // TODO 즉 필드명이 같으면 source객체의 값이 복사되어 source객체에 null이면 target객체에 동일한 필드명은 기존값이 null로 덮어씌워짐.
                 BeanUtils.copyProperties(param, teamRegularExercise);
                 teamRegularExerciseRepository.updateTeamRegularExercise(teamRegularExercise);
             } else {
