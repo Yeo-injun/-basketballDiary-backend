@@ -52,15 +52,11 @@ public class MyTeamService {
     public List<MemberDTO> findManagers(Long teamSeq) {
         // 소속팀 운영진 정보는 반드시 1건 이상(최소한 팀장이 존재해야함)이어야 하므로,
         // 조회내역이 존재하지 않으면 200 처리후 메시지를 전달한다.
+        List<MemberDTO> resultManagerList
+                = myTeamRepository.findAllManagerByTeamSeq(teamSeq);
 
-        // 1. Validation check: 운영진 정보가 Null일 경우 throw
-        List<MemberDTO> resultManagerList = Optional.ofNullable(myTeamRepository.findAllManagerByTeamSeq(teamSeq))
-            .orElseThrow(() -> new CustomException(Error.MANAGER_NOT_FOUND));
-
-        // 2. Validation Check: 운영진 정보가 Null은 아니지만, size가 0일 경우 throw
-        if(resultManagerList.isEmpty()) throw new CustomException(Error.MANAGER_NOT_FOUND);
-
-        return resultManagerList;
+        return resultManagerList.isEmpty() ?
+                Collections.emptyList() : resultManagerList;
     }
 
     /**
@@ -79,7 +75,8 @@ public class MyTeamService {
         // 소속팀은 팀장과 운영진을 제외하므로, 팀원 정보가 존재하지 않더라도 404 처리하지 않는다.
         List<MemberDTO> resultMemberList = myTeamRepository.findPagingMemberByTeamSeq(memberDTO);
 
-        return resultMemberList.isEmpty() ? Collections.emptyList() : resultMemberList;
+        return resultMemberList.isEmpty() ?
+                Collections.emptyList() : resultMemberList;
     }
 
     /**
@@ -101,7 +98,8 @@ public class MyTeamService {
             resultMyTeamList.add(myTeamDTO);
         });
 
-        return resultMyTeamList.isEmpty() ? Collections.emptyList() : resultMyTeamList;
+        return resultMyTeamList.isEmpty() ?
+                Collections.emptyList() : resultMyTeamList;
     }
 
     /**
@@ -112,9 +110,9 @@ public class MyTeamService {
     public MyTeamDTO findTeam(Long userSeq, Long teamSeq) {
         // 소속되지 않은 팀에 대한 조회는 Interceptor에 의해 처리됨.
 
-        MyTeamInfoDTO myTeamInfo = Optional.ofNullable(myTeamRepository.findByUserSeqAndTeamSeq(userSeq, teamSeq))
-                .orElseThrow(() -> new CustomException(Error.MY_TEAM_NOT_FOUND));
-        List<TeamRegularExercise> teamRegularExerciseList = teamRegularExerciseRepository.findByTeamSeq(teamSeq);
+        MyTeamInfoDTO myTeamInfo = myTeamRepository.findByUserSeqAndTeamSeq(userSeq, teamSeq);
+        List<TeamRegularExercise> teamRegularExerciseList 
+                = teamRegularExerciseRepository.findByTeamSeq(teamSeq);
 
         MyTeamDTO resultDTO = new MyTeamDTO()
                 .myTeamInfo(myTeamInfo)
@@ -134,8 +132,10 @@ public class MyTeamService {
         List<TeamRegularExercise> paramTeamRegularExercise = dto.getTeamRegularExercisesList();
 
         // 2. 팀정보 수정
+        // 2-1. 조회하려는 팀이 존재하지 않으므로 예외처리
         Team team = Optional.ofNullable(teamRepository.findByTeamSeq(teamSeq))
                 .orElseThrow(() -> new CustomException(Error.MY_TEAM_NOT_FOUND));
+        // TODO: 테스트 필요. copyProperties 안될것으로 보임.
         BeanUtils.copyProperties(paramMyTeamInfo, team);
         teamRepository.updateTeam(team);
 
@@ -145,7 +145,9 @@ public class MyTeamService {
             // 3.1 팀 정기운동 Seq에 따라 등록 및 수정 분기
             if(teamRegularExerciseSeq != null) {
                 // Seq가 있으므로 조회 후 수정내역 update
-                TeamRegularExercise teamRegularExercise = teamRegularExerciseRepository.findByTeamRegularExerciseSeq(teamRegularExerciseSeq);
+                TeamRegularExercise teamRegularExercise = Optional.ofNullable(teamRegularExerciseRepository.findByTeamRegularExerciseSeq(teamRegularExerciseSeq))
+                                .orElseThrow(() -> new CustomException(Error.REGULAR_EXERCISE_NOT_FOUND));
+                // TODO: 테스트 필요. copyProperties 안될것으로 보임.
                 BeanUtils.copyProperties(param, teamRegularExercise);
                 teamRegularExerciseRepository.updateTeamRegularExercise(teamRegularExercise);
             } else {
