@@ -5,11 +5,10 @@ import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.mvc.domain.TeamJoinRequest;
 import com.threeNerds.basketballDiary.mvc.domain.TeamMember;
-import com.threeNerds.basketballDiary.mvc.dto.JoinRequestDTO;
-import com.threeNerds.basketballDiary.mvc.dto.KeyDTO;
+import com.threeNerds.basketballDiary.mvc.dto.loginUser.userTeamManager.JoinRequestDTO;
 import com.threeNerds.basketballDiary.mvc.dto.PlayerDTO;
 import com.threeNerds.basketballDiary.mvc.dto.PlayerSearchDTO;
-import com.threeNerds.basketballDiary.mvc.dto.myTeam.MyTeamTempDTO;
+import com.threeNerds.basketballDiary.mvc.dto.myTeam.CmnMyTeamDTO;
 import com.threeNerds.basketballDiary.mvc.repository.PlayerRepository;
 import com.threeNerds.basketballDiary.mvc.repository.TeamJoinRequestRepository;
 import com.threeNerds.basketballDiary.mvc.repository.TeamMemberRepository;
@@ -80,7 +79,7 @@ public class TeamMemberManagerService {
         {
             throw new CustomException(Error.ALREADY_EXIST_TEAM_MEMBER); // TODO 참고자료(왜 409에러로 처리했는지) : https://deveric.tistory.com/62
         }
-        JoinRequestDTO joinRequestInfo = teamJoinRequestRepository.findUserByTeamJoinRequestSeq(joinRequest);
+        TeamJoinRequest joinRequestInfo = teamJoinRequestRepository.findUserByTeamJoinRequestSeq(joinRequest);
         TeamMember newTeamMember = TeamMember.createNewMember(joinRequestInfo);
         teamMemberRepository.saveTeamMemeber(newTeamMember);
 
@@ -153,7 +152,7 @@ public class TeamMemberManagerService {
      * @param teamMemberKey
      * @return List<PlayerDTO>
      */
-    public void removeTeamMember(MyTeamTempDTO teamMemberKey)
+    public void removeTeamMember(CmnMyTeamDTO teamMemberKey)
     {
         TeamMember teamMember = TeamMember.withdrawalMember(teamMemberKey);
         boolean isWithdrawal = teamMemberRepository.updateWithdrawalState(teamMember) == 1 ? true : false;
@@ -167,7 +166,7 @@ public class TeamMemberManagerService {
      * 소속팀 관리자 임명하기
      * @param teamMemberKey
      */
-    public void appointManager(MyTeamTempDTO teamMemberKey) {
+    public void appointManager(CmnMyTeamDTO teamMemberKey) {
         TeamMember toManagerMember = TeamMember.toManager(teamMemberKey);
 
         boolean isSuccess = teamMemberRepository.updateTeamAuth(toManagerMember) == 1 ? true : false;
@@ -181,7 +180,7 @@ public class TeamMemberManagerService {
      * 소속팀 관리자 해임하기
      * @param teamMemberKeys
      */
-    public void dismissManager(MyTeamTempDTO teamMemberKeys) {
+    public void dismissManager(CmnMyTeamDTO teamMemberKeys) {
         TeamMember toMember = TeamMember.toMember(teamMemberKeys);
 
         boolean isSuccess = teamMemberRepository.updateTeamAuth(toMember) == 1 ? true : false;

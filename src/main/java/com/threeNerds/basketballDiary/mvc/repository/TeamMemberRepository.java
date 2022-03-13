@@ -2,7 +2,7 @@ package com.threeNerds.basketballDiary.mvc.repository;
 
 import com.threeNerds.basketballDiary.mvc.controller.MyTeamController;
 import com.threeNerds.basketballDiary.mvc.domain.TeamMember;
-import com.threeNerds.basketballDiary.mvc.dto.JoinRequestDTO;
+import com.threeNerds.basketballDiary.mvc.dto.loginUser.userTeamManager.JoinRequestDTO;
 import com.threeNerds.basketballDiary.mvc.dto.myTeam.ResponseMyTeamProfileDTO;
 import org.apache.ibatis.annotations.Mapper;
 

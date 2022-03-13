@@ -2,14 +2,13 @@ package com.threeNerds.basketballDiary.mvc.controller;
 
 import com.threeNerds.basketballDiary.interceptor.Auth;
 import com.threeNerds.basketballDiary.mvc.domain.User;
-import com.threeNerds.basketballDiary.mvc.dto.loginUser.LoginUserDTO;
+import com.threeNerds.basketballDiary.mvc.dto.loginUser.CmnLoginUserDTO;
 import com.threeNerds.basketballDiary.mvc.dto.user.UserDTO;
 import com.threeNerds.basketballDiary.mvc.service.LoginService;
 import com.threeNerds.basketballDiary.mvc.service.UserService;
 import com.threeNerds.basketballDiary.mvc.service.UserTeamManagerService;
 import com.threeNerds.basketballDiary.session.SessionConst;
 import com.threeNerds.basketballDiary.session.SessionUser;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -75,11 +74,11 @@ public class UserController {
      * API030 로그인
      */
     @PostMapping("/login")
-    public ResponseEntity<SessionUser> login(@RequestBody LoginUserDTO loginUserDTO, HttpSession session) {
+    public ResponseEntity<SessionUser> login(@RequestBody CmnLoginUserDTO cmnLoginUserDTO, HttpSession session) {
         log.info("로그인");
-        SessionUser sessionUser = loginService.login(loginUserDTO)
+        SessionUser sessionUser = loginService.login(cmnLoginUserDTO)
                 .map(u -> {
-                    Map<Long, Long> userAuth = loginService.findAuthList(loginUserDTO).stream()
+                    Map<Long, Long> userAuth = loginService.findAuthList(cmnLoginUserDTO).stream()
                             .collect(Collectors.toMap(i -> Long.parseLong(i.getTeamSeq()), i -> Long.parseLong(i.getTeamAuthCode())));
                     return new SessionUser(u.getUserSeq(), u.getUserId(),userAuth);
                 })

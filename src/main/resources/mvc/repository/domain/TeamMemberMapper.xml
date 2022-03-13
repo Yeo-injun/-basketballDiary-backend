@@ -19,7 +19,7 @@
         )
     </insert>
 
-    <select id="checkTeamMember" resultType="com.threeNerds.basketballDiary.mvc.dto.JoinRequestDTO">
+    <select id="checkTeamMember" resultType="com.threeNerds.basketballDiary.mvc.dto.loginUser.userTeamManager.JoinRequestDTO">
         SELECT A.TEAM_SEQ
              , A.USER_SEQ
           FROM TEAM_JOIN_REQUEST A
