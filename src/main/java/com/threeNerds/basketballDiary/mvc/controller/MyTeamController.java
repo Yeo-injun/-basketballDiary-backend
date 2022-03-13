@@ -2,7 +2,8 @@ package com.threeNerds.basketballDiary.mvc.controller;
 
 import com.threeNerds.basketballDiary.interceptor.Auth;
 import com.threeNerds.basketballDiary.mvc.dto.*;
-import com.threeNerds.basketballDiary.mvc.dto.myTeam.MyTeamTempDTO;
+import com.threeNerds.basketballDiary.mvc.dto.loginUser.userTeamManager.JoinRequestDTO;
+import com.threeNerds.basketballDiary.mvc.dto.myTeam.CmnMyTeamDTO;
 import com.threeNerds.basketballDiary.mvc.dto.myTeam.ResponseMyTeamProfileDTO;
 import com.threeNerds.basketballDiary.mvc.service.MyTeamService;
 import com.threeNerds.basketballDiary.mvc.service.TeamMemberManagerService;
@@ -86,7 +87,7 @@ public class MyTeamController {
             @PathVariable Long teamSeq,
             @PathVariable Long teamMemberSeq
     ) {
-        MyTeamTempDTO teamMemberKey = new MyTeamTempDTO()
+        CmnMyTeamDTO teamMemberKey = new CmnMyTeamDTO()
                 .teamSeq(teamSeq)
                 .teamMemberSeq(teamMemberSeq);
 
@@ -103,7 +104,7 @@ public class MyTeamController {
             @PathVariable Long teamSeq,
             @PathVariable Long teamMemberSeq
     ) {
-        MyTeamTempDTO teamMemberKey = new MyTeamTempDTO()
+        CmnMyTeamDTO teamMemberKey = new CmnMyTeamDTO()
                                 .teamSeq(teamSeq)
                                 .teamMemberSeq(teamMemberSeq);
         teamMemberManagerService.removeTeamMember(teamMemberKey);
@@ -311,7 +312,7 @@ public class MyTeamController {
             @PathVariable Long teamSeq,
             @PathVariable Long teamMemberSeq
     ) {
-        MyTeamTempDTO teamMemberKeys = new MyTeamTempDTO()
+        CmnMyTeamDTO teamMemberKeys = new CmnMyTeamDTO()
                 .teamMemberSeq(teamMemberSeq)
                 .teamSeq(teamSeq);
         teamMemberManagerService.dismissManager(teamMemberKeys);
