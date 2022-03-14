@@ -1,15 +1,16 @@
 package com.threeNerds.basketballDiary.mvc.controller;
 
-import com.threeNerds.basketballDiary.mvc.domain.Team;
-import com.threeNerds.basketballDiary.mvc.dto.team.TeamDTO;
+import com.threeNerds.basketballDiary.interceptor.Auth;
+import com.threeNerds.basketballDiary.mvc.dto.team.team.SearchTeamDTO;
+import com.threeNerds.basketballDiary.mvc.dto.team.team.TeamDTO;
 import com.threeNerds.basketballDiary.mvc.service.TeamService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
+import java.util.List;
 
 /**
  * ... 수행하는 Controller
@@ -18,6 +19,7 @@ import java.time.LocalDate;
  * issue and history
  * <pre>
  * 2022.02.08 여인준 : 소스코드 생성
+ * 2022.03.14 강창기 : 팀 조회 구현
  * </pre>
  */
 
@@ -29,21 +31,40 @@ public class TeamController {
 
     private final TeamService teamService;
 
-    @PostMapping("/new")
-    public String create(TeamDTO teamDto){
-        Team team = Team.builder()
-                .leaderId(teamDto.getLeaderId())
-                .teamName(teamDto.getTeamName())
-                .hometown(teamDto.getHometown())
-                .introduction(teamDto.getIntroduction())
-                .foundationYmd(LocalDate.now().toString())
-                .regDate(LocalDate.now())
-                .updateDate(LocalDate.now())
-                .sidoCode(teamDto.getSidoCode())
-                .sigunguCode(teamDto.getSigunguCode())
-                .build();
+    /**
+     * API019 : 팀 목록 조회
+     */
+    @Auth(GRADE = 0L)
+    @GetMapping
+    public ResponseEntity<List<TeamDTO>> searchTeams(
+      @RequestParam(name = "team-name")     String teamName,
+      @RequestParam(name = "sigungu")       String sigungu,
+      @RequestParam(name = "start-day")     String startDay,
+      @RequestParam(name = "end-day")       String endDay,
+      @RequestParam(name = "start-time")    String startTime,
+      @RequestParam(name = "end-time")      String endTime
+    ) {
+        SearchTeamDTO searchTeamDTO = new SearchTeamDTO()
+                .teamName(teamName)
+                .sigungu(sigungu)
+                .startDay(startDay)
+                .endDay(endDay)
+                .startTime(startTime)
+                .endTime(endTime);
 
-        teamService.createTeam(team);
-        return "ok";
+        List<TeamDTO> teamList = teamService.searchTeams(searchTeamDTO);
+
+        return ResponseEntity.ok().body(teamList);
+    }
+
+    /**
+     * API021 : 팀 등록
+     */
+    @Auth(GRADE = 0L)
+    @PostMapping
+    public ResponseEntity<?> registerTeam() {
+
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

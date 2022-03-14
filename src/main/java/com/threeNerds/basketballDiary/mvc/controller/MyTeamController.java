@@ -5,6 +5,8 @@ import com.threeNerds.basketballDiary.mvc.dto.*;
 import com.threeNerds.basketballDiary.mvc.dto.loginUser.userTeamManager.JoinRequestDTO;
 import com.threeNerds.basketballDiary.mvc.dto.myTeam.CmnMyTeamDTO;
 import com.threeNerds.basketballDiary.mvc.dto.myTeam.ResponseMyTeamProfileDTO;
+import com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MemberDTO;
+import com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MyTeamDTO;
 import com.threeNerds.basketballDiary.mvc.service.MyTeamService;
 import com.threeNerds.basketballDiary.mvc.service.TeamMemberManagerService;
 import com.threeNerds.basketballDiary.mvc.service.TeamMemberService;

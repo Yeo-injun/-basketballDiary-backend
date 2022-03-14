@@ -1,4 +1,4 @@
-package com.threeNerds.basketballDiary.mvc.dto;
+package com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam;
 
 import com.threeNerds.basketballDiary.mvc.domain.TeamRegularExercise;
 import lombok.Getter;
@@ -13,7 +13,6 @@ public class MyTeamDTO {
 
     /* 정기운동 목록 */
     private List<TeamRegularExercise> teamRegularExercisesList;
-
 
     public MyTeamDTO myTeamInfo (MyTeamInfoDTO myTeamInfo) {
         this.myTeamInfo = myTeamInfo;
