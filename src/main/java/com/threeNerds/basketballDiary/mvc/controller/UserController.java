@@ -3,6 +3,7 @@ package com.threeNerds.basketballDiary.mvc.controller;
 import com.threeNerds.basketballDiary.interceptor.Auth;
 import com.threeNerds.basketballDiary.mvc.domain.User;
 import com.threeNerds.basketballDiary.mvc.dto.loginUser.CmnLoginUserDTO;
+import com.threeNerds.basketballDiary.mvc.dto.user.CmnUserDTO;
 import com.threeNerds.basketballDiary.mvc.dto.user.UserDTO;
 import com.threeNerds.basketballDiary.mvc.service.LoginService;
 import com.threeNerds.basketballDiary.mvc.service.UserService;
@@ -47,7 +48,7 @@ public class UserController {
      * API029 회원가입
      */
     @PostMapping("/registration")
-    public ResponseEntity<?> createUser(@RequestBody @Valid UserDTO userDTO){
+    public ResponseEntity<?> createUser(@RequestBody @Valid CmnUserDTO userDTO){
 
         User user = User.builder()
                 .userId(userDTO.getUserId())
