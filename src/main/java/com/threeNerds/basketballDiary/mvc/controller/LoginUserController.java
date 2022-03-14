@@ -37,7 +37,7 @@ public class LoginUserController {
     @PostMapping("/joinRequestTo/{teamSeq}")
     public ResponseEntity<?> sendJoinRequestToTeam(
             @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser,
-            @PathVariable("teamSeq") Long teamSeq
+            @PathVariable Long teamSeq
     )
     {
         Long userSeq = sessionUser.getUserSeq();
@@ -54,10 +54,9 @@ public class LoginUserController {
      *  22.03.13 인준 : API022 세분화 - 가입요청 및 초대 목록을 하나의 API콜로 가져오는 것에서 API 2개를 콜해서 가져오는 구조로 변경
      **/
     @GetMapping("/joinRequestsTo")
-    public ResponseEntity<?> getJoinRequestsTo(
+    public ResponseEntity<?> getJoinRequestsTo (
             @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser
-    )
-    {
+    ) {
         Long userSeq = sessionUser.getUserSeq();
         CmnLoginUserDTO loginUserDTO = new CmnLoginUserDTO()
                 .userSeq(userSeq);
@@ -65,6 +64,23 @@ public class LoginUserController {
         List<JoinRequestDTO> result = userTeamManagerService.getJoinRequestsTo(loginUserDTO);
         // TODO ResponseDTO로 감싸서 보내주기
         return ResponseEntity.ok(result);
+    }
+
+    /**
+     * API023 : 팀 가입요청 취소
+     */
+    @DeleteMapping("/joinRequestsTo/{teamJoinRequestSeq}")
+    public ResponseEntity<?> cancelJoinReqeust(
+            @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser,
+            @PathVariable Long teamJoinRequestSeq
+    ) {
+        CmnLoginUserDTO loginUserDTO = new CmnLoginUserDTO()
+                .teamJoinRequestSeq(teamJoinRequestSeq)
+                .userSeq(sessionUser.getUserSeq());
+
+        userTeamManagerService.cancelJoinRequest(loginUserDTO);
+
+        return RESPONSE_OK;
     }
 
     /**
@@ -84,6 +100,10 @@ public class LoginUserController {
         // TODO ResponseDTO로 감싸서 보내주기
         return ResponseEntity.ok(result);
     }
+
+
+
+    /**끝 인준 API **************************************************************************************************************/
 
     /**
      * API025 회원정보 수정데이터 조회
