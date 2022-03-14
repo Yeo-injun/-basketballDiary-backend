@@ -1,4 +1,4 @@
-package com.threeNerds.basketballDiary.mvc.dto;
+package com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam;
 
 import com.threeNerds.basketballDiary.mvc.domain.TeamRegularExercise;
 import lombok.Getter;

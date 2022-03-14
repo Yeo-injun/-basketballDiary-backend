@@ -3,7 +3,7 @@
 
 <mapper namespace="com.threeNerds.basketballDiary.mvc.repository.MyTeamRepository">
 
-    <select id="findByUserSeqAndTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.dto.MyTeamInfoDTO">
+    <select id="findByUserSeqAndTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MyTeamInfoDTO">
         SELECT A.TEAM_SEQ
              , A.TEAM_AUTH_CODE -- 팀정보 수정 권한을 위해
              , B.TEAM_NAME
@@ -21,7 +21,7 @@
           AND A.TEAM_SEQ = #{teamSeq}
     </select>
 
-    <select id="findAllByUserSeq" resultType="com.threeNerds.basketballDiary.mvc.dto.MyTeamInfoDTO">
+    <select id="findAllByUserSeq" resultType="com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MyTeamInfoDTO">
         SELECT A.TEAM_SEQ
              , A.TEAM_AUTH_CODE -- 팀정보 수정 권한을 위해
              , B.TEAM_NAME
@@ -38,7 +38,7 @@
         WHERE A.USER_SEQ = #{userSeq}
     </select>
 
-    <select id="findAllManagerByTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.dto.MemberDTO">
+    <select id="findAllManagerByTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MemberDTO">
         SELECT A.USER_SEQ
              , B.TEAM_MEMBER_SEQ
              , B.TEAM_SEQ
@@ -57,7 +57,7 @@
           AND B.TEAM_SEQ = #{teamSeq}
     </select>
 
-    <select id="findAllMemberByTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.dto.MemberDTO">
+    <select id="findAllMemberByTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MemberDTO">
         SELECT A.USER_SEQ
              , B.TEAM_MEMBER_SEQ
              , B.TEAM_SEQ
@@ -81,7 +81,7 @@
           AND B.TEAM_SEQ = #{teamSeq}
     </select>
 
-    <select id="findPagingMemberByTeamSeq" parameterType="com.threeNerds.basketballDiary.mvc.dto.MemberDTO" resultType="com.threeNerds.basketballDiary.mvc.dto.MemberDTO">
+    <select id="findPagingMemberByTeamSeq" parameterType="com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MemberDTO" resultType="com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MemberDTO">
         SELECT *
         FROM (SELECT A.USER_SEQ
                    , B.TEAM_MEMBER_SEQ
