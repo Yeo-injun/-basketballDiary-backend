@@ -39,18 +39,29 @@
     </select>
 
     <select id="findAll" resultType="com.threeNerds.basketballDiary.mvc.domain.Team">
-        SELECT TEAM_SEQ
-             , LEADER_ID
-             , TEAM_NAME
-             , TEAM_IMAGE_PATH
-             , HOMETOWN
-             , INTRODUCTION
-             , FOUNDATION_YMD
-             , REG_DATE
-             , UPDATE_DATE
-             , SIDO_CODE
-             , SIGUNGU_CODE
-        FROM TEAM
+        SELECT A.TEAM_SEQ
+             , A.LEADER_ID
+             , A.TEAM_NAME
+             , A.TEAM_IMAGE_PATH
+             , A.HOMETOWN
+             , A.INTRODUCTION
+             , A.FOUNDATION_YMD
+             , A.REG_DATE
+             , A.UPDATE_DATE
+             , A.SIDO_CODE
+             , A.SIGUNGU_CODE
+             , COUNT(B.USER_SEQ) OVER(PARTITION BY B.TEAM_SEQ) AS TOT_MEMBER
+          FROM TEAM A
+          JOIN (SELECT * FROM TEAM_MEMBER WHERE WITHDRAWAL_YN != 'Y') B
+            ON A.TEAM_SEQ = B.TEAM_SEQ
+         WHERE 1=1
+        <if test="teamName != null and !''.equals(teamName)">
+           AND A.TEAM_NAME LIKE '%' || #{teamName} ||'%'
+        </if>
+        <if test="sigungu != null and !''.equals(sigungu)">
+           AND A.SIGUNGU_CODE = #{sigungu}
+        </if>
+      ORDER BY A.TEAM_NAME
     </select>
 
     <delete id="deleteById">

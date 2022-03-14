@@ -14,7 +14,6 @@ public class MyTeamDTO {
     /* 정기운동 목록 */
     private List<TeamRegularExercise> teamRegularExercisesList;
 
-
     public MyTeamDTO myTeamInfo (MyTeamInfoDTO myTeamInfo) {
         this.myTeamInfo = myTeamInfo;
         return this;
