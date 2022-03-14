@@ -1,14 +1,12 @@
 package com.threeNerds.basketballDiary.mvc.controller;
 
 import com.threeNerds.basketballDiary.mvc.domain.User;
-import com.threeNerds.basketballDiary.mvc.dto.JoinRequestDTO;
-import com.threeNerds.basketballDiary.mvc.dto.ResponseMyTeamProfileDTO;
-import com.threeNerds.basketballDiary.mvc.dto.UserDTO;
-import com.threeNerds.basketballDiary.mvc.service.TeamMemberService;
+import com.threeNerds.basketballDiary.mvc.dto.loginUser.userTeamManager.JoinRequestDTO;
+import com.threeNerds.basketballDiary.mvc.dto.loginUser.CmnLoginUserDTO;
+import com.threeNerds.basketballDiary.mvc.dto.user.UserDTO;
 import com.threeNerds.basketballDiary.mvc.service.UserService;
 import com.threeNerds.basketballDiary.mvc.service.UserTeamManagerService;
 import com.threeNerds.basketballDiary.session.SessionUser;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -35,7 +33,6 @@ public class LoginUserController {
     /**
      *  API020 : 농구팀 가입요청 보내기
      **/
-    // TODO 클래스단위의 url 매핑정보 수정에 따라 root url 수정 필요
     // TODO 로그인 여부 체크하는 동작 필요 - checkLogin 어노테이션 적용 요망
     @PostMapping("/joinRequestTo/{teamSeq}")
     public ResponseEntity<?> sendJoinRequestToTeam(
@@ -44,27 +41,47 @@ public class LoginUserController {
     )
     {
         Long userSeq = sessionUser.getUserSeq();
-        JoinRequestDTO joinRequest = new JoinRequestDTO()
+        CmnLoginUserDTO loginUserDTO = new CmnLoginUserDTO()
                 .teamSeq(teamSeq)
                 .userSeq(userSeq);
 
-        userTeamManagerService.sendJoinRequestToTeam(joinRequest);
+        userTeamManagerService.sendJoinRequestToTeam(loginUserDTO);
         return RESPONSE_CREATED;
     }
 
     /**
-     *  API022 : 농구팀 가입요청 및 초대 목록 조회
+     *  API022 : 농구팀 가입요청 목록 조회
+     *  22.03.13 인준 : API022 세분화 - 가입요청 및 초대 목록을 하나의 API콜로 가져오는 것에서 API 2개를 콜해서 가져오는 구조로 변경
      **/
-    @GetMapping("/joinRequestsAll")
-    public ResponseEntity<?> searchJoinRequestsAll(
+    @GetMapping("/joinRequestsTo")
+    public ResponseEntity<?> getJoinRequestsTo(
             @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser
     )
     {
         Long userSeq = sessionUser.getUserSeq();
-        JoinRequestDTO joinRequestDTO = new JoinRequestDTO()
+        CmnLoginUserDTO loginUserDTO = new CmnLoginUserDTO()
                 .userSeq(userSeq);
 
-        List<JoinRequestDTO> result = userTeamManagerService.searchJoinRequestsAll(joinRequestDTO);
+        List<JoinRequestDTO> result = userTeamManagerService.getJoinRequestsTo(loginUserDTO);
+        // TODO ResponseDTO로 감싸서 보내주기
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     *  API032 : 농구팀 초대 목록 조회
+     *  22.03.13 인준 : API022 세분화 - 가입요청 및 초대 목록을 하나의 API콜로 가져오는 것에서 API 2개를 콜해서 가져오는 구조로 변경
+     **/
+    @GetMapping("/joinRequestsFrom")
+    public ResponseEntity<?> getJoinRequestsFrom(
+            @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser
+    )
+    {
+        Long userSeq = sessionUser.getUserSeq();
+        CmnLoginUserDTO loginUserDTO = new CmnLoginUserDTO()
+                .userSeq(userSeq);
+
+        List<JoinRequestDTO> result = userTeamManagerService.getJoinRequestsFrom(loginUserDTO);
+        // TODO ResponseDTO로 감싸서 보내주기
         return ResponseEntity.ok(result);
     }
 

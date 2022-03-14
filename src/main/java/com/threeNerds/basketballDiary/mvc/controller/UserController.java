@@ -2,25 +2,24 @@ package com.threeNerds.basketballDiary.mvc.controller;
 
 import com.threeNerds.basketballDiary.interceptor.Auth;
 import com.threeNerds.basketballDiary.mvc.domain.User;
-import com.threeNerds.basketballDiary.mvc.dto.JoinRequestDTO;
-import com.threeNerds.basketballDiary.mvc.dto.ResponseMyTeamProfileDTO;
-import com.threeNerds.basketballDiary.mvc.dto.UserDTO;
-import com.threeNerds.basketballDiary.mvc.service.TeamMemberService;
+import com.threeNerds.basketballDiary.mvc.dto.loginUser.CmnLoginUserDTO;
+import com.threeNerds.basketballDiary.mvc.dto.user.UserDTO;
+import com.threeNerds.basketballDiary.mvc.service.LoginService;
 import com.threeNerds.basketballDiary.mvc.service.UserService;
 import com.threeNerds.basketballDiary.mvc.service.UserTeamManagerService;
+import com.threeNerds.basketballDiary.session.SessionConst;
 import com.threeNerds.basketballDiary.session.SessionUser;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-import static com.threeNerds.basketballDiary.session.SessionConst.LOGIN_MEMBER;
 import static com.threeNerds.basketballDiary.utils.HttpResponses.*;
 
 /**
@@ -30,15 +29,17 @@ import static com.threeNerds.basketballDiary.utils.HttpResponses.*;
  * issue and history
  * <pre>
  * 2022.02.08 여인준 : 소스코드 생성
+ * 2022.03.13 이성주 : LoginController 통합
  * </pre>
  */
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/users")
+@RequestMapping("/api/user")
 public class UserController {
 
+    private final LoginService loginService;
     private final UserService userService;
     private final UserTeamManagerService userTeamManagerService;
 
@@ -66,6 +67,32 @@ public class UserController {
                 .build();
 
         userService.createMember(user);
+        return RESPONSE_OK;
+    }
+
+    /**
+     * API030 로그인
+     */
+    @PostMapping("/login")
+    public ResponseEntity<SessionUser> login(@RequestBody CmnLoginUserDTO cmnLoginUserDTO, HttpSession session) {
+        log.info("로그인");
+        SessionUser sessionUser = loginService.login(cmnLoginUserDTO)
+                .map(u -> {
+                    Map<Long, Long> userAuth = loginService.findAuthList(cmnLoginUserDTO).stream()
+                            .collect(Collectors.toMap(i -> Long.parseLong(i.getTeamSeq()), i -> Long.parseLong(i.getTeamAuthCode())));
+                    return new SessionUser(u.getUserSeq(), u.getUserId(),userAuth);
+                })
+                .orElse(null);
+        session.setAttribute(SessionConst.LOGIN_MEMBER, sessionUser);
+        return ResponseEntity.ok(sessionUser);
+    }
+    /**
+     * API031 로그아웃
+     */
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpSession session){
+        log.info("로그아웃");
+        session.invalidate();
         return RESPONSE_OK;
     }
 

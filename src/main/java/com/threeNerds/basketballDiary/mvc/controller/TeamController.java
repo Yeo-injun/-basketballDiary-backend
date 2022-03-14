@@ -1,7 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.controller;
 
 import com.threeNerds.basketballDiary.mvc.domain.Team;
-import com.threeNerds.basketballDiary.mvc.dto.TeamDTO;
+import com.threeNerds.basketballDiary.mvc.dto.team.TeamDTO;
 import com.threeNerds.basketballDiary.mvc.service.TeamService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

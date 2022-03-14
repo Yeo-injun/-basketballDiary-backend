@@ -1,11 +1,8 @@
 package com.threeNerds.basketballDiary.mvc.service;
 
-import com.threeNerds.basketballDiary.mvc.controller.LoginUserController;
 import com.threeNerds.basketballDiary.mvc.controller.MyTeamController;
-import com.threeNerds.basketballDiary.mvc.controller.UserController;
-import com.threeNerds.basketballDiary.mvc.dto.ResponseMyTeamProfileDTO;
+import com.threeNerds.basketballDiary.mvc.dto.myTeam.ResponseMyTeamProfileDTO;
 import com.threeNerds.basketballDiary.mvc.repository.TeamMemberRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
