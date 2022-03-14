@@ -48,6 +48,16 @@ public class TeamJoinRequest {
                 .build();
     }
 
+    /** 가입요청(사용자 -> 팀) 취소 */
+    public static TeamJoinRequest cancelJoinRequest (CmnLoginUserDTO loginUserDTO)
+    {
+        return TeamJoinRequest.builder()
+                .teamJoinRequestSeq(loginUserDTO.getTeamJoinRequestSeq())
+                .userSeq(loginUserDTO.getUserSeq())
+                .joinRequestStateCode(JoinRequestStateCode.CANCEL.getCode())
+                .build();
+    }
+
     /** 초대 생성(팀 -> 사용자) */
     public static TeamJoinRequest createInvitation (JoinRequestDTO joinRequest)
     {

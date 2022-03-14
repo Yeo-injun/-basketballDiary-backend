@@ -2,6 +2,8 @@ package com.threeNerds.basketballDiary.mvc.service;
 
 import com.threeNerds.basketballDiary.constant.JoinRequestStateCode;
 import com.threeNerds.basketballDiary.constant.JoinRequestTypeCode;
+import com.threeNerds.basketballDiary.exception.CustomException;
+import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.mvc.domain.TeamJoinRequest;
 import com.threeNerds.basketballDiary.mvc.dto.loginUser.userTeamManager.JoinRequestDTO;
 import com.threeNerds.basketballDiary.mvc.dto.loginUser.CmnLoginUserDTO;
@@ -77,7 +79,7 @@ public class UserTeamManagerService {
                 .userSeq(loginUserDTO.getUserSeq())
                 .joinRequestTypeCode(JoinRequestTypeCode.JOIN_REQUEST.getCode());
 
-        List<JoinRequestDTO> joinRequestDTOList = userTeamManagerRepository.findJoinRequestsTo(joinRequestDTO);
+        List<JoinRequestDTO> joinRequestDTOList = userTeamManagerRepository.findJoinRequestsByType(joinRequestDTO);
         for (JoinRequestDTO joinRequest : joinRequestDTOList)
         {
             joinRequest.setCodeNameByInstanceCodeValue();
@@ -92,11 +94,24 @@ public class UserTeamManagerService {
                 .userSeq(loginUserDTO.getUserSeq())
                 .joinRequestTypeCode(JoinRequestTypeCode.INVITATION.getCode());
 
-        List<JoinRequestDTO> joinRequestDTOList = userTeamManagerRepository.findJoinRequestsTo(joinRequestDTO);
+        List<JoinRequestDTO> joinRequestDTOList = userTeamManagerRepository.findJoinRequestsByType(joinRequestDTO);
         for (JoinRequestDTO joinRequest : joinRequestDTOList)
         {
             joinRequest.setCodeNameByInstanceCodeValue();
         }
         return joinRequestDTOList;
+    }
+
+    // 사용자가 가입요청한 건을 취소상태로 바꾸는 API (데이터를 삭제하지는 않음)
+    public void cancelJoinRequest(CmnLoginUserDTO loginUserDTO)
+    {
+        TeamJoinRequest joinRequestCancel = TeamJoinRequest.cancelJoinRequest(loginUserDTO);
+
+        // TODO 가입요청 취소 Request를 보낸 사용자가 가입요청을 취소하는 것인지도 확인해야 하는지??
+       boolean isSuccess = teamJoinRequestRepository.updateJoinRequestState(joinRequestCancel) == 1 ? true : false;
+        if (!isSuccess)
+        {
+            throw new CustomException(Error.JOIN_REQUEST_NOT_FOUND);
+        }
     }
 }

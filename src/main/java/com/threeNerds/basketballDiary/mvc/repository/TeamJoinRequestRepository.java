@@ -13,6 +13,6 @@ public interface TeamJoinRequestRepository {
     TeamJoinRequest findUserByTeamJoinRequestSeq(JoinRequestDTO joinRequestDTO);
 
     int createJoinRequest(TeamJoinRequest teamJoinRequest);
-    int updateJoinRequestState(TeamJoinRequest approvalInfo);
+    int updateJoinRequestState(TeamJoinRequest teamJoinRequest);
 
 }

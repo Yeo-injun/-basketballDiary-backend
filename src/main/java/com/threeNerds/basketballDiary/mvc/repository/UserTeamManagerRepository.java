@@ -8,6 +8,6 @@ import java.util.List;
 @Mapper
 public interface UserTeamManagerRepository {
 
-    List<JoinRequestDTO> findJoinRequestsTo(JoinRequestDTO joinRequestDTO);
+    List<JoinRequestDTO> findJoinRequestsByType(JoinRequestDTO joinRequestDTO);
 
 }
