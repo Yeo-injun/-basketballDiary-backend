@@ -1,13 +1,14 @@
 package com.threeNerds.basketballDiary.mvc.service;
 
-import com.threeNerds.basketballDiary.constant.JoinRequestStateCode;
+
 import com.threeNerds.basketballDiary.constant.JoinRequestTypeCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
-import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.mvc.domain.TeamJoinRequest;
+import com.threeNerds.basketballDiary.mvc.domain.TeamMember;
 import com.threeNerds.basketballDiary.mvc.dto.loginUser.userTeamManager.JoinRequestDTO;
 import com.threeNerds.basketballDiary.mvc.dto.loginUser.CmnLoginUserDTO;
 import com.threeNerds.basketballDiary.mvc.repository.TeamJoinRequestRepository;
+import com.threeNerds.basketballDiary.mvc.repository.TeamMemberRepository;
 import com.threeNerds.basketballDiary.mvc.repository.UserTeamManagerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
+import static com.threeNerds.basketballDiary.exception.Error.*;
 
 /**
  * 사용자가 팀의 구성원으로서 관련된 업무를 수행하기 위한 Service
@@ -33,6 +36,7 @@ import java.util.List;
 @Transactional
 public class UserTeamManagerService {
 
+    private final TeamMemberRepository teamMemberRepository;
     private final TeamJoinRequestRepository teamJoinRequestRepository;
     private final UserTeamManagerRepository userTeamManagerRepository;
 
@@ -111,7 +115,24 @@ public class UserTeamManagerService {
        boolean isSuccess = teamJoinRequestRepository.updateJoinRequestState(joinRequestCancel) == 1 ? true : false;
         if (!isSuccess)
         {
-            throw new CustomException(Error.JOIN_REQUEST_NOT_FOUND);
+            throw new CustomException(JOIN_REQUEST_NOT_FOUND);
         }
     }
+
+    // 사용자가 팀의 초대를 승인하는 API
+    public void approveInvitation(CmnLoginUserDTO loginUserDTO)
+    {
+        /** 초대요청 상태 업데이트 하기 */
+        boolean isSuccess = teamJoinRequestRepository.updateJoinRequestState(TeamJoinRequest.approveInvitation(loginUserDTO)) == 1 ? true : false;
+        if (!isSuccess)
+        {
+            throw new CustomException(JOIN_REQUEST_NOT_FOUND);
+        }
+
+        /** 팀원 추가 */
+        TeamJoinRequest joinInfo = teamJoinRequestRepository.findUserByTeamJoinRequestSeq(loginUserDTO.getTeamJoinRequestSeq());
+        TeamMember newTeamMember = TeamMember.createNewMember(joinInfo);
+        teamMemberRepository.saveTeamMemeber(newTeamMember);
+    }
+
 }

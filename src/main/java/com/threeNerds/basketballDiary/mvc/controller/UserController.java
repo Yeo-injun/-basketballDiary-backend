@@ -78,7 +78,7 @@ public class UserController {
     public ResponseEntity<SessionUser> login(@RequestBody CmnLoginUserDTO cmnLoginUserDTO, HttpSession session) {
         log.info("로그인");
         SessionUser sessionUser = loginService.login(cmnLoginUserDTO)
-                .map(u -> {
+                .map(u -> { // TODO  loginService.login()에서 로그인 처리 하기 (트랜잭션 경계 이슈 - 현재처럼  login요청을 두번의 Service요청으로 쪼개놓으면 향후 트랜잭션 단위가 분리가 되어 이슈가 발생할 수 있음.)
                     Map<Long, Long> userAuth = loginService.findAuthList(cmnLoginUserDTO).stream()
                             .collect(Collectors.toMap(i -> Long.parseLong(i.getTeamSeq()), i -> Long.parseLong(i.getTeamAuthCode())));
                     return new SessionUser(u.getUserSeq(), u.getUserId(),userAuth);

@@ -61,7 +61,17 @@ public class TeamMemberManagerService {
             log.info("==== 이미 {}가 있습니다. ====", reqTypeName);
             throw new CustomException(Error.ALREADY_EXIST_JOIN_REQUEST);
         }
-        /** 초대-가입요청이 없을경우에만 INSERT */
+
+        /** 팀원으로 존재하는지 확인 : 팀원으로 존재할 경우 예외를 던짐(409에러) */
+        boolean isExsistTeamMember = teamMemberRepository.checkTeamMember(joinRequest) != null
+                ? true
+                : false;
+        if (isExsistTeamMember)
+        {
+            throw new CustomException(Error.ALREADY_EXIST_TEAM_MEMBER); // TODO 참고자료(왜 409에러로 처리했는지) : https://deveric.tistory.com/62
+        }
+
+        /** 초대-가입요청이 없고, 팀원이 아닐 경우에만 INSERT */
         teamJoinRequestRepository.createJoinRequest(invitationInfo);
     }
 
@@ -71,26 +81,17 @@ public class TeamMemberManagerService {
      */
     public void approveJoinRequest(JoinRequestDTO joinRequest)
     {
-        /** 팀원 추가 - 이미 팀원으로 존재하고 있는 경우 예외처리 */
-        boolean isExsistTeamMember = teamMemberRepository.checkTeamMember(joinRequest) != null
-                                        ? true
-                                        : false;
-        if (isExsistTeamMember)
-        {
-            throw new CustomException(Error.ALREADY_EXIST_TEAM_MEMBER); // TODO 참고자료(왜 409에러로 처리했는지) : https://deveric.tistory.com/62
-        }
-        TeamJoinRequest joinRequestInfo = teamJoinRequestRepository.findUserByTeamJoinRequestSeq(joinRequest);
-        TeamMember newTeamMember = TeamMember.createNewMember(joinRequestInfo);
-        teamMemberRepository.saveTeamMemeber(newTeamMember);
-
-
         /** 가입요청 상태 업데이트 하기 */
-        TeamJoinRequest joinRequestApproval = TeamJoinRequest.approve(joinRequest);
-        boolean isApprovalSuccess = teamJoinRequestRepository.updateJoinRequestState(joinRequestApproval) == 1 ? true : false;
-        if (!isApprovalSuccess)
+        boolean isSuccess = teamJoinRequestRepository.updateJoinRequestState(TeamJoinRequest.approveJoinRequest(joinRequest)) == 1 ? true : false;
+        if (!isSuccess)
         {
             throw new CustomException(USER_NOT_FOUND);
         }
+
+        /** 팀원 추가 */
+        TeamJoinRequest joinRequestInfo = teamJoinRequestRepository.findUserByTeamJoinRequestSeq(joinRequest.getTeamJoinRequestSeq());
+        TeamMember newTeamMember = TeamMember.createNewMember(joinRequestInfo);
+        teamMemberRepository.saveTeamMemeber(newTeamMember);
     }
 
     /**
