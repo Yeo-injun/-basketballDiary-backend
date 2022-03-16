@@ -85,9 +85,9 @@ public class TeamMemberManagerService {
 
 
         /** 가입요청 상태 업데이트 하기 */
-        TeamJoinRequest joinRequestApproval = TeamJoinRequest.approve(joinRequest);
-        boolean isApprovalSuccess = teamJoinRequestRepository.updateJoinRequestState(joinRequestApproval) == 1 ? true : false;
-        if (!isApprovalSuccess)
+        TeamJoinRequest joinRequestApproval = TeamJoinRequest.approveJoinRequest(joinRequest);
+        boolean isSuccess = teamJoinRequestRepository.updateJoinRequestState(joinRequestApproval) == 1 ? true : false;
+        if (!isSuccess)
         {
             throw new CustomException(USER_NOT_FOUND);
         }

@@ -69,8 +69,8 @@ public class TeamJoinRequest {
                     .build();
     }
 
-    /** 승인처리 */
-    public static TeamJoinRequest approve (JoinRequestDTO joinRequest)
+    /** 승인처리 - 팀이 사용자의 가입요청을 */
+    public static TeamJoinRequest approveJoinRequest (JoinRequestDTO joinRequest)
     {
         return TeamJoinRequest.builder()
                 .teamJoinRequestSeq(joinRequest.getTeamJoinRequestSeq())
@@ -78,4 +78,15 @@ public class TeamJoinRequest {
                 .joinRequestStateCode(JoinRequestStateCode.APPROVAL.getCode())
                 .build();
     }
+
+    /** 승인처리 - 사용자가 팀의 초대를 */
+    public static TeamJoinRequest approveInvitation (CmnLoginUserDTO loginUserDTO)
+    {
+        return TeamJoinRequest.builder()
+                .teamJoinRequestSeq(loginUserDTO.getTeamJoinRequestSeq())
+                .userSeq(loginUserDTO.getUserSeq())
+                .joinRequestStateCode(JoinRequestStateCode.APPROVAL.getCode())
+                .build();
+    }
+
  }

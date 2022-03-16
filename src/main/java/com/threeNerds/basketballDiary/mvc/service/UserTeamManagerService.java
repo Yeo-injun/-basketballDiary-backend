@@ -1,9 +1,8 @@
 package com.threeNerds.basketballDiary.mvc.service;
 
-import com.threeNerds.basketballDiary.constant.JoinRequestStateCode;
+
 import com.threeNerds.basketballDiary.constant.JoinRequestTypeCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
-import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.mvc.domain.TeamJoinRequest;
 import com.threeNerds.basketballDiary.mvc.dto.loginUser.userTeamManager.JoinRequestDTO;
 import com.threeNerds.basketballDiary.mvc.dto.loginUser.CmnLoginUserDTO;
@@ -15,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
+import static com.threeNerds.basketballDiary.exception.Error.*;
 
 /**
  * 사용자가 팀의 구성원으로서 관련된 업무를 수행하기 위한 Service
@@ -111,7 +112,19 @@ public class UserTeamManagerService {
        boolean isSuccess = teamJoinRequestRepository.updateJoinRequestState(joinRequestCancel) == 1 ? true : false;
         if (!isSuccess)
         {
-            throw new CustomException(Error.JOIN_REQUEST_NOT_FOUND);
+            throw new CustomException(JOIN_REQUEST_NOT_FOUND);
         }
     }
+
+    // 사용자가 팀의 초대를 승인하는 API
+    public void approveInvitation(CmnLoginUserDTO loginUserDTO) {
+        TeamJoinRequest joinRequest = TeamJoinRequest.approveInvitation(loginUserDTO);
+
+        boolean isSuccess = teamJoinRequestRepository.updateJoinRequestState(joinRequest) == 1 ? true : false;
+        if (!isSuccess)
+        {
+            throw new CustomException(JOIN_REQUEST_NOT_FOUND);
+        }
+    }
+
 }

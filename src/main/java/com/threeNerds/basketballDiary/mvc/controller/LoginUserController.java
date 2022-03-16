@@ -84,6 +84,23 @@ public class LoginUserController {
     }
 
     /**
+     * API024 : 팀 초대 승인
+     */
+    @PutMapping("/joinRequestsFrom/{teamJoinRequestSeq}/approval")
+    public ResponseEntity<?> approveInvitation (
+            @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser,
+            @PathVariable Long teamJoinRequestSeq
+    ) {
+        Long userSeq = sessionUser.getUserSeq();
+        CmnLoginUserDTO loginUserDTO = new CmnLoginUserDTO()
+                .teamJoinRequestSeq(teamJoinRequestSeq)
+                .userSeq(userSeq);
+
+        userTeamManagerService.approveInvitation(loginUserDTO);
+        return RESPONSE_OK;
+    }
+
+    /**
      *  API032 : 농구팀 초대 목록 조회
      *  22.03.13 인준 : API022 세분화 - 가입요청 및 초대 목록을 하나의 API콜로 가져오는 것에서 API 2개를 콜해서 가져오는 구조로 변경
      **/
