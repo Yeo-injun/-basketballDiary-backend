@@ -99,11 +99,7 @@ public class TeamMemberManagerService {
      * @param joinRequest
      */
     public boolean rejectJoinRequest(JoinRequestDTO joinRequest) {
-        TeamJoinRequest rejectionInfo = TeamJoinRequest.builder()
-                .teamJoinRequestSeq(joinRequest.getTeamJoinRequestSeq())
-                .teamSeq(joinRequest.getTeamSeq())
-                .joinRequestStateCode(JoinRequestStateCode.REJECTION.getCode())
-                .build();
+        TeamJoinRequest rejectionInfo = TeamJoinRequest.rejectJoinRequest(joinRequest);
 
         boolean isRejectionSuccess = teamJoinRequestRepository.updateJoinRequestState(rejectionInfo) == 1 ? true : false;
         if (!isRejectionSuccess)

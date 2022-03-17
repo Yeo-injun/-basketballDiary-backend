@@ -3,6 +3,7 @@ package com.threeNerds.basketballDiary.mvc.service;
 
 import com.threeNerds.basketballDiary.constant.JoinRequestTypeCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
+import com.threeNerds.basketballDiary.mvc.domain.Team;
 import com.threeNerds.basketballDiary.mvc.domain.TeamJoinRequest;
 import com.threeNerds.basketballDiary.mvc.domain.TeamMember;
 import com.threeNerds.basketballDiary.mvc.dto.loginUser.userTeamManager.JoinRequestDTO;
@@ -135,4 +136,16 @@ public class UserTeamManagerService {
         teamMemberRepository.saveTeamMemeber(newTeamMember);
     }
 
+    // 팀 초대 거절 API
+    public void rejectInvitation(CmnLoginUserDTO loginUserDTO)
+    {
+        TeamJoinRequest rejectInvitation = TeamJoinRequest.rejectInvitation(loginUserDTO);
+
+        boolean isSussess = teamJoinRequestRepository.updateJoinRequestState(rejectInvitation) == 1 ? true : false;
+        if (!isSussess)
+        {
+            throw new CustomException(INVITATION_NOT_FOUND);
+        }
+
+    }
 }

@@ -62,7 +62,8 @@ public class LoginUserController {
                 .userSeq(userSeq);
 
         List<JoinRequestDTO> result = userTeamManagerService.getJoinRequestsTo(loginUserDTO);
-        // TODO ResponseDTO로 감싸서 보내주기
+        // TODO ResponseDTO로 감싸서 보내주기 ResponseDTO를 조회용 DTO의 공통부분을 추상화(페이징, 목록의 갯수 등)하고 이를 상속받아서
+        // 매 조회요청 Controller의 메소드이름DTO로 만들기 
         return ResponseEntity.ok(result);
     }
 
@@ -118,7 +119,21 @@ public class LoginUserController {
         return ResponseEntity.ok(result);
     }
 
+    /**
+     *  API033 : 농구팀 초대 거절
+     **/
+    @PutMapping("/joinRequestsFrom/{teamJoinRequestSeq}/rejection")
+    public ResponseEntity<?> rejectInvitation (
+            @SessionAttribute(value=LOGIN_MEMBER, required = false) SessionUser sessionUser,
+            @PathVariable Long teamJoinRequestSeq
+    ) {
+        CmnLoginUserDTO loginUserDTO = new CmnLoginUserDTO()
+                .teamJoinRequestSeq(teamJoinRequestSeq)
+                .userSeq(sessionUser.getUserSeq());
 
+        userTeamManagerService.rejectInvitation(loginUserDTO);
+        return RESPONSE_OK;
+    }
 
     /**끝 인준 API **************************************************************************************************************/
 
