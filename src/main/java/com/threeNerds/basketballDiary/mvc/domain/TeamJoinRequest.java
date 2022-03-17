@@ -89,4 +89,24 @@ public class TeamJoinRequest {
                 .build();
     }
 
- }
+    /** 거절처리 - 팀이 사용자의 가입요청을 */
+    public static TeamJoinRequest rejectJoinRequest(JoinRequestDTO joinRequest)
+    {
+        return TeamJoinRequest.builder()
+                .teamJoinRequestSeq(joinRequest.getTeamJoinRequestSeq())
+                .teamSeq(joinRequest.getTeamSeq())
+                .joinRequestStateCode(JoinRequestStateCode.REJECTION.getCode())
+                .build();
+    }
+
+    /** 거절처리 - 팀이 사용자의 가입요청을 */
+    public static TeamJoinRequest rejectInvitation(CmnLoginUserDTO loginUserDTO)
+    {
+        return TeamJoinRequest.builder()
+                .teamJoinRequestSeq(loginUserDTO.getTeamJoinRequestSeq())
+                .teamSeq(loginUserDTO.getTeamSeq())
+                .joinRequestStateCode(JoinRequestStateCode.REJECTION.getCode())
+                .build();
+    }
+
+}
