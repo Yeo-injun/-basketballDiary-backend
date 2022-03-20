@@ -43,7 +43,7 @@ public class LoginService {
                                         // 이때문에 List안에 첫번째 요소로 null이 들어가 있는 상태가 됨.
                                         // 추가적으로 레코드가 없을때 return되는 값을 null이 아닌 인스턴스로 할 수 있음
                                         // 하지만 이경우에도 조회된 값이 없기때문에 return되는 인스턴스 안에 필드는 모두 null이 됨.
-                                        if (userAuthList.get(0) == null)
+                                        if (userAuthList.get(0) == null && userAuthList.size() == 1)
                                         {
                                             return new SessionUser(loginUser.getUserSeq(), loginUser.getUserId());
                                         }
