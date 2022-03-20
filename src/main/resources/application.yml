@@ -23,6 +23,10 @@ mybatis:
     call-setters-on-nulls: true
     jdbc-type-for-null: varchar
     default-fetch-size: 500
+    # 참고자료 : https://jaehun2841.github.io/2018/12/30/2018-12-30-mybatis-returnInstanceForEmptyRow/#%EB%93%A4%EC%96%B4%EA%B0%80%EB%A9%B0
+    # 참고자료 : https://oingdaddy.tistory.com/379
+    # select 조회시 record가 없다면 null을 반환하는것이 기본설정(false), record가 없어도 instance를 반환하려면 true (instance를 반환한다는 것은 객체가 생성되는 것이고, 해당되는 데이터가 없기 때문에 객체의 모든 필드는 null값을 가지게 됨)
+    return-instance-for-empty-row : false
   mapper-locations:
     - classpath:mvc/repository/**/*.xml
 
