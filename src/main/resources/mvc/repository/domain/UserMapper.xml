@@ -22,9 +22,23 @@
 
 
     <select id="loginFindUser" resultType="com.threeNerds.basketballDiary.mvc.domain.User">
-        SELECT USER_SEQ,USER_ID,NAME AS USERNAME,PWD AS PASSWORD,EMAIL,REG_DATE,UPDATE_DATE,USER_REG_YN,GENDER,HEIGHT,WEIGHT,SIDO_CODE,SIGUNGU_CODE,POSITION_CODE
-        FROM USER
-        WHERE USER_ID=#{userId} AND PWD=#{password}
+        SELECT USER_SEQ
+             , USER_ID
+             , NAME AS USERNAME
+             , PWD AS PASSWORD
+             , EMAIL
+             , REG_DATE
+             , UPDATE_DATE
+             , USER_REG_YN
+             , GENDER
+             , HEIGHT
+             , WEIGHT
+             , SIDO_CODE
+             , SIGUNGU_CODE
+             , POSITION_CODE
+         FROM USER
+        WHERE USER_ID   = #{userId}
+          AND PWD       = #{password}
     </select>
 
     <select id="findAuthList" resultType="com.threeNerds.basketballDiary.mvc.dto.AuthUserRequestDTO">
