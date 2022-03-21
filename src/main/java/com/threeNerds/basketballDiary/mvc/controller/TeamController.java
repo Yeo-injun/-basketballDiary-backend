@@ -32,17 +32,17 @@ public class TeamController {
 
     private final TeamService teamService;
 
-    /**
+    /**ㅎ
      * API019 : 팀 목록 조회
      */
     @GetMapping
     public ResponseEntity<List<TeamDTO>> searchTeams(
-      @RequestParam(name = "team-name")     String teamName,
-      @RequestParam(name = "sigungu")       String sigungu,
-      @RequestParam(name = "start-day")     String startDay,
-      @RequestParam(name = "end-day")       String endDay,
-      @RequestParam(name = "start-time")    String startTime,
-      @RequestParam(name = "end-time")      String endTime
+      @RequestParam(name = "team-name"  , required = false)         String teamName,
+      @RequestParam(name = "sigungu"    , defaultValue = "26110")   String sigungu,
+      @RequestParam(name = "start-day"  , required = false)         String startDay,
+      @RequestParam(name = "end-day"    , required = false)         String endDay,
+      @RequestParam(name = "start-time" , required = false)         String startTime,
+      @RequestParam(name = "end-time"   , required = false)         String endTime
     ) {
         log.info("▒▒▒▒▒ API019: TeamController.searchTeams");
         SearchTeamDTO searchTeamDTO = new SearchTeamDTO()
