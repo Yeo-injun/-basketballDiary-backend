@@ -59,6 +59,7 @@ public class MyTeamController {
             @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser,
             @PathVariable(value = "teamSeq") Long teamSeq
     ) {
+        log.info("▒▒▒▒▒ API001: MyTeamController.searchManagers");
         List<MemberDTO> managerList = myTeamService.findManagers(teamSeq);
 
         return ResponseEntity.ok().body(managerList);
@@ -74,6 +75,7 @@ public class MyTeamController {
             @PathVariable(value = "teamSeq") Long teamSeq,
             @RequestParam(name = "pageNo", defaultValue = "0") Integer pageNo
     ) {
+        log.info("▒▒▒▒▒ API002: MyTeamController.searchMembers");
         List<MemberDTO> memberList = myTeamService.findMembers(teamSeq, pageNo);
 
         return ResponseEntity.ok().body(memberList);
@@ -264,6 +266,7 @@ public class MyTeamController {
     public ResponseEntity<List<MyTeamDTO>> searchTeams(
             @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser
     ) {
+        log.info("▒▒▒▒▒ API014: MyTeamController.searchTeams");
         Long userSeq = sessionUser.getUserSeq();
         List<MyTeamDTO> myTeamList = myTeamService.findTeams(userSeq);
 
@@ -295,6 +298,7 @@ public class MyTeamController {
             @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser,
             @PathVariable(value = "teamSeq") Long teamSeq
     ) {
+        log.info("▒▒▒▒▒ API016: MyTeamController.searchTeam");
         Long userSeq = sessionUser.getUserSeq();
         MyTeamDTO myTeam = myTeamService.findTeam(userSeq, teamSeq);
 
@@ -311,6 +315,7 @@ public class MyTeamController {
             @PathVariable(value = "teamSeq") Long teamSeq,
             @RequestBody MyTeamDTO dto
     ) {
+        log.info("▒▒▒▒▒ API017: MyTeamController.modifyMyTeam");
         Long userSeq = sessionUser.getUserSeq();
         myTeamService.modifyMyTeam(teamSeq, dto);
         // MyTeamDTO myTeam = myTeamService.findTeam(userSeq, teamSeq);
@@ -327,6 +332,7 @@ public class MyTeamController {
     public ResponseEntity<?> removeMyTeam(
             @PathVariable(value = "teamSeq") Long teamSeq
     ) {
+        log.info("▒▒▒▒▒ API018: MyTeamController.removeMyTeam");
         myTeamService.deleteMyTeam(teamSeq);
 
         // 삭제가 정상적으로 완료된 경우 204 No Content로 응답한다.

@@ -42,8 +42,11 @@ public class TeamService {
      * @return List<TeamDTO>
      */
     public List<TeamDTO> searchTeams(SearchTeamDTO searchTeamDTO) {
+        log.info("TeamService.searchTeams");
         List<TeamDTO> resultTeamList = new ArrayList<TeamDTO>();
         List<TeamInfoDTO> teamInfoList = teamRepository.findAll(searchTeamDTO);
+        if(teamInfoList.isEmpty())
+            teamInfoList = Collections.emptyList();
 
         teamInfoList.forEach(teamInfo -> {
             Long teamSeq = teamInfo.getTeamSeq();
