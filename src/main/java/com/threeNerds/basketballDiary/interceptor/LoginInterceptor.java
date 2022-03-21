@@ -45,7 +45,7 @@ public class LoginInterceptor implements HandlerInterceptor {
         //팀 id , 권한
         //Long teamId = Long.parseLong(request.getParameter("teamId"));   //=>pathVariable 로 바꾸어야됨
         final Map<String, String> pathVariables = (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
-        Long teamId = Long.parseLong(pathVariables.get("teamId"));
+        Long teamId = Long.parseLong(pathVariables.get("teamSeq"));
         Map<Long, Long> userAuth = memberDto.getUserAuth();
 
         Long grade = auth.GRADE();

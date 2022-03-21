@@ -2,9 +2,8 @@ package com.threeNerds.basketballDiary.mvc.controller;
 
 import com.threeNerds.basketballDiary.interceptor.Auth;
 import com.threeNerds.basketballDiary.mvc.domain.User;
-import com.threeNerds.basketballDiary.mvc.dto.AuthUserRequestDTO;
-import com.threeNerds.basketballDiary.mvc.dto.loginUser.CmnLoginUserDTO;
 import com.threeNerds.basketballDiary.mvc.dto.user.CmnUserDTO;
+import com.threeNerds.basketballDiary.mvc.dto.user.FindAllUserDTO;
 import com.threeNerds.basketballDiary.mvc.dto.user.UserDTO;
 import com.threeNerds.basketballDiary.mvc.service.LoginService;
 import com.threeNerds.basketballDiary.mvc.service.UserService;
@@ -20,9 +19,6 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static com.threeNerds.basketballDiary.utils.HttpResponses.*;
 
@@ -96,6 +92,19 @@ public class UserController {
         log.info("로그아웃");
         session.invalidate();
         return RESPONSE_OK;
+    }
+
+    /**
+     * API006 사용자 검색
+     */
+    @GetMapping
+    public ResponseEntity<?> findUserInfo(@RequestParam String userName,@RequestParam String email){
+        log.info("사용자 검색");
+        FindAllUserDTO findAllUserDTO = new FindAllUserDTO()
+                                            .userName(userName)
+                                            .email(email);
+        List<UserDTO> allUser = userService.findAllUser(findAllUserDTO);
+        return ResponseEntity.ok(allUser);
     }
 
     @Auth(GRADE = 3L)

@@ -4,8 +4,32 @@
 <mapper namespace="com.threeNerds.basketballDiary.mvc.repository.UserRepository">
 
     <insert id="saveUser" parameterType="com.threeNerds.basketballDiary.mvc.domain.User">
-        INSERT INTO USER(USER_ID,PWD,NAME,EMAIL,REG_DATE,UPDATE_DATE,USER_REG_YN,GENDER,HEIGHT,WEIGHT,SIDO_CODE,SIGUNGU_CODE,POSITION_CODE)
-        VALUES(#{userId},#{password},#{userName},#{email},#{regDate},#{updateDate},#{userRegYn},#{gender},#{height},#{weight},#{sidoCode},#{sigunguCode},#{positionCode})
+        INSERT INTO USER ( USER_ID
+                         , PWD
+                         , NAME
+                         , EMAIL
+                         , REG_DATE
+                         , UPDATE_DATE
+                         , USER_REG_YN
+                         , GENDER
+                         , HEIGHT
+                         , WEIGHT
+                         , SIDO_CODE
+                         , SIGUNGU_CODE
+                         , POSITION_CODE)
+        VALUES ( #{userId}
+               , #{password}
+               , #{userName}
+               , #{email}
+               , #{regDate}
+               , #{updateDate}
+               , #{userRegYn}
+               , #{gender}
+               , #{height}
+               , #{weight}
+               , #{sidoCode}
+               , #{sigunguCode}
+               , #{positionCode})
     </insert>
 
     <select id="findSeq" resultType="long">
@@ -15,11 +39,41 @@
     </select>
 
     <select id="findUser" resultType="com.threeNerds.basketballDiary.mvc.domain.User">
-        SELECT DISTINCT USER_SEQ,USER_ID,NAME AS USERNAME,PWD AS PASSWORD,EMAIL,REG_DATE,UPDATE_DATE,USER_REG_YN,GENDER,HEIGHT,WEIGHT,SIDO_CODE,SIGUNGU_CODE,POSITION_CODE
+        SELECT DISTINCT USER_SEQ
+                      , USER_ID
+                      , NAME AS USERNAME
+                      , PWD AS PASSWORD
+                      , EMAIL
+                      , REG_DATE
+                      , UPDATE_DATE
+                      , USER_REG_YN
+                      , GENDER
+                      , HEIGHT
+                      , WEIGHT
+                      , SIDO_CODE
+                      , SIGUNGU_CODE
+                      , POSITION_CODE
         FROM USER
         WHERE USER_SEQ=#{id}
     </select>
 
+    <select id="findAllUser" resultType="com.threeNerds.basketballDiary.mvc.dto.user.UserDTO">
+        SELECT USER_ID
+             , NAME AS USERNAME
+             , PWD AS PASSWORD
+             , EMAIL
+             , REG_DATE
+             , UPDATE_DATE
+             , USER_REG_YN
+             , GENDER
+             , HEIGHT
+             , WEIGHT
+             , SIDO_CODE
+             , SIGUNGU_CODE
+             , POSITION_CODE
+        FROM USER
+        WHERE NAME=#{userName} OR EMAIL=#{email}
+    </select>
 
     <select id="loginFindUser" resultType="com.threeNerds.basketballDiary.mvc.domain.User">
         SELECT USER_SEQ
@@ -53,8 +107,15 @@
 
     <update id="updateUser">
         UPDATE USER
-        SET NAME=#{userName}, PWD=#{password}, EMAIL=#{email}, GENDER=#{gender}, HEIGHT=#{height}, WEIGHT=#{weight}
-            , SIDO_CODE=#{sidoCode}, SIGUNGU_CODE=#{sigunguCode}, POSITION_CODE=#{positionCode}
+        SET NAME=#{userName}
+          , PWD=#{password}
+          , EMAIL=#{email}
+          , GENDER=#{gender}
+          , HEIGHT=#{height}
+          , WEIGHT=#{weight}
+          , SIDO_CODE=#{sidoCode}
+          , SIGUNGU_CODE=#{sigunguCode}
+          , POSITION_CODE=#{positionCode}
         WHERE USER_SEQ=#{userSeq}
     </update>
 

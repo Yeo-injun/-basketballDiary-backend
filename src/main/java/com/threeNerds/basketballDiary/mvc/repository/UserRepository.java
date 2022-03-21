@@ -4,6 +4,8 @@ import com.threeNerds.basketballDiary.mvc.domain.User;
 import com.threeNerds.basketballDiary.mvc.dto.AuthUserRequestDTO;
 import com.threeNerds.basketballDiary.mvc.dto.loginUser.CmnLoginUserDTO;
 import com.threeNerds.basketballDiary.mvc.dto.user.CmnUserDTO;
+import com.threeNerds.basketballDiary.mvc.dto.user.FindAllUserDTO;
+import com.threeNerds.basketballDiary.mvc.dto.user.UserDTO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -18,4 +20,5 @@ public interface UserRepository {
     void deleteUser(String id);
 
     List<AuthUserRequestDTO> findAuthList(CmnUserDTO cmnUserDTO);
+    List<UserDTO> findAllUser(FindAllUserDTO findAllUserDTO);
 }
