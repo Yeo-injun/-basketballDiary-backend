@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -34,7 +35,6 @@ public class TeamController {
     /**
      * API019 : 팀 목록 조회
      */
-    @Auth(GRADE = 0L)
     @GetMapping
     public ResponseEntity<List<TeamDTO>> searchTeams(
       @RequestParam(name = "team-name")     String teamName,
@@ -44,6 +44,7 @@ public class TeamController {
       @RequestParam(name = "start-time")    String startTime,
       @RequestParam(name = "end-time")      String endTime
     ) {
+        log.info("▒▒▒▒▒ API019: TeamController.searchTeams");
         SearchTeamDTO searchTeamDTO = new SearchTeamDTO()
                 .teamName(teamName)
                 .sigungu(sigungu)
@@ -53,6 +54,7 @@ public class TeamController {
                 .endTime(endTime);
 
         List<TeamDTO> teamList = teamService.searchTeams(searchTeamDTO);
+        teamList = teamList.isEmpty() ? Collections.emptyList() : teamList;
 
         return ResponseEntity.ok().body(teamList);
     }
@@ -63,7 +65,7 @@ public class TeamController {
     @Auth(GRADE = 0L)
     @PostMapping
     public ResponseEntity<?> registerTeam() {
-
+        log.info("▒▒▒▒▒ API021: TeamController.registerTeam");
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
