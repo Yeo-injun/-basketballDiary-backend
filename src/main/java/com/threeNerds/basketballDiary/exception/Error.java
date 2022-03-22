@@ -15,6 +15,7 @@ public enum Error {
 
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
     UNAUTHORIZED_MEMBER(UNAUTHORIZED, "현재 내 계정 정보가 존재하지 않습니다"),
+    LOGIN_REQUIRED(UNAUTHORIZED, "로그인이 필요합니다"),
 
     /* 404 NOT_FOUND : Resource 를 찾을 수 없음 */
     USER_NOT_FOUND(NOT_FOUND, "해당 사용자를 찾을 수 없습니다"),

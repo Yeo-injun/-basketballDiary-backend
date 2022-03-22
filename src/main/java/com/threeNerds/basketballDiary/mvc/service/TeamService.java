@@ -14,6 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -25,6 +27,8 @@ import java.util.List;
  * issue and history
  * <pre>
  * 2022.02.08 여인준 : 소스코드 생성
+ * 2022.03.14 강창기 : 팀 목록 조회 구현
+ * 2022.03.23 강창기 : 팀 생성 구현
  * </pre>
  */
 
@@ -60,5 +64,39 @@ public class TeamService {
 
         return resultTeamList.isEmpty() ?
                 Collections.emptyList() : resultTeamList;
+    }
+
+    /**
+     * 팀 생성
+     * @return Long
+     */
+    @Transactional
+    public Team createTeam(String userId, TeamDTO teamDTO) {
+        Team team = Team.builder()
+                .teamName(teamDTO.getTeamInfoDTO().getTeamName())
+                .hometown(teamDTO.getTeamInfoDTO().getHometown())
+                .foundationYmd(teamDTO.getTeamInfoDTO().getFoundationYmd())
+                .introduction(teamDTO.getTeamInfoDTO().getIntroduction())
+                .teamImagePath(teamDTO.getTeamInfoDTO().getTeamImagePath())
+                .leaderId(userId)
+                .regDate(LocalDate.now(ZoneId.of("Asia/Seoul")))
+                .updateDate(LocalDate.now(ZoneId.of("Asia/Seoul")))
+                .build();
+        teamRepository.saveTeam(team);
+
+        List<TeamRegularExercise> teamRegularExerciseList = teamDTO.getTeamRegularExercisesList();
+        teamRegularExerciseList.forEach(tempDTO -> {
+            TeamRegularExercise teamRegularExercise = TeamRegularExercise.builder()
+                    .teamSeq(team.getTeamSeq())
+                    .startTime(tempDTO.getStartTime())
+                    .endTime(tempDTO.getEndTime())
+                    .dayOfTheWeekCode(tempDTO.getDayOfTheWeekCode())
+                    .exercisePlaceAddress(tempDTO.getExercisePlaceAddress())
+                    .exercisePlaceName(tempDTO.getExercisePlaceName())
+                    .build();
+            teamRegularExerciseRepository.saveTeamRegularExercise(teamRegularExercise);
+        });
+
+        return team;
     }
 }
