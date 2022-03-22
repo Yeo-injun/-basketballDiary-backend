@@ -112,16 +112,17 @@ public class TeamMemberManagerService {
 
     /**
      * 소속팀에서 초대한 선수목록 조회 API
-     * @param searchCond
+     * @param playerSearchCond
      * @return List<PlayerDTO>
      */
-    public List<PlayerDTO> searchInvitedPlayer(PlayerSearchDTO searchCond) {
-        searchCond.joinRequestTypeCode(JoinRequestTypeCode.INVITATION.getCode());
-        List<PlayerDTO> players = playerRepository.findPlayers(searchCond);
+    public List<PlayerDTO> searchInvitedPlayer(CmnMyTeamDTO playerSearchCond) {
+        playerSearchCond.joinRequestTypeCode(JoinRequestTypeCode.INVITATION.getCode());
+        List<PlayerDTO> players = playerRepository.findPlayers(playerSearchCond);
 
-        players.stream().forEach(player -> {
-                player.positionCodeName(PositionCode.getName(player.getPositionCode()))
-                      .joinRequestStateCodeName(JoinRequestStateCode.getName(player.getJoinRequestStateCode()));
+        players.stream() // TODO Stream에서는 빈 List를 어떻게 처리하는지 확인할 필요가 있음.
+                .forEach(player -> {
+                                player.positionCodeName(PositionCode.getName(player.getPositionCode()))
+                                      .joinRequestStateCodeName(JoinRequestStateCode.getName(player.getJoinRequestStateCode()));
         });
 
         return players;
