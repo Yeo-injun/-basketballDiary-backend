@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.threeNerds.basketballDiary.mvc.repository.UserRepository">
+<mapper namespace="com.threeNerds.basketballDiary.mvc.repository.TeamRepository">
 
     <insert id="saveTeam">
         INSERT INTO TEAM(LEADER_ID, TEAM_NAME,HOMETOWN,INTRODUCTION,FOUNDATION_YMD,REG_DATE,UPDATE_DATE,SIDO_CODE,SIGUNGU_CODE)
@@ -38,7 +38,7 @@
          WHERE TEAM_SEQ = #{teamSeq}
     </select>
 
-    <select id="findAll" resultType="com.threeNerds.basketballDiary.mvc.domain.Team">
+    <select id="findAll" resultType="com.threeNerds.basketballDiary.mvc.dto.team.team.TeamInfoDTO">
         SELECT A.TEAM_SEQ
              , A.LEADER_ID
              , A.TEAM_NAME
@@ -52,7 +52,7 @@
              , A.SIGUNGU_CODE
              , COUNT(B.USER_SEQ) OVER(PARTITION BY B.TEAM_SEQ) AS TOT_MEMBER
           FROM TEAM A
-          JOIN (SELECT * FROM TEAM_MEMBER WHERE WITHDRAWAL_YN != 'Y') B
+     LEFT JOIN (SELECT * FROM TEAM_MEMBER WHERE WITHDRAWAL_YN != 'Y') B
             ON A.TEAM_SEQ = B.TEAM_SEQ
          WHERE 1=1
         <if test="teamName != null and !''.equals(teamName)">
@@ -62,6 +62,34 @@
            AND A.SIGUNGU_CODE = #{sigungu}
         </if>
       ORDER BY A.TEAM_NAME
+    </select>
+
+    <select id="findPagingTeam" resultType="com.threeNerds.basketballDiary.mvc.dto.team.team.TeamInfoDTO">
+    SELECT *
+    FROM ( SELECT A.TEAM_SEQ
+                , A.LEADER_ID
+                , A.TEAM_NAME
+                , A.TEAM_IMAGE_PATH
+                , A.HOMETOWN
+                , A.INTRODUCTION
+                , A.FOUNDATION_YMD
+                , A.REG_DATE
+                , A.UPDATE_DATE
+                , A.SIDO_CODE
+                , A.SIGUNGU_CODE
+                , COUNT(B.USER_SEQ) OVER(PARTITION BY B.TEAM_SEQ) AS TOT_MEMBER
+             FROM TEAM A
+        LEFT JOIN (SELECT * FROM TEAM_MEMBER WHERE WITHDRAWAL_YN != 'Y') B
+               ON A.TEAM_SEQ = B.TEAM_SEQ
+            WHERE 1=1
+        <if test="teamName != null and !''.equals(teamName)">
+              AND A.TEAM_NAME LIKE '%' || #{teamName} ||'%'
+        </if>
+        <if test="sigungu != null and !''.equals(sigungu)">
+              AND A.SIGUNGU_CODE = #{sigungu}
+        </if>
+         ORDER BY A.TEAM_NAME
+        ) ORDERS LIMIT #{pagerDTO.offset} OFFSET #{pagerDTO.pageNo}
     </select>
 
     <delete id="deleteById">

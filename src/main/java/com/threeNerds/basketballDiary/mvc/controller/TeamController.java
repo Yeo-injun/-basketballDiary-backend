@@ -1,6 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.controller;
 
 import com.threeNerds.basketballDiary.interceptor.Auth;
+import com.threeNerds.basketballDiary.mvc.dto.PagerDTO;
 import com.threeNerds.basketballDiary.mvc.dto.team.team.SearchTeamDTO;
 import com.threeNerds.basketballDiary.mvc.dto.team.team.TeamDTO;
 import com.threeNerds.basketballDiary.mvc.service.TeamService;
@@ -37,21 +38,26 @@ public class TeamController {
      */
     @GetMapping
     public ResponseEntity<List<TeamDTO>> searchTeams(
-      @RequestParam(name = "team-name"  , required = false)         String teamName,
-      @RequestParam(name = "sigungu"    , defaultValue = "26110")   String sigungu,
-      @RequestParam(name = "start-day"  , required = false)         String startDay,
-      @RequestParam(name = "end-day"    , required = false)         String endDay,
-      @RequestParam(name = "start-time" , required = false)         String startTime,
-      @RequestParam(name = "end-time"   , required = false)         String endTime
+      @RequestParam(name = "team-name"  , required = false) String teamName,
+      @RequestParam(name = "sigungu"    , required = false) String sigungu,
+      @RequestParam(name = "start-day"  , required = false) String startDay,
+      @RequestParam(name = "end-day"    , required = false) String endDay,
+      @RequestParam(name = "start-time" , required = false) String startTime,
+      @RequestParam(name = "end-time"   , required = false) String endTime,
+      @RequestParam(name = "pageNo"     , defaultValue = "0") Integer pageNo
     ) {
         log.info("▒▒▒▒▒ API019: TeamController.searchTeams");
+        PagerDTO pagerDTO = new PagerDTO()
+                .pageNo(pageNo*5)
+                .offset(5);
         SearchTeamDTO searchTeamDTO = new SearchTeamDTO()
                 .teamName(teamName)
                 .sigungu(sigungu)
                 .startDay(startDay)
                 .endDay(endDay)
                 .startTime(startTime)
-                .endTime(endTime);
+                .endTime(endTime)
+                .pagerDTO(pagerDTO);
 
         List<TeamDTO> teamList = teamService.searchTeams(searchTeamDTO);
         teamList = teamList.isEmpty() ? Collections.emptyList() : teamList;
