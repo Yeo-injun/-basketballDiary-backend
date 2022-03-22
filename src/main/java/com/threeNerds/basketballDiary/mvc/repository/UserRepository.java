@@ -19,6 +19,6 @@ public interface UserRepository {
     void updateUser(User user);
     void deleteUser(String id);
 
-    List<AuthUserRequestDTO> findAuthList(CmnUserDTO cmnUserDTO);
+    List<AuthUserRequestDTO> findAuthList(User user);
     List<UserDTO> findAllUser(FindAllUserDTO findAllUserDTO);
 }
