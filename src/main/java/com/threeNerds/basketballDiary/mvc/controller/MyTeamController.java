@@ -116,17 +116,18 @@ public class MyTeamController {
 
     /**
      * API005 : 소속팀의 초대한 선수목록 조회
+     * 22.03.22(화) 인준 : 공통DTO적용 및 동적쿼리 수정
      */
     @GetMapping("/{teamSeq}/joinRequestTo")
     public ResponseEntity<?> searchInvitedPlayer(
             @PathVariable Long teamSeq,
-            @RequestParam(name = "state", defaultValue = "00") String joinRequestStateCode
+            @RequestParam(name = "state", required = false) String joinRequestStateCode
     ) {
-        PlayerSearchDTO searchCond = new PlayerSearchDTO()
+        CmnMyTeamDTO playerSearchCond = new CmnMyTeamDTO()
                                             .teamSeq(teamSeq)
                                             .joinRequestStateCode(joinRequestStateCode);
 
-        List<PlayerDTO> playerList = teamMemberManagerService.searchInvitedPlayer(searchCond);
+        List<PlayerDTO> playerList = teamMemberManagerService.searchInvitedPlayer(playerSearchCond);
         return ResponseEntity.ok(playerList);
     }
 
