@@ -13,5 +13,6 @@ public interface TeamRepository {
     void updateTeam(Team team);
     Team findByTeamSeq(Long teamSeq);
     List<TeamInfoDTO> findAll(SearchTeamDTO searchTeamDTO);
+    List<TeamInfoDTO> findPagingTeam(SearchTeamDTO searchTeamDTO);
     void deleteById(Long teamSeq);
 }
