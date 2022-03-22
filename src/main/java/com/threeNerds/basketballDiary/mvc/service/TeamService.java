@@ -44,7 +44,7 @@ public class TeamService {
     public List<TeamDTO> searchTeams(SearchTeamDTO searchTeamDTO) {
         log.info("TeamService.searchTeams");
         List<TeamDTO> resultTeamList = new ArrayList<TeamDTO>();
-        List<TeamInfoDTO> teamInfoList = teamRepository.findAll(searchTeamDTO);
+        List<TeamInfoDTO> teamInfoList = teamRepository.findPagingTeam(searchTeamDTO);
         if(teamInfoList.isEmpty())
             teamInfoList = Collections.emptyList();
 
