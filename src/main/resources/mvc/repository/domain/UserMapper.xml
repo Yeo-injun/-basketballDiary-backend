@@ -99,10 +99,9 @@
         SELECT B.TEAM_SEQ
              , B.TEAM_AUTH_CODE
           FROM USER A
-          LEFT JOIN TEAM_MEMBER B
+         INNER JOIN TEAM_MEMBER B
             ON A.USER_SEQ = B.USER_SEQ
-         WHERE A.USER_ID = #{userId}
-           AND A.PWD     = #{password}
+         WHERE A.USER_SEQ = #{userSeq}
     </select>
 
     <update id="updateUser">
