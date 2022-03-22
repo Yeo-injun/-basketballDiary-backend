@@ -55,4 +55,6 @@ public interface TeamMemberRepository {
     int updateMyTeamProfile(ModifyMyTeamProfileDTO userDto);
 
     void deleteMyTeamProfile(FindMyTeamProfileDTO userDto);
+
+    Long findMyTeamCount(Long userSeq);
 }

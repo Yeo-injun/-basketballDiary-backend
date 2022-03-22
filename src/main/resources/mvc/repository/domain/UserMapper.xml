@@ -57,7 +57,7 @@
         WHERE USER_SEQ=#{id}
     </select>
 
-    <select id="findAllUser" resultType="com.threeNerds.basketballDiary.mvc.dto.user.UserDTO">
+    <select id="findAllUser" resultType="com.threeNerds.basketballDiary.mvc.dto.user.user.UserDTO">
         SELECT USER_ID
              , NAME AS USERNAME
              , PWD AS PASSWORD

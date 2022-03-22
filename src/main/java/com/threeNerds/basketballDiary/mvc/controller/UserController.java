@@ -3,8 +3,9 @@ package com.threeNerds.basketballDiary.mvc.controller;
 import com.threeNerds.basketballDiary.interceptor.Auth;
 import com.threeNerds.basketballDiary.mvc.domain.User;
 import com.threeNerds.basketballDiary.mvc.dto.user.CmnUserDTO;
-import com.threeNerds.basketballDiary.mvc.dto.user.FindAllUserDTO;
-import com.threeNerds.basketballDiary.mvc.dto.user.UserDTO;
+import com.threeNerds.basketballDiary.mvc.dto.user.user.FindAllUserDTO;
+import com.threeNerds.basketballDiary.mvc.dto.user.user.LoginUserDTO;
+import com.threeNerds.basketballDiary.mvc.dto.user.user.UserDTO;
 import com.threeNerds.basketballDiary.mvc.service.LoginService;
 import com.threeNerds.basketballDiary.mvc.service.UserService;
 import com.threeNerds.basketballDiary.mvc.service.UserTeamManagerService;
@@ -75,11 +76,11 @@ public class UserController {
      */
     @PostMapping("/login")
     public ResponseEntity<SessionUser> login (
-            @RequestBody CmnUserDTO cmnUserDTO,
+            @RequestBody LoginUserDTO loginUserDTO,
             HttpSession session
     ) {
         log.info("로그인 시도");
-        SessionUser sessionUser = loginService.login(cmnUserDTO);
+        SessionUser sessionUser = loginService.login(loginUserDTO);
         session.setAttribute(SessionConst.LOGIN_MEMBER, sessionUser);
         return ResponseEntity.ok(sessionUser);
     }

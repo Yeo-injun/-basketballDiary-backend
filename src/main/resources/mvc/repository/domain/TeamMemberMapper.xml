@@ -66,4 +66,10 @@
     <delete id="deleteMyTeamProfild">
         DELETE FROM TEAM_MEMBER WHERE USER_SEQ=#{userSeq} AND TEAMSEQ=#{teamSeq}
     </delete>
+
+    <select id="findMyTeamCount" resultType="long">
+        SELECT COUNT(*)
+        FROM TEAM_MEMBER
+        WHERE USER_SEQ=#{userSeq}
+    </select>
 </mapper>
