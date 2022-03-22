@@ -1,8 +1,8 @@
 package com.threeNerds.basketballDiary.mvc.service;
 
 import com.threeNerds.basketballDiary.mvc.domain.User;
-import com.threeNerds.basketballDiary.mvc.dto.user.FindAllUserDTO;
-import com.threeNerds.basketballDiary.mvc.dto.user.UserDTO;
+import com.threeNerds.basketballDiary.mvc.dto.user.user.FindAllUserDTO;
+import com.threeNerds.basketballDiary.mvc.dto.user.user.UserDTO;
 import com.threeNerds.basketballDiary.mvc.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
