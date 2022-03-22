@@ -38,4 +38,7 @@ public class Team {
 
     // 시군구코드
     private String sigunguCode;
+
+    // 팀 이미지 경로
+    private String teamImagePath;
 }
