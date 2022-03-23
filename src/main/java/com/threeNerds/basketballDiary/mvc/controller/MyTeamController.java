@@ -118,7 +118,7 @@ public class MyTeamController {
      * API005 : 소속팀의 초대한 선수목록 조회
      * 22.03.22(화) 인준 : 공통DTO적용 및 동적쿼리 수정
      */
-    @GetMapping("/{teamSeq}/joinRequestTo")
+    @GetMapping("/{teamSeq}/joinRequestsTo")
     public ResponseEntity<?> searchInvitedPlayer(
             @PathVariable Long teamSeq,
             @RequestParam(name = "state", required = false) String joinRequestStateCode
@@ -150,17 +150,18 @@ public class MyTeamController {
 
     /**
      * API008 : 소속팀이 받은 가입요청목록 조회
+     * 22.03.23 인준 : QueryString 기본값 제거 및 필수값 설정 해제. 공통DTO로 Service넘겨주기
      */
     @GetMapping("/{teamSeq}/joinRequestsFrom")
-    public ResponseEntity<?> searchJoinRequestPlayer(
+    public ResponseEntity<?> searchJoinRequestPlayer (
             @PathVariable Long teamSeq,
-            @RequestParam(name = "state", defaultValue = "00") String joinRequestStateCode
+            @RequestParam(name = "state", required = false) String joinRequestStateCode
     ) {
-        PlayerSearchDTO searchCond = new PlayerSearchDTO()
+        CmnMyTeamDTO playerSearchCond = new CmnMyTeamDTO()
                 .teamSeq(teamSeq)
                 .joinRequestStateCode(joinRequestStateCode);
 
-        List<PlayerDTO> playerList = teamMemberManagerService.searchJoinRequestPlayer(searchCond);
+        List<PlayerDTO> playerList = teamMemberManagerService.searchJoinRequestPlayer(playerSearchCond);
         return ResponseEntity.ok(playerList);
     }
 
