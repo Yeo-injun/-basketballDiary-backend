@@ -19,14 +19,12 @@
         )
     </insert>
 
-    <select id="checkTeamMember" resultType="com.threeNerds.basketballDiary.mvc.dto.loginUser.userTeamManager.JoinRequestDTO">
-        SELECT A.TEAM_SEQ
-             , A.USER_SEQ
-          FROM TEAM_JOIN_REQUEST A
-         INNER JOIN TEAM_MEMBER B
-            ON A.TEAM_SEQ = B.TEAM_SEQ
-           AND A.USER_SEQ = B.USER_SEQ
-         WHERE TEAM_JOIN_REQUEST_SEQ = #{teamJoinRequestSeq}
+    <select id="checkDuplicatedTeamMember" resultType="int">
+        SELECT COUNT(*)
+          FROM TEAM_MEMBER
+         WHERE 1=1
+           AND TEAM_SEQ = #{teamSeq}
+           AND USER_SEQ = #{userSeq}
     </select>
 
     <update id="updateWithdrawalState">

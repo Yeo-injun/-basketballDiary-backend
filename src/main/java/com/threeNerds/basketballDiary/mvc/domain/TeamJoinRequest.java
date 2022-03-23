@@ -4,6 +4,7 @@ import com.threeNerds.basketballDiary.constant.JoinRequestStateCode;
 import com.threeNerds.basketballDiary.constant.JoinRequestTypeCode;
 import com.threeNerds.basketballDiary.mvc.dto.loginUser.CmnLoginUserDTO;
 import com.threeNerds.basketballDiary.mvc.dto.loginUser.userTeamManager.JoinRequestDTO;
+import com.threeNerds.basketballDiary.mvc.dto.myTeam.CmnMyTeamDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -59,7 +60,7 @@ public class TeamJoinRequest {
     }
 
     /** 초대 생성(팀 -> 사용자) */
-    public static TeamJoinRequest createInvitation (JoinRequestDTO joinRequest)
+    public static TeamJoinRequest createInvitation (CmnMyTeamDTO joinRequest)
     {
         return TeamJoinRequest.builder()
                     .teamSeq(joinRequest.getTeamSeq())

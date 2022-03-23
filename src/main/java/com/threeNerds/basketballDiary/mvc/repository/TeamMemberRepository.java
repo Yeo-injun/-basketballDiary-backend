@@ -3,6 +3,7 @@ package com.threeNerds.basketballDiary.mvc.repository;
 import com.threeNerds.basketballDiary.mvc.controller.MyTeamController;
 import com.threeNerds.basketballDiary.mvc.domain.TeamMember;
 import com.threeNerds.basketballDiary.mvc.dto.loginUser.userTeamManager.JoinRequestDTO;
+import com.threeNerds.basketballDiary.mvc.dto.myTeam.CmnMyTeamDTO;
 import com.threeNerds.basketballDiary.mvc.dto.myTeam.FindMyTeamProfileDTO;
 import com.threeNerds.basketballDiary.mvc.dto.myTeam.ModifyMyTeamProfileDTO;
 import com.threeNerds.basketballDiary.mvc.dto.myTeam.ResponseMyTeamProfileDTO;
@@ -22,7 +23,7 @@ public interface TeamMemberRepository {
      * @param joinRequest
      * @return JoinRequestDTO
      */
-    JoinRequestDTO checkTeamMember(JoinRequestDTO joinRequest);
+     int checkDuplicatedTeamMember(CmnMyTeamDTO joinRequest);
 
     /**
      * 팀원 단건조회(팀원SEQ로)

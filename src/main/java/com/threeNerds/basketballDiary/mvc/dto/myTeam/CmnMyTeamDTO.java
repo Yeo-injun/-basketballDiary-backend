@@ -4,8 +4,14 @@ import lombok.Getter;
 
 @Getter
 public class CmnMyTeamDTO {
-    // 사용자Seq
+    /**************
+     * USER 테이블 */
     private Long userSeq;
+
+    public CmnMyTeamDTO userSeq(Long userSeq) {
+        this.userSeq = userSeq;
+        return this;
+    }
 
     /**************
      * TEAM 테이블 */
@@ -44,5 +50,6 @@ public class CmnMyTeamDTO {
         this.joinRequestStateCode = joinRequestStateCode;
         return this;
     }
+
 
 }
