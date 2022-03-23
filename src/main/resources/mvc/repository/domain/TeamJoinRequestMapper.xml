@@ -26,13 +26,13 @@
         )
     </insert>
 
-    <select id="checkJoinRequest" resultType="com.threeNerds.basketballDiary.mvc.domain.TeamJoinRequest">
-        SELECT JOIN_REQUEST_TYPE_CODE /* 가입요청유형코드 */
+    <select id="checkPendingJoinRequest" resultType="int">
+        SELECT COUNT(*)
           FROM TEAM_JOIN_REQUEST
          WHERE 1=1
            AND TEAM_SEQ = #{teamSeq}
            AND USER_SEQ = #{userSeq}
-           AND JOIN_REQUEST_STATE_CODE = #{joinRequestStateCode}  /* 대기중(01)인 경우에만 체크 */
+           AND JOIN_REQUEST_STATE_CODE = '01'  /* 대기중(01)인 경우에만 체크 */
     </select>
 
     <update id="updateJoinRequestState" parameterType="com.threeNerds.basketballDiary.mvc.domain.TeamJoinRequest">

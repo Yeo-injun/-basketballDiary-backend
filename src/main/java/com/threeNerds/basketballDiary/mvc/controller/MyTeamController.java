@@ -140,7 +140,7 @@ public class MyTeamController {
             @PathVariable Long teamSeq,
             @PathVariable Long userSeq
     ) {
-        JoinRequestDTO joinRequest = new JoinRequestDTO()
+        CmnMyTeamDTO joinRequest = new CmnMyTeamDTO()
                                             .teamSeq(teamSeq)
                                             .userSeq(userSeq);
 

@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.threeNerds.basketballDiary.exception.Error.USER_NOT_FOUND;
 
@@ -46,32 +47,26 @@ public class TeamMemberManagerService {
      * 팀원 초대 API
      * @param joinRequest
      */
-    public void inviteTeamMember(JoinRequestDTO joinRequest)
+    public void inviteTeamMember(CmnMyTeamDTO joinRequest)
     {
-        TeamJoinRequest invitationInfo = TeamJoinRequest.createInvitation(joinRequest);
+        joinRequest.joinRequestTypeCode(JoinRequestTypeCode.INVITATION.getCode());
 
         /** 초대-가입요청 존재여부 확인 : 대기중인 가입요청 혹은 초대가 있을 경우 중복가입요청 방지 */
-        TeamJoinRequest prevJoinReq = teamJoinRequestRepository.checkJoinRequest(invitationInfo);
-        boolean isExistJoinRequest = prevJoinReq != null
-                                        ? true
-                                        : false;
-        if (isExistJoinRequest)
+        int checkPendingJoinReqCnt = teamJoinRequestRepository.checkPendingJoinRequest(joinRequest);
+        if (checkPendingJoinReqCnt > 0)
         {
-            String reqTypeName = JoinRequestTypeCode.getName(prevJoinReq.getJoinRequestTypeCode());
-            log.info("==== 이미 {}가 있습니다. ====", reqTypeName);
             throw new CustomException(Error.ALREADY_EXIST_JOIN_REQUEST);
         }
 
         /** 팀원으로 존재하는지 확인 : 팀원으로 존재할 경우 예외를 던짐(409에러) */
-        boolean isExsistTeamMember = teamMemberRepository.checkTeamMember(joinRequest) != null
-                ? true
-                : false;
-        if (isExsistTeamMember)
+        int checkDuplicatedTeamMemberCnt = teamMemberRepository.checkDuplicatedTeamMember(joinRequest);
+        if (checkDuplicatedTeamMemberCnt > 0)
         {
-            throw new CustomException(Error.ALREADY_EXIST_TEAM_MEMBER); // TODO 참고자료(왜 409에러로 처리했는지) : https://deveric.tistory.com/62
+            throw new CustomException(Error.ALREADY_EXIST_TEAM_MEMBER);
         }
 
         /** 초대-가입요청이 없고, 팀원이 아닐 경우에만 INSERT */
+        TeamJoinRequest invitationInfo = TeamJoinRequest.createInvitation(joinRequest);
         teamJoinRequestRepository.createJoinRequest(invitationInfo);
     }
 
