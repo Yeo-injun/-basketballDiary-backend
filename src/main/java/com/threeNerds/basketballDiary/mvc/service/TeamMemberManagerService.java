@@ -115,7 +115,8 @@ public class TeamMemberManagerService {
      * @param playerSearchCond
      * @return List<PlayerDTO>
      */
-    public List<PlayerDTO> searchInvitedPlayer(CmnMyTeamDTO playerSearchCond) {
+    public List<PlayerDTO> searchInvitedPlayer(CmnMyTeamDTO playerSearchCond)
+    {
         playerSearchCond.joinRequestTypeCode(JoinRequestTypeCode.INVITATION.getCode());
         List<PlayerDTO> players = playerRepository.findPlayers(playerSearchCond);
 
@@ -130,12 +131,12 @@ public class TeamMemberManagerService {
 
     /**
      * 소속팀에 가입요청한 선수목록 조회 API
-     * @param searchCond
+     * @param playerSearchCond
      * @return List<PlayerDTO>
      */
-    public List<PlayerDTO> searchJoinRequestPlayer(PlayerSearchDTO searchCond) {
-        searchCond.joinRequestTypeCode(JoinRequestTypeCode.JOIN_REQUEST.getCode());
-        List<PlayerDTO> players = playerRepository.findPlayers(searchCond);
+    public List<PlayerDTO> searchJoinRequestPlayer(CmnMyTeamDTO playerSearchCond) {
+        playerSearchCond.joinRequestTypeCode(JoinRequestTypeCode.JOIN_REQUEST.getCode());
+        List<PlayerDTO> players = playerRepository.findPlayers(playerSearchCond);
 
         players.stream().forEach(player -> { player
                                                 .positionCodeName(PositionCode.getName(player.getPositionCode()))
