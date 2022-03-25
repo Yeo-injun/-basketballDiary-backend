@@ -50,9 +50,10 @@ public class TeamMemberManagerService {
     public void inviteTeamMember(CmnMyTeamDTO joinRequest)
     {
         joinRequest.joinRequestTypeCode(JoinRequestTypeCode.INVITATION.getCode());
+        TeamJoinRequest invitationInfo = TeamJoinRequest.createInvitation(joinRequest);
 
         /** 초대-가입요청 존재여부 확인 : 대기중인 가입요청 혹은 초대가 있을 경우 중복가입요청 방지 */
-        int checkPendingJoinReqCnt = teamJoinRequestRepository.checkPendingJoinRequest(joinRequest);
+        int checkPendingJoinReqCnt = teamJoinRequestRepository.checkPendingJoinRequest(invitationInfo);
         if (checkPendingJoinReqCnt > 0)
         {
             throw new CustomException(Error.ALREADY_EXIST_JOIN_REQUEST);
@@ -66,7 +67,6 @@ public class TeamMemberManagerService {
         }
 
         /** 초대-가입요청이 없고, 팀원이 아닐 경우에만 INSERT */
-        TeamJoinRequest invitationInfo = TeamJoinRequest.createInvitation(joinRequest);
         teamJoinRequestRepository.createJoinRequest(invitationInfo);
     }
 
@@ -74,11 +74,12 @@ public class TeamMemberManagerService {
      * 소속팀 가입요청 승인 API
      * @param joinRequest
      */
-    public void approveJoinRequest(JoinRequestDTO joinRequest)
+    public void approveJoinRequest(CmnMyTeamDTO joinRequest)
     {
         /** 가입요청 상태 업데이트 하기 */
-        boolean isSuccess = teamJoinRequestRepository.updateJoinRequestState(TeamJoinRequest.approveJoinRequest(joinRequest)) == 1 ? true : false;
-        if (!isSuccess)
+        boolean isApproveSuccess = teamJoinRequestRepository
+                                        .updateJoinRequestState(TeamJoinRequest.approveJoinRequest(joinRequest)) == 1 ? true : false;
+        if (!isApproveSuccess)
         {
             throw new CustomException(USER_NOT_FOUND);
         }
