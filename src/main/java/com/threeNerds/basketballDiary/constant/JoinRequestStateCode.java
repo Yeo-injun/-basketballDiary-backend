@@ -8,7 +8,6 @@ import java.util.Optional;
 @Getter
 public enum JoinRequestStateCode {
 
-    ALL("전체상태", "00"), //  TODO 삭제예정 - 전체 TeamJoinRequest를 조회할때는 StateCode값을 조건으로 걸지 않으면 됨...!
     WAITING("대기중", "01"),
     APPROVAL("승인", "02"),
     REJECTION("거절", "03"),

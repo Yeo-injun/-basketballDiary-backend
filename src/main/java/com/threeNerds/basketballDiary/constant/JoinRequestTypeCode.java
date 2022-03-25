@@ -14,7 +14,6 @@ import java.util.Optional;
 @Getter
 public enum JoinRequestTypeCode {
 
-    ALL("전체", "00"),
     INVITATION("팀초대", "01"),
     JOIN_REQUEST("팀가입요청", "02");
 

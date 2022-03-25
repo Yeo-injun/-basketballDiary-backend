@@ -190,13 +190,12 @@ public class MyTeamController {
             @PathVariable Long teamSeq,
             @PathVariable Long teamJoinRequestSeq
     ) {
-        JoinRequestDTO joinRequest = new JoinRequestDTO()
+        CmnMyTeamDTO joinRequest = new CmnMyTeamDTO()
                 .teamSeq(teamSeq)
                 .teamJoinRequestSeq(teamJoinRequestSeq);
 
         teamMemberManagerService.rejectJoinRequest(joinRequest);
         return RESPONSE_OK;
-        // TODO 예외처리 반영
     }
 /*****************************************************************************************************************/
     /**

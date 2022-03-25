@@ -62,21 +62,6 @@ public class UserTeamManagerService {
         teamJoinRequestRepository.createJoinRequest(joinRequestInfo);
     }
 
-    // 농구팀 가입요청 및 초대목록 조회하기
-//    public List<JoinRequestDTO> searchJoinRequestsAll(JoinRequestDTO joinRequestDTO)
-//    {
-//        List<JoinRequestDTO> joinRequestDTOList = teamJoinRequestRepository.findAllJoinRequests(joinRequestDTO);
-//        for (JoinRequestDTO joinRequest : joinRequestDTOList)
-//        {
-//            String typeCode = joinRequest.getJoinRequestTypeCode();
-//            String stateCode = joinRequest.getJoinRequestStateCode();
-//
-//            joinRequest.joinRequestTypeCodeName(typeCode);
-//            joinRequest.joinRequestStateCodeName(stateCode);
-//        }
-//        return joinRequestDTOList;
-//    }
-
     // 사용자가 가입요청을 보낸 팀 목록을 조회
     public List<JoinRequestDTO> getJoinRequestsTo(CmnLoginUserDTO loginUserDTO)
     {
@@ -113,8 +98,8 @@ public class UserTeamManagerService {
         TeamJoinRequest joinRequestCancel = TeamJoinRequest.cancelJoinRequest(loginUserDTO);
 
         // TODO 가입요청 취소 Request를 보낸 사용자가 가입요청을 취소하는 것인지도 확인해야 하는지??
-       boolean isSuccess = teamJoinRequestRepository.updateJoinRequestState(joinRequestCancel) == 1 ? true : false;
-        if (!isSuccess)
+       boolean isCancelSuccess = teamJoinRequestRepository.updateJoinRequestState(joinRequestCancel) == 1 ? true : false;
+        if (!isCancelSuccess)
         {
             throw new CustomException(JOIN_REQUEST_NOT_FOUND);
         }

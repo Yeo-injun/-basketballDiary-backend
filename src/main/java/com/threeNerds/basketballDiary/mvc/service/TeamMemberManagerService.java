@@ -93,16 +93,16 @@ public class TeamMemberManagerService {
      * 소속팀 가입요청 거절 API
      * @param joinRequest
      */
-    public boolean rejectJoinRequest(JoinRequestDTO joinRequest) {
+    public void rejectJoinRequest(CmnMyTeamDTO joinRequest)
+    {
         TeamJoinRequest rejectionInfo = TeamJoinRequest.rejectJoinRequest(joinRequest);
 
-        boolean isRejectionSuccess = teamJoinRequestRepository.updateJoinRequestState(rejectionInfo) == 1 ? true : false;
+        boolean isRejectionSuccess = teamJoinRequestRepository
+                                        .updateJoinRequestState(rejectionInfo) == 1 ? true : false;
         if (!isRejectionSuccess)
         {
-            log.info("==== 해당 가입요청은 거절할 수 없는 가입요청입니다. ====");
-            return isRejectionSuccess; // TODO 에러를 던지는 것으로 코드 바꾸기
+            throw new CustomException(Error.JOIN_REQUEST_NOT_FOUND);
         }
-        return isRejectionSuccess;
     }
 
     /**

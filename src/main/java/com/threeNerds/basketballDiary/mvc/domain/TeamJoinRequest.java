@@ -91,7 +91,7 @@ public class TeamJoinRequest {
     }
 
     /** 거절처리 - 팀이 사용자의 가입요청을 */
-    public static TeamJoinRequest rejectJoinRequest(JoinRequestDTO joinRequest)
+    public static TeamJoinRequest rejectJoinRequest(CmnMyTeamDTO joinRequest)
     {
         return TeamJoinRequest.builder()
                 .teamJoinRequestSeq(joinRequest.getTeamJoinRequestSeq())
