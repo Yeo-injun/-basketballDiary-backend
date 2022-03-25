@@ -71,7 +71,7 @@ public class TeamJoinRequest {
     }
 
     /** 승인처리 - 팀이 사용자의 가입요청을 */
-    public static TeamJoinRequest approveJoinRequest (JoinRequestDTO joinRequest)
+    public static TeamJoinRequest approveJoinRequest (CmnMyTeamDTO joinRequest)
     {
         return TeamJoinRequest.builder()
                 .teamJoinRequestSeq(joinRequest.getTeamJoinRequestSeq())

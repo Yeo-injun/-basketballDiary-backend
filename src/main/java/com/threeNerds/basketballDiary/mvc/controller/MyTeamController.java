@@ -168,13 +168,14 @@ public class MyTeamController {
     /**
      * API009 : 소속팀이 사용자의 가입요청 승인
      * 22.03.10 인준 : Service Layer에 CustomException 적용
+     * 22.03.25 인준 : CmnMyTeamDTO적용
      */
     @PatchMapping("/{teamSeq}/joinRequestFrom/{teamJoinRequestSeq}/approval")
     public ResponseEntity<?> approveJoinRequest(
             @PathVariable Long teamJoinRequestSeq,
             @PathVariable Long teamSeq
     ) {
-        JoinRequestDTO joinRequest = new JoinRequestDTO()
+        CmnMyTeamDTO joinRequest = new CmnMyTeamDTO()
                 .teamJoinRequestSeq(teamJoinRequestSeq)
                 .teamSeq(teamSeq);
 
@@ -184,6 +185,7 @@ public class MyTeamController {
 
     /**
      * API010 : 소속팀의 가입요청 거절
+     * 22.03.25(금) 인준 : CmnMyTeamDTO적용 및 예외처리
      */
     @PatchMapping("/{teamSeq}/joinRequestFrom/{teamJoinRequestSeq}/rejection")
     public ResponseEntity<?> rejectJoinRequest(

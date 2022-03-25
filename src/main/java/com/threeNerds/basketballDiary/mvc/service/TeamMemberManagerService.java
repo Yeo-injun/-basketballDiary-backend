@@ -74,11 +74,12 @@ public class TeamMemberManagerService {
      * 소속팀 가입요청 승인 API
      * @param joinRequest
      */
-    public void approveJoinRequest(JoinRequestDTO joinRequest)
+    public void approveJoinRequest(CmnMyTeamDTO joinRequest)
     {
         /** 가입요청 상태 업데이트 하기 */
-        boolean isSuccess = teamJoinRequestRepository.updateJoinRequestState(TeamJoinRequest.approveJoinRequest(joinRequest)) == 1 ? true : false;
-        if (!isSuccess)
+        boolean isApproveSuccess = teamJoinRequestRepository
+                                        .updateJoinRequestState(TeamJoinRequest.approveJoinRequest(joinRequest)) == 1 ? true : false;
+        if (!isApproveSuccess)
         {
             throw new CustomException(USER_NOT_FOUND);
         }
