@@ -30,7 +30,7 @@ import static com.threeNerds.basketballDiary.utils.HttpResponses.RESPONSE_OK;
 @RequestMapping("/api/loginUser")
 public class LoginUserController {
 
-    private final UserService userService; // TODO UserTeamManagerService로 변경
+    private final UserService userService;
     private final UserTeamManagerService userTeamManagerService;
 
     /**
@@ -43,9 +43,11 @@ public class LoginUserController {
             @PathVariable Long teamSeq
     )
     {
-        Optional.ofNullable(sessionUser)
-                .orElseThrow(() -> new CustomException(Error.LOGIN_REQUIRED));
-        Long userSeq = sessionUser.getUserSeq();
+        /** Optional을 이용한 안전한 Null처리  : 참고 - https://madplay.github.io/post/how-to-handle-optional-in-java */
+        Long userSeq = Optional.ofNullable(sessionUser)
+                                .map(SessionUser::getUserSeq)   // SessionUser객체에서 getUserSeq를 호출하여 해당 값가져오기
+                                .orElseThrow(() -> new CustomException(Error.LOGIN_REQUIRED));  // Null일 경우 예외를 던짐
+
         CmnLoginUserDTO loginUserDTO = new CmnLoginUserDTO()
                 .teamSeq(teamSeq)
                 .userSeq(userSeq);

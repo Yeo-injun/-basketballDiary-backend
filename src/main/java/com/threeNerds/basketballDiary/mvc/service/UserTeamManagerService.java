@@ -3,6 +3,7 @@ package com.threeNerds.basketballDiary.mvc.service;
 
 import com.threeNerds.basketballDiary.constant.JoinRequestTypeCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
+import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.mvc.domain.Team;
 import com.threeNerds.basketballDiary.mvc.domain.TeamJoinRequest;
 import com.threeNerds.basketballDiary.mvc.domain.TeamMember;
@@ -10,6 +11,7 @@ import com.threeNerds.basketballDiary.mvc.dto.loginUser.userTeamManager.JoinRequ
 import com.threeNerds.basketballDiary.mvc.dto.loginUser.CmnLoginUserDTO;
 import com.threeNerds.basketballDiary.mvc.repository.TeamJoinRequestRepository;
 import com.threeNerds.basketballDiary.mvc.repository.TeamMemberRepository;
+import com.threeNerds.basketballDiary.mvc.repository.TeamRepository;
 import com.threeNerds.basketballDiary.mvc.repository.UserTeamManagerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.threeNerds.basketballDiary.exception.Error.*;
 
@@ -37,6 +40,7 @@ import static com.threeNerds.basketballDiary.exception.Error.*;
 @Transactional
 public class UserTeamManagerService {
 
+    private final TeamRepository teamRepository;
     private final TeamMemberRepository teamMemberRepository;
     private final TeamJoinRequestRepository teamJoinRequestRepository;
     private final UserTeamManagerRepository userTeamManagerRepository;
@@ -45,14 +49,19 @@ public class UserTeamManagerService {
     public void sendJoinRequestToTeam(CmnLoginUserDTO loginUserDTO)
     {
         TeamJoinRequest joinRequestInfo = TeamJoinRequest.createJoinRequest(loginUserDTO);
-        // 초대-가입요청 존재여부 확인 : 대기중인 가입요청 혹은 초대가 있을 경우 중복가입요청 방지
+        /** 초대-가입요청 존재여부 확인 : 대기중인 가입요청 혹은 초대가 있을 경우 중복가입요청 방지 */
         boolean isExistPrevJoinRequest = teamJoinRequestRepository.checkPendingJoinRequest(joinRequestInfo) == 1 ? true : false;
         if (isExistPrevJoinRequest)
         {
             throw new CustomException(ALREADY_EXIST_JOIN_REQUEST);
         }
 
-        // 초대-가입요청이 없을경우에만 INSERT
+        /** 팀 존재여부 확인 */
+        Optional
+            .ofNullable(teamRepository.findByTeamSeq(joinRequestInfo.getTeamSeq()))
+            .orElseThrow(()-> new CustomException(TEAM_NOT_FOUND));
+
+        /** 팀이 존재하고, 초대-가입요청이 없을경우에만 INSERT */
         teamJoinRequestRepository.createJoinRequest(joinRequestInfo);
     }
 
