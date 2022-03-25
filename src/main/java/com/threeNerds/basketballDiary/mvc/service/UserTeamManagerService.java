@@ -42,20 +42,14 @@ public class UserTeamManagerService {
     private final UserTeamManagerRepository userTeamManagerRepository;
 
     // 농구팀에 가입요청 보내기
-    public void sendJoinRequestToTeam(CmnLoginUserDTO loginUserDTO) {
-
+    public void sendJoinRequestToTeam(CmnLoginUserDTO loginUserDTO)
+    {
         TeamJoinRequest joinRequestInfo = TeamJoinRequest.createJoinRequest(loginUserDTO);
-
         // 초대-가입요청 존재여부 확인 : 대기중인 가입요청 혹은 초대가 있을 경우 중복가입요청 방지
-        TeamJoinRequest prevJoinReq = teamJoinRequestRepository.checkJoinRequest(joinRequestInfo);
-        boolean isExistJoinRequest = prevJoinReq != null
-                ? true
-                : false;
-        if (isExistJoinRequest)
+        boolean isExistPrevJoinRequest = teamJoinRequestRepository.checkPendingJoinRequest(joinRequestInfo) == 1 ? true : false;
+        if (isExistPrevJoinRequest)
         {
-            String prevJoinReqTypeName = JoinRequestTypeCode.getName(prevJoinReq.getJoinRequestTypeCode());
-            log.info("==== 이미 {}가 있습니다. ====", prevJoinReqTypeName);
-            return; // TODO 에러를 던지거나 다른 것을 리턴하기
+            throw new CustomException(ALREADY_EXIST_JOIN_REQUEST);
         }
 
         // 초대-가입요청이 없을경우에만 INSERT
