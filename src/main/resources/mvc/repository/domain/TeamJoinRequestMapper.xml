@@ -37,11 +37,11 @@
 
     <update id="updateJoinRequestState" parameterType="com.threeNerds.basketballDiary.mvc.domain.TeamJoinRequest">
         UPDATE TEAM_JOIN_REQUEST
-           SET JOIN_REQUEST_STATE_CODE = #{joinRequestStateCode}
-             , CONFIRMATION_DATE = CURRENT_TIMESTAMP
+           SET JOIN_REQUEST_STATE_CODE  = #{joinRequestStateCode}
+             , CONFIRMATION_DATE        = CURRENT_TIMESTAMP()
          WHERE 1=1
-           AND TEAM_JOIN_REQUEST_SEQ = #{teamJoinRequestSeq}
-           AND JOIN_REQUEST_STATE_CODE = '01' /* 팀가입요청상태코드 - 대기중인 상태만 변경가능 */
+           AND TEAM_JOIN_REQUEST_SEQ    = #{teamJoinRequestSeq}
+           AND JOIN_REQUEST_STATE_CODE  = '01' /* 팀가입요청상태코드 - 대기중인 상태만 변경가능 */
         <if test="userSeq != '' and userSeq != null " >
            AND USER_SEQ = #{userSeq}
         </if>
