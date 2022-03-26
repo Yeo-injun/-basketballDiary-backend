@@ -1,5 +1,6 @@
 package com.threeNerds.basketballDiary.constant;
 
+import com.threeNerds.basketballDiary.constant.Constant;
 import lombok.Getter;
 
 import java.util.Arrays;
@@ -10,10 +11,10 @@ public enum TeamAuthCode {
 
     // TODO 상수의 코드값 부여 정책 정해야 함 - 권한처리시 사용해야 하니까.
     // TODO 22.02.26(인준) code의 자료형을 int로 수정하는 것은? long타입은 과할것 같음
-    LEADER("팀장", "3"),
-    MANGER("관리자", "2"),
-    TEAM_MEMBER("일반팀원", "1"),
-    GUEST("게스트", "0");
+    LEADER("팀장", Long.toString(Constant.LEADER)),
+    MANAGER("관리자", Long.toString(Constant.MANAGER)),
+    TEAM_MEMBER("일반팀원", Long.toString(Constant.TEAM_MEMBER)),
+    GUEST("게스트", Long.toString(Constant.GUEST));
 
     private final String name;
     private final String code;
