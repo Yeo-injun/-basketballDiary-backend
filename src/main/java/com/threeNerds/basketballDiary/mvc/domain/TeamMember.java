@@ -36,7 +36,7 @@ public class TeamMember {
         return TeamMember.builder()
                 .teamSeq(teamMember.getTeamSeq())
                 .teamMemberSeq(teamMember.getTeamMemberSeq())
-                .teamAuthCode(TeamAuthCode.MANGER.getCode())
+                .teamAuthCode(TeamAuthCode.MANAGER.getCode())
                 .build();
     }
 

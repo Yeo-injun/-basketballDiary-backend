@@ -22,6 +22,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static com.threeNerds.basketballDiary.utils.HttpResponses.*;
+import static com.threeNerds.basketballDiary.constant.Constant.*;
 
 /**
  * ... 수행하는 Controller
@@ -108,13 +109,13 @@ public class UserController {
         return ResponseEntity.ok(allUser);
     }
 
-    @Auth(GRADE = 3L)
+    @Auth(GRADE = LEADER)
     @GetMapping("/testAnnotation/{teamId}")
     public void test(){
         log.info("Auth : 1");
     }
 
-    @Auth(GRADE = 2L)
+    @Auth(GRADE = MANAGER)
     @GetMapping("/testAnnotation2/{teamId}")
     public void test2(){
         log.info("Auth : 2");

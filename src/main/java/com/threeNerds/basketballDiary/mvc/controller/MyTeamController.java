@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.threeNerds.basketballDiary.constant.Constant.*;
 import static com.threeNerds.basketballDiary.session.SessionConst.LOGIN_MEMBER;
 import static com.threeNerds.basketballDiary.utils.HttpResponses.RESPONSE_OK;
 
@@ -50,10 +51,11 @@ public class MyTeamController {
     private final TeamMemberService teamMemberService;
     private final TeamMemberManagerService teamMemberManagerService;
 
+
     /**
      * API001 : 소속팀 운영진 조회
      */
-    @Auth(GRADE = 1L)
+    @Auth(GRADE = TEAM_MEMBER)
     @GetMapping("/{teamSeq}/managers")
     public ResponseEntity<List<MemberDTO>> searchManagers(
             @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser,
@@ -68,7 +70,7 @@ public class MyTeamController {
     /**
      * API002 : 소속팀 팀원목록 조회
      */
-    @Auth(GRADE = 1L)
+    @Auth(GRADE = TEAM_MEMBER)
     @GetMapping("/{teamSeq}/members")
     public ResponseEntity<List<MemberDTO>> searchMembers(
             @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser,
@@ -199,7 +201,7 @@ public class MyTeamController {
         teamMemberManagerService.rejectJoinRequest(joinRequest);
         return RESPONSE_OK;
     }
-/*****************************************************************************************************************/
+
     /**
      * API011 소속팀 개인프로필 수정데이터 조회
      */
@@ -218,7 +220,6 @@ public class MyTeamController {
 
         return ResponseEntity.ok(myTeamProfileDTO);
     }
-
 
     /**
      * API012 소속팀 개인프로필 수정
@@ -260,8 +261,6 @@ public class MyTeamController {
         return RESPONSE_OK;
     }
 
-    /********************************************************************************************************/
-
     /**
      * API014 : 소속팀 목록 조회
      */
@@ -295,7 +294,7 @@ public class MyTeamController {
     /**
      * API016 : 소속팀 정보 단건 조회
      */
-    @Auth(GRADE = 1L)
+    @Auth(GRADE = TEAM_MEMBER)
     @GetMapping("/{teamSeq}/info")
     public ResponseEntity<MyTeamDTO> searchTeam(
             @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser,
@@ -311,7 +310,7 @@ public class MyTeamController {
     /**
      * API017 : 소속팀 정보 수정
      */
-    @Auth(GRADE = 2L)
+    @Auth(GRADE = MANAGER)
     @PutMapping("/{teamSeq}/info")
     public ResponseEntity<?> modifyMyTeam(
             @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser,
@@ -330,7 +329,7 @@ public class MyTeamController {
     /**
      * API018 : 소속팀 정보 삭제
      */
-    @Auth(GRADE = 3L)
+    @Auth(GRADE = LEADER)
     @DeleteMapping("/{teamSeq}")
     public ResponseEntity<?> removeMyTeam(
             @PathVariable(value = "teamSeq") Long teamSeq
