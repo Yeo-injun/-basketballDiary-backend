@@ -50,6 +50,7 @@ public class MyTeamController {
     private final TeamMemberService teamMemberService;
     private final TeamMemberManagerService teamMemberManagerService;
 
+
     /**
      * API001 : 소속팀 운영진 조회
      */
@@ -199,7 +200,7 @@ public class MyTeamController {
         teamMemberManagerService.rejectJoinRequest(joinRequest);
         return RESPONSE_OK;
     }
-/*****************************************************************************************************************/
+
     /**
      * API011 소속팀 개인프로필 수정데이터 조회
      */
@@ -218,7 +219,6 @@ public class MyTeamController {
 
         return ResponseEntity.ok(myTeamProfileDTO);
     }
-
 
     /**
      * API012 소속팀 개인프로필 수정
@@ -259,8 +259,6 @@ public class MyTeamController {
         teamMemberService.deleteMyTeamProfile(findMyTeamProfileDTO);
         return RESPONSE_OK;
     }
-
-    /********************************************************************************************************/
 
     /**
      * API014 : 소속팀 목록 조회
