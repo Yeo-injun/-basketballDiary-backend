@@ -1,11 +1,15 @@
 package com.threeNerds.basketballDiary.mvc.service;
 
 import com.threeNerds.basketballDiary.mvc.domain.User;
+import com.threeNerds.basketballDiary.mvc.dto.user.user.FindAllUserDTO;
+import com.threeNerds.basketballDiary.mvc.dto.user.user.UserDTO;
 import com.threeNerds.basketballDiary.mvc.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * 소속팀에서 팀원관리 및 소속팀정보 관리 등의 업무를 수행하는 Service
@@ -45,5 +49,10 @@ public class UserService {
     @Transactional
     public void deleteUser(String id) {
         userRepository.deleteUser(id);
+    }
+
+    @Transactional
+    public List<UserDTO> findAllUser(FindAllUserDTO findAllUserDTO){
+        return userRepository.findAllUser(findAllUserDTO);
     }
 }

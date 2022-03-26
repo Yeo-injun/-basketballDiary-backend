@@ -8,10 +8,10 @@ import java.util.Optional;
 @Getter
 public enum JoinRequestStateCode {
 
-    ALL("전체상태", "00"),
     WAITING("대기중", "01"),
     APPROVAL("승인", "02"),
-    REJECTION("거절", "03");
+    REJECTION("거절", "03"),
+    CANCEL("취소", "04");
 
     private final String name;
     private final String code;

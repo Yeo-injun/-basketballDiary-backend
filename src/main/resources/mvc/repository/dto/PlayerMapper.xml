@@ -19,8 +19,14 @@
          WHERE 1=1
            AND A.TEAM_SEQ = #{teamSeq}
            AND A.JOIN_REQUEST_TYPE_CODE = #{joinRequestTypeCode}
-        <if test='joinRequestStateCode != "00"'>
-            AND A.JOIN_REQUEST_STATE_CODE = #{joinRequestStateCode}
-        </if>
+        <choose>
+            <when test='joinRequestStateCode != "" and joinRequestStateCode != null'>
+           AND A.JOIN_REQUEST_STATE_CODE = #{joinRequestStateCode}
+            </when>
+            <otherwise>
+           AND (A.JOIN_REQUEST_STATE_CODE = '01'
+                OR A.JOIN_REQUEST_STATE_CODE = '03') /* 요청상태코드 : 대기중(01), 거절(03) */
+            </otherwise>
+        </choose>
     </select>
 </mapper>

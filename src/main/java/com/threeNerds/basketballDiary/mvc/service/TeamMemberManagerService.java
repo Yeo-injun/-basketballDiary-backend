@@ -5,10 +5,10 @@ import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.mvc.domain.TeamJoinRequest;
 import com.threeNerds.basketballDiary.mvc.domain.TeamMember;
-import com.threeNerds.basketballDiary.mvc.dto.JoinRequestDTO;
-import com.threeNerds.basketballDiary.mvc.dto.KeyDTO;
+import com.threeNerds.basketballDiary.mvc.dto.loginUser.userTeamManager.JoinRequestDTO;
 import com.threeNerds.basketballDiary.mvc.dto.PlayerDTO;
 import com.threeNerds.basketballDiary.mvc.dto.PlayerSearchDTO;
+import com.threeNerds.basketballDiary.mvc.dto.myTeam.CmnMyTeamDTO;
 import com.threeNerds.basketballDiary.mvc.repository.PlayerRepository;
 import com.threeNerds.basketballDiary.mvc.repository.TeamJoinRequestRepository;
 import com.threeNerds.basketballDiary.mvc.repository.TeamMemberRepository;
@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.threeNerds.basketballDiary.exception.Error.USER_NOT_FOUND;
 
@@ -46,22 +47,26 @@ public class TeamMemberManagerService {
      * 팀원 초대 API
      * @param joinRequest
      */
-    public void inviteTeamMember(JoinRequestDTO joinRequest)
+    public void inviteTeamMember(CmnMyTeamDTO joinRequest)
     {
+        joinRequest.joinRequestTypeCode(JoinRequestTypeCode.INVITATION.getCode());
         TeamJoinRequest invitationInfo = TeamJoinRequest.createInvitation(joinRequest);
 
         /** 초대-가입요청 존재여부 확인 : 대기중인 가입요청 혹은 초대가 있을 경우 중복가입요청 방지 */
-        TeamJoinRequest prevJoinReq = teamJoinRequestRepository.checkJoinRequest(invitationInfo);
-        boolean isExistJoinRequest = prevJoinReq != null
-                                        ? true
-                                        : false;
-        if (isExistJoinRequest)
+        int checkPendingJoinReqCnt = teamJoinRequestRepository.checkPendingJoinRequest(invitationInfo);
+        if (checkPendingJoinReqCnt > 0)
         {
-            String reqTypeName = JoinRequestTypeCode.getName(prevJoinReq.getJoinRequestTypeCode());
-            log.info("==== 이미 {}가 있습니다. ====", reqTypeName);
             throw new CustomException(Error.ALREADY_EXIST_JOIN_REQUEST);
         }
-        /** 초대-가입요청이 없을경우에만 INSERT */
+
+        /** 팀원으로 존재하는지 확인 : 팀원으로 존재할 경우 예외를 던짐(409에러) */
+        int checkDuplicatedTeamMemberCnt = teamMemberRepository.checkDuplicatedTeamMember(joinRequest);
+        if (checkDuplicatedTeamMemberCnt > 0)
+        {
+            throw new CustomException(Error.ALREADY_EXIST_TEAM_MEMBER);
+        }
+
+        /** 초대-가입요청이 없고, 팀원이 아닐 경우에만 INSERT */
         teamJoinRequestRepository.createJoinRequest(invitationInfo);
     }
 
@@ -69,62 +74,52 @@ public class TeamMemberManagerService {
      * 소속팀 가입요청 승인 API
      * @param joinRequest
      */
-    public void approveJoinRequest(JoinRequestDTO joinRequest)
+    public void approveJoinRequest(CmnMyTeamDTO joinRequest)
     {
-        /** 팀원 추가 - 이미 팀원으로 존재하고 있는 경우 예외처리 */
-        boolean isExsistTeamMember = teamMemberRepository.checkTeamMember(joinRequest) != null
-                                        ? true
-                                        : false;
-        if (isExsistTeamMember)
-        {
-            throw new CustomException(Error.ALREADY_EXIST_TEAM_MEMBER); // TODO 참고자료(왜 409에러로 처리했는지) : https://deveric.tistory.com/62
-        }
-        JoinRequestDTO joinRequestInfo = teamJoinRequestRepository.findUserByTeamJoinRequestSeq(joinRequest);
-        TeamMember newTeamMember = TeamMember.createNewMember(joinRequestInfo);
-        teamMemberRepository.saveTeamMemeber(newTeamMember);
-
-
         /** 가입요청 상태 업데이트 하기 */
-        TeamJoinRequest joinRequestApproval = TeamJoinRequest.approve(joinRequest);
-        boolean isApprovalSuccess = teamJoinRequestRepository.updateJoinRequestState(joinRequestApproval) == 1 ? true : false;
-        if (!isApprovalSuccess)
+        boolean isApproveSuccess = teamJoinRequestRepository
+                                        .updateJoinRequestState(TeamJoinRequest.approveJoinRequest(joinRequest)) == 1 ? true : false;
+        if (!isApproveSuccess)
         {
             throw new CustomException(USER_NOT_FOUND);
         }
+
+        /** 팀원 추가 */
+        TeamJoinRequest joinRequestInfo = teamJoinRequestRepository.findUserByTeamJoinRequestSeq(joinRequest.getTeamJoinRequestSeq());
+        TeamMember newTeamMember = TeamMember.createNewMember(joinRequestInfo);
+        teamMemberRepository.saveTeamMemeber(newTeamMember);
     }
 
     /**
      * 소속팀 가입요청 거절 API
      * @param joinRequest
      */
-    public boolean rejectJoinRequest(JoinRequestDTO joinRequest) {
-        TeamJoinRequest rejectionInfo = TeamJoinRequest.builder()
-                .teamJoinRequestSeq(joinRequest.getTeamJoinRequestSeq())
-                .teamSeq(joinRequest.getTeamSeq())
-                .joinRequestStateCode(JoinRequestStateCode.REJECTION.getCode())
-                .build();
+    public void rejectJoinRequest(CmnMyTeamDTO joinRequest)
+    {
+        TeamJoinRequest rejectionInfo = TeamJoinRequest.rejectJoinRequest(joinRequest);
 
-        boolean isRejectionSuccess = teamJoinRequestRepository.updateJoinRequestState(rejectionInfo) == 1 ? true : false;
+        boolean isRejectionSuccess = teamJoinRequestRepository
+                                        .updateJoinRequestState(rejectionInfo) == 1 ? true : false;
         if (!isRejectionSuccess)
         {
-            log.info("==== 해당 가입요청은 거절할 수 없는 가입요청입니다. ====");
-            return isRejectionSuccess; // TODO 에러를 던지는 것으로 코드 바꾸기
+            throw new CustomException(Error.JOIN_REQUEST_NOT_FOUND);
         }
-        return isRejectionSuccess;
     }
 
     /**
      * 소속팀에서 초대한 선수목록 조회 API
-     * @param searchCond
+     * @param playerSearchCond
      * @return List<PlayerDTO>
      */
-    public List<PlayerDTO> searchInvitedPlayer(PlayerSearchDTO searchCond) {
-        searchCond.joinRequestTypeCode(JoinRequestTypeCode.INVITATION.getCode());
-        List<PlayerDTO> players = playerRepository.findPlayers(searchCond);
+    public List<PlayerDTO> searchInvitedPlayer(CmnMyTeamDTO playerSearchCond)
+    {
+        playerSearchCond.joinRequestTypeCode(JoinRequestTypeCode.INVITATION.getCode());
+        List<PlayerDTO> players = playerRepository.findPlayers(playerSearchCond);
 
-        players.stream().forEach(player -> {
-                player.positionCodeName(PositionCode.getName(player.getPositionCode()))
-                      .joinRequestStateCodeName(JoinRequestStateCode.getName(player.getJoinRequestStateCode()));
+        players.stream() // TODO Stream에서는 빈 List를 어떻게 처리하는지 확인할 필요가 있음.
+                .forEach(player -> {
+                                player.positionCodeName(PositionCode.getName(player.getPositionCode()))
+                                      .joinRequestStateCodeName(JoinRequestStateCode.getName(player.getJoinRequestStateCode()));
         });
 
         return players;
@@ -132,12 +127,12 @@ public class TeamMemberManagerService {
 
     /**
      * 소속팀에 가입요청한 선수목록 조회 API
-     * @param searchCond
+     * @param playerSearchCond
      * @return List<PlayerDTO>
      */
-    public List<PlayerDTO> searchJoinRequestPlayer(PlayerSearchDTO searchCond) {
-        searchCond.joinRequestTypeCode(JoinRequestTypeCode.JOIN_REQUEST.getCode());
-        List<PlayerDTO> players = playerRepository.findPlayers(searchCond);
+    public List<PlayerDTO> searchJoinRequestPlayer(CmnMyTeamDTO playerSearchCond) {
+        playerSearchCond.joinRequestTypeCode(JoinRequestTypeCode.JOIN_REQUEST.getCode());
+        List<PlayerDTO> players = playerRepository.findPlayers(playerSearchCond);
 
         players.stream().forEach(player -> { player
                                                 .positionCodeName(PositionCode.getName(player.getPositionCode()))
@@ -152,7 +147,7 @@ public class TeamMemberManagerService {
      * @param teamMemberKey
      * @return List<PlayerDTO>
      */
-    public void removeTeamMember(KeyDTO.TeamMember teamMemberKey)
+    public void removeTeamMember(CmnMyTeamDTO teamMemberKey)
     {
         TeamMember teamMember = TeamMember.withdrawalMember(teamMemberKey);
         boolean isWithdrawal = teamMemberRepository.updateWithdrawalState(teamMember) == 1 ? true : false;
@@ -166,7 +161,7 @@ public class TeamMemberManagerService {
      * 소속팀 관리자 임명하기
      * @param teamMemberKey
      */
-    public void appointManager(KeyDTO.TeamMember teamMemberKey) {
+    public void appointManager(CmnMyTeamDTO teamMemberKey) {
         TeamMember toManagerMember = TeamMember.toManager(teamMemberKey);
 
         boolean isSuccess = teamMemberRepository.updateTeamAuth(toManagerMember) == 1 ? true : false;
@@ -180,7 +175,7 @@ public class TeamMemberManagerService {
      * 소속팀 관리자 해임하기
      * @param teamMemberKeys
      */
-    public void dismissManager(KeyDTO.TeamMember teamMemberKeys) {
+    public void dismissManager(CmnMyTeamDTO teamMemberKeys) {
         TeamMember toMember = TeamMember.toMember(teamMemberKeys);
 
         boolean isSuccess = teamMemberRepository.updateTeamAuth(toMember) == 1 ? true : false;

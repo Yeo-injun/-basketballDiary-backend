@@ -2,15 +2,15 @@ package com.threeNerds.basketballDiary.mvc.domain;
 
 import com.threeNerds.basketballDiary.constant.JoinRequestStateCode;
 import com.threeNerds.basketballDiary.constant.JoinRequestTypeCode;
-import com.threeNerds.basketballDiary.mvc.dto.JoinRequestDTO;
+import com.threeNerds.basketballDiary.mvc.dto.loginUser.CmnLoginUserDTO;
+import com.threeNerds.basketballDiary.mvc.dto.loginUser.userTeamManager.JoinRequestDTO;
+import com.threeNerds.basketballDiary.mvc.dto.myTeam.CmnMyTeamDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.apache.tomcat.jni.Local;
 
 import java.time.LocalDate;
-import java.util.*;
 
 @Getter
 @Builder
@@ -38,8 +38,40 @@ public class TeamJoinRequest {
     // 요청확정일시
     private LocalDate confirmationDate;
 
-    /** 가입요청 승인처리 */
-    public static TeamJoinRequest approve (JoinRequestDTO joinRequest)
+    /** 가입요청(사용자 -> 팀) 생성 */
+    public static TeamJoinRequest createJoinRequest (CmnLoginUserDTO loginUserDTO)
+    {
+        return TeamJoinRequest.builder()
+                .userSeq(loginUserDTO.getUserSeq())
+                .teamSeq(loginUserDTO.getTeamSeq())
+                .joinRequestTypeCode(JoinRequestTypeCode.JOIN_REQUEST.getCode())
+                .joinRequestStateCode(JoinRequestStateCode.WAITING.getCode())
+                .build();
+    }
+
+    /** 가입요청(사용자 -> 팀) 취소 */
+    public static TeamJoinRequest cancelJoinRequest (CmnLoginUserDTO loginUserDTO)
+    {
+        return TeamJoinRequest.builder()
+                .teamJoinRequestSeq(loginUserDTO.getTeamJoinRequestSeq())
+                .userSeq(loginUserDTO.getUserSeq())
+                .joinRequestStateCode(JoinRequestStateCode.CANCEL.getCode())
+                .build();
+    }
+
+    /** 초대 생성(팀 -> 사용자) */
+    public static TeamJoinRequest createInvitation (CmnMyTeamDTO joinRequest)
+    {
+        return TeamJoinRequest.builder()
+                    .teamSeq(joinRequest.getTeamSeq())
+                    .userSeq(joinRequest.getUserSeq())
+                    .joinRequestTypeCode(JoinRequestTypeCode.INVITATION.getCode())
+                    .joinRequestStateCode(JoinRequestStateCode.WAITING.getCode())
+                    .build();
+    }
+
+    /** 승인처리 - 팀이 사용자의 가입요청을 */
+    public static TeamJoinRequest approveJoinRequest (CmnMyTeamDTO joinRequest)
     {
         return TeamJoinRequest.builder()
                 .teamJoinRequestSeq(joinRequest.getTeamJoinRequestSeq())
@@ -48,14 +80,34 @@ public class TeamJoinRequest {
                 .build();
     }
 
-    /** 가입요청 승인처리 */
-    public static TeamJoinRequest createInvitation (JoinRequestDTO joinRequest)
+    /** 승인처리 - 사용자가 팀의 초대를 */
+    public static TeamJoinRequest approveInvitation (CmnLoginUserDTO loginUserDTO)
     {
         return TeamJoinRequest.builder()
-                .teamSeq(joinRequest.getTeamSeq())
-                .userSeq(joinRequest.getUserSeq())
-                .joinRequestTypeCode(JoinRequestTypeCode.INVITATION.getCode())
-                .joinRequestStateCode(JoinRequestStateCode.WAITING.getCode())
+                .teamJoinRequestSeq(loginUserDTO.getTeamJoinRequestSeq())
+                .userSeq(loginUserDTO.getUserSeq())
+                .joinRequestStateCode(JoinRequestStateCode.APPROVAL.getCode())
                 .build();
     }
- }
+
+    /** 거절처리 - 팀이 사용자의 가입요청을 */
+    public static TeamJoinRequest rejectJoinRequest(CmnMyTeamDTO joinRequest)
+    {
+        return TeamJoinRequest.builder()
+                .teamJoinRequestSeq(joinRequest.getTeamJoinRequestSeq())
+                .teamSeq(joinRequest.getTeamSeq())
+                .joinRequestStateCode(JoinRequestStateCode.REJECTION.getCode())
+                .build();
+    }
+
+    /** 거절처리 - 팀이 사용자의 가입요청을 */
+    public static TeamJoinRequest rejectInvitation(CmnLoginUserDTO loginUserDTO)
+    {
+        return TeamJoinRequest.builder()
+                .teamJoinRequestSeq(loginUserDTO.getTeamJoinRequestSeq())
+                .teamSeq(loginUserDTO.getTeamSeq())
+                .joinRequestStateCode(JoinRequestStateCode.REJECTION.getCode())
+                .build();
+    }
+
+}

@@ -1,8 +1,11 @@
 package com.threeNerds.basketballDiary.mvc.repository;
 
-import com.threeNerds.basketballDiary.mvc.controller.LoginController;
 import com.threeNerds.basketballDiary.mvc.domain.User;
 import com.threeNerds.basketballDiary.mvc.dto.AuthUserRequestDTO;
+import com.threeNerds.basketballDiary.mvc.dto.user.CmnUserDTO;
+import com.threeNerds.basketballDiary.mvc.dto.user.user.FindAllUserDTO;
+import com.threeNerds.basketballDiary.mvc.dto.user.user.LoginUserDTO;
+import com.threeNerds.basketballDiary.mvc.dto.user.user.UserDTO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -12,9 +15,10 @@ public interface UserRepository {
     Long findSeq(String userId);
     User findUser(Long id);
     Long saveUser(User user);
-    User loginFindUser(LoginController.LoginUserRequest loginUserRequest);
+    User loginFindUser(LoginUserDTO loginUserDTO);
     void updateUser(User user);
     void deleteUser(String id);
 
-    List<AuthUserRequestDTO> findAuthList(LoginController.LoginUserRequest loginUserRequest);
+    List<AuthUserRequestDTO> findAuthList(User user);
+    List<UserDTO> findAllUser(FindAllUserDTO findAllUserDTO);
 }

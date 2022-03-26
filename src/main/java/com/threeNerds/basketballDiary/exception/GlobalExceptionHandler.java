@@ -1,11 +1,15 @@
 package com.threeNerds.basketballDiary.exception;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+// TODO @RestControllerAdvice에 대한 학습 필요
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
@@ -22,6 +26,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     {
         log.error("handleCustomException throw CustomException : {}", ex.getError());
         return ErrorResponse.toResponseEntity(ex.getError());
+    }
+
+    @ExceptionHandler(value = { NullPointerException.class })
+    protected ResponseEntity<ErrorResponse> handleNullPointerException (NullPointerException ex)
+    {
+        log.error("handleCustomException throw CustomException : {}", ex.getStackTrace());
+        return ErrorResponse.toResponseEntity(Error.INTERNAL_ERROR);
     }
 
 }

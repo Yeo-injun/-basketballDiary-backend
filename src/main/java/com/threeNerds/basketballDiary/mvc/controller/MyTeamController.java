@@ -1,12 +1,16 @@
 package com.threeNerds.basketballDiary.mvc.controller;
 
 import com.threeNerds.basketballDiary.interceptor.Auth;
-import com.threeNerds.basketballDiary.mvc.dto.*;
+import com.threeNerds.basketballDiary.mvc.dto.PlayerDTO;
+import com.threeNerds.basketballDiary.mvc.dto.PlayerSearchDTO;
+import com.threeNerds.basketballDiary.mvc.dto.loginUser.userTeamManager.JoinRequestDTO;
+import com.threeNerds.basketballDiary.mvc.dto.myTeam.*;
+import com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MemberDTO;
+import com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MyTeamDTO;
 import com.threeNerds.basketballDiary.mvc.service.MyTeamService;
 import com.threeNerds.basketballDiary.mvc.service.TeamMemberManagerService;
 import com.threeNerds.basketballDiary.mvc.service.TeamMemberService;
 import com.threeNerds.basketballDiary.session.SessionUser;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 import static com.threeNerds.basketballDiary.session.SessionConst.LOGIN_MEMBER;
-import static com.threeNerds.basketballDiary.utils.HttpResponses.*;
+import static com.threeNerds.basketballDiary.utils.HttpResponses.RESPONSE_OK;
 
 /**
  * 소속팀과 관련된 업무를 처리하는 Controller
@@ -55,6 +59,7 @@ public class MyTeamController {
             @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser,
             @PathVariable(value = "teamSeq") Long teamSeq
     ) {
+        log.info("▒▒▒▒▒ API001: MyTeamController.searchManagers");
         List<MemberDTO> managerList = myTeamService.findManagers(teamSeq);
 
         return ResponseEntity.ok().body(managerList);
@@ -70,6 +75,7 @@ public class MyTeamController {
             @PathVariable(value = "teamSeq") Long teamSeq,
             @RequestParam(name = "pageNo", defaultValue = "0") Integer pageNo
     ) {
+        log.info("▒▒▒▒▒ API002: MyTeamController.searchMembers");
         List<MemberDTO> memberList = myTeamService.findMembers(teamSeq, pageNo);
 
         return ResponseEntity.ok().body(memberList);
@@ -84,7 +90,7 @@ public class MyTeamController {
             @PathVariable Long teamSeq,
             @PathVariable Long teamMemberSeq
     ) {
-        KeyDTO.TeamMember teamMemberKey = new KeyDTO.TeamMember()
+        CmnMyTeamDTO teamMemberKey = new CmnMyTeamDTO()
                 .teamSeq(teamSeq)
                 .teamMemberSeq(teamMemberSeq);
 
@@ -101,7 +107,7 @@ public class MyTeamController {
             @PathVariable Long teamSeq,
             @PathVariable Long teamMemberSeq
     ) {
-        KeyDTO.TeamMember teamMemberKey = new KeyDTO.TeamMember()
+        CmnMyTeamDTO teamMemberKey = new CmnMyTeamDTO()
                                 .teamSeq(teamSeq)
                                 .teamMemberSeq(teamMemberSeq);
         teamMemberManagerService.removeTeamMember(teamMemberKey);
@@ -110,30 +116,31 @@ public class MyTeamController {
 
     /**
      * API005 : 소속팀의 초대한 선수목록 조회
+     * 22.03.22(화) 인준 : 공통DTO적용 및 동적쿼리 수정
      */
-    @GetMapping("/{teamSeq}/joinRequestTo") // TODO URL 마지막에 /users 추가하는 것은 어떤지 (22.02.20 인준의견)
+    @GetMapping("/{teamSeq}/joinRequestsTo")
     public ResponseEntity<?> searchInvitedPlayer(
             @PathVariable Long teamSeq,
-            @RequestParam(name = "state", defaultValue = "00") String joinRequestStateCode
+            @RequestParam(name = "state", required = false) String joinRequestStateCode
     ) {
-        PlayerSearchDTO searchCond = new PlayerSearchDTO()
+        CmnMyTeamDTO playerSearchCond = new CmnMyTeamDTO()
                                             .teamSeq(teamSeq)
                                             .joinRequestStateCode(joinRequestStateCode);
 
-        List<PlayerDTO> playerList = teamMemberManagerService.searchInvitedPlayer(searchCond);
+        List<PlayerDTO> playerList = teamMemberManagerService.searchInvitedPlayer(playerSearchCond);
         return ResponseEntity.ok(playerList);
     }
 
     /**
      * API007 : 소속팀의 선수초대
-     * 22.03.10 : Service Layer에 CustomException 적용
+     * 22.03.10 인준 : Service Layer에 CustomException 적용
      */
     @PostMapping("/{teamSeq}/joinRequestTo/{userSeq}")
     public ResponseEntity<?> inviteTeamMember(
             @PathVariable Long teamSeq,
             @PathVariable Long userSeq
     ) {
-        JoinRequestDTO joinRequest = new JoinRequestDTO()
+        CmnMyTeamDTO joinRequest = new CmnMyTeamDTO()
                                             .teamSeq(teamSeq)
                                             .userSeq(userSeq);
 
@@ -143,30 +150,32 @@ public class MyTeamController {
 
     /**
      * API008 : 소속팀이 받은 가입요청목록 조회
+     * 22.03.23 인준 : QueryString 기본값 제거 및 필수값 설정 해제. 공통DTO로 Service넘겨주기
      */
-    @GetMapping("/{teamSeq}/joinRequestFrom") // TODO URL 마지막에 /users 추가하는 것은 어떤지 (22.02.20 인준의견)
-    public ResponseEntity<?> searchJoinRequestPlayer(
+    @GetMapping("/{teamSeq}/joinRequestsFrom")
+    public ResponseEntity<?> searchJoinRequestPlayer (
             @PathVariable Long teamSeq,
-            @RequestParam(name = "state", defaultValue = "00") String joinRequestStateCode
+            @RequestParam(name = "state", required = false) String joinRequestStateCode
     ) {
-        PlayerSearchDTO searchCond = new PlayerSearchDTO()
+        CmnMyTeamDTO playerSearchCond = new CmnMyTeamDTO()
                 .teamSeq(teamSeq)
                 .joinRequestStateCode(joinRequestStateCode);
 
-        List<PlayerDTO> playerList = teamMemberManagerService.searchJoinRequestPlayer(searchCond);
+        List<PlayerDTO> playerList = teamMemberManagerService.searchJoinRequestPlayer(playerSearchCond);
         return ResponseEntity.ok(playerList);
     }
 
     /**
      * API009 : 소속팀이 사용자의 가입요청 승인
-     * 22.03.10 : Service Layer에 CustomException 적용
+     * 22.03.10 인준 : Service Layer에 CustomException 적용
+     * 22.03.25 인준 : CmnMyTeamDTO적용
      */
     @PatchMapping("/{teamSeq}/joinRequestFrom/{teamJoinRequestSeq}/approval")
     public ResponseEntity<?> approveJoinRequest(
             @PathVariable Long teamJoinRequestSeq,
             @PathVariable Long teamSeq
     ) {
-        JoinRequestDTO joinRequest = new JoinRequestDTO()
+        CmnMyTeamDTO joinRequest = new CmnMyTeamDTO()
                 .teamJoinRequestSeq(teamJoinRequestSeq)
                 .teamSeq(teamSeq);
 
@@ -176,19 +185,19 @@ public class MyTeamController {
 
     /**
      * API010 : 소속팀의 가입요청 거절
+     * 22.03.25(금) 인준 : CmnMyTeamDTO적용 및 예외처리
      */
     @PatchMapping("/{teamSeq}/joinRequestFrom/{teamJoinRequestSeq}/rejection")
     public ResponseEntity<?> rejectJoinRequest(
             @PathVariable Long teamSeq,
             @PathVariable Long teamJoinRequestSeq
     ) {
-        JoinRequestDTO joinRequest = new JoinRequestDTO()
+        CmnMyTeamDTO joinRequest = new CmnMyTeamDTO()
                 .teamSeq(teamSeq)
                 .teamJoinRequestSeq(teamJoinRequestSeq);
 
         teamMemberManagerService.rejectJoinRequest(joinRequest);
         return RESPONSE_OK;
-        // TODO 예외처리 반영
     }
 /*****************************************************************************************************************/
     /**
@@ -201,8 +210,7 @@ public class MyTeamController {
 
         Long id = sessionDTO.getUserSeq();
 
-        MyTeamController.FindMyTeamProfileDTO findMyTeamProfileDTO = new MyTeamController
-                .FindMyTeamProfileDTO()
+        FindMyTeamProfileDTO findMyTeamProfileDTO = new FindMyTeamProfileDTO()
                 .userSeq(id)
                 .teamSeq(teamSeq);
 
@@ -210,20 +218,7 @@ public class MyTeamController {
 
         return ResponseEntity.ok(myTeamProfileDTO);
     }
-    @Getter
-    public static class FindMyTeamProfileDTO {
-        private Long userSeq;
-        private Long teamSeq;
 
-        public MyTeamController.FindMyTeamProfileDTO userSeq(Long userSeq){
-            this.userSeq=userSeq;
-            return this;
-        }
-        public MyTeamController.FindMyTeamProfileDTO teamSeq(Long teamSeq){
-            this.teamSeq=teamSeq;
-            return this;
-        }
-    }
 
     /**
      * API012 소속팀 개인프로필 수정
@@ -232,40 +227,20 @@ public class MyTeamController {
     public ResponseEntity<?> modifyMyTeamsProfile(
             @SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO,
             @PathVariable Long teamSeq,
-            @RequestBody MyTeamController.BackNumber backNumber){
+            @RequestBody BackNumber backNumber){
 
         Long id = sessionDTO.getUserSeq();
 
-        MyTeamController.FindMyTeamProfileDTO findMyTeamProfileDTO = new MyTeamController.FindMyTeamProfileDTO()
+        FindMyTeamProfileDTO findMyTeamProfileDTO = new FindMyTeamProfileDTO()
                 .userSeq(id)
                 .teamSeq(teamSeq);
 
-        MyTeamController.ModifyMyTeamProfileDTO myTeamProfileDTO = new MyTeamController.ModifyMyTeamProfileDTO()
+        ModifyMyTeamProfileDTO myTeamProfileDTO = new ModifyMyTeamProfileDTO()
                 .findMyTeamProfileDTO(findMyTeamProfileDTO)
                 .backNumber(backNumber.getBackNumber());
 
         teamMemberService.updateMyTeamProfile(myTeamProfileDTO);
         return RESPONSE_OK;
-    }
-
-    @Getter
-    public static class BackNumber{
-        private String backNumber;
-    }
-
-    @Getter
-    public static class ModifyMyTeamProfileDTO{
-        private MyTeamController.FindMyTeamProfileDTO findMyTeamProfileDTO;
-        private String backNumber;
-
-        public MyTeamController.ModifyMyTeamProfileDTO findMyTeamProfileDTO(MyTeamController.FindMyTeamProfileDTO findMyTeamProfileDTO){
-            this.findMyTeamProfileDTO = findMyTeamProfileDTO;
-            return this;
-        }
-        public MyTeamController.ModifyMyTeamProfileDTO backNumber(String backNumber){
-            this.backNumber = backNumber;
-            return this;
-        }
     }
 
     /**
@@ -278,7 +253,7 @@ public class MyTeamController {
     {
         Long id = sessionDTO.getUserSeq();
 
-        MyTeamController.FindMyTeamProfileDTO findMyTeamProfileDTO = new MyTeamController.FindMyTeamProfileDTO()
+        FindMyTeamProfileDTO findMyTeamProfileDTO = new FindMyTeamProfileDTO()
                 .userSeq(id)
                 .teamSeq(teamSeq);
         teamMemberService.deleteMyTeamProfile(findMyTeamProfileDTO);
@@ -294,6 +269,7 @@ public class MyTeamController {
     public ResponseEntity<List<MyTeamDTO>> searchTeams(
             @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser
     ) {
+        log.info("▒▒▒▒▒ API014: MyTeamController.searchTeams");
         Long userSeq = sessionUser.getUserSeq();
         List<MyTeamDTO> myTeamList = myTeamService.findTeams(userSeq);
 
@@ -309,7 +285,7 @@ public class MyTeamController {
             @PathVariable Long teamSeq,
             @PathVariable Long teamMemberSeq
     ) {
-        KeyDTO.TeamMember teamMemberKeys = new KeyDTO.TeamMember()
+        CmnMyTeamDTO teamMemberKeys = new CmnMyTeamDTO()
                 .teamMemberSeq(teamMemberSeq)
                 .teamSeq(teamSeq);
         teamMemberManagerService.dismissManager(teamMemberKeys);
@@ -325,6 +301,7 @@ public class MyTeamController {
             @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser,
             @PathVariable(value = "teamSeq") Long teamSeq
     ) {
+        log.info("▒▒▒▒▒ API016: MyTeamController.searchTeam");
         Long userSeq = sessionUser.getUserSeq();
         MyTeamDTO myTeam = myTeamService.findTeam(userSeq, teamSeq);
 
@@ -341,6 +318,7 @@ public class MyTeamController {
             @PathVariable(value = "teamSeq") Long teamSeq,
             @RequestBody MyTeamDTO dto
     ) {
+        log.info("▒▒▒▒▒ API017: MyTeamController.modifyMyTeam");
         Long userSeq = sessionUser.getUserSeq();
         myTeamService.modifyMyTeam(teamSeq, dto);
         // MyTeamDTO myTeam = myTeamService.findTeam(userSeq, teamSeq);
@@ -357,6 +335,7 @@ public class MyTeamController {
     public ResponseEntity<?> removeMyTeam(
             @PathVariable(value = "teamSeq") Long teamSeq
     ) {
+        log.info("▒▒▒▒▒ API018: MyTeamController.removeMyTeam");
         myTeamService.deleteMyTeam(teamSeq);
 
         // 삭제가 정상적으로 완료된 경우 204 No Content로 응답한다.

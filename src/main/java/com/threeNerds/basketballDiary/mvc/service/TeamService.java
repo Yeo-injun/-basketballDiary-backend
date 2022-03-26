@@ -1,11 +1,24 @@
 package com.threeNerds.basketballDiary.mvc.service;
 
 import com.threeNerds.basketballDiary.mvc.domain.Team;
+import com.threeNerds.basketballDiary.mvc.domain.TeamRegularExercise;
+import com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MyTeamDTO;
+import com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MyTeamInfoDTO;
+import com.threeNerds.basketballDiary.mvc.dto.team.team.SearchTeamDTO;
+import com.threeNerds.basketballDiary.mvc.dto.team.team.TeamDTO;
+import com.threeNerds.basketballDiary.mvc.dto.team.team.TeamInfoDTO;
+import com.threeNerds.basketballDiary.mvc.repository.TeamRegularExerciseRepository;
 import com.threeNerds.basketballDiary.mvc.repository.TeamRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * 소속팀에서 팀원관리 및 소속팀정보 관리 등의 업무를 수행하는 Service
@@ -14,6 +27,8 @@ import org.springframework.transaction.annotation.Transactional;
  * issue and history
  * <pre>
  * 2022.02.08 여인준 : 소스코드 생성
+ * 2022.03.14 강창기 : 팀 목록 조회 구현
+ * 2022.03.23 강창기 : 팀 생성 구현
  * </pre>
  */
 
@@ -24,9 +39,64 @@ import org.springframework.transaction.annotation.Transactional;
 public class TeamService {
 
     private final TeamRepository teamRepository;
+    private final TeamRegularExerciseRepository teamRegularExerciseRepository;
 
+    /**
+     * 팀 목록 조회
+     * @return List<TeamDTO>
+     */
+    public List<TeamDTO> searchTeams(SearchTeamDTO searchTeamDTO) {
+        log.info("TeamService.searchTeams");
+        List<TeamDTO> resultTeamList = new ArrayList<TeamDTO>();
+        List<TeamInfoDTO> teamInfoList = teamRepository.findPagingTeam(searchTeamDTO);
+        if(teamInfoList.isEmpty())
+            teamInfoList = Collections.emptyList();
+
+        teamInfoList.forEach(teamInfo -> {
+            Long teamSeq = teamInfo.getTeamSeq();
+            List<TeamRegularExercise> exerciseList = teamRegularExerciseRepository.findByTeamSeq(teamSeq);
+            TeamDTO teamDTO = new TeamDTO()
+                    .teamInfoDTO(teamInfo)
+                    .teamRegularExercisesList(exerciseList.isEmpty() ? Collections.emptyList() : exerciseList);
+
+            resultTeamList.add(teamDTO);
+        });
+
+        return resultTeamList.isEmpty() ?
+                Collections.emptyList() : resultTeamList;
+    }
+
+    /**
+     * 팀 생성
+     * @return Long
+     */
     @Transactional
-    public void createTeam(Team team){
+    public Team createTeam(String userId, TeamDTO teamDTO) {
+        Team team = Team.builder()
+                .teamName(teamDTO.getTeamInfoDTO().getTeamName())
+                .hometown(teamDTO.getTeamInfoDTO().getHometown())
+                .foundationYmd(teamDTO.getTeamInfoDTO().getFoundationYmd())
+                .introduction(teamDTO.getTeamInfoDTO().getIntroduction())
+                .teamImagePath(teamDTO.getTeamInfoDTO().getTeamImagePath())
+                .leaderId(userId)
+                .regDate(LocalDate.now(ZoneId.of("Asia/Seoul")))
+                .updateDate(LocalDate.now(ZoneId.of("Asia/Seoul")))
+                .build();
         teamRepository.saveTeam(team);
+
+        List<TeamRegularExercise> teamRegularExerciseList = teamDTO.getTeamRegularExercisesList();
+        teamRegularExerciseList.forEach(tempDTO -> {
+            TeamRegularExercise teamRegularExercise = TeamRegularExercise.builder()
+                    .teamSeq(team.getTeamSeq())
+                    .startTime(tempDTO.getStartTime())
+                    .endTime(tempDTO.getEndTime())
+                    .dayOfTheWeekCode(tempDTO.getDayOfTheWeekCode())
+                    .exercisePlaceAddress(tempDTO.getExercisePlaceAddress())
+                    .exercisePlaceName(tempDTO.getExercisePlaceName())
+                    .build();
+            teamRegularExerciseRepository.saveTeamRegularExercise(teamRegularExercise);
+        });
+
+        return team;
     }
 }

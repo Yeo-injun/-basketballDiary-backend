@@ -2,6 +2,7 @@ package com.threeNerds.basketballDiary.mvc.repository;
 
 import com.threeNerds.basketballDiary.mvc.dto.PlayerDTO;
 import com.threeNerds.basketballDiary.mvc.dto.PlayerSearchDTO;
+import com.threeNerds.basketballDiary.mvc.dto.myTeam.CmnMyTeamDTO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -10,4 +11,7 @@ import java.util.List;
 public interface PlayerRepository {
 
     List<PlayerDTO> findPlayers(PlayerSearchDTO searchCond);
+    List<PlayerDTO> findPlayers(CmnMyTeamDTO searchCond);
+
+
 }

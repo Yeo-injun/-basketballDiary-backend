@@ -2,12 +2,11 @@ package com.threeNerds.basketballDiary.mvc.domain;
 
 import com.threeNerds.basketballDiary.constant.Constant;
 import com.threeNerds.basketballDiary.constant.TeamAuthCode;
-import com.threeNerds.basketballDiary.mvc.dto.JoinRequestDTO;
-import com.threeNerds.basketballDiary.mvc.dto.KeyDTO;
+import com.threeNerds.basketballDiary.mvc.dto.loginUser.userTeamManager.JoinRequestDTO;
+import com.threeNerds.basketballDiary.mvc.dto.myTeam.CmnMyTeamDTO;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 @Getter
 @Builder
@@ -32,25 +31,25 @@ public class TeamMember {
     private String withdrawalYn;
 
     /* TODO 도메인 객체의 기본적인 데이터 세팅 동작을 메소드로 구현 */
-    public static TeamMember toManager(KeyDTO.TeamMember keys)
+    public static TeamMember toManager(CmnMyTeamDTO teamMember)
     {
         return TeamMember.builder()
-                .teamSeq(keys.getTeamSeq())
-                .teamMemberSeq(keys.getTeamMemberSeq())
+                .teamSeq(teamMember.getTeamSeq())
+                .teamMemberSeq(teamMember.getTeamMemberSeq())
                 .teamAuthCode(TeamAuthCode.MANGER.getCode())
                 .build();
     }
 
-    public static TeamMember toMember(KeyDTO.TeamMember keys)
+    public static TeamMember toMember(CmnMyTeamDTO teamMember)
     {
         return TeamMember.builder()
-                .teamSeq(keys.getTeamSeq())
-                .teamMemberSeq(keys.getTeamMemberSeq())
+                .teamSeq(teamMember.getTeamSeq())
+                .teamMemberSeq(teamMember.getTeamMemberSeq())
                 .teamAuthCode(TeamAuthCode.TEAM_MEMBER.getCode())
                 .build();
     }
 
-    public static TeamMember createNewMember(JoinRequestDTO joinRequest)
+    public static TeamMember createNewMember(TeamJoinRequest joinRequest)
     {
         String currentYmd = LocalDate.now().toString().replace("-", "");
         return TeamMember.builder()
@@ -62,7 +61,7 @@ public class TeamMember {
                 .build();
     }
 
-    public static TeamMember withdrawalMember(KeyDTO.TeamMember teamMember)
+    public static TeamMember withdrawalMember(CmnMyTeamDTO teamMember)
     {
         return TeamMember.builder()
                 .teamMemberSeq(teamMember.getTeamMemberSeq())

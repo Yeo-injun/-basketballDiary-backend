@@ -1,5 +1,6 @@
-package com.threeNerds.basketballDiary.mvc.dto;
+package com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam;
 
+import com.threeNerds.basketballDiary.mvc.dto.PagerDTO;
 import lombok.Getter;
 
 /**
@@ -91,7 +92,7 @@ public class MemberDTO {
         return this;
     }
 
-    public MemberDTO pagerVO (PagerDTO pagerDTO) {
+    public MemberDTO pagerDTO(PagerDTO pagerDTO) {
         this.pagerDTO = pagerDTO;
         return this;
     }

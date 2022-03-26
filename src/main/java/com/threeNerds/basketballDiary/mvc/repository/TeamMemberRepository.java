@@ -1,14 +1,13 @@
 package com.threeNerds.basketballDiary.mvc.repository;
 
 import com.threeNerds.basketballDiary.mvc.controller.MyTeamController;
-import com.threeNerds.basketballDiary.mvc.controller.UserController;
 import com.threeNerds.basketballDiary.mvc.domain.TeamMember;
-import com.threeNerds.basketballDiary.mvc.domain.User;
-import com.threeNerds.basketballDiary.mvc.dto.JoinRequestDTO;
-import com.threeNerds.basketballDiary.mvc.dto.ResponseMyTeamProfileDTO;
+import com.threeNerds.basketballDiary.mvc.dto.loginUser.userTeamManager.JoinRequestDTO;
+import com.threeNerds.basketballDiary.mvc.dto.myTeam.CmnMyTeamDTO;
+import com.threeNerds.basketballDiary.mvc.dto.myTeam.FindMyTeamProfileDTO;
+import com.threeNerds.basketballDiary.mvc.dto.myTeam.ModifyMyTeamProfileDTO;
+import com.threeNerds.basketballDiary.mvc.dto.myTeam.ResponseMyTeamProfileDTO;
 import org.apache.ibatis.annotations.Mapper;
-
-import java.util.Optional;
 
 @Mapper
 public interface TeamMemberRepository {
@@ -24,7 +23,7 @@ public interface TeamMemberRepository {
      * @param joinRequest
      * @return JoinRequestDTO
      */
-    JoinRequestDTO checkTeamMember(JoinRequestDTO joinRequest);
+     int checkDuplicatedTeamMember(CmnMyTeamDTO joinRequest);
 
     /**
      * 팀원 단건조회(팀원SEQ로)
@@ -52,9 +51,11 @@ public interface TeamMemberRepository {
      * @param userDto
      * @return
      */
-    ResponseMyTeamProfileDTO findMyTeamProfile(MyTeamController.FindMyTeamProfileDTO userDto);
+    ResponseMyTeamProfileDTO findMyTeamProfile(FindMyTeamProfileDTO userDto);
 
-    int updateMyTeamProfile(MyTeamController.ModifyMyTeamProfileDTO userDto);
+    int updateMyTeamProfile(ModifyMyTeamProfileDTO userDto);
 
-    void deleteMyTeamProfile(MyTeamController.FindMyTeamProfileDTO userDto);
+    void deleteMyTeamProfile(FindMyTeamProfileDTO userDto);
+
+    Long findMyTeamCount(Long userSeq);
 }
