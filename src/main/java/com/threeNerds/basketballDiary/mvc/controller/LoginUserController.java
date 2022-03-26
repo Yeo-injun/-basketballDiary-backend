@@ -36,18 +36,15 @@ public class LoginUserController {
     /**
      *  API020 : 농구팀 가입요청 보내기
      *  22.03.25 인준 : SessionUser null체크후 예외처리 적용. Service Layer에서의 예외처리 적용
-     **/
+     *  22.03.26 인준 : SessionUser null체크 로직 제거 - 인터셉터에서 하기 때문.
+     * */
     @PostMapping("/joinRequestTo/{teamSeq}")
     public ResponseEntity<?> sendJoinRequestToTeam(
             @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser,
             @PathVariable Long teamSeq
     )
     {
-        /** Optional을 이용한 안전한 Null처리  : 참고 - https://madplay.github.io/post/how-to-handle-optional-in-java */
-        Long userSeq = Optional.ofNullable(sessionUser)
-                                .map(SessionUser::getUserSeq)   // SessionUser객체에서 getUserSeq를 호출하여 해당 값가져오기
-                                .orElseThrow(() -> new CustomException(Error.LOGIN_REQUIRED));  // Null일 경우 예외를 던짐
-
+        Long userSeq = sessionUser.getUserSeq();
         CmnLoginUserDTO loginUserDTO = new CmnLoginUserDTO()
                 .teamSeq(teamSeq)
                 .userSeq(userSeq);
@@ -59,7 +56,8 @@ public class LoginUserController {
     /**
      *  API022 : 농구팀 가입요청 목록 조회
      *  22.03.13 인준 : API022 세분화 - 가입요청 및 초대 목록을 하나의 API콜로 가져오는 것에서 API 2개를 콜해서 가져오는 구조로 변경
-     **/
+     *  22.03.26 인준 : SessionUser null체크 로직 제거 - 인터셉터에서 체크하기 때문
+     * */
     @GetMapping("/joinRequestsTo")
     public ResponseEntity<?> getJoinRequestsTo (
             @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser
@@ -78,7 +76,7 @@ public class LoginUserController {
      * API023 : 팀 가입요청 취소
      */
     @DeleteMapping("/joinRequestsTo/{teamJoinRequestSeq}")
-    public ResponseEntity<?> cancelJoinReqeust(
+    public ResponseEntity<?> cancelJoinReqeust (
             @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser,
             @PathVariable Long teamJoinRequestSeq
     ) {
@@ -87,7 +85,6 @@ public class LoginUserController {
                 .userSeq(sessionUser.getUserSeq());
 
         userTeamManagerService.cancelJoinRequest(loginUserDTO);
-
         return RESPONSE_OK;
     }
 
