@@ -1,10 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.service;
 
-
 import com.threeNerds.basketballDiary.constant.JoinRequestTypeCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
-import com.threeNerds.basketballDiary.exception.Error;
-import com.threeNerds.basketballDiary.mvc.domain.Team;
 import com.threeNerds.basketballDiary.mvc.domain.TeamJoinRequest;
 import com.threeNerds.basketballDiary.mvc.domain.TeamMember;
 import com.threeNerds.basketballDiary.mvc.dto.loginUser.userTeamManager.JoinRequestDTO;
@@ -100,7 +97,6 @@ public class UserTeamManagerService {
     {
         TeamJoinRequest joinRequestCancel = TeamJoinRequest.cancelJoinRequest(loginUserDTO);
 
-        // TODO 가입요청 취소 Request를 보낸 사용자가 가입요청을 취소하는 것인지도 확인해야 하는지??
        boolean isCancelSuccess = teamJoinRequestRepository.updateJoinRequestState(joinRequestCancel) == 1 ? true : false;
         if (!isCancelSuccess)
         {
