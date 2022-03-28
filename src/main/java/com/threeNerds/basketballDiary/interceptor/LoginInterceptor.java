@@ -58,9 +58,14 @@ public class LoginInterceptor implements HandlerInterceptor {
 //        }
 
         //3. 각 권한 분기처리(팀장,임원,팀원)
-        //팀 id , 권한
-        //Long teamId = Long.parseLong(request.getParameter("teamId"));   //=>pathVariable 로 바꾸어야됨
         final Map<String, String> pathVariables = (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+        // TODO 팀에 소속되어 있지 않아도 되는 API인 경우 별도 분기 처리 - URL에 teamSeq에 대한 정보가 없는 API
+        if (pathVariables.size() == 0)
+        {
+            return true;
+        }
+
+        // TODO 팀원 이상인 경우에만 접근가능하도록 처리
         Long teamId = Long.parseLong(pathVariables.get("teamSeq"));
         Map<Long, Long> userAuth = memberDto.getUserAuth();
 
