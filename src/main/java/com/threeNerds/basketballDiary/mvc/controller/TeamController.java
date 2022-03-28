@@ -46,7 +46,7 @@ public class TeamController {
 
     private final TeamService teamService;
 
-    /**ㅎ
+    /**
      * API019 : 팀 목록 조회
      */
     @GetMapping
