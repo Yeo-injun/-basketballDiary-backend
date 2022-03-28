@@ -20,6 +20,7 @@ public class TestController {
             @RequestParam String redirectURL
     )
     {
+        log.info("#########################################");
         return ResponseEntity.ok("테스트입니다. : " + redirectURL);
     }
 }
