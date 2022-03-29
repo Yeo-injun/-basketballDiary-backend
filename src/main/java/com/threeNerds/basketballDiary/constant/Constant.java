@@ -10,5 +10,5 @@ public class Constant {
     public static final long LEADER      = 3L;
     public static final long MANAGER     = 2L;
     public static final long TEAM_MEMBER = 1L;
-    public static final long GUEST       = 0L;
+    public static final long USER        = 0L;
 }
