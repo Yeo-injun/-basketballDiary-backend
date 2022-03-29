@@ -14,7 +14,7 @@ public enum TeamAuthCode {
     LEADER("팀장", Long.toString(Constant.LEADER)),
     MANAGER("관리자", Long.toString(Constant.MANAGER)),
     TEAM_MEMBER("일반팀원", Long.toString(Constant.TEAM_MEMBER)),
-    GUEST("게스트", Long.toString(Constant.GUEST));
+    USER("사용자", Long.toString(Constant.USER));
 
     private final String name;
     private final String code;

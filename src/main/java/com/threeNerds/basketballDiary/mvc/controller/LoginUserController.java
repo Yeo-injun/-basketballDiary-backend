@@ -21,7 +21,7 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
-import static com.threeNerds.basketballDiary.constant.Constant.GUEST;
+import static com.threeNerds.basketballDiary.constant.Constant.USER;
 import static com.threeNerds.basketballDiary.session.SessionConst.LOGIN_MEMBER;
 import static com.threeNerds.basketballDiary.utils.HttpResponses.RESPONSE_CREATED;
 import static com.threeNerds.basketballDiary.utils.HttpResponses.RESPONSE_OK;
@@ -39,7 +39,9 @@ public class LoginUserController {
      *  API020 : 농구팀 가입요청 보내기
      *  22.03.25 인준 : SessionUser null체크후 예외처리 적용. Service Layer에서의 예외처리 적용
      *  22.03.26 인준 : SessionUser null체크 로직 제거 - 인터셉터에서 하기 때문.
-     * */
+     *  22.03.29 인준 : 권한어노테이션 추가
+     **/
+    @Auth(GRADE = USER)
     @PostMapping("/joinRequestTo/{teamSeq}")
     public ResponseEntity<?> sendJoinRequestToTeam(
             @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser,
@@ -59,8 +61,9 @@ public class LoginUserController {
      *  API022 : 농구팀 가입요청 목록 조회
      *  22.03.13 인준 : API022 세분화 - 가입요청 및 초대 목록을 하나의 API콜로 가져오는 것에서 API 2개를 콜해서 가져오는 구조로 변경
      *  22.03.26 인준 : SessionUser null체크 로직 제거 - 인터셉터에서 체크하기 때문
-     * */
-    @Auth(GRADE = GUEST)
+     *  22.03.29 인준 : 권한어노테이션 추가
+     **/
+    @Auth(GRADE = USER)
     @GetMapping("/joinRequestsTo")
     public ResponseEntity<?> getJoinRequestsTo (
             @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser
@@ -76,8 +79,10 @@ public class LoginUserController {
     }
 
     /**
-     * API023 : 팀 가입요청 취소
-     */
+     *  API023 : 팀 가입요청 취소
+     *  22.03.29 인준 : 권한어노테이션 추가
+     **/
+    @Auth(GRADE = USER)
     @DeleteMapping("/joinRequestsTo/{teamJoinRequestSeq}")
     public ResponseEntity<?> cancelJoinReqeust (
             @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser,
@@ -92,8 +97,10 @@ public class LoginUserController {
     }
 
     /**
-     * API024 : 팀 초대 승인
-     */
+     *  API024 : 팀 초대 승인
+     *  22.03.29 인준 : 권한어노테이션 추가
+     **/
+    @Auth(GRADE = USER)
     @PutMapping("/joinRequestsFrom/{teamJoinRequestSeq}/approval")
     public ResponseEntity<?> approveInvitation (
             @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser,
@@ -111,7 +118,9 @@ public class LoginUserController {
     /**
      *  API032 : 농구팀 초대 목록 조회
      *  22.03.13 인준 : API022 세분화 - 가입요청 및 초대 목록을 하나의 API콜로 가져오는 것에서 API 2개를 콜해서 가져오는 구조로 변경
+     *  22.03.29 인준 : 권한어노테이션 추가
      **/
+    @Auth(GRADE = USER)
     @GetMapping("/joinRequestsFrom")
     public ResponseEntity<?> getJoinRequestsFrom(
             @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser
@@ -128,7 +137,9 @@ public class LoginUserController {
 
     /**
      *  API033 : 농구팀 초대 거절
+     *  22.03.29 인준 : 권한어노테이션 추가
      **/
+    @Auth(GRADE = USER)
     @PutMapping("/joinRequestsFrom/{teamJoinRequestSeq}/rejection")
     public ResponseEntity<?> rejectInvitation (
             @SessionAttribute(value=LOGIN_MEMBER, required = false) SessionUser sessionUser,
@@ -150,7 +161,8 @@ public class LoginUserController {
     @GetMapping("/profile")
     public ResponseEntity<UserDTO> myInfo(
             @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionDTO,
-            UserDTO userDTO){
+            UserDTO userDTO
+    ){
 
         Long id = sessionDTO.getUserSeq();
 
@@ -167,7 +179,8 @@ public class LoginUserController {
     @PutMapping("/profile")
     public ResponseEntity<?> updateUser(
             @SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO,
-            @RequestBody @Valid UserDTO userDTO) {
+            @RequestBody @Valid UserDTO userDTO
+    ) {
 
         Long id = sessionDTO.getUserSeq();
 
