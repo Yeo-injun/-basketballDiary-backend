@@ -30,7 +30,7 @@ import static com.threeNerds.basketballDiary.utils.HttpResponses.RESPONSE_OK;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/loginUser")
-public class LoginUserController {
+public class AuthUserController {
 
     private final UserService userService;
     private final UserTeamManagerService userTeamManagerService;
