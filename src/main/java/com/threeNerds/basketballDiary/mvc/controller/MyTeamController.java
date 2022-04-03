@@ -278,6 +278,7 @@ public class MyTeamController {
     /**
      * API014 : 소속팀 목록 조회
      */
+    @Auth(GRADE = TEAM_MEMBER)
     @GetMapping
     public ResponseEntity<List<MyTeamDTO>> searchTeams(
             @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser
@@ -336,9 +337,8 @@ public class MyTeamController {
         log.info("▒▒▒▒▒ API017: MyTeamController.modifyMyTeam");
         Long userSeq = sessionUser.getUserSeq();
         myTeamService.modifyMyTeam(teamSeq, dto);
-        // MyTeamDTO myTeam = myTeamService.findTeam(userSeq, teamSeq);
+        MyTeamDTO myTeam = myTeamService.findTeam(userSeq, teamSeq);
 
-        //return new ResponseEntity<>(HttpStatus.OK); 과 동일...
         return RESPONSE_OK;
     }
 

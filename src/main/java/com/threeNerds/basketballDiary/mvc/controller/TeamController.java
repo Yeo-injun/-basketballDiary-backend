@@ -1,19 +1,17 @@
 package com.threeNerds.basketballDiary.mvc.controller;
 
+import com.threeNerds.basketballDiary.constant.TeamAuthCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.interceptor.Auth;
 import com.threeNerds.basketballDiary.mvc.domain.Team;
-import com.threeNerds.basketballDiary.mvc.domain.TeamRegularExercise;
 import com.threeNerds.basketballDiary.mvc.dto.PagerDTO;
 import com.threeNerds.basketballDiary.mvc.dto.team.team.SearchTeamDTO;
 import com.threeNerds.basketballDiary.mvc.dto.team.team.TeamDTO;
-import com.threeNerds.basketballDiary.mvc.dto.team.team.TeamInfoDTO;
 import com.threeNerds.basketballDiary.mvc.service.TeamService;
 import com.threeNerds.basketballDiary.session.SessionUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -24,6 +22,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static com.threeNerds.basketballDiary.constant.Constant.*;
 import static com.threeNerds.basketballDiary.session.SessionConst.LOGIN_MEMBER;
 
 /**
@@ -81,6 +80,7 @@ public class TeamController {
     /**
      * API021 : 팀 등록
      */
+    @Auth(GRADE = USER)
     @PostMapping
     public ResponseEntity<Team> registerTeam(
             @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser,
