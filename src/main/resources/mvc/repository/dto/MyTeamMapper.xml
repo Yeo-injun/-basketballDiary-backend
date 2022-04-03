@@ -3,7 +3,7 @@
 
 <mapper namespace="com.threeNerds.basketballDiary.mvc.repository.MyTeamRepository">
 
-    <select id="findByUserSeqAndTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MyTeamInfoDTO">
+    <select id="findByUserSeqAndTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MyTeamDTO">
         SELECT A.TEAM_SEQ
              , A.TEAM_AUTH_CODE -- 팀정보 수정 권한을 위해
              , B.TEAM_NAME
@@ -21,7 +21,7 @@
           AND A.TEAM_SEQ = #{teamSeq}
     </select>
 
-    <select id="findAllByUserSeq" resultType="com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MyTeamInfoDTO">
+    <select id="findAllByUserSeq" resultType="com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MyTeamDTO">
         SELECT A.TEAM_SEQ
              , A.TEAM_AUTH_CODE -- 팀정보 수정 권한을 위해
              , B.TEAM_NAME
