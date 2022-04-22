@@ -20,7 +20,9 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         WebMvcConfigurer.super.addCorsMappings(registry);
         registry.addMapping("/api/**")                      // /api 하위 API call 허용
-                .allowedOrigins("http://127.0.0.1:5500")    // 로컬 프론트에서만 허용
-                .allowedMethods("GET");                     // GET Method에 대해서만 허용
+                .allowedOrigins("*")
+                .allowedMethods("*");
+                //.allowedOrigins("http://127.0.0.1:5500")    // 로컬 프론트에서만 허용
+                //.allowedMethods("GET");                     // GET Method에 대해서만 허용
     }
 }
