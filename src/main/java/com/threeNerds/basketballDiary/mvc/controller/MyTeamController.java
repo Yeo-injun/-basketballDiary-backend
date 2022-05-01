@@ -11,6 +11,7 @@ import com.threeNerds.basketballDiary.mvc.service.MyTeamService;
 import com.threeNerds.basketballDiary.mvc.service.TeamMemberManagerService;
 import com.threeNerds.basketballDiary.mvc.service.TeamMemberService;
 import com.threeNerds.basketballDiary.session.SessionUser;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -278,7 +279,7 @@ public class MyTeamController {
     /**
      * API014 : 소속팀 목록 조회
      */
-    @Auth(GRADE = TEAM_MEMBER)
+    /*@Auth(GRADE = TEAM_MEMBER)
     @GetMapping
     public ResponseEntity<List<MyTeamDTO>> searchTeams(
             @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser
@@ -288,6 +289,11 @@ public class MyTeamController {
         List<MyTeamDTO> myTeamList = myTeamService.findTeams(userSeq);
 
         return ResponseEntity.ok().body(myTeamList);
+    }*/
+    @GetMapping("/{temp}")
+    public ResponseEntity<?> searchTeams(@PathVariable Integer temp){
+        log.error(String.valueOf(temp));
+        return ResponseEntity.ok().body(null);
     }
 
     /**
