@@ -109,7 +109,7 @@ public class UserController {
         return ResponseEntity.ok(allUser);
     }
 
-    @Auth(GRADE = LEADER)
+/*    @Auth(GRADE = LEADER)
     @GetMapping("/testAnnotation/{teamId}")
     public void test(){
         log.info("Auth : 1");
@@ -119,5 +119,5 @@ public class UserController {
     @GetMapping("/testAnnotation2/{teamId}")
     public void test2(){
         log.info("Auth : 2");
-    }
+    }*/
 }
