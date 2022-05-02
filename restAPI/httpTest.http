@@ -5,7 +5,7 @@
 ### 컨트롤러별 API와 같은 수준으로 intergrationTest패키지 별도 존재 - 시나리오별로 .http파일을 만들어서 관리 예정
 
 ### API030 로그인
-POST http://localhost:8080/api/user/login
+POST http://54.180.147.129/api/user/login
 Content-Type : application/json
 
 {
