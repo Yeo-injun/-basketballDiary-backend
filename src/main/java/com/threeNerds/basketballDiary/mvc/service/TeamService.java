@@ -2,11 +2,8 @@ package com.threeNerds.basketballDiary.mvc.service;
 
 import com.threeNerds.basketballDiary.mvc.domain.Team;
 import com.threeNerds.basketballDiary.mvc.domain.TeamRegularExercise;
-import com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MyTeamDTO;
-import com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MyTeamInfoDTO;
 import com.threeNerds.basketballDiary.mvc.dto.team.team.SearchTeamDTO;
 import com.threeNerds.basketballDiary.mvc.dto.team.team.TeamDTO;
-import com.threeNerds.basketballDiary.mvc.dto.team.team.TeamInfoDTO;
 import com.threeNerds.basketballDiary.mvc.repository.TeamRegularExerciseRepository;
 import com.threeNerds.basketballDiary.mvc.repository.TeamRepository;
 import lombok.RequiredArgsConstructor;
@@ -47,16 +44,27 @@ public class TeamService {
      */
     public List<TeamDTO> searchTeams(SearchTeamDTO searchTeamDTO) {
         log.info("TeamService.searchTeams");
-        List<TeamDTO> resultTeamList = new ArrayList<TeamDTO>();
-        List<TeamInfoDTO> teamInfoList = teamRepository.findPagingTeam(searchTeamDTO);
-        if(teamInfoList.isEmpty())
-            teamInfoList = Collections.emptyList();
+        List<TeamDTO> resultTeamList = new ArrayList<>();
+        List<TeamDTO> teamList = teamRepository.findPagingTeam(searchTeamDTO);
+        if(teamList.isEmpty())
+            teamList = Collections.emptyList();
 
-        teamInfoList.forEach(teamInfo -> {
-            Long teamSeq = teamInfo.getTeamSeq();
+        teamList.forEach(team -> {
+            Long teamSeq = team.getTeamSeq();
             List<TeamRegularExercise> exerciseList = teamRegularExerciseRepository.findByTeamSeq(teamSeq);
             TeamDTO teamDTO = new TeamDTO()
-                    .teamInfoDTO(teamInfo)
+                    .teamSeq(team.getTeamSeq())
+                    .leaderId(team.getLeaderId())
+                    .teamName(team.getTeamName())
+                    .teamImagePath(team.getTeamImagePath())
+                    .hometown(team.getHometown())
+                    .introduction(team.getIntroduction())
+                    .foundationYmd(team.getFoundationYmd())
+                    .regDate(team.getRegDate())
+                    .updateDate(team.getUpdateDate())
+                    .sidoCode(team.getSidoCode())
+                    .sigunguCode(team.getSigunguCode())
+                    .totMember(team.getTotMember())
                     .teamRegularExercisesList(exerciseList.isEmpty() ? Collections.emptyList() : exerciseList);
 
             resultTeamList.add(teamDTO);
@@ -73,11 +81,11 @@ public class TeamService {
     @Transactional
     public Team createTeam(String userId, TeamDTO teamDTO) {
         Team team = Team.builder()
-                .teamName(teamDTO.getTeamInfoDTO().getTeamName())
-                .hometown(teamDTO.getTeamInfoDTO().getHometown())
-                .foundationYmd(teamDTO.getTeamInfoDTO().getFoundationYmd())
-                .introduction(teamDTO.getTeamInfoDTO().getIntroduction())
-                .teamImagePath(teamDTO.getTeamInfoDTO().getTeamImagePath())
+                .teamName(teamDTO.getTeamName())
+                .hometown(teamDTO.getHometown())
+                .foundationYmd(teamDTO.getFoundationYmd())
+                .introduction(teamDTO.getIntroduction())
+                .teamImagePath(teamDTO.getTeamImagePath())
                 .leaderId(userId)
                 .regDate(LocalDate.now(ZoneId.of("Asia/Seoul")))
                 .updateDate(LocalDate.now(ZoneId.of("Asia/Seoul")))

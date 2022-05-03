@@ -7,7 +7,6 @@ import com.threeNerds.basketballDiary.mvc.domain.TeamRegularExercise;
 import com.threeNerds.basketballDiary.mvc.dto.*;
 import com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MemberDTO;
 import com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MyTeamDTO;
-import com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MyTeamInfoDTO;
 import com.threeNerds.basketballDiary.mvc.repository.MyTeamRepository;
 import com.threeNerds.basketballDiary.mvc.repository.TeamRegularExerciseRepository;
 import com.threeNerds.basketballDiary.mvc.repository.TeamRepository;
@@ -17,6 +16,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -89,15 +90,22 @@ public class MyTeamService {
      */
     public List<MyTeamDTO> findTeams(Long userSeq) {
         List<MyTeamDTO> resultMyTeamList = new ArrayList<MyTeamDTO>();
-        List<MyTeamInfoDTO> myTeamInfoList = myTeamRepository.findAllByUserSeq(userSeq);
+        List<MyTeamDTO> myTeamInfoList = myTeamRepository.findAllByUserSeq(userSeq);
 
         myTeamInfoList.forEach(myTeamInfo -> {
             Long teamSeq = myTeamInfo.getTeamSeq();
             List<TeamRegularExercise> exerciseList = teamRegularExerciseRepository.findByTeamSeq(teamSeq);
             MyTeamDTO myTeamDTO = new MyTeamDTO()
-                    .myTeamInfo(myTeamInfo)
+                    .teamSeq(myTeamInfo.getTeamSeq())
+                    .teamName(myTeamInfo.getTeamName())
+                    .teamImagePath(myTeamInfo.getTeamImagePath())
+                    .hometown(myTeamInfo.getHometown())
+                    .sidoCode(myTeamInfo.getSidoCode())
+                    .sigunguCode(myTeamInfo.getSigunguCode())
+                    .foundationYmd(myTeamInfo.getFoundationYmd())
+                    .introduction(myTeamInfo.getIntroduction())
+                    .totMember(myTeamInfo.getTotMember())
                     .teamRegularExercisesList(exerciseList.isEmpty() ? Collections.emptyList() : exerciseList);
-
             resultMyTeamList.add(myTeamDTO);
         });
 
@@ -113,15 +121,23 @@ public class MyTeamService {
     public MyTeamDTO findTeam(Long userSeq, Long teamSeq) {
         // 소속되지 않은 팀에 대한 조회는 Interceptor에 의해 처리됨.
 
-        MyTeamInfoDTO myTeamInfo = myTeamRepository.findByUserSeqAndTeamSeq(userSeq, teamSeq);
-        List<TeamRegularExercise> teamRegularExerciseList 
+        MyTeamDTO myTeam = myTeamRepository.findByUserSeqAndTeamSeq(userSeq, teamSeq);
+        List<TeamRegularExercise> teamRegularExerciseList
                 = teamRegularExerciseRepository.findByTeamSeq(teamSeq);
 
         MyTeamDTO resultDTO = new MyTeamDTO()
-                .myTeamInfo(myTeamInfo)
+                .teamSeq(myTeam.getTeamSeq())
+                .teamName(myTeam.getTeamName())
+                .teamImagePath(myTeam.getTeamImagePath())
+                .hometown(myTeam.getHometown())
+                .sidoCode(myTeam.getSidoCode())
+                .sigunguCode(myTeam.getSigunguCode())
+                .foundationYmd(myTeam.getFoundationYmd())
+                .introduction(myTeam.getIntroduction())
+                .totMember(myTeam.getTotMember())
                 .teamRegularExercisesList(teamRegularExerciseList.isEmpty() ? Collections.emptyList() : teamRegularExerciseList);
 
-        log.info("teamName = {}", myTeamInfo.getTeamName());
+        log.info("teamName = {}", myTeam.getTeamName());
         return resultDTO;
     }
 
@@ -131,16 +147,28 @@ public class MyTeamService {
      */
     public void modifyMyTeam(Long teamSeq, MyTeamDTO dto) {
         // 1. @RequestBody 값 조회
-        MyTeamInfoDTO paramMyTeamInfo = dto.getMyTeamInfo();
         List<TeamRegularExercise> paramTeamRegularExercise = dto.getTeamRegularExercisesList();
 
         // 2. 팀정보 수정
         // 2-1. 조회하려는 팀이 존재하지 않으므로 예외처리
         Team team = Optional.ofNullable(teamRepository.findByTeamSeq(teamSeq))
                 .orElseThrow(() -> new CustomException(Error.MY_TEAM_NOT_FOUND));
-        // TODO: 테스트 필요. copyProperties 안될것으로 보임.
-        BeanUtils.copyProperties(paramMyTeamInfo, team);
-        teamRepository.updateTeam(team);
+
+        Team resultTeam = Team.builder()
+                .teamSeq(teamSeq)
+                .leaderId(team.getLeaderId())
+                .teamName(dto.getTeamName())
+                .teamImagePath(dto.getTeamImagePath())
+                .hometown(dto.getHometown())
+                .introduction(dto.getIntroduction())
+                .foundationYmd(dto.getFoundationYmd())
+                .regDate(team.getRegDate())
+                .updateDate(LocalDate.now(ZoneId.of("Asia/Seoul")))
+                .sidoCode(dto.getSidoCode())
+                .sigunguCode(dto.getSigunguCode())
+                .build();
+
+        teamRepository.updateTeam(resultTeam);
 
         // 3. 정기운동 등록 및 수정
         paramTeamRegularExercise.forEach(param -> {
@@ -150,9 +178,16 @@ public class MyTeamService {
                 // Seq가 있으므로 조회 후 수정내역 update
                 TeamRegularExercise teamRegularExercise = Optional.ofNullable(teamRegularExerciseRepository.findByTeamRegularExerciseSeq(teamRegularExerciseSeq))
                                 .orElseThrow(() -> new CustomException(Error.REGULAR_EXERCISE_NOT_FOUND));
-                // TODO: 테스트 필요. copyProperties 안될것으로 보임.
-                BeanUtils.copyProperties(param, teamRegularExercise);
-                teamRegularExerciseRepository.updateTeamRegularExercise(teamRegularExercise);
+
+                teamRegularExerciseRepository.updateTeamRegularExercise(TeamRegularExercise.builder()
+                                .teamRegularExerciseSeq(teamRegularExerciseSeq)
+                                .teamSeq(teamSeq)
+                                .dayOfTheWeekCode(param.getDayOfTheWeekCode())
+                                .startTime(param.getStartTime())
+                                .endTime(param.getEndTime())
+                                .exercisePlaceAddress(param.getExercisePlaceAddress())
+                                .exercisePlaceName(param.getExercisePlaceName())
+                                .build());
             } else {
                 // Seq가 없으므로 신규내역 insert
                 TeamRegularExercise teamRegularExercise = TeamRegularExercise.builder()

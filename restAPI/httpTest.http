@@ -1,0 +1,19 @@
+### VS Code Extensions 설치 : REST Client / publisher : Huachao Mao
+### REST API 테스트 패키지 구조
+### 최상단 패키지 - restAPI
+### 컨트롤러별 API를 작성한 .http파일 존재
+### 컨트롤러별 API와 같은 수준으로 intergrationTest패키지 별도 존재 - 시나리오별로 .http파일을 만들어서 관리 예정
+
+### API030 로그인
+POST http://localhost:8080/api/user/login
+Content-Type : application/json
+
+{
+    "userId" : "test02",
+    "password" : "1111"
+}
+
+### API022 농구팀 가입요청 목록 조회
+GET http://localhost:8080/api/loginUser/joinRequestsTo
+
+###

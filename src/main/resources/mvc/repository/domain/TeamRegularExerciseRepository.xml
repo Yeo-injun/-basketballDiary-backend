@@ -12,7 +12,7 @@
              , EXERCISE_PLACE_ADDRESS
              , EXERCISE_PLACE_NAME
         FROM TEAM_REGULAR_EXERCISE
-        WHERE TEAM_SEQ = #{teamRegularExerciseSeq}
+        WHERE TEAM_REGULAR_EXERCISE_SEQ = #{teamRegularExerciseSeq}
     </select>
 
     <select id="findByTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.domain.TeamRegularExercise">

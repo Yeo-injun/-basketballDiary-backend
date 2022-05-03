@@ -11,6 +11,7 @@ import com.threeNerds.basketballDiary.mvc.service.MyTeamService;
 import com.threeNerds.basketballDiary.mvc.service.TeamMemberManagerService;
 import com.threeNerds.basketballDiary.mvc.service.TeamMemberService;
 import com.threeNerds.basketballDiary.session.SessionUser;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -86,7 +87,9 @@ public class MyTeamController {
     /**
      * API003 : 소속팀 관리자임명
      * 22.03.08 인준 : CustomException적용 - 퇴장상태로 업데이트된 결과가 없을 때 USER_NOT_FOUND 예외 발생
+     * 22.03.29 인준 : 권한어노테이션 추가
      */
+    @Auth(GRADE = LEADER)
     @PostMapping("{teamSeq}/members/{teamMemberSeq}/manager")
     public ResponseEntity<?> appointManager (
             @PathVariable Long teamSeq,
@@ -103,7 +106,9 @@ public class MyTeamController {
     /**
      * API004 : 소속팀 회원 강퇴시키기
      * 22.03.08 인준 : CustomException적용 - 퇴장상태로 업데이트된 결과가 없을 때 USER_NOT_FOUND 예외 발생
+     * 22.03.29 인준 : 권한어노테이션 추가
      */
+    @Auth(GRADE = LEADER)
     @DeleteMapping("{teamSeq}/members/{teamMemberSeq}")
     public ResponseEntity<?> removeTeamMember(
             @PathVariable Long teamSeq,
@@ -119,7 +124,9 @@ public class MyTeamController {
     /**
      * API005 : 소속팀의 초대한 선수목록 조회
      * 22.03.22(화) 인준 : 공통DTO적용 및 동적쿼리 수정
+     * 22.03.29 인준 : 권한어노테이션 추가
      */
+    @Auth(GRADE = MANAGER)
     @GetMapping("/{teamSeq}/joinRequestsTo")
     public ResponseEntity<?> searchInvitedPlayer(
             @PathVariable Long teamSeq,
@@ -136,7 +143,9 @@ public class MyTeamController {
     /**
      * API007 : 소속팀의 선수초대
      * 22.03.10 인준 : Service Layer에 CustomException 적용
+     * 22.03.29 인준 : 권한어노테이션 추가
      */
+    @Auth(GRADE = MANAGER)
     @PostMapping("/{teamSeq}/joinRequestTo/{userSeq}")
     public ResponseEntity<?> inviteTeamMember(
             @PathVariable Long teamSeq,
@@ -153,7 +162,9 @@ public class MyTeamController {
     /**
      * API008 : 소속팀이 받은 가입요청목록 조회
      * 22.03.23 인준 : QueryString 기본값 제거 및 필수값 설정 해제. 공통DTO로 Service넘겨주기
+     * 22.03.29 인준 : 권한어노테이션 추가
      */
+    @Auth(GRADE = MANAGER)
     @GetMapping("/{teamSeq}/joinRequestsFrom")
     public ResponseEntity<?> searchJoinRequestPlayer (
             @PathVariable Long teamSeq,
@@ -171,7 +182,9 @@ public class MyTeamController {
      * API009 : 소속팀이 사용자의 가입요청 승인
      * 22.03.10 인준 : Service Layer에 CustomException 적용
      * 22.03.25 인준 : CmnMyTeamDTO적용
+     * 22.03.29 인준 : 권한어노테이션 추가
      */
+    @Auth(GRADE = MANAGER)
     @PatchMapping("/{teamSeq}/joinRequestFrom/{teamJoinRequestSeq}/approval")
     public ResponseEntity<?> approveJoinRequest(
             @PathVariable Long teamJoinRequestSeq,
@@ -187,8 +200,10 @@ public class MyTeamController {
 
     /**
      * API010 : 소속팀의 가입요청 거절
-     * 22.03.25(금) 인준 : CmnMyTeamDTO적용 및 예외처리
+     * 22.03.25 인준 : CmnMyTeamDTO적용 및 예외처리
+     * 22.03.29 인준 : 권한어노테이션 추가
      */
+    @Auth(GRADE = MANAGER)
     @PatchMapping("/{teamSeq}/joinRequestFrom/{teamJoinRequestSeq}/rejection")
     public ResponseEntity<?> rejectJoinRequest(
             @PathVariable Long teamSeq,
@@ -264,6 +279,7 @@ public class MyTeamController {
     /**
      * API014 : 소속팀 목록 조회
      */
+    /*@Auth(GRADE = TEAM_MEMBER)
     @GetMapping
     public ResponseEntity<List<MyTeamDTO>> searchTeams(
             @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser
@@ -273,12 +289,19 @@ public class MyTeamController {
         List<MyTeamDTO> myTeamList = myTeamService.findTeams(userSeq);
 
         return ResponseEntity.ok().body(myTeamList);
+    }*/
+    @GetMapping("/{temp}")
+    public ResponseEntity<?> searchTeams(@PathVariable Integer temp){
+        log.error(String.valueOf(temp));
+        return ResponseEntity.ok().body(null);
     }
 
     /**
      * API015 : 소속팀 관리자 제명
      * 22.03.08 인준 : CustomException적용 - 퇴장상태로 업데이트된 결과가 없을 때 USER_NOT_FOUND 예외 발생
+     * 22.03.29 인준 : 권한어노테이션 추가
      */
+    @Auth(GRADE = LEADER)
     @DeleteMapping("/{teamSeq}/members/{teamMemberSeq}/manager")
     public ResponseEntity<?> dismissManager(
             @PathVariable Long teamSeq,
@@ -320,9 +343,8 @@ public class MyTeamController {
         log.info("▒▒▒▒▒ API017: MyTeamController.modifyMyTeam");
         Long userSeq = sessionUser.getUserSeq();
         myTeamService.modifyMyTeam(teamSeq, dto);
-        // MyTeamDTO myTeam = myTeamService.findTeam(userSeq, teamSeq);
+        MyTeamDTO myTeam = myTeamService.findTeam(userSeq, teamSeq);
 
-        //return new ResponseEntity<>(HttpStatus.OK); 과 동일...
         return RESPONSE_OK;
     }
 

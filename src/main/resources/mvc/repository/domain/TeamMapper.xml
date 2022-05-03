@@ -33,7 +33,7 @@
              , HOMETOWN = #{hometown}
              , INTRODUCTION = #{introduction}
              , FOUNDATION_YMD = #{foundationYmd}
-             , UPDATE_DATE = SYSTIMESTAMP
+             , UPDATE_DATE = #{updateDate}
              , SIDO_CODE = #{sidoCode}
              , SIGUNGU_CODE = #{sigunguCode}
          WHERE TEAM_SEQ = #{teamSeq}
@@ -55,7 +55,7 @@
          WHERE TEAM_SEQ = #{teamSeq}
     </select>
 
-    <select id="findAll" resultType="com.threeNerds.basketballDiary.mvc.dto.team.team.TeamInfoDTO">
+    <select id="findAll" resultType="com.threeNerds.basketballDiary.mvc.dto.team.team.TeamDTO">
         SELECT A.TEAM_SEQ
              , A.LEADER_ID
              , A.TEAM_NAME
@@ -81,7 +81,7 @@
       ORDER BY A.TEAM_NAME
     </select>
 
-    <select id="findPagingTeam" resultType="com.threeNerds.basketballDiary.mvc.dto.team.team.TeamInfoDTO">
+    <select id="findPagingTeam" resultType="com.threeNerds.basketballDiary.mvc.dto.team.team.TeamDTO">
     SELECT *
     FROM ( SELECT A.TEAM_SEQ
                 , A.LEADER_ID
