@@ -290,10 +290,16 @@ public class MyTeamController {
 
         return ResponseEntity.ok().body(myTeamList);
     }*/
-    @GetMapping("/{temp}")
-    public ResponseEntity<?> searchTeams(@PathVariable Integer temp){
-        log.error(String.valueOf(temp));
-        return ResponseEntity.ok().body(null);
+    @GetMapping
+    public ResponseEntity<List<MyTeamDTO>> searchTeams(
+//            @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser
+            @RequestParam(value = "userSeq") Long id
+    ) {
+        log.info("▒▒▒▒▒ API014: MyTeamController.searchTeams");
+//        Long userSeq = sessionUser.getUserSeq();
+        List<MyTeamDTO> myTeamList = myTeamService.findTeams(id);
+
+        return ResponseEntity.ok().body(myTeamList);
     }
 
     /**
