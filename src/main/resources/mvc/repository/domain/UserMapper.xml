@@ -48,6 +48,7 @@
                       , UPDATE_DATE
                       , USER_REG_YN
                       , GENDER
+                      , BIRTH_YMD
                       , HEIGHT
                       , WEIGHT
                       , SIDO_CODE

@@ -279,25 +279,15 @@ public class MyTeamController {
     /**
      * API014 : 소속팀 목록 조회
      */
-    /*@Auth(GRADE = TEAM_MEMBER)
+    @Auth(GRADE = TEAM_MEMBER)
     @GetMapping
     public ResponseEntity<List<MyTeamDTO>> searchTeams(
             @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser
+//            @RequestParam(value="userSeq") Long userSeq
     ) {
         log.info("▒▒▒▒▒ API014: MyTeamController.searchTeams");
         Long userSeq = sessionUser.getUserSeq();
         List<MyTeamDTO> myTeamList = myTeamService.findTeams(userSeq);
-
-        return ResponseEntity.ok().body(myTeamList);
-    }*/
-    @GetMapping
-    public ResponseEntity<List<MyTeamDTO>> searchTeams(
-//            @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser
-            @RequestParam(value = "userSeq") Long id
-    ) {
-        log.info("▒▒▒▒▒ API014: MyTeamController.searchTeams");
-//        Long userSeq = sessionUser.getUserSeq();
-        List<MyTeamDTO> myTeamList = myTeamService.findTeams(id);
 
         return ResponseEntity.ok().body(myTeamList);
     }
