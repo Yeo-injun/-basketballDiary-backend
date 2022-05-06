@@ -160,8 +160,7 @@ public class AuthUserController {
      */
     @GetMapping("/profile")
     public ResponseEntity<UserDTO> myInfo(
-            @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionDTO,
-            UserDTO userDTO
+            @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionDTO
     ){
 
         Long id = sessionDTO.getUserSeq();
