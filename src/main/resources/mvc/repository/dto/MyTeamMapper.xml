@@ -38,17 +38,44 @@
         WHERE A.USER_SEQ = #{userSeq}
     </select>
 
+    <select id="findProfileByUserSeqAndTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MemberDTO">
+        SELECT A.USER_SEQ
+             , B.TEAM_SEQ
+             , A.NAME 			"USER_NAME"
+             , C.TEAM_NAME
+             , A.POSITION_CODE
+             , B.TEAM_AUTH_CODE
+             , B.TEAM_MEMBER_SEQ
+             , B.JOIN_YMD
+             , A.HEIGHT
+             , A.WEIGHT
+             , B.BACK_NUMBER
+             , IFNULL(D.TOT_MATCH, 0) TOT_GAME
+          FROM USER A
+               LEFT JOIN TEAM_MEMBER B
+                  ON A.USER_SEQ = B.USER_SEQ
+               JOIN TEAM C
+                  ON B.TEAM_SEQ = C.TEAM_SEQ
+               LEFT JOIN (SELECT TEAM_MEMBER_SEQ, COUNT(*) AS "TOT_MATCH"
+                            FROM GAME_JOIN_PLAYER
+                           GROUP BY TEAM_MEMBER_SEQ) D
+                  ON B.TEAM_MEMBER_SEQ = D.TEAM_MEMBER_SEQ
+         WHERE A.USER_SEQ = #{userSeq}
+           AND B.TEAM_SEQ = #{teamSeq}
+    </select>
+
     <select id="findAllManagerByTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MemberDTO">
         SELECT A.USER_SEQ
              , B.TEAM_MEMBER_SEQ
              , B.TEAM_SEQ
              , B.TEAM_AUTH_CODE
-             , A.NAME
+             , A.NAME       "USER_NAME"
              , A.BIRTH_YMD
              , A.HEIGHT
              , A.WEIGHT
              , B.BACK_NUMBER
              , B.JOIN_YMD
+             , A.POSITION_CODE
         FROM USER A
                  JOIN TEAM_MEMBER B
                       ON A.USER_SEQ = B.USER_SEQ
@@ -62,12 +89,13 @@
              , B.TEAM_MEMBER_SEQ
              , B.TEAM_SEQ
              , B.TEAM_AUTH_CODE
-             , A.NAME
+             , A.NAME   "USER_NAME"
              , A.BIRTH_YMD
              , A.HEIGHT
              , A.WEIGHT
              , B.BACK_NUMBER
              , B.JOIN_YMD
+             , A.POSITION_CODE
              , IFNULL(C.TOT_MATCH, 0) TOT_GAME
         FROM USER A
                  JOIN TEAM_MEMBER B
@@ -87,7 +115,7 @@
                    , B.TEAM_MEMBER_SEQ
                    , B.TEAM_SEQ
                    , B.TEAM_AUTH_CODE
-                   , A.NAME
+                   , A.NAME "USER_NAME"
                    , A.BIRTH_YMD
                    , A.HEIGHT
                    , A.WEIGHT
