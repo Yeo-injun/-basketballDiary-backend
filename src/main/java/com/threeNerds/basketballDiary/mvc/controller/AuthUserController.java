@@ -157,7 +157,6 @@ public class AuthUserController {
     @GetMapping("/profile")
     public ResponseEntity<UserDTO> myInfo(
             @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionDTO
-//            @RequestParam(value = "userSeq") Long id
     ){
 
         Long id = sessionDTO.getUserSeq();
@@ -183,7 +182,7 @@ public class AuthUserController {
     /**
      * API026 회원수정 : update 를 수행한 후 update 된 객체를 리턴시켜주자 => 이래야 TEST CODE 작성시 정확히 update 가 되었는지 확인할 수 있다.
      */
-    @PutMapping("/profile")
+    @PostMapping("/profile")
     public ResponseEntity<?> updateUser(
             @SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO,
             @RequestBody @Valid UserDTO userDTO
