@@ -10,7 +10,6 @@ import com.threeNerds.basketballDiary.mvc.service.UserTeamManagerService;
 import com.threeNerds.basketballDiary.session.SessionUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -155,14 +154,19 @@ public class AuthUserController {
      * API025 회원정보 수정데이터 조회
      */
     @GetMapping("/profile")
-    public ResponseEntity<UserDTO> myInfo(
+    public ResponseEntity<UserDTO> getMyInfo(
             @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionDTO
     ){
 
         Long id = sessionDTO.getUserSeq();
 
         User user = userService.findUser(id);
-        UserDTO userDto = new UserDTO().userId(user.getUserId())
+        UserDTO userDto = getUserDto(user);
+        return ResponseEntity.ok(userDto);
+    }
+
+    private UserDTO getUserDto(User user) {
+        return new UserDTO().userId(user.getUserId())
                 .password(user.getPassword())
                 .userName(user.getUserName())
                 .positionCode(user.getPositionCode())
@@ -176,7 +180,6 @@ public class AuthUserController {
                 .userRegYn(user.getUserRegYn())
                 .sidoCode(user.getSidoCode())
                 .sigunguCode(user.getSigunguCode());
-        return ResponseEntity.ok(userDto);
     }
 
     /**
@@ -187,15 +190,9 @@ public class AuthUserController {
             @SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO,
             @RequestBody @Valid UserDTO userDTO
     ) {
-
-        Long id = sessionDTO.getUserSeq();
-
-        User user = userService.findUser(id);
-
-        BeanUtils.copyProperties(userDTO,user);
+        User user = User.createUser(userDTO.userSeq(sessionDTO.getUserSeq()));
         userService.updateUser(user);
-
-        return RESPONSE_OK;
+        return ResponseEntity.ok(userDTO);
     }
 
     /**

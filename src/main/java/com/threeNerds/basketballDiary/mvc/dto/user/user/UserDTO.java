@@ -7,6 +7,8 @@ import java.time.LocalDate;
 @Getter
 public class UserDTO {
 
+    /* 시퀸스 */
+    private Long userSeq;
     /* 아이디 */
     private String userId;
     /* 패스워드 */
@@ -36,6 +38,10 @@ public class UserDTO {
     /* 시군구코드 */
     private String sigunguCode;
 
+    public UserDTO userSeq(Long userSeq){
+        this.userSeq = userSeq;
+        return this;
+    }
     public UserDTO userId(String userId){
         this.userId = userId;
         return this;
