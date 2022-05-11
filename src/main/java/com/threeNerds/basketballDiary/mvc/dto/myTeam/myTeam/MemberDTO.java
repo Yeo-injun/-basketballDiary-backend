@@ -19,8 +19,10 @@ public class MemberDTO {
     private Long teamSeq;
     /* 팀권한코드 */
     private Long teamAuthCode;
+    /* 포지션코드 */
+    private Long positionCode;
     /* 이름 */
-    private String name;
+    private String userName;
     /* 생년월일 */
     private String birthYmd;
     /* 신장 */
@@ -57,8 +59,13 @@ public class MemberDTO {
         return this;
     }
 
-    public MemberDTO name (String name) {
-        this.name = name;
+    public MemberDTO positionCode (Long positionCode) {
+        this.positionCode = positionCode;
+        return this;
+    }
+
+    public MemberDTO userName (String userName) {
+        this.userName = userName;
         return this;
     }
 

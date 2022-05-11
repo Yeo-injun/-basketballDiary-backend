@@ -4,6 +4,7 @@ import com.threeNerds.basketballDiary.mvc.controller.MyTeamController;
 import com.threeNerds.basketballDiary.mvc.dto.myTeam.FindMyTeamProfileDTO;
 import com.threeNerds.basketballDiary.mvc.dto.myTeam.ModifyMyTeamProfileDTO;
 import com.threeNerds.basketballDiary.mvc.dto.myTeam.ResponseMyTeamProfileDTO;
+import com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MemberDTO;
 import com.threeNerds.basketballDiary.mvc.repository.TeamMemberRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -57,7 +58,8 @@ class TeamMemberServiceTest {
         //given
         when(teamMemberRepository.findMyTeamProfile(findMyTeamProfileDTO)).thenReturn(responseMyTeamProfileDTO);
         //when
-        ResponseMyTeamProfileDTO profile = teamMemberService.findProfile(findMyTeamProfileDTO);
+        //ResponseMyTeamProfileDTO profile = teamMemberService.findProfile(findMyTeamProfileDTO);
+        MemberDTO profile = teamMemberService.findProfile(findMyTeamProfileDTO);
         //then
         assertThat(profile).isEqualTo(responseMyTeamProfileDTO);
     }

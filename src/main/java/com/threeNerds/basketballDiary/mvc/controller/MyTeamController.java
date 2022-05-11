@@ -221,7 +221,7 @@ public class MyTeamController {
      * API011 소속팀 개인프로필 수정데이터 조회
      */
     @GetMapping("/{teamSeq}/profile")
-    public ResponseEntity<ResponseMyTeamProfileDTO> findMyTeamsProfile(
+    public ResponseEntity<MemberDTO> findMyTeamsProfile(
             @SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO,
             @PathVariable Long teamSeq){
 
@@ -231,7 +231,8 @@ public class MyTeamController {
                 .userSeq(id)
                 .teamSeq(teamSeq);
 
-        ResponseMyTeamProfileDTO myTeamProfileDTO = teamMemberService.findProfile(findMyTeamProfileDTO);
+        //ResponseMyTeamProfileDTO myTeamProfileDTO = teamMemberService.findProfile(findMyTeamProfileDTO);
+        MemberDTO myTeamProfileDTO = teamMemberService.findProfile(findMyTeamProfileDTO);
 
         return ResponseEntity.ok(myTeamProfileDTO);
     }
