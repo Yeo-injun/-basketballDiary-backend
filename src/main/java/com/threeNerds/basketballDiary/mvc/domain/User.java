@@ -1,5 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.domain;
 
+import com.threeNerds.basketballDiary.mvc.dto.user.CmnUserDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -43,4 +44,22 @@ public class User {
     /* 시군구코드 */
     private String sigunguCode;
 
+    public User registerUser(CmnUserDTO userDTO)
+    {
+        return User.builder()
+                .userId(userDTO.getUserId())
+                .password(userDTO.getPassword())
+                .userName(userDTO.getUserName())
+                .email(userDTO.getEmail())
+                .gender(userDTO.getGender())
+                .birthYmd(userDTO.getBirthYmd())
+                .height(userDTO.getHeight())
+                .weight(userDTO.getWeight())
+                .regDate(LocalDate.now())
+                .updateDate(LocalDate.now())
+                .userRegYn("Y")
+                .sidoCode(userDTO.getSidoCode())
+                .sigunguCode(userDTO.getSigunguCode())
+                .build();
+    }
 }

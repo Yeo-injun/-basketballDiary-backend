@@ -13,9 +13,11 @@ import com.threeNerds.basketballDiary.session.SessionConst;
 import com.threeNerds.basketballDiary.session.SessionUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.time.LocalDate;
@@ -83,6 +85,9 @@ public class UserController {
         log.info("로그인 시도");
         SessionUser sessionUser = loginService.login(loginUserDTO);
         session.setAttribute(SessionConst.LOGIN_MEMBER, sessionUser);
+        log.info(session.getId());
+        // TODO 쿠키생성 로직 - https://reflectoring.io/spring-boot-cookies/
+//        ResponseCookie cookie = ResponseCookie.from("teset", "cookie").httpOnly(false).build();
         return ResponseEntity.ok(sessionUser);
     }
 
