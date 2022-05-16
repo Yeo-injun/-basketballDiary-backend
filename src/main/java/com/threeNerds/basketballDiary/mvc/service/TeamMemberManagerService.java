@@ -53,15 +53,15 @@ public class TeamMemberManagerService {
         TeamJoinRequest invitationInfo = TeamJoinRequest.createInvitation(joinRequest);
 
         /** 초대-가입요청 존재여부 확인 : 대기중인 가입요청 혹은 초대가 있을 경우 중복가입요청 방지 */
-        int checkPendingJoinReqCnt = teamJoinRequestRepository.checkPendingJoinRequest(invitationInfo);
-        if (checkPendingJoinReqCnt > 0)
+        int pendingJoinReqCnt = teamJoinRequestRepository.checkPendingJoinRequest(invitationInfo);
+        if (pendingJoinReqCnt > 0)
         {
             throw new CustomException(Error.ALREADY_EXIST_JOIN_REQUEST);
         }
 
         /** 팀원으로 존재하는지 확인 : 팀원으로 존재할 경우 예외를 던짐(409에러) */
-        int checkDuplicatedTeamMemberCnt = teamMemberRepository.checkDuplicatedTeamMember(joinRequest);
-        if (checkDuplicatedTeamMemberCnt > 0)
+        int duplicatedTeamMemberCnt = teamMemberRepository.checkDuplicatedTeamMember(joinRequest);
+        if (duplicatedTeamMemberCnt > 0)
         {
             throw new CustomException(Error.ALREADY_EXIST_TEAM_MEMBER);
         }
