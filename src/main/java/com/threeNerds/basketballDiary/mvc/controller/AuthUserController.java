@@ -1,9 +1,11 @@
 package com.threeNerds.basketballDiary.mvc.controller;
 
+import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.interceptor.Auth;
 import com.threeNerds.basketballDiary.mvc.domain.User;
 import com.threeNerds.basketballDiary.mvc.dto.loginUser.CmnLoginUserDTO;
 import com.threeNerds.basketballDiary.mvc.dto.loginUser.userTeamManager.JoinRequestDTO;
+import com.threeNerds.basketballDiary.mvc.dto.loginUser.PasswordDTO;
 import com.threeNerds.basketballDiary.mvc.dto.user.user.UserDTO;
 import com.threeNerds.basketballDiary.mvc.service.UserService;
 import com.threeNerds.basketballDiary.mvc.service.UserTeamManagerService;
@@ -17,6 +19,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 import static com.threeNerds.basketballDiary.constant.Constant.USER;
+import static com.threeNerds.basketballDiary.exception.Error.INCORRECT_PASSWORD;
 import static com.threeNerds.basketballDiary.session.SessionConst.LOGIN_MEMBER;
 import static com.threeNerds.basketballDiary.utils.HttpResponses.RESPONSE_CREATED;
 import static com.threeNerds.basketballDiary.utils.HttpResponses.RESPONSE_OK;
@@ -159,7 +162,6 @@ public class AuthUserController {
     ){
 
         Long id = sessionDTO.getUserSeq();
-
         User user = userService.findUser(id);
         UserDTO userDto = getUserDto(user);
         return ResponseEntity.ok(userDto);
@@ -200,11 +202,26 @@ public class AuthUserController {
      *          만약 컬럼값 1개만 Y->N 으로 변경했더라면 객체간 비교를 해줄 수 있지만, 아에 테이블에서 삭제를 해버리는 이상 마땅한 방법이 없음
      */
     @DeleteMapping("/profile")
-    public ResponseEntity<?> deleteUser(@SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO){
+    public ResponseEntity<?> deleteUser(
+            @SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO
+    ){
 
         String id = sessionDTO.getUserId();
 
         userService.deleteUser(id);
         return RESPONSE_OK;
+    }
+
+    @PostMapping("/profile/password")
+    public ResponseEntity<?> updatePassword(
+            @SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO,
+            @RequestBody PasswordDTO passwordDTO
+    ){
+        User user = userService.findUser(sessionDTO.getUserSeq());
+
+        if(!user.getPassword().equals(passwordDTO.getPrevPassword())) throw new CustomException(INCORRECT_PASSWORD);
+
+        userService.updatePassword(passwordDTO);
+        return ResponseEntity.ok(null);
     }
 }

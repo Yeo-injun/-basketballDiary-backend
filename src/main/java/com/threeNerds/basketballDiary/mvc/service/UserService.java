@@ -1,6 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.service;
 
 import com.threeNerds.basketballDiary.mvc.domain.User;
+import com.threeNerds.basketballDiary.mvc.dto.loginUser.PasswordDTO;
 import com.threeNerds.basketballDiary.mvc.dto.user.user.FindAllUserDTO;
 import com.threeNerds.basketballDiary.mvc.dto.user.user.UserDTO;
 import com.threeNerds.basketballDiary.mvc.repository.UserRepository;
@@ -54,5 +55,10 @@ public class UserService {
     @Transactional
     public List<UserDTO> findAllUser(FindAllUserDTO findAllUserDTO){
         return userRepository.findAllUser(findAllUserDTO);
+    }
+
+    @Transactional
+    public void updatePassword(PasswordDTO passwordDTO){
+        userRepository.updatePassword(passwordDTO);
     }
 }
