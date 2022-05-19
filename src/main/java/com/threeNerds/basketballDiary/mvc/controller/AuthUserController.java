@@ -73,7 +73,7 @@ public class AuthUserController {
         List<JoinRequestDTO> result = userTeamManagerService.getJoinRequestsTo(loginUserDTO);
         // TODO ResponseDTO로 감싸서 보내주기 ResponseDTO를 조회용 DTO의 공통부분을 추상화(페이징, 목록의 갯수 등)하고 이를 상속받아서
         // 매 조회요청 Controller의 메소드이름DTO로 만들기 
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok().body(result);
     }
 
     /**
@@ -130,7 +130,7 @@ public class AuthUserController {
 
         List<JoinRequestDTO> result = userTeamManagerService.getJoinRequestsFrom(loginUserDTO);
         // TODO ResponseDTO로 감싸서 보내주기
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok().body(result);
     }
 
     /**
@@ -164,7 +164,7 @@ public class AuthUserController {
         Long id = sessionDTO.getUserSeq();
         User user = userService.findUser(id);
         UserDTO userDto = getUserDto(user);
-        return ResponseEntity.ok(userDto);
+        return ResponseEntity.ok().body(userDto);
     }
 
     private UserDTO getUserDto(User user) {
@@ -194,7 +194,7 @@ public class AuthUserController {
     ) {
         User user = User.createUser(userDTO.userSeq(sessionDTO.getUserSeq()));
         userService.updateUser(user);
-        return ResponseEntity.ok(userDTO);
+        return ResponseEntity.ok().body(userDTO);
     }
 
     /**
@@ -222,6 +222,6 @@ public class AuthUserController {
         if(!user.getPassword().equals(passwordDTO.getPrevPassword())) throw new CustomException(INCORRECT_PASSWORD);
 
         userService.updatePassword(passwordDTO);
-        return ResponseEntity.ok(null);
+        return RESPONSE_OK;
     }
 }
