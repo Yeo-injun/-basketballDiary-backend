@@ -221,7 +221,7 @@ public class MyTeamController {
      * API011 소속팀 개인프로필 수정데이터 조회
      */
     @GetMapping("/{teamSeq}/profile")
-    public ResponseEntity<ResponseMyTeamProfileDTO> findMyTeamsProfile(
+    public ResponseEntity<MemberDTO> findMyTeamsProfile(
             @SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO,
             @PathVariable Long teamSeq){
 
@@ -231,7 +231,8 @@ public class MyTeamController {
                 .userSeq(id)
                 .teamSeq(teamSeq);
 
-        ResponseMyTeamProfileDTO myTeamProfileDTO = teamMemberService.findProfile(findMyTeamProfileDTO);
+        //ResponseMyTeamProfileDTO myTeamProfileDTO = teamMemberService.findProfile(findMyTeamProfileDTO);
+        MemberDTO myTeamProfileDTO = teamMemberService.findProfile(findMyTeamProfileDTO);
 
         return ResponseEntity.ok(myTeamProfileDTO);
     }
@@ -279,7 +280,7 @@ public class MyTeamController {
     /**
      * API014 : 소속팀 목록 조회
      */
-    /*@Auth(GRADE = TEAM_MEMBER)
+//    @Auth(GRADE = TEAM_MEMBER)
     @GetMapping
     public ResponseEntity<List<MyTeamDTO>> searchTeams(
             @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser
@@ -289,11 +290,6 @@ public class MyTeamController {
         List<MyTeamDTO> myTeamList = myTeamService.findTeams(userSeq);
 
         return ResponseEntity.ok().body(myTeamList);
-    }*/
-    @GetMapping("/{temp}")
-    public ResponseEntity<?> searchTeams(@PathVariable Integer temp){
-        log.error(String.valueOf(temp));
-        return ResponseEntity.ok().body(null);
     }
 
     /**

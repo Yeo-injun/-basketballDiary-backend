@@ -20,9 +20,17 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         WebMvcConfigurer.super.addCorsMappings(registry);
         registry.addMapping("/api/**")                      // /api 하위 API call 허용
-                .allowedOrigins("*")
-                .allowedMethods("*");
-                //.allowedOrigins("http://127.0.0.1:5500")    // 로컬 프론트에서만 허용
+                .allowedMethods("*")
+                // CORS은 기본헤더만 접근가능하게 함. 따라서 브라우저에서는 set-Cookie 헤더에 접근이 불가함. 접근을 허용하기 위해 설정을 추가
+                // https://bogmong.tistory.com/5
+//                .allowedHeaders("Cookie", "Set-Cookie")
+                .allowedHeaders("*")
+                .exposedHeaders("Set-Cookie")
+                .allowedOrigins("http://127.0.0.1:5500", "http://localhost:5500") // TODO allowedCredentials이 true이면  *(와일드 카드)는 사용 못함. Origin을 명시해줘야 함
+                .allowCredentials(true);
+
+
+        //.allowedOrigins("http://127.0.0.1:5500")    // 로컬 프론트에서만 허용
                 //.allowedMethods("GET");                     // GET Method에 대해서만 허용
     }
 }

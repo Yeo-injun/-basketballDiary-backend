@@ -1,27 +1,25 @@
 package com.threeNerds.basketballDiary.mvc.controller;
 
 import com.threeNerds.basketballDiary.exception.CustomException;
-import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.interceptor.Auth;
 import com.threeNerds.basketballDiary.mvc.domain.User;
-import com.threeNerds.basketballDiary.mvc.dto.loginUser.userTeamManager.JoinRequestDTO;
 import com.threeNerds.basketballDiary.mvc.dto.loginUser.CmnLoginUserDTO;
+import com.threeNerds.basketballDiary.mvc.dto.loginUser.userTeamManager.JoinRequestDTO;
+import com.threeNerds.basketballDiary.mvc.dto.loginUser.PasswordDTO;
 import com.threeNerds.basketballDiary.mvc.dto.user.user.UserDTO;
 import com.threeNerds.basketballDiary.mvc.service.UserService;
 import com.threeNerds.basketballDiary.mvc.service.UserTeamManagerService;
 import com.threeNerds.basketballDiary.session.SessionUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-
 import java.util.List;
-import java.util.Optional;
 
 import static com.threeNerds.basketballDiary.constant.Constant.USER;
+import static com.threeNerds.basketballDiary.exception.Error.INCORRECT_PASSWORD;
 import static com.threeNerds.basketballDiary.session.SessionConst.LOGIN_MEMBER;
 import static com.threeNerds.basketballDiary.utils.HttpResponses.RESPONSE_CREATED;
 import static com.threeNerds.basketballDiary.utils.HttpResponses.RESPONSE_OK;
@@ -75,7 +73,7 @@ public class AuthUserController {
         List<JoinRequestDTO> result = userTeamManagerService.getJoinRequestsTo(loginUserDTO);
         // TODO ResponseDTO로 감싸서 보내주기 ResponseDTO를 조회용 DTO의 공통부분을 추상화(페이징, 목록의 갯수 등)하고 이를 상속받아서
         // 매 조회요청 Controller의 메소드이름DTO로 만들기 
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok().body(result);
     }
 
     /**
@@ -132,7 +130,7 @@ public class AuthUserController {
 
         List<JoinRequestDTO> result = userTeamManagerService.getJoinRequestsFrom(loginUserDTO);
         // TODO ResponseDTO로 감싸서 보내주기
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok().body(result);
     }
 
     /**
@@ -159,37 +157,44 @@ public class AuthUserController {
      * API025 회원정보 수정데이터 조회
      */
     @GetMapping("/profile")
-    public ResponseEntity<UserDTO> myInfo(
-            @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionDTO,
-            UserDTO userDTO
+    public ResponseEntity<UserDTO> getMyInfo(
+            @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionDTO
     ){
 
         Long id = sessionDTO.getUserSeq();
-
         User user = userService.findUser(id);
-        UserDTO userDto = new UserDTO();
+        UserDTO userDto = getUserDto(user);
+        return ResponseEntity.ok().body(userDto);
+    }
 
-        BeanUtils.copyProperties(user,userDto);
-        return ResponseEntity.ok(userDto);
+    private UserDTO getUserDto(User user) {
+        return new UserDTO().userId(user.getUserId())
+                .password(user.getPassword())
+                .userName(user.getUserName())
+                .positionCode(user.getPositionCode())
+                .email(user.getEmail())
+                .gender(user.getGender())
+                .birthYmd(user.getBirthYmd())
+                .height(user.getHeight())
+                .weight(user.getWeight())
+                .regDate(user.getRegDate())
+                .updateDate(user.getUpdateDate())
+                .userRegYn(user.getUserRegYn())
+                .sidoCode(user.getSidoCode())
+                .sigunguCode(user.getSigunguCode());
     }
 
     /**
      * API026 회원수정 : update 를 수행한 후 update 된 객체를 리턴시켜주자 => 이래야 TEST CODE 작성시 정확히 update 가 되었는지 확인할 수 있다.
      */
-    @PutMapping("/profile")
+    @PostMapping("/profile")
     public ResponseEntity<?> updateUser(
             @SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO,
             @RequestBody @Valid UserDTO userDTO
     ) {
-
-        Long id = sessionDTO.getUserSeq();
-
-        User user = userService.findUser(id);
-
-        BeanUtils.copyProperties(userDTO,user);
+        User user = User.createUser(userDTO.userSeq(sessionDTO.getUserSeq()));
         userService.updateUser(user);
-
-        return RESPONSE_OK;
+        return ResponseEntity.ok().body(userDTO);
     }
 
     /**
@@ -197,11 +202,26 @@ public class AuthUserController {
      *          만약 컬럼값 1개만 Y->N 으로 변경했더라면 객체간 비교를 해줄 수 있지만, 아에 테이블에서 삭제를 해버리는 이상 마땅한 방법이 없음
      */
     @DeleteMapping("/profile")
-    public ResponseEntity<?> deleteUser(@SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO){
+    public ResponseEntity<?> deleteUser(
+            @SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO
+    ){
 
         String id = sessionDTO.getUserId();
 
         userService.deleteUser(id);
+        return RESPONSE_OK;
+    }
+
+    @PostMapping("/profile/password")
+    public ResponseEntity<?> updatePassword(
+            @SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO,
+            @RequestBody PasswordDTO passwordDTO
+    ){
+        User user = userService.findUser(sessionDTO.getUserSeq());
+
+        if(!user.getPassword().equals(passwordDTO.getPrevPassword())) throw new CustomException(INCORRECT_PASSWORD);
+
+        userService.updatePassword(passwordDTO);
         return RESPONSE_OK;
     }
 }

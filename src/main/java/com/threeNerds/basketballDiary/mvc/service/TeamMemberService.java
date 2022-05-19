@@ -1,10 +1,11 @@
 package com.threeNerds.basketballDiary.mvc.service;
 
-import com.threeNerds.basketballDiary.mvc.controller.MyTeamController;
 import com.threeNerds.basketballDiary.mvc.dto.myTeam.FindMyTeamProfileDTO;
 import com.threeNerds.basketballDiary.mvc.dto.myTeam.ModifyMyTeamProfileDTO;
 import com.threeNerds.basketballDiary.mvc.dto.myTeam.ResponseMyTeamProfileDTO;
+import com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MemberDTO;
 import com.threeNerds.basketballDiary.mvc.repository.TeamMemberRepository;
+import com.threeNerds.basketballDiary.mvc.repository.MyTeamRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -26,9 +27,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class TeamMemberService {
     private final TeamMemberRepository teamMemberRepository;
+    private final MyTeamRepository myTeamRepository;
 
-    public ResponseMyTeamProfileDTO findProfile(FindMyTeamProfileDTO userDto){
-        return teamMemberRepository.findMyTeamProfile(userDto);
+    // 2022.05.08. 강창기   소속팀 프로필 api와 프로필 수정조회 api와 함께 사용하기 위해 수정반영
+    //public ResponseMyTeamProfileDTO findProfile(FindMyTeamProfileDTO userDto){
+    public MemberDTO findProfile(FindMyTeamProfileDTO userDto){
+        //return teamMemberRepository.findMyTeamProfile(userDto);
+        return myTeamRepository.findProfileByUserSeqAndTeamSeq(userDto.getUserSeq(), userDto.getTeamSeq());
     }
 
     public int updateMyTeamProfile(ModifyMyTeamProfileDTO userDto){
