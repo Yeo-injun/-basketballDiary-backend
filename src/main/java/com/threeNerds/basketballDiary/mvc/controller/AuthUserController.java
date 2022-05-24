@@ -212,6 +212,9 @@ public class AuthUserController {
         return RESPONSE_OK;
     }
 
+    /**
+     * API027 비밀번호 변경
+     */
     @PostMapping("/profile/password")
     public ResponseEntity<?> updatePassword(
             @SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO,
