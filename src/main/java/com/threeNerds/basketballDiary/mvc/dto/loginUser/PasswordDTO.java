@@ -23,4 +23,10 @@ public class PasswordDTO {
         this.curPassword = curPassword;
         return this;
     }
+
+    public static PasswordDTO retPasswordDto(PasswordDTO passwordDTO,Long userSeq){
+        return new PasswordDTO().userSeq(userSeq)
+                .prevPassword(passwordDTO.getPrevPassword())
+                .curPassword(passwordDTO.getCurPassword());
+    }
 }

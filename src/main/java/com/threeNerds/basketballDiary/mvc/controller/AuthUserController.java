@@ -222,9 +222,11 @@ public class AuthUserController {
     ){
         User user = userService.findUser(sessionDTO.getUserSeq());
 
-        if(!user.getPassword().equals(passwordDTO.getPrevPassword())) throw new CustomException(INCORRECT_PASSWORD);
+        if(!user.getPassword().equals(passwordDTO.getPrevPassword())) {
+            throw new CustomException(INCORRECT_PASSWORD);
+        }
 
-        userService.updatePassword(passwordDTO);
+        userService.updatePassword(PasswordDTO.retPasswordDto(passwordDTO,user.getUserSeq()));
         return RESPONSE_OK;
     }
 }
