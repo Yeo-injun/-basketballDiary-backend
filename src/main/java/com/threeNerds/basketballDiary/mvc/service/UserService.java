@@ -3,6 +3,7 @@ package com.threeNerds.basketballDiary.mvc.service;
 import com.threeNerds.basketballDiary.mvc.domain.User;
 import com.threeNerds.basketballDiary.mvc.dto.loginUser.PasswordDTO;
 import com.threeNerds.basketballDiary.mvc.dto.user.user.FindAllUserDTO;
+import com.threeNerds.basketballDiary.mvc.dto.user.user.UpdateUserDTO;
 import com.threeNerds.basketballDiary.mvc.dto.user.user.UserDTO;
 import com.threeNerds.basketballDiary.mvc.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -43,7 +44,7 @@ public class UserService {
         return userRepository.saveUser(user);
     }
     @Transactional
-    public void updateUser(User user){
+    public void updateUser(UpdateUserDTO user){
         userRepository.updateUser(user);
     }
 
