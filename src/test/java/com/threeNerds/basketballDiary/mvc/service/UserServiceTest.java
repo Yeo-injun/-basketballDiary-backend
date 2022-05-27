@@ -93,16 +93,6 @@ class UserServiceTest {
     }
 
     @Test
-    void modifyUserTest(){
-        //given
-        doNothing().when(userRepository).updateUser(testUser2);
-        //when
-        userRepository.updateUser(testUser2);
-        //then
-        verify(userRepository).updateUser(testUser2);
-    }
-
-    @Test
     void deleteUserTest(){
         //given
         doNothing().when(userRepository).deleteUser("Uesr");

@@ -5,6 +5,7 @@ import com.threeNerds.basketballDiary.mvc.dto.AuthUserRequestDTO;
 import com.threeNerds.basketballDiary.mvc.dto.loginUser.PasswordDTO;
 import com.threeNerds.basketballDiary.mvc.dto.user.user.FindAllUserDTO;
 import com.threeNerds.basketballDiary.mvc.dto.user.user.LoginUserDTO;
+import com.threeNerds.basketballDiary.mvc.dto.user.user.UpdateUserDTO;
 import com.threeNerds.basketballDiary.mvc.dto.user.user.UserDTO;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -16,7 +17,7 @@ public interface UserRepository {
     User findUser(Long id);
     Long saveUser(User user);
     User loginFindUser(LoginUserDTO loginUserDTO);
-    void updateUser(User user);
+    void updateUser(UpdateUserDTO user);
     void deleteUser(String id);
     void updatePassword(PasswordDTO passwordDTO);
 

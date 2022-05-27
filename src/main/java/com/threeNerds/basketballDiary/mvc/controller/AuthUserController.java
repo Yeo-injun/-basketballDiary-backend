@@ -6,12 +6,14 @@ import com.threeNerds.basketballDiary.mvc.domain.User;
 import com.threeNerds.basketballDiary.mvc.dto.loginUser.CmnLoginUserDTO;
 import com.threeNerds.basketballDiary.mvc.dto.loginUser.userTeamManager.JoinRequestDTO;
 import com.threeNerds.basketballDiary.mvc.dto.loginUser.PasswordDTO;
+import com.threeNerds.basketballDiary.mvc.dto.user.user.UpdateUserDTO;
 import com.threeNerds.basketballDiary.mvc.dto.user.user.UserDTO;
 import com.threeNerds.basketballDiary.mvc.service.UserService;
 import com.threeNerds.basketballDiary.mvc.service.UserTeamManagerService;
 import com.threeNerds.basketballDiary.session.SessionUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.annotations.Update;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -163,26 +165,11 @@ public class AuthUserController {
 
         Long id = sessionDTO.getUserSeq();
         User user = userService.findUser(id);
-        UserDTO userDto = getUserDto(user);
+        UserDTO userDto = UserDTO.getUserDto(user);
         return ResponseEntity.ok().body(userDto);
     }
 
-    private UserDTO getUserDto(User user) {
-        return new UserDTO().userId(user.getUserId())
-                .password(user.getPassword())
-                .userName(user.getUserName())
-                .positionCode(user.getPositionCode())
-                .email(user.getEmail())
-                .gender(user.getGender())
-                .birthYmd(user.getBirthYmd())
-                .height(user.getHeight())
-                .weight(user.getWeight())
-                .regDate(user.getRegDate())
-                .updateDate(user.getUpdateDate())
-                .userRegYn(user.getUserRegYn())
-                .sidoCode(user.getSidoCode())
-                .sigunguCode(user.getSigunguCode());
-    }
+
 
     /**
      * API026 회원수정 : update 를 수행한 후 update 된 객체를 리턴시켜주자 => 이래야 TEST CODE 작성시 정확히 update 가 되었는지 확인할 수 있다.
@@ -190,11 +177,11 @@ public class AuthUserController {
     @PostMapping("/profile")
     public ResponseEntity<?> updateUser(
             @SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO,
-            @RequestBody @Valid UserDTO userDTO
+            @RequestBody @Valid UpdateUserDTO userDTO
     ) {
-        User user = User.createUser(userDTO.userSeq(sessionDTO.getUserSeq()));
-        userService.updateUser(user);
-        return ResponseEntity.ok().body(userDTO);
+        userService.updateUser(userDTO.userSeq(sessionDTO.getUserSeq()));
+
+        return ResponseEntity.ok().body(null);
     }
 
     /**
