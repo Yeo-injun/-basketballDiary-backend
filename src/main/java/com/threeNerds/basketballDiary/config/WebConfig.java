@@ -13,7 +13,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(new AuthInterceptor())
                 .order(1)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/","/users/new","/login","/logout","/css/**","/*ico","/error");
+                .excludePathPatterns("/", "/api/user/registration", "/api/user/login", "/api/user/logout", "/users/new","/login","/logout","/css/**","/*ico","/error");
     }
 
     @Override

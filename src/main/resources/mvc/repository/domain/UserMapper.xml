@@ -122,4 +122,11 @@
     <delete id="deleteUser">
         DELETE FROM USER WHERE USER_ID = #{id}
     </delete>
+
+    <select id="findUserByUserId" resultType="com.threeNerds.basketballDiary.mvc.domain.User">
+        SELECT USER_ID
+             , USER_SEQ
+          FROM USER
+         WHERE USER_ID = #{userId}
+    </select>
 </mapper>

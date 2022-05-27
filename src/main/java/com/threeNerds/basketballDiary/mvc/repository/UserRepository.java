@@ -21,4 +21,7 @@ public interface UserRepository {
 
     List<AuthUserRequestDTO> findAuthList(User user);
     List<UserDTO> findAllUser(FindAllUserDTO findAllUserDTO);
+
+    // 사용자ID 중복확인 쿼리
+    User findUserByUserId(User checkForDuplication);
 }
