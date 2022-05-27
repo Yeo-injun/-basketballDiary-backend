@@ -21,8 +21,7 @@ public class ErrorResponse {
      * ErrorResponse.toResponseEntity Static 메소드를 이용해서
      * HTTP 상태코드와 에러메세지 등의 정보를 HttpResponse로 만들어줌.
      */
-    public static ResponseEntity<ErrorResponse> toResponseEntity(Error error)
-    {
+    public static ResponseEntity<ErrorResponse> toResponseEntity(Error error){
         return ResponseEntity
                 .status(error.getHttpStatus())
                 .body(ErrorResponse.builder()

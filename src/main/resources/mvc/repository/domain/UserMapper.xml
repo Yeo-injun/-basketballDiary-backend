@@ -129,4 +129,10 @@
           FROM USER
          WHERE USER_ID = #{userId}
     </select>
+
+    <update id="updatePassword" parameterType="com.threeNerds.basketballDiary.mvc.dto.loginUser.PasswordDTO">
+        UPDATE USER
+        SET PWD=#{curPassword}
+        WHERE USER_SEQ=#{userSeq}
+    </update>
 </mapper>

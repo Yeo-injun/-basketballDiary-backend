@@ -87,7 +87,7 @@ public class UserController {
         log.info(session.getId());
         // TODO 쿠키생성 로직 - https://reflectoring.io/spring-boot-cookies/
 //        ResponseCookie cookie = ResponseCookie.from("teset", "cookie").httpOnly(false).build();
-        return ResponseEntity.ok(sessionUser);
+        return ResponseEntity.ok().body(sessionUser);
     }
 
     /**
@@ -110,7 +110,7 @@ public class UserController {
                                             .userName(userName)
                                             .email(email);
         List<UserDTO> allUser = userService.findAllUser(findAllUserDTO);
-        return ResponseEntity.ok(allUser);
+        return ResponseEntity.ok().body(allUser);
     }
 
 }

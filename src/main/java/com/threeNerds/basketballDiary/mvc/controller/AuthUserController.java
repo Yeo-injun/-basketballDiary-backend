@@ -1,9 +1,11 @@
 package com.threeNerds.basketballDiary.mvc.controller;
 
+import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.interceptor.Auth;
 import com.threeNerds.basketballDiary.mvc.domain.User;
 import com.threeNerds.basketballDiary.mvc.dto.loginUser.CmnLoginUserDTO;
 import com.threeNerds.basketballDiary.mvc.dto.loginUser.userTeamManager.JoinRequestDTO;
+import com.threeNerds.basketballDiary.mvc.dto.loginUser.PasswordDTO;
 import com.threeNerds.basketballDiary.mvc.dto.user.user.UserDTO;
 import com.threeNerds.basketballDiary.mvc.service.UserService;
 import com.threeNerds.basketballDiary.mvc.service.UserTeamManagerService;
@@ -17,6 +19,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 import static com.threeNerds.basketballDiary.constant.Constant.USER;
+import static com.threeNerds.basketballDiary.exception.Error.INCORRECT_PASSWORD;
 import static com.threeNerds.basketballDiary.session.SessionConst.LOGIN_MEMBER;
 import static com.threeNerds.basketballDiary.utils.HttpResponses.RESPONSE_CREATED;
 import static com.threeNerds.basketballDiary.utils.HttpResponses.RESPONSE_OK;
@@ -70,7 +73,7 @@ public class AuthUserController {
         List<JoinRequestDTO> result = userTeamManagerService.getJoinRequestsTo(loginUserDTO);
         // TODO ResponseDTO로 감싸서 보내주기 ResponseDTO를 조회용 DTO의 공통부분을 추상화(페이징, 목록의 갯수 등)하고 이를 상속받아서
         // 매 조회요청 Controller의 메소드이름DTO로 만들기 
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok().body(result);
     }
 
     /**
@@ -127,7 +130,7 @@ public class AuthUserController {
 
         List<JoinRequestDTO> result = userTeamManagerService.getJoinRequestsFrom(loginUserDTO);
         // TODO ResponseDTO로 감싸서 보내주기
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok().body(result);
     }
 
     /**
@@ -159,10 +162,9 @@ public class AuthUserController {
     ){
 
         Long id = sessionDTO.getUserSeq();
-
         User user = userService.findUser(id);
         UserDTO userDto = getUserDto(user);
-        return ResponseEntity.ok(userDto);
+        return ResponseEntity.ok().body(userDto);
     }
 
     private UserDTO getUserDto(User user) {
@@ -192,7 +194,7 @@ public class AuthUserController {
     ) {
         User user = User.createUser(userDTO.userSeq(sessionDTO.getUserSeq()));
         userService.updateUser(user);
-        return ResponseEntity.ok(userDTO);
+        return ResponseEntity.ok().body(userDTO);
     }
 
     /**
@@ -200,11 +202,31 @@ public class AuthUserController {
      *          만약 컬럼값 1개만 Y->N 으로 변경했더라면 객체간 비교를 해줄 수 있지만, 아에 테이블에서 삭제를 해버리는 이상 마땅한 방법이 없음
      */
     @DeleteMapping("/profile")
-    public ResponseEntity<?> deleteUser(@SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO){
+    public ResponseEntity<?> deleteUser(
+            @SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO
+    ){
 
         String id = sessionDTO.getUserId();
 
         userService.deleteUser(id);
+        return RESPONSE_OK;
+    }
+
+    /**
+     * API027 비밀번호 변경
+     */
+    @PostMapping("/profile/password")
+    public ResponseEntity<?> updatePassword(
+            @SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO,
+            @RequestBody PasswordDTO passwordDTO
+    ){
+        User user = userService.findUser(sessionDTO.getUserSeq());
+
+        if(!user.getPassword().equals(passwordDTO.getPrevPassword())) {
+            throw new CustomException(INCORRECT_PASSWORD);
+        }
+
+        userService.updatePassword(PasswordDTO.retPasswordDto(passwordDTO,user.getUserSeq()));
         return RESPONSE_OK;
     }
 }

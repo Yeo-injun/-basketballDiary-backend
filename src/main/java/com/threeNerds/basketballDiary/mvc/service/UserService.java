@@ -3,6 +3,7 @@ package com.threeNerds.basketballDiary.mvc.service;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.mvc.domain.User;
+import com.threeNerds.basketballDiary.mvc.dto.loginUser.PasswordDTO;
 import com.threeNerds.basketballDiary.mvc.dto.user.user.FindAllUserDTO;
 import com.threeNerds.basketballDiary.mvc.dto.user.user.UserDTO;
 import com.threeNerds.basketballDiary.mvc.repository.UserRepository;
@@ -12,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * 소속팀에서 팀원관리 및 소속팀정보 관리 등의 업무를 수행하는 Service
@@ -67,5 +67,10 @@ public class UserService {
             throw new CustomException(Error.DUPLICATE_USER_ID);
         }
 
+    }
+
+    @Transactional
+    public void updatePassword(PasswordDTO passwordDTO){
+        userRepository.updatePassword(passwordDTO);
     }
 }
