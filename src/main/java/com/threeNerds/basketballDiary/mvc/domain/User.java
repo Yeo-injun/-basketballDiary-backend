@@ -47,26 +47,6 @@ public class User {
     /* 도로명주소 */
     private String roadAddress;
 
-    public static User createUser(UserDTO userDTO){
-        return User.builder()
-                .userSeq(userDTO.getUserSeq())
-                .userId(userDTO.getUserId())
-                .password(userDTO.getPassword())
-                .userName(userDTO.getUserName())
-                .positionCode(userDTO.getPositionCode())
-                .email(userDTO.getEmail())
-                .gender(userDTO.getGender())
-                .birthYmd(userDTO.getBirthYmd())
-                .height(userDTO.getHeight())
-                .weight(userDTO.getWeight())
-                .regDate(userDTO.getRegDate())
-                .updateDate(userDTO.getUpdateDate())
-                .userRegYn(userDTO.getUserRegYn())
-                .sidoCode(userDTO.getSidoCode())
-                .sigunguCode(userDTO.getSigunguCode())
-                .build();
-    }
-
     public static User createUserForRegistration(CmnUserDTO userDTO)
     {
         LocalDate today = LocalDate.now();
