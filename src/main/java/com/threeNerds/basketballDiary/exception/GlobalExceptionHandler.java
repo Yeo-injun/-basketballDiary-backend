@@ -24,14 +24,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = { CustomException.class })
     protected ResponseEntity<ErrorResponse> handleCustomException (CustomException ex)
     {
-        log.error("handleCustomException throw CustomException : {}", ex.getError());
+        log.error("handleCustomException throw CustomException : {}", ex.getError(),ex);
         return ErrorResponse.toResponseEntity(ex.getError());
     }
 
     @ExceptionHandler(value = { NullPointerException.class })
     protected ResponseEntity<ErrorResponse> handleNullPointerException (NullPointerException ex)
     {
-        log.error("handleCustomException throw CustomException : {}", ex.getStackTrace());
+        log.error("handleCustomException throw CustomException={}", ex.getMessage(),ex);
         return ErrorResponse.toResponseEntity(Error.INTERNAL_ERROR);
     }
 
