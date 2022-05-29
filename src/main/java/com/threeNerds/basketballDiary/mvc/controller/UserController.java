@@ -44,28 +44,27 @@ public class UserController {
     private final UserTeamManagerService userTeamManagerService;
 
     /**
+     * API034 사용자ID 중복확인
+     */
+    @PostMapping("/duplicationCheck")
+    public ResponseEntity<?> checkDuplicateUserId (
+            @RequestBody CmnUserDTO cmnUserDTO
+    ) {
+        User checkForDuplication = User.builder()
+                .userId(cmnUserDTO.getUserId())
+                .build();
+        userService.checkDuplicationUserId(checkForDuplication);
+        return RESPONSE_OK;
+    }
+    /**
      * API029 회원가입
      */
     @PostMapping("/registration")
-    public ResponseEntity<?> createUser(@RequestBody @Valid CmnUserDTO userDTO){
+    public ResponseEntity<?> createUser(
+            @RequestBody @Valid CmnUserDTO userDTO
+    ) {
 
-        User user = User.builder()
-                .userId(userDTO.getUserId())
-                .password(userDTO.getPassword())
-                .userName(userDTO.getUserName())
-                .positionCode(userDTO.getPositionCode())
-                .email(userDTO.getEmail())
-                .gender(userDTO.getGender())
-                .birthYmd(userDTO.getBirthYmd())
-                .height(userDTO.getHeight())
-                .weight(userDTO.getWeight())
-                .regDate(LocalDate.now())
-                .updateDate(LocalDate.now())
-                .userRegYn("Y")
-                .sidoCode(userDTO.getSidoCode())
-                .sigunguCode(userDTO.getSigunguCode())
-                .build();
-
+        User user = User.createUserForRegistration(userDTO);
         userService.createMember(user);
         return RESPONSE_OK;
     }
@@ -110,15 +109,4 @@ public class UserController {
         return ResponseEntity.ok().body(allUser);
     }
 
-/*    @Auth(GRADE = LEADER)
-    @GetMapping("/testAnnotation/{teamId}")
-    public void test(){
-        log.info("Auth : 1");
-    }
-
-    @Auth(GRADE = MANAGER)
-    @GetMapping("/testAnnotation2/{teamId}")
-    public void test2(){
-        log.info("Auth : 2");
-    }*/
 }

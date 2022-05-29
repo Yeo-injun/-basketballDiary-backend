@@ -1,5 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.service;
 
+import com.threeNerds.basketballDiary.exception.CustomException;
+import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.mvc.domain.User;
 import com.threeNerds.basketballDiary.mvc.dto.loginUser.PasswordDTO;
 import com.threeNerds.basketballDiary.mvc.dto.user.user.FindAllUserDTO;
@@ -35,6 +37,7 @@ public class UserService {
     public Long findSeq(String userId){
         return userRepository.findSeq(userId);
     }
+
     @Transactional
     public User findUser(Long id) {
         return userRepository.findUser(id);
@@ -56,6 +59,15 @@ public class UserService {
     @Transactional
     public List<UserDTO> findAllUser(FindAllUserDTO findAllUserDTO){
         return userRepository.findAllUser(findAllUserDTO);
+    }
+
+    public void checkDuplicationUserId(User checkForDuplication)
+    {
+        User user = userRepository.findUserByUserId(checkForDuplication);
+        if (user != null) {
+            throw new CustomException(Error.DUPLICATE_USER_ID);
+        }
+
     }
 
     @Transactional

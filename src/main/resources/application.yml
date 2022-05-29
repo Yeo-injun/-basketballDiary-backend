@@ -37,7 +37,7 @@ server:
       tracking-modes: cookie
       cookie:
         name: basketballDiary
-#        domain: localhost:5500 sameSite 설정을 위한 속성값 - sameSite의 기본값은 lax로 제한적으로만 cookie가 세팅됨. sameSite = none으로 하고 https통신으로 바꿔줘야 함!
+#        domain: 127.0.0.1:5500 # sameSite 설정을 위한 속성값 - sameSite의 기본값은 lax로 제한적으로만 cookie가 세팅됨. sameSite = none으로 하고 https통신으로 바꿔줘야 함!
 # 참고 : https://yousrain.tistory.com/23, https://velog.io/@kwakwoohyun/%EC%9D%B4%EC%8A%88%EC%B2%98%EB%A6%AC-spring-boot-local-cookie
         http-only: true
         path: /
