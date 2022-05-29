@@ -44,6 +44,8 @@ public class User {
     private String sidoCode;
     /* 시군구코드 */
     private String sigunguCode;
+    /* 도로명주소 */
+    private String roadAddress;
 
     public static User createUser(UserDTO userDTO){
         return User.builder()
