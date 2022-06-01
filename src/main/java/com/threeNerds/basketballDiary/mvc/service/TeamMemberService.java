@@ -33,7 +33,8 @@ public class TeamMemberService {
     //public ResponseMyTeamProfileDTO findProfile(FindMyTeamProfileDTO userDto){
     public MemberDTO findProfile(FindMyTeamProfileDTO userDto){
         //return teamMemberRepository.findMyTeamProfile(userDto);
-        return myTeamRepository.findProfileByUserSeqAndTeamSeq(userDto.getUserSeq(), userDto.getTeamSeq());
+//        return myTeamRepository.findProfileByUserSeqAndTeamSeq(userDto.getUserSeq(), userDto.getTeamSeq());
+        return myTeamRepository.findProfileByUserSeqAndTeamSeq(userDto);
     }
 
     public int updateMyTeamProfile(ModifyMyTeamProfileDTO userDto){
