@@ -181,7 +181,7 @@ public class AuthUserController {
     ) {
         userService.updateUser(userDTO.userSeq(sessionDTO.getUserSeq()));
 
-        return ResponseEntity.ok().body(null);
+        return ResponseEntity.ok().body(userDTO);
     }
 
     /**

@@ -280,7 +280,7 @@ public class MyTeamController {
     /**
      * API014 : 소속팀 목록 조회
      */
-//    @Auth(GRADE = TEAM_MEMBER)
+    @Auth(GRADE = TEAM_MEMBER)
     @GetMapping
     public ResponseEntity<List<MyTeamDTO>> searchTeams(
             @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser
@@ -330,7 +330,7 @@ public class MyTeamController {
      * API017 : 소속팀 정보 수정
      */
     @Auth(GRADE = MANAGER)
-    @PutMapping("/{teamSeq}/info")
+    @PostMapping("/{teamSeq}/info")
     public ResponseEntity<?> modifyMyTeam(
             @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser,
             @PathVariable(value = "teamSeq") Long teamSeq,
