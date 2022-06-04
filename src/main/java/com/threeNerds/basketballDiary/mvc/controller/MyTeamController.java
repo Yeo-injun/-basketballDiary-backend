@@ -2,20 +2,21 @@ package com.threeNerds.basketballDiary.mvc.controller;
 
 import com.threeNerds.basketballDiary.interceptor.Auth;
 import com.threeNerds.basketballDiary.mvc.dto.PlayerDTO;
-import com.threeNerds.basketballDiary.mvc.dto.PlayerSearchDTO;
-import com.threeNerds.basketballDiary.mvc.dto.loginUser.userTeamManager.JoinRequestDTO;
-import com.threeNerds.basketballDiary.mvc.dto.myTeam.*;
+import com.threeNerds.basketballDiary.mvc.dto.myTeam.MyTeamProfileDTO;
+import com.threeNerds.basketballDiary.mvc.dto.myTeam.CmnMyTeamDTO;
+import com.threeNerds.basketballDiary.mvc.dto.myTeam.FindMyTeamProfileDTO;
+import com.threeNerds.basketballDiary.mvc.dto.myTeam.ModifyMyTeamProfileDTO;
 import com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MemberDTO;
 import com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MyTeamDTO;
 import com.threeNerds.basketballDiary.mvc.service.MyTeamService;
 import com.threeNerds.basketballDiary.mvc.service.TeamMemberManagerService;
 import com.threeNerds.basketballDiary.mvc.service.TeamMemberService;
 import com.threeNerds.basketballDiary.session.SessionUser;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -240,11 +241,11 @@ public class MyTeamController {
     /**
      * API012 소속팀 개인프로필 수정
      */
-    @PatchMapping("/{teamSeq}/profile")
+    //@PostMapping("/{teamSeq}/profile")
     public ResponseEntity<?> modifyMyTeamsProfile(
             @SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO,
             @PathVariable Long teamSeq,
-            @RequestBody BackNumber backNumber){
+            @RequestBody MyTeamProfileDTO backNumber){
 
         Long id = sessionDTO.getUserSeq();
 
@@ -257,6 +258,18 @@ public class MyTeamController {
                 .backNumber(backNumber.getBackNumber());
 
         teamMemberService.updateMyTeamProfile(myTeamProfileDTO);
+        return RESPONSE_OK;
+    }
+
+    @PostMapping("/{teamSeq}/profile")
+    public ResponseEntity<?> modifyMyTeamsProfile_tmp(
+            @SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO,
+            @PathVariable Long teamSeq,
+            @RequestParam(value = "dto") MyTeamProfileDTO myTeamProfileDTO){
+
+        Long id = sessionDTO.getUserSeq();
+
+
         return RESPONSE_OK;
     }
 
