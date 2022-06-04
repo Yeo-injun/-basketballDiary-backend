@@ -241,11 +241,11 @@ public class MyTeamController {
     /**
      * API012 소속팀 개인프로필 수정
      */
-    //@PostMapping("/{teamSeq}/profile")
+    @PostMapping("/{teamSeq}/profile")
     public ResponseEntity<?> modifyMyTeamsProfile(
             @SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO,
             @PathVariable Long teamSeq,
-            @RequestBody MyTeamProfileDTO backNumber){
+            @RequestBody MyTeamProfileDTO myTeamProfileDTO){
 
         Long id = sessionDTO.getUserSeq();
 
@@ -253,22 +253,22 @@ public class MyTeamController {
                 .userSeq(id)
                 .teamSeq(teamSeq);
 
-        ModifyMyTeamProfileDTO myTeamProfileDTO = new ModifyMyTeamProfileDTO()
+        ModifyMyTeamProfileDTO teamProfileDTO = new ModifyMyTeamProfileDTO()
                 .findMyTeamProfileDTO(findMyTeamProfileDTO)
-                .backNumber(backNumber.getBackNumber());
+                .backNumber(myTeamProfileDTO.getBackNumber());
 
-        teamMemberService.updateMyTeamProfile(myTeamProfileDTO);
+        teamMemberService.updateMyTeamProfile(teamProfileDTO);
         return RESPONSE_OK;
     }
 
-    @PostMapping("/{teamSeq}/profile")
+    //@PostMapping("/{teamSeq}/profile")
     public ResponseEntity<?> modifyMyTeamsProfile_tmp(
             @SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO,
             @PathVariable Long teamSeq,
-            @RequestParam(value = "dto") MyTeamProfileDTO myTeamProfileDTO){
+            @ModelAttribute MyTeamProfileDTO myTeamProfileDTO){
 
-        Long id = sessionDTO.getUserSeq();
-
+        String backNumber = myTeamProfileDTO.getBackNumber();
+        MultipartFile file = myTeamProfileDTO.getImageFile();
 
         return RESPONSE_OK;
     }
