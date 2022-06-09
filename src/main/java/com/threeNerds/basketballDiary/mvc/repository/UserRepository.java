@@ -3,6 +3,7 @@ package com.threeNerds.basketballDiary.mvc.repository;
 import com.threeNerds.basketballDiary.mvc.domain.User;
 import com.threeNerds.basketballDiary.mvc.dto.AuthUserRequestDTO;
 import com.threeNerds.basketballDiary.mvc.dto.loginUser.PasswordDTO;
+import com.threeNerds.basketballDiary.mvc.dto.user.CmnUserDTO;
 import com.threeNerds.basketballDiary.mvc.dto.user.user.FindAllUserDTO;
 import com.threeNerds.basketballDiary.mvc.dto.user.user.LoginUserDTO;
 import com.threeNerds.basketballDiary.mvc.dto.user.user.UpdateUserDTO;
@@ -26,4 +27,6 @@ public interface UserRepository {
 
     // 사용자ID 중복확인 쿼리
     User findUserByUserId(User checkForDuplication);
+
+    List<UserDTO> findUserByUserNameOrEmail(CmnUserDTO findUserCond);
 }
