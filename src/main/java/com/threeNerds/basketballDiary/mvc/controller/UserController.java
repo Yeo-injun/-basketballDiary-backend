@@ -100,13 +100,15 @@ public class UserController {
      * API006 사용자 검색
      */
     @GetMapping
-    public ResponseEntity<?> findUserInfo(@RequestParam String userName,@RequestParam String email){
-        log.info("사용자 검색");
-        FindAllUserDTO findAllUserDTO = new FindAllUserDTO()
-                                            .userName(userName)
-                                            .email(email);
-        List<UserDTO> allUser = userService.findAllUser(findAllUserDTO);
-        return ResponseEntity.ok().body(allUser);
+    public ResponseEntity<?> findUserInfo(
+            @RequestParam(required = false) String userName,    // @RequestParam에 required=false가 없으면  get요청시 쿼리스트링이 반드시 있어야 함.
+            @RequestParam(required = false) String email
+    ){
+        CmnUserDTO findUserCond = new CmnUserDTO()
+                                        .userName(userName)
+                                        .email(email);
+        List<UserDTO> findUserList = userService.findUserByCond(findUserCond);
+        return ResponseEntity.ok().body(findUserList);
     }
 
 }
