@@ -245,7 +245,7 @@ public class MyTeamController {
     public ResponseEntity<?> modifyMyTeamsProfile(
             @SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO,
             @PathVariable Long teamSeq,
-            @RequestBody MyTeamProfileDTO myTeamProfileDTO){
+            @ModelAttribute MyTeamProfileDTO myTeamProfileDTO){
 
         Long id = sessionDTO.getUserSeq();
 
@@ -258,18 +258,6 @@ public class MyTeamController {
                 .backNumber(myTeamProfileDTO.getBackNumber());
 
         teamMemberService.updateMyTeamProfile(teamProfileDTO);
-        return RESPONSE_OK;
-    }
-
-    //@PostMapping("/{teamSeq}/profile")
-    public ResponseEntity<?> modifyMyTeamsProfile_tmp(
-            @SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO,
-            @PathVariable Long teamSeq,
-            @ModelAttribute MyTeamProfileDTO myTeamProfileDTO){
-
-        String backNumber = myTeamProfileDTO.getBackNumber();
-        MultipartFile file = myTeamProfileDTO.getImageFile();
-
         return RESPONSE_OK;
     }
 

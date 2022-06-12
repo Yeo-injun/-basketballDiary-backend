@@ -3,7 +3,8 @@
 
 <mapper namespace="com.threeNerds.basketballDiary.mvc.repository.UserRepository">
 
-    <insert id="saveUser" parameterType="com.threeNerds.basketballDiary.mvc.domain.User">
+    <insert id="saveUser" parameterType="com.threeNerds.basketballDiary.mvc.domain.User"
+        useGeneratedKeys="true" keyProperty="userSeq">
         INSERT INTO USER ( USER_ID
                          , PWD
                          , NAME

@@ -23,6 +23,8 @@ public class MemberDTO {
     private Long positionCode;
     /* 이름 */
     private String userName;
+    /* 팀이름 */
+    private String teamName;
     /* 생년월일 */
     private String birthYmd;
     /* 신장 */
@@ -66,6 +68,11 @@ public class MemberDTO {
 
     public MemberDTO userName (String userName) {
         this.userName = userName;
+        return this;
+    }
+
+    public MemberDTO teamName(String teamName){
+        this.teamName = teamName;
         return this;
     }
 

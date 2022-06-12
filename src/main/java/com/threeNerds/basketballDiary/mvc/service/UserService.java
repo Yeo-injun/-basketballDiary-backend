@@ -44,7 +44,8 @@ public class UserService {
     }
     @Transactional
     public Long createMember(User user) {
-        return userRepository.saveUser(user);
+        userRepository.saveUser(user);
+        return user.getUserSeq();
     }
     @Transactional
     public void updateUser(UpdateUserDTO user){
