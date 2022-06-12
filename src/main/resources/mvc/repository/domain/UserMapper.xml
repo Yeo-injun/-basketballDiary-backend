@@ -75,7 +75,34 @@
              , SIGUNGU_CODE
              , POSITION_CODE
         FROM USER
-        WHERE NAME=#{userName} OR EMAIL=#{email}
+        WHERE 1=1
+    </select>
+
+    <select id="findUserByUserNameOrEmail" resultType="com.threeNerds.basketballDiary.mvc.dto.user.user.UserDTO">
+        SELECT USER_ID
+        , NAME AS USERNAME
+        , PWD AS PASSWORD
+        , EMAIL
+        , REG_DATE
+        , UPDATE_DATE
+        , USER_REG_YN
+        , GENDER
+        , HEIGHT
+        , WEIGHT
+        , SIDO_CODE
+        , SIGUNGU_CODE
+        , POSITION_CODE
+        FROM USER
+        WHERE 1=1
+        <choose>
+            <when test='userName != "" and userName != null'>
+          AND NAME=#{userName}
+            </when>
+            <when test='email != "" and email != null'>
+          AND EMAIL=#{email}
+            </when>
+            <otherwise></otherwise>
+        </choose>
     </select>
 
     <select id="loginFindUser" resultType="com.threeNerds.basketballDiary.mvc.domain.User">
