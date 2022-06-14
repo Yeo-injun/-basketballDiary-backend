@@ -96,10 +96,10 @@
         WHERE 1=1
         <choose>
             <when test='userName != "" and userName != null'>
-          AND NAME=#{userName}
+          AND NAME LIKE '%${userName}%'
             </when>
             <when test='email != "" and email != null'>
-          AND EMAIL=#{email}
+          AND EMAIL LIKE '%${email}%'
             </when>
             <otherwise></otherwise>
         </choose>
