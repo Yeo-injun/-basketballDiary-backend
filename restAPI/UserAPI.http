@@ -1,4 +1,4 @@
 ### API029 회원가입
 
-### API006 사용자 검색
+###  사용자 검색
 GET http://127.0.0.1:8080/api/user?userName=Kim
