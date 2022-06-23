@@ -1,5 +1,7 @@
 package com.threeNerds.basketballDiary.interceptor;
 
+import com.threeNerds.basketballDiary.constant.Constant;
+import com.threeNerds.basketballDiary.constant.TeamAuthCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.session.SessionConst;
@@ -66,10 +68,15 @@ public class AuthInterceptor implements HandlerInterceptor {
         }
 
         // TODO 팀원 이상인 경우에만 접근가능하도록 처리
+        Long grade = auth.GRADE();
+        if (grade < Constant.TEAM_MEMBER) {
+            return true;
+        }
+
         Long teamId = Long.parseLong(pathVariables.get("teamSeq"));
         Map<Long, Long> userAuth = memberDto.getUserAuth();
 
-        Long grade = auth.GRADE();
+
         //현재 나의 권한보다 접근할 수 있는 권한이 더 높으면 접근 불가
         if(userAuth.get(teamId) < grade){
             log.info("접근 불가");
