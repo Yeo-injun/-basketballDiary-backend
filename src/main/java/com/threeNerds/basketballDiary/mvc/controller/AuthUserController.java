@@ -93,7 +93,10 @@ public class AuthUserController {
                 .userSeq(sessionUser.getUserSeq());
 
         userTeamManagerService.cancelJoinRequest(loginUserDTO);
-        return RESPONSE_OK;
+        // TODO 같은 서비스에서 호출해야 하는 것인지 아니면 컨트롤러에서 별도로 호출해야 하는것인지..
+        // 트랜잭션 관리를 어떻게 할 것인지가 관건으로 판단됨.
+        List<JoinRequestDTO> joinRequestDTOList = userTeamManagerService.getJoinRequestsTo(loginUserDTO);
+        return ResponseEntity.ok().body(joinRequestDTOList);
     }
 
     /**
@@ -124,8 +127,7 @@ public class AuthUserController {
     @GetMapping("/joinRequestsFrom")
     public ResponseEntity<?> getJoinRequestsFrom(
             @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser
-    )
-    {
+    ) {
         Long userSeq = sessionUser.getUserSeq();
         CmnLoginUserDTO loginUserDTO = new CmnLoginUserDTO()
                 .userSeq(userSeq);
