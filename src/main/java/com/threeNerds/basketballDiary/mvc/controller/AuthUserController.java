@@ -115,7 +115,9 @@ public class AuthUserController {
                 .userSeq(userSeq);
 
         userTeamManagerService.approveInvitation(loginUserDTO);
-        return RESPONSE_OK;
+        // TODO 컨트롤러에서 서비스 호출하는 방식을 허용할 것인지 -> 우선 트랜잭션 이슈 검토, 서비스레이어의 역할 및 책임에 대해서 다시 공부 검토
+        List<JoinRequestDTO> joinRequestDTOList = userTeamManagerService.getJoinRequestsFrom(loginUserDTO);
+        return ResponseEntity.ok().body(joinRequestDTOList);
     }
 
     /**
@@ -133,7 +135,6 @@ public class AuthUserController {
                 .userSeq(userSeq);
 
         List<JoinRequestDTO> result = userTeamManagerService.getJoinRequestsFrom(loginUserDTO);
-        // TODO ResponseDTO로 감싸서 보내주기
         return ResponseEntity.ok().body(result);
     }
 
@@ -152,7 +153,9 @@ public class AuthUserController {
                 .userSeq(sessionUser.getUserSeq());
 
         userTeamManagerService.rejectInvitation(loginUserDTO);
-        return RESPONSE_OK;
+        // TODO 컨트롤러에서 서비스 호출하는 방식을 허용할 것인지 -> 우선 트랜잭션 이슈 검토, 서비스레이어의 역할 및 책임에 대해서 다시 공부 검토
+        List<JoinRequestDTO> joinRequestDTOList = userTeamManagerService.getJoinRequestsFrom(loginUserDTO);
+        return ResponseEntity.ok().body(joinRequestDTOList);
     }
 
     /**끝 인준 API **************************************************************************************************************/
