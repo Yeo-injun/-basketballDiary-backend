@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 import static com.threeNerds.basketballDiary.constant.Constant.USER;
 import static com.threeNerds.basketballDiary.exception.Error.INCORRECT_PASSWORD;
@@ -114,7 +115,11 @@ public class AuthUserController {
                 .teamJoinRequestSeq(teamJoinRequestSeq)
                 .userSeq(userSeq);
 
-        userTeamManagerService.approveInvitation(loginUserDTO);
+        Map<Long, Long> userAuth = userTeamManagerService.approveInvitation(loginUserDTO);
+
+        /** 세션 정보 update */
+        sessionUser.setUserAuth(userAuth);
+
         // TODO 컨트롤러에서 서비스 호출하는 방식을 허용할 것인지 -> 우선 트랜잭션 이슈 검토, 서비스레이어의 역할 및 책임에 대해서 다시 공부 검토
         List<JoinRequestDTO> joinRequestDTOList = userTeamManagerService.getJoinRequestsFrom(loginUserDTO);
         return ResponseEntity.ok().body(joinRequestDTOList);
