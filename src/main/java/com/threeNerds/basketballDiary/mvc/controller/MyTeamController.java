@@ -358,7 +358,10 @@ public class MyTeamController {
     ) {
         log.info("▒▒▒▒▒ API016: MyTeamController.searchTeam");
         Long userSeq = sessionUser.getUserSeq();
-        MyTeamDTO myTeam = myTeamService.findTeam(userSeq, teamSeq);
+        FindMyTeamProfileDTO paramDTO = new FindMyTeamProfileDTO()
+                .teamSeq(teamSeq)
+                .userSeq(userSeq);
+        MyTeamDTO myTeam = myTeamService.findTeam(paramDTO);
 
         return ResponseEntity.ok().body(myTeam);
     }
@@ -376,9 +379,13 @@ public class MyTeamController {
         log.info("▒▒▒▒▒ API017: MyTeamController.modifyMyTeam");
         Long userSeq = sessionUser.getUserSeq();
         myTeamService.modifyMyTeam(teamSeq, dto);
-        MyTeamDTO myTeam = myTeamService.findTeam(userSeq, teamSeq);
+        // TODO 수정하고 수정한 데이터를 조회하는 동작을 하나의 서비스로 합쳐야 하는지 검토(트랜잭션 이슈 등)
+        FindMyTeamProfileDTO findParamDTO = new FindMyTeamProfileDTO()
+                                                .teamSeq(teamSeq)
+                                                .userSeq(userSeq);
+        MyTeamDTO myTeam = myTeamService.findTeam(findParamDTO);
 
-        return RESPONSE_OK;
+        return ResponseEntity.ok().body(myTeam);
     }
 
     /**

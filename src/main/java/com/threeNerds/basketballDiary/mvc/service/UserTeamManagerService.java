@@ -4,19 +4,20 @@ import com.threeNerds.basketballDiary.constant.JoinRequestTypeCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.mvc.domain.TeamJoinRequest;
 import com.threeNerds.basketballDiary.mvc.domain.TeamMember;
+import com.threeNerds.basketballDiary.mvc.domain.User;
+import com.threeNerds.basketballDiary.mvc.dto.AuthUserRequestDTO;
 import com.threeNerds.basketballDiary.mvc.dto.loginUser.userTeamManager.JoinRequestDTO;
 import com.threeNerds.basketballDiary.mvc.dto.loginUser.CmnLoginUserDTO;
-import com.threeNerds.basketballDiary.mvc.repository.TeamJoinRequestRepository;
-import com.threeNerds.basketballDiary.mvc.repository.TeamMemberRepository;
-import com.threeNerds.basketballDiary.mvc.repository.TeamRepository;
-import com.threeNerds.basketballDiary.mvc.repository.UserTeamManagerRepository;
+import com.threeNerds.basketballDiary.mvc.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.threeNerds.basketballDiary.exception.Error.*;
 
@@ -41,6 +42,7 @@ public class UserTeamManagerService {
     private final TeamMemberRepository teamMemberRepository;
     private final TeamJoinRequestRepository teamJoinRequestRepository;
     private final UserTeamManagerRepository userTeamManagerRepository;
+    private final UserRepository userRepository;
 
     // 농구팀에 가입요청 보내기
     public void sendJoinRequestToTeam(CmnLoginUserDTO loginUserDTO)
@@ -105,12 +107,11 @@ public class UserTeamManagerService {
     }
 
     // 사용자가 팀의 초대를 승인하는 API
-    public void approveInvitation(CmnLoginUserDTO loginUserDTO)
+    public Map<Long, Long> approveInvitation(CmnLoginUserDTO loginUserDTO)
     {
         /** 초대요청 상태 업데이트 하기 */
         boolean isSuccess = teamJoinRequestRepository.updateJoinRequestState(TeamJoinRequest.approveInvitation(loginUserDTO)) == 1 ? true : false;
-        if (!isSuccess)
-        {
+        if (!isSuccess) {
             throw new CustomException(JOIN_REQUEST_NOT_FOUND);
         }
 
@@ -118,6 +119,18 @@ public class UserTeamManagerService {
         TeamJoinRequest joinInfo = teamJoinRequestRepository.findUserByTeamJoinRequestSeq(loginUserDTO.getTeamJoinRequestSeq());
         TeamMember newTeamMember = TeamMember.createNewMember(joinInfo);
         teamMemberRepository.saveTeamMemeber(newTeamMember);
+
+        /** 새로운 권한정보 생성 및 return */
+        User user = new User().builder()
+                        .userSeq(loginUserDTO.getUserSeq())
+                        .build();
+
+        /** TODO 세션에 권한 세팅하는 공통함수를 설정해야 함 - 임원 제명 선정 등의 API에서 활용 */
+        List<AuthUserRequestDTO> userAuthList = userRepository.findAuthList(user);
+        Map<Long, Long> userAuth = userAuthList.stream()
+                .collect(Collectors.toMap(authDTO -> Long.parseLong(authDTO.getTeamSeq()),
+                        authDTO -> Long.parseLong(authDTO.getTeamAuthCode())));
+        return userAuth;
     }
 
     // 팀 초대 거절 API
