@@ -79,4 +79,8 @@
         WHERE TEAM_REGULAR_EXERCISE_SEQ = #{teamRegularExerciseSeq}
     </update>
 
+    <delete id="deleteTeamRegularExercise" parameterType="Long">
+        DELETE FROM TEAM_REGULAR_EXERCISE
+        WHERE TEAM_REGULAR_EXERCISE_SEQ = #{teamRegularExerciseSeq}
+    </delete>
 </mapper>
