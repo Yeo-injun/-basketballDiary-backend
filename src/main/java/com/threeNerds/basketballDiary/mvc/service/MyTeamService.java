@@ -17,13 +17,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 소속팀에서 팀원관리 및 소속팀정보 관리 등의 업무를 수행하는 Service
@@ -127,10 +126,16 @@ public class MyTeamService {
         List<TeamRegularExercise> teamRegularExerciseList
                 = teamRegularExerciseRepository.findByTeamSeq(paramDTO.getTeamSeq());
 
+        /**
+         * Amazon s3로부터 teamImageUrl컬럼을 통해 이미지를 받아와서 MultipartFile로 받아 front로 던져주기.
+         */
+        MultipartFile teamImage = null;
+
         MyTeamDTO resultDTO = new MyTeamDTO()
                 .teamSeq(myTeam.getTeamSeq())
                 .teamName(myTeam.getTeamName())
                 .teamImagePath(myTeam.getTeamImagePath())
+                .teamImage(teamImage)
                 .hometown(myTeam.getHometown())
                 .sidoCode(myTeam.getSidoCode())
                 .sigunguCode(myTeam.getSigunguCode())
@@ -148,14 +153,11 @@ public class MyTeamService {
      * @param teamSeq, dto
      */
     public void modifyMyTeam(Long teamSeq, MyTeamDTO dto) {
-        // 1. @RequestBody 값 조회
-        List<TeamRegularExercise> paramTeamRegularExercise = dto.getTeamRegularExercisesList();
+        List<TeamRegularExercise> paramExerciseList = dto.getTeamRegularExercisesList();
 
-        // 2. 팀정보 수정
-        // 2-1. 조회하려는 팀이 존재하지 않으므로 예외처리
+        /* 1. 팀정보 수정 */
         Team team = Optional.ofNullable(teamRepository.findByTeamSeq(teamSeq))
                 .orElseThrow(() -> new CustomException(Error.MY_TEAM_NOT_FOUND));
-
         Team resultTeam = Team.builder()
                 .teamSeq(teamSeq)
                 .leaderId(team.getLeaderId())
@@ -169,41 +171,54 @@ public class MyTeamService {
                 .sidoCode(dto.getSidoCode())
                 .sigunguCode(dto.getSigunguCode())
                 .build();
-
         teamRepository.updateTeam(resultTeam);
 
-        // 3. 정기운동 등록 및 수정
-        paramTeamRegularExercise.forEach(param -> {
-            Long teamRegularExerciseSeq = param.getTeamRegularExerciseSeq();
-            // 3.1 팀 정기운동 Seq에 따라 등록 및 수정 분기
-            if(teamRegularExerciseSeq != null) {
-                // Seq가 있으므로 조회 후 수정내역 update
-                TeamRegularExercise teamRegularExercise = Optional.ofNullable(teamRegularExerciseRepository.findByTeamRegularExerciseSeq(teamRegularExerciseSeq))
-                                .orElseThrow(() -> new CustomException(Error.REGULAR_EXERCISE_NOT_FOUND));
+        /* 2. 정기운동내역 수정 */
+        // 실제 db에 저장된 정기운동내역
+        List<TeamRegularExercise> dbExerciseList
+                = teamRegularExerciseRepository.findByTeamSeq(teamSeq);
+        // Front에서 받아온 정기운동내역
+        Map<Long, TeamRegularExercise> paramExerciseMap =
+                paramExerciseList.stream().collect(Collectors.toMap(TeamRegularExercise::getTeamRegularExerciseSeq, dvo->dvo));
 
+        // DB내용 기준으로 Front 데이터와 비교
+        dbExerciseList.forEach(dbData -> {
+            Long dbSeq = dbData.getTeamRegularExerciseSeq();
+            TeamRegularExercise paramData = paramExerciseMap.get(dbSeq);
+
+            if (paramData != null) {
+                // Seq가 있으므로 조회 후 수정내역 update
                 teamRegularExerciseRepository.updateTeamRegularExercise(TeamRegularExercise.builder()
-                                .teamRegularExerciseSeq(teamRegularExerciseSeq)
-                                .teamSeq(teamSeq)
-                                .dayOfTheWeekCode(param.getDayOfTheWeekCode())
-                                .startTime(param.getStartTime())
-                                .endTime(param.getEndTime())
-                                .exercisePlaceAddress(param.getExercisePlaceAddress())
-                                .exercisePlaceName(param.getExercisePlaceName())
-                                .build());
+                        .teamRegularExerciseSeq(dbSeq)
+                        .teamSeq(teamSeq)
+                        .dayOfTheWeekCode(paramData.getDayOfTheWeekCode())
+                        .startTime(paramData.getStartTime())
+                        .endTime(paramData.getEndTime())
+                        .exercisePlaceAddress(paramData.getExercisePlaceAddress())
+                        .exercisePlaceName(paramData.getExercisePlaceName())
+                        .build());
+                // update했으므로 map에서 해당 정기운동항목 삭제
+                paramExerciseMap.remove(dbSeq);
             } else {
-                // Seq가 없으므로 신규내역 insert
+                // Front에서 값이 없으면 삭제된 내용임.
+                teamRegularExerciseRepository.deleteTeamRegularExercise(dbSeq);
+            }
+        });
+        // Map에 값이 남아있다면 INSERT 하기.
+        if(paramExerciseMap.size() > 0) {
+            paramExerciseMap.forEach((key, value) -> {
                 TeamRegularExercise teamRegularExercise = TeamRegularExercise.builder()
                         .teamSeq(teamSeq)
-                        .dayOfTheWeekCode(param.getDayOfTheWeekCode())
-                        .startTime(param.getStartTime())
-                        .endTime(param.getEndTime())
-                        .exercisePlaceAddress(param.getExercisePlaceAddress())
-                        .exercisePlaceName(param.getExercisePlaceName())
+                        .dayOfTheWeekCode(value.getDayOfTheWeekCode())
+                        .startTime(value.getStartTime())
+                        .endTime(value.getEndTime())
+                        .exercisePlaceAddress(value.getExercisePlaceAddress())
+                        .exercisePlaceName(value.getExercisePlaceName())
                         .build();
 
                 teamRegularExerciseRepository.saveTeamRegularExercise(teamRegularExercise);
-            }
-        });
+            });
+        }
     }
 
     /**
