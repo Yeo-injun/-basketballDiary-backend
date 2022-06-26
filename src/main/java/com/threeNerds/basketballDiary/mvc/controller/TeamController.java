@@ -88,8 +88,8 @@ public class TeamController {
         log.info("▒▒▒▒▒ API021: TeamController.registerTeam");
         Optional.ofNullable(sessionUser).orElseThrow(() -> new CustomException(Error.LOGIN_REQUIRED));
 
-        String userId = sessionUser.getUserId();
-        Team team = teamService.createTeam(userId, teamDTO);
+        Long userSeq = sessionUser.getUserSeq();
+        Team team = teamService.createTeam(userSeq, teamDTO);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")

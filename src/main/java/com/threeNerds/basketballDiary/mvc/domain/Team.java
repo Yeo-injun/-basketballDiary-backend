@@ -12,8 +12,8 @@ public class Team {
     // 팀SEQ
     private Long teamSeq;
 
-    // 팀장ID - userSeq를 할당해주기? 확인필요
-    private String leaderId;
+    // 팀장ID
+    private Long leaderId;
 
     // 팀명
     private String teamName;
