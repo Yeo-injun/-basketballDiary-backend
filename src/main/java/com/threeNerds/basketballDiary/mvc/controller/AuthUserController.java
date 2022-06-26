@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 import static com.threeNerds.basketballDiary.constant.Constant.USER;
 import static com.threeNerds.basketballDiary.exception.Error.INCORRECT_PASSWORD;
@@ -93,7 +94,10 @@ public class AuthUserController {
                 .userSeq(sessionUser.getUserSeq());
 
         userTeamManagerService.cancelJoinRequest(loginUserDTO);
-        return RESPONSE_OK;
+        // TODO 같은 서비스에서 호출해야 하는 것인지 아니면 컨트롤러에서 별도로 호출해야 하는것인지..
+        // 트랜잭션 관리를 어떻게 할 것인지가 관건으로 판단됨.
+        List<JoinRequestDTO> joinRequestDTOList = userTeamManagerService.getJoinRequestsTo(loginUserDTO);
+        return ResponseEntity.ok().body(joinRequestDTOList);
     }
 
     /**
@@ -111,8 +115,14 @@ public class AuthUserController {
                 .teamJoinRequestSeq(teamJoinRequestSeq)
                 .userSeq(userSeq);
 
-        userTeamManagerService.approveInvitation(loginUserDTO);
-        return RESPONSE_OK;
+        Map<Long, Long> userAuth = userTeamManagerService.approveInvitation(loginUserDTO);
+
+        /** 세션 정보 update */
+        sessionUser.setUserAuth(userAuth);
+
+        // TODO 컨트롤러에서 서비스 호출하는 방식을 허용할 것인지 -> 우선 트랜잭션 이슈 검토, 서비스레이어의 역할 및 책임에 대해서 다시 공부 검토
+        List<JoinRequestDTO> joinRequestDTOList = userTeamManagerService.getJoinRequestsFrom(loginUserDTO);
+        return ResponseEntity.ok().body(joinRequestDTOList);
     }
 
     /**
@@ -124,14 +134,12 @@ public class AuthUserController {
     @GetMapping("/joinRequestsFrom")
     public ResponseEntity<?> getJoinRequestsFrom(
             @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser
-    )
-    {
+    ) {
         Long userSeq = sessionUser.getUserSeq();
         CmnLoginUserDTO loginUserDTO = new CmnLoginUserDTO()
                 .userSeq(userSeq);
 
         List<JoinRequestDTO> result = userTeamManagerService.getJoinRequestsFrom(loginUserDTO);
-        // TODO ResponseDTO로 감싸서 보내주기
         return ResponseEntity.ok().body(result);
     }
 
@@ -150,7 +158,9 @@ public class AuthUserController {
                 .userSeq(sessionUser.getUserSeq());
 
         userTeamManagerService.rejectInvitation(loginUserDTO);
-        return RESPONSE_OK;
+        // TODO 컨트롤러에서 서비스 호출하는 방식을 허용할 것인지 -> 우선 트랜잭션 이슈 검토, 서비스레이어의 역할 및 책임에 대해서 다시 공부 검토
+        List<JoinRequestDTO> joinRequestDTOList = userTeamManagerService.getJoinRequestsFrom(loginUserDTO);
+        return ResponseEntity.ok().body(joinRequestDTOList);
     }
 
     /**끝 인준 API **************************************************************************************************************/

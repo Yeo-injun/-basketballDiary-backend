@@ -1,5 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.controller;
 
+import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.interceptor.Auth;
 import com.threeNerds.basketballDiary.mvc.dto.PlayerDTO;
 import com.threeNerds.basketballDiary.mvc.dto.myTeam.MyTeamProfileDTO;
@@ -14,10 +15,16 @@ import com.threeNerds.basketballDiary.mvc.service.TeamMemberService;
 import com.threeNerds.basketballDiary.session.SessionUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static com.threeNerds.basketballDiary.constant.Constant.*;
@@ -247,6 +254,8 @@ public class MyTeamController {
             @PathVariable Long teamSeq,
             @ModelAttribute MyTeamProfileDTO myTeamProfileDTO){
 
+        uploadFile(myTeamProfileDTO.getImageFile());
+
         Long id = sessionDTO.getUserSeq();
 
         FindMyTeamProfileDTO findMyTeamProfileDTO = new FindMyTeamProfileDTO()
@@ -259,6 +268,33 @@ public class MyTeamController {
 
         teamMemberService.updateMyTeamProfile(teamProfileDTO);
         return RESPONSE_OK;
+    }
+
+    public void uploadFile(MultipartFile file){
+        /**
+         * 파일을 저장할 경로를 미리 생성
+         * ex) 오늘이 2022/06/18 이라면 D드라이브 upload 폴더에 2022->06->18 이라는 폴더들이 계층별로 생성됨
+        */
+        String uploadFolder = "D:\\upload";
+
+        String date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd")).replace("/", File.separator);
+
+        File uploadPath = new File(uploadFolder,date);
+
+        if(!uploadPath.exists()) {
+            uploadPath.mkdirs();
+        }
+
+        String uploadFileName = file.getOriginalFilename();
+        File saveFile = new File(uploadPath,uploadFileName);
+
+        try{
+            file.transferTo(saveFile);
+        }catch(IllegalStateException e){
+            throw new RuntimeException(e.getMessage(),e);
+        }catch(IOException e){
+            throw new RuntimeException(e.getMessage(),e);
+        }
     }
 
     /**
@@ -322,7 +358,10 @@ public class MyTeamController {
     ) {
         log.info("▒▒▒▒▒ API016: MyTeamController.searchTeam");
         Long userSeq = sessionUser.getUserSeq();
-        MyTeamDTO myTeam = myTeamService.findTeam(userSeq, teamSeq);
+        FindMyTeamProfileDTO paramDTO = new FindMyTeamProfileDTO()
+                .teamSeq(teamSeq)
+                .userSeq(userSeq);
+        MyTeamDTO myTeam = myTeamService.findTeam(paramDTO);
 
         return ResponseEntity.ok().body(myTeam);
     }
@@ -340,9 +379,13 @@ public class MyTeamController {
         log.info("▒▒▒▒▒ API017: MyTeamController.modifyMyTeam");
         Long userSeq = sessionUser.getUserSeq();
         myTeamService.modifyMyTeam(teamSeq, dto);
-        MyTeamDTO myTeam = myTeamService.findTeam(userSeq, teamSeq);
+        // TODO 수정하고 수정한 데이터를 조회하는 동작을 하나의 서비스로 합쳐야 하는지 검토(트랜잭션 이슈 등)
+        FindMyTeamProfileDTO findParamDTO = new FindMyTeamProfileDTO()
+                                                .teamSeq(teamSeq)
+                                                .userSeq(userSeq);
+        MyTeamDTO myTeam = myTeamService.findTeam(findParamDTO);
 
-        return RESPONSE_OK;
+        return ResponseEntity.ok().body(myTeam);
     }
 
     /**

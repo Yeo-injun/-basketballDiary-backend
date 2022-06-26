@@ -5,6 +5,8 @@ import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.mvc.domain.Team;
 import com.threeNerds.basketballDiary.mvc.domain.TeamRegularExercise;
 import com.threeNerds.basketballDiary.mvc.dto.*;
+import com.threeNerds.basketballDiary.mvc.dto.myTeam.CmnMyTeamDTO;
+import com.threeNerds.basketballDiary.mvc.dto.myTeam.FindMyTeamProfileDTO;
 import com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MemberDTO;
 import com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MyTeamDTO;
 import com.threeNerds.basketballDiary.mvc.repository.MyTeamRepository;
@@ -114,15 +116,15 @@ public class MyTeamService {
 
     /**
      * 소속팀 단건 조회
-     * @param userSeq, teamSeq
+     * @param paramDTO
      * @return MyTeamDTO
      */
-    public MyTeamDTO findTeam(Long userSeq, Long teamSeq) {
+    public MyTeamDTO findTeam(FindMyTeamProfileDTO paramDTO) {
         // 소속되지 않은 팀에 대한 조회는 Interceptor에 의해 처리됨.
 
-        MyTeamDTO myTeam = myTeamRepository.findByUserSeqAndTeamSeq(userSeq, teamSeq);
+        MyTeamDTO myTeam = myTeamRepository.findByUserSeqAndTeamSeq(paramDTO);
         List<TeamRegularExercise> teamRegularExerciseList
-                = teamRegularExerciseRepository.findByTeamSeq(teamSeq);
+                = teamRegularExerciseRepository.findByTeamSeq(paramDTO.getTeamSeq());
 
         /**
          * Amazon s3로부터 teamImageUrl컬럼을 통해 이미지를 받아와서 MultipartFile로 받아 front로 던져주기.
