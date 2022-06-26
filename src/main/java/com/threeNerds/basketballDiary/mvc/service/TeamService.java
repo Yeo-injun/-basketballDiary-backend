@@ -79,14 +79,14 @@ public class TeamService {
      * @return Long
      */
     @Transactional
-    public Team createTeam(String userId, TeamDTO teamDTO) {
+    public Team createTeam(Long userSeq, TeamDTO teamDTO) {
         Team team = Team.builder()
                 .teamName(teamDTO.getTeamName())
                 .hometown(teamDTO.getHometown())
                 .foundationYmd(teamDTO.getFoundationYmd())
                 .introduction(teamDTO.getIntroduction())
                 .teamImagePath(teamDTO.getTeamImagePath())
-                .leaderId(userId)
+                .leaderId(userSeq)
                 .regDate(LocalDate.now(ZoneId.of("Asia/Seoul")))
                 .updateDate(LocalDate.now(ZoneId.of("Asia/Seoul")))
                 .build();
