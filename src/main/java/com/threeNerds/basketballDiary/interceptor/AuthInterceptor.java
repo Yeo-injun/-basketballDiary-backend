@@ -1,7 +1,5 @@
 package com.threeNerds.basketballDiary.interceptor;
 
-import com.threeNerds.basketballDiary.constant.Constant;
-import com.threeNerds.basketballDiary.constant.TeamAuthCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.session.SessionConst;
@@ -28,15 +26,16 @@ public class AuthInterceptor implements HandlerInterceptor {
         }
         HandlerMethod hm = (HandlerMethod) handler;
 
-        Auth auth = hm.getMethodAnnotation(Auth.class);
+        Auth apiAuth = hm.getMethodAnnotation(Auth.class);
         //1. @Auth 가 없는 경우는 인증이 별도로 필요없음(팀에 속하지 않는 회원에 해당)
-        if(auth==null){
+        if (apiAuth == null) {
             return true;
         }
 
         //2. @Auth 가 있는 경우에는 세션이 있는지 확인
+        // TODO API정보를 어노테이션으로 관리해서 log찍어주기
         String requestURI = request.getRequestURI();
-        log.info("인증 체크 인터셉터 실행 {}",requestURI);
+        log.info("============= 인증 체크 인터셉터 실행 {} =============", requestURI);
 
         HttpSession session = request.getSession();
         SessionUser memberDto = Optional.ofNullable(session)
@@ -59,30 +58,29 @@ public class AuthInterceptor implements HandlerInterceptor {
 //             return false;
 //        }
 
-        //3. 각 권한 분기처리(팀장,임원,팀원)
+        /** 소속팀의 권한 체크 - pathVariables에 teamSeq가 없는 경우는 권한체크를 할 필요없음. */
         final Map<String, String> pathVariables = (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
-        // TODO 팀에 소속되어 있지 않아도 되는 API인 경우 별도 분기 처리 - URL에 teamSeq에 대한 정보가 없는 API
-        if (pathVariables.size() == 0)
-        {
+        if (pathVariables.size() == 0) {
             return true;
         }
-
-        // TODO 팀원 이상인 경우에만 접근가능하도록 처리
-        Long grade = auth.GRADE();
-        if (grade < Constant.TEAM_MEMBER) {
+        Long teamSeq = Long.parseLong(pathVariables.get("teamSeq"));
+        if (teamSeq == null) {
             return true;
         }
-
-        Long teamId = Long.parseLong(pathVariables.get("teamSeq"));
         Map<Long, Long> userAuth = memberDto.getUserAuth();
 
-
-        //현재 나의 권한보다 접근할 수 있는 권한이 더 높으면 접근 불가
-        if(userAuth.get(teamId) < grade){
-            log.info("접근 불가");
-            return false;
+        // 현재 나의 권한이 api의 권한보다 크거나 같을때 접근가능
+        Long apiAuthGrade = apiAuth.GRADE();
+        Long userAuthGrade = userAuth.get(teamSeq);
+        boolean isAuthorized = userAuthGrade >= apiAuthGrade;
+        if (isAuthorized) {
+            return true;
         }
-        return true;
+        log.info("==================== 권한이 없습니다. ===================");
+        log.info("### 팀Seq : {} / API권한정보 : {} ###", teamSeq, apiAuthGrade);
+        log.info("### 사용자권한정보 : {} ###", userAuthGrade);
+        log.info("======================================================");
+        return false;
     }
 
     @Override
