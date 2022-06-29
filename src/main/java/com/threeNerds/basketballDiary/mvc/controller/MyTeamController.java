@@ -13,6 +13,7 @@ import com.threeNerds.basketballDiary.mvc.service.MyTeamService;
 import com.threeNerds.basketballDiary.mvc.service.TeamMemberManagerService;
 import com.threeNerds.basketballDiary.mvc.service.TeamMemberService;
 import com.threeNerds.basketballDiary.session.SessionUser;
+import com.threeNerds.basketballDiary.utils.SessionUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -28,7 +29,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static com.threeNerds.basketballDiary.constant.Constant.*;
-import static com.threeNerds.basketballDiary.session.SessionConst.LOGIN_MEMBER;
 import static com.threeNerds.basketballDiary.utils.HttpResponses.RESPONSE_OK;
 
 /**
@@ -67,7 +67,7 @@ public class MyTeamController {
     @Auth(GRADE = TEAM_MEMBER)
     @GetMapping("/{teamSeq}/managers")
     public ResponseEntity<List<MemberDTO>> searchManagers(
-            @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser,
+            @SessionAttribute(value = "loginUser", required = false) SessionUser sessionUser,
             @PathVariable(value = "teamSeq") Long teamSeq
     ) {
         log.info("▒▒▒▒▒ API001: MyTeamController.searchManagers");
@@ -82,7 +82,7 @@ public class MyTeamController {
     @Auth(GRADE = TEAM_MEMBER)
     @GetMapping("/{teamSeq}/members")
     public ResponseEntity<List<MemberDTO>> searchMembers(
-            @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser,
+            @SessionAttribute(value = "loginUser", required = false) SessionUser sessionUser,
             @PathVariable(value = "teamSeq") Long teamSeq,
             @RequestParam(name = "pageNo", defaultValue = "0") Integer pageNo
     ) {
@@ -230,8 +230,9 @@ public class MyTeamController {
      */
     @GetMapping("/{teamSeq}/profile")
     public ResponseEntity<MemberDTO> findMyTeamsProfile(
-            @SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO,
-            @PathVariable Long teamSeq){
+            @SessionAttribute(value = "loginUser",required = false) SessionUser sessionDTO,
+            @PathVariable Long teamSeq
+    ) {
 
         Long id = sessionDTO.getUserSeq();
 
@@ -250,7 +251,7 @@ public class MyTeamController {
      */
     @PostMapping("/{teamSeq}/profile")
     public ResponseEntity<?> modifyMyTeamsProfile(
-            @SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO,
+            @SessionAttribute(value = "loginUser",required = false) SessionUser sessionDTO,
             @PathVariable Long teamSeq,
             @ModelAttribute MyTeamProfileDTO myTeamProfileDTO){
 
@@ -302,7 +303,7 @@ public class MyTeamController {
      */
     @DeleteMapping("/{teamSeq}/profile")
     public ResponseEntity<?> deleteMyTeamsProfile(
-            @SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO,
+            @SessionAttribute(value = "loginUser",required = false) SessionUser sessionDTO,
             @PathVariable Long teamSeq)
     {
         Long id = sessionDTO.getUserSeq();
@@ -320,10 +321,10 @@ public class MyTeamController {
     @Auth(GRADE = TEAM_MEMBER)
     @GetMapping
     public ResponseEntity<List<MyTeamDTO>> searchTeams(
-            @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser
+            @SessionAttribute(value = "loginUser", required = false) SessionUser sessionUser
     ) {
         log.info("▒▒▒▒▒ API014: MyTeamController.searchTeams");
-        Long userSeq = sessionUser.getUserSeq();
+        Long userSeq = SessionUtil.getUserSeq();
         List<MyTeamDTO> myTeamList = myTeamService.findTeams(userSeq);
 
         return ResponseEntity.ok().body(myTeamList);
@@ -353,7 +354,7 @@ public class MyTeamController {
     @Auth(GRADE = TEAM_MEMBER)
     @GetMapping("/{teamSeq}/info")
     public ResponseEntity<MyTeamDTO> searchTeam(
-            @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser,
+            @SessionAttribute(value = "loginUser", required = false) SessionUser sessionUser,
             @PathVariable(value = "teamSeq") Long teamSeq
     ) {
         log.info("▒▒▒▒▒ API016: MyTeamController.searchTeam");
@@ -372,7 +373,7 @@ public class MyTeamController {
     @Auth(GRADE = MANAGER)
     @PostMapping("/{teamSeq}/info")
     public ResponseEntity<?> modifyMyTeam(
-            @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser,
+            @SessionAttribute(value = "loginUser", required = false) SessionUser sessionUser,
             @PathVariable(value = "teamSeq") Long teamSeq,
             @RequestBody MyTeamDTO dto
     ) {
