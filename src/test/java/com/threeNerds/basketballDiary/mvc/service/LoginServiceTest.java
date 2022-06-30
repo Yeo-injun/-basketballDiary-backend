@@ -5,7 +5,6 @@ import com.threeNerds.basketballDiary.mvc.domain.User;
 import com.threeNerds.basketballDiary.mvc.dto.user.user.LoginUserDTO;
 import com.threeNerds.basketballDiary.mvc.dto.user.user.UserDTO;
 import com.threeNerds.basketballDiary.mvc.repository.UserRepository;
-import com.threeNerds.basketballDiary.session.SessionConst;
 import com.threeNerds.basketballDiary.session.SessionUser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -91,10 +90,10 @@ class LoginServiceTest {
         //given
         UserDTO userDTO = new UserDTO();
         //when
-        session.setAttribute(SessionConst.LOGIN_MEMBER,userDTO);
+        session.setAttribute("loginUser",userDTO);
         //then
-        session.removeAttribute(SessionConst.LOGIN_MEMBER);
-        UserDTO user = (UserDTO) session.getAttribute(SessionConst.LOGIN_MEMBER);
+        session.removeAttribute("loginUser");
+        UserDTO user = (UserDTO) session.getAttribute("loginUser");
         assertThat(user).isNull();
     }
 }

@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.threeNerds.basketballDiary.constant.Constant.USER;
-import static com.threeNerds.basketballDiary.session.SessionConst.LOGIN_MEMBER;
 
 /**
  * ... 수행하는 Controller
@@ -82,7 +81,7 @@ public class TeamController {
     @Auth(GRADE = USER)
     @PostMapping
     public ResponseEntity<Team> registerTeam(
-            @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser,
+            @SessionAttribute(value = "loginUser", required = false) SessionUser sessionUser,
             @RequestBody @Valid TeamDTO teamDTO
     ) {
         log.info("▒▒▒▒▒ API021: TeamController.registerTeam");
