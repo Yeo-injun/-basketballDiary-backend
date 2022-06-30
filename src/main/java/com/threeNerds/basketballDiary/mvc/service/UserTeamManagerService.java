@@ -5,7 +5,7 @@ import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.mvc.domain.TeamJoinRequest;
 import com.threeNerds.basketballDiary.mvc.domain.TeamMember;
 import com.threeNerds.basketballDiary.mvc.domain.User;
-import com.threeNerds.basketballDiary.mvc.dto.AuthUserRequestDTO;
+import com.threeNerds.basketballDiary.mvc.dto.TeamAuthDTO;
 import com.threeNerds.basketballDiary.mvc.dto.loginUser.userTeamManager.JoinRequestDTO;
 import com.threeNerds.basketballDiary.mvc.dto.loginUser.CmnLoginUserDTO;
 import com.threeNerds.basketballDiary.mvc.repository.*;
@@ -107,10 +107,10 @@ public class UserTeamManagerService {
     }
 
     // 사용자가 팀의 초대를 승인하는 API
-    public Map<Long, Long> approveInvitation(CmnLoginUserDTO loginUserDTO)
+    public List<TeamAuthDTO> approveInvitation(CmnLoginUserDTO loginUserDTO)
     {
         /** 초대요청 상태 업데이트 하기 */
-        boolean isSuccess = teamJoinRequestRepository.updateJoinRequestState(TeamJoinRequest.approveInvitation(loginUserDTO)) == 1 ? true : false;
+        boolean isSuccess = teamJoinRequestRepository.updateJoinRequestState(TeamJoinRequest.approveInvitation(loginUserDTO)) == 1;
         if (!isSuccess) {
             throw new CustomException(JOIN_REQUEST_NOT_FOUND);
         }
@@ -120,17 +120,12 @@ public class UserTeamManagerService {
         TeamMember newTeamMember = TeamMember.createNewMember(joinInfo);
         teamMemberRepository.saveTeamMemeber(newTeamMember);
 
-        /** 새로운 권한정보 생성 및 return */
+        /** 변경된 권한정보 조회 */
         User user = new User().builder()
-                        .userSeq(loginUserDTO.getUserSeq())
-                        .build();
-
-        /** TODO 세션에 권한 세팅하는 공통함수를 설정해야 함 - 임원 제명 선정 등의 API에서 활용 */
-        List<AuthUserRequestDTO> userAuthList = userRepository.findAuthList(user);
-        Map<Long, Long> userAuth = userAuthList.stream()
-                .collect(Collectors.toMap(authDTO -> Long.parseLong(authDTO.getTeamSeq()),
-                        authDTO -> Long.parseLong(authDTO.getTeamAuthCode())));
-        return userAuth;
+                .userSeq(loginUserDTO.getUserSeq())
+                .build();
+        List<TeamAuthDTO> authList = userRepository.findAuthList(user);
+        return authList;
     }
 
     // 팀 초대 거절 API

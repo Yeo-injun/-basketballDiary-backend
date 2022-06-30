@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
-public class AuthUserRequestDTO {
+public class TeamAuthDTO {
     private String teamSeq;
     private String teamAuthCode;
 }

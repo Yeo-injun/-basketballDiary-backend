@@ -126,7 +126,7 @@
           AND PWD       = #{password}
     </select>
 
-    <select id="findAuthList" resultType="com.threeNerds.basketballDiary.mvc.dto.AuthUserRequestDTO">
+    <select id="findAuthList" resultType="com.threeNerds.basketballDiary.mvc.dto.TeamAuthDTO">
         SELECT B.TEAM_SEQ
              , B.TEAM_AUTH_CODE
           FROM USER A

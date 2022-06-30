@@ -40,14 +40,12 @@ public class AuthInterceptor implements HandlerInterceptor {
 
         /** 소속팀의 권한 체크 - pathVariables에 teamSeq가 없는 경우는 권한체크를 할 필요없음. */
         final Map<String, String> pathVariables = (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
-        if (pathVariables.size() == 0) {
+        if (!pathVariables.containsKey("teamSeq")) {
             return true;
         }
-        Long teamSeq = Long.parseLong(pathVariables.get("teamSeq"));
-        if (teamSeq == null) {
-            return true;
-        }
+
         Map<Long, Long> userAuth = SessionUtil.getAuth();
+        Long teamSeq = Long.parseLong(pathVariables.get("teamSeq"));
 
         // 현재 나의 권한이 api의 권한보다 크거나 같을때 접근가능
         Long apiAuthGrade = apiAuth.GRADE();
@@ -60,8 +58,10 @@ public class AuthInterceptor implements HandlerInterceptor {
         log.info("### 팀Seq : {} / API권한정보 : {} ###", teamSeq, apiAuthGrade);
         log.info("### 사용자권한정보 : {} ###", userAuthGrade);
         log.info("======================================================");
+//        throw new CustomException(Error.UNAUTHORIZED_MEMBER);
         return false;
     }
+
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {

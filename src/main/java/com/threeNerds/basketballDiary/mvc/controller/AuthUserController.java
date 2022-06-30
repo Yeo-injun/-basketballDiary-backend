@@ -3,6 +3,7 @@ package com.threeNerds.basketballDiary.mvc.controller;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.interceptor.Auth;
 import com.threeNerds.basketballDiary.mvc.domain.User;
+import com.threeNerds.basketballDiary.mvc.dto.TeamAuthDTO;
 import com.threeNerds.basketballDiary.mvc.dto.loginUser.CmnLoginUserDTO;
 import com.threeNerds.basketballDiary.mvc.dto.loginUser.userTeamManager.JoinRequestDTO;
 import com.threeNerds.basketballDiary.mvc.dto.loginUser.PasswordDTO;
@@ -114,10 +115,10 @@ public class AuthUserController {
                 .teamJoinRequestSeq(teamJoinRequestSeq)
                 .userSeq(userSeq);
 
-        Map<Long, Long> userAuth = userTeamManagerService.approveInvitation(loginUserDTO);
+        List<TeamAuthDTO> authList = userTeamManagerService.approveInvitation(loginUserDTO);
 
         /** 세션 정보 update */
-        sessionUser.setUserAuth(userAuth);
+        sessionUser.updateAuthority(authList);
 
         // TODO 컨트롤러에서 서비스 호출하는 방식을 허용할 것인지 -> 우선 트랜잭션 이슈 검토, 서비스레이어의 역할 및 책임에 대해서 다시 공부 검토
         List<JoinRequestDTO> joinRequestDTOList = userTeamManagerService.getJoinRequestsFrom(loginUserDTO);
