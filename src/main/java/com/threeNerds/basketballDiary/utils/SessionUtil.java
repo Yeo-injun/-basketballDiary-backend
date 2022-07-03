@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class SessionUtil {
 
-    private static final String LOGIN_USER = "loginUser";
+    public static final String LOGIN_USER = "loginUser";
 
     private SessionUtil() {
         throw new AssertionError("Can not create instance of SessionUtil");
