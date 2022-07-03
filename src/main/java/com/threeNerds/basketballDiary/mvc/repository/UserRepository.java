@@ -1,7 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.repository;
 
 import com.threeNerds.basketballDiary.mvc.domain.User;
-import com.threeNerds.basketballDiary.mvc.dto.AuthUserRequestDTO;
+import com.threeNerds.basketballDiary.mvc.dto.TeamAuthDTO;
 import com.threeNerds.basketballDiary.mvc.dto.loginUser.PasswordDTO;
 import com.threeNerds.basketballDiary.mvc.dto.user.CmnUserDTO;
 import com.threeNerds.basketballDiary.mvc.dto.user.user.FindAllUserDTO;
@@ -22,7 +22,7 @@ public interface UserRepository {
     void deleteUser(String id);
     void updatePassword(PasswordDTO passwordDTO);
 
-    List<AuthUserRequestDTO> findAuthList(User user);
+    List<TeamAuthDTO> findAuthList(User user);
     List<UserDTO> findAllUser(FindAllUserDTO findAllUserDTO);
 
     // 사용자ID 중복확인 쿼리

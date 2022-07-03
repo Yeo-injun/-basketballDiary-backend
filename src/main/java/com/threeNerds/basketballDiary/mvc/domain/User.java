@@ -67,4 +67,12 @@ public class User {
                 .build();
     }
 
+    // 로그인 상태 확인
+    public boolean isLogin() {
+        if (this.userSeq == null) {
+            return false;
+        }
+        return true;
+    }
+
 }

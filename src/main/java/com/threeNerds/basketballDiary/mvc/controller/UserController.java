@@ -2,14 +2,13 @@ package com.threeNerds.basketballDiary.mvc.controller;
 
 import com.threeNerds.basketballDiary.mvc.domain.User;
 import com.threeNerds.basketballDiary.mvc.dto.user.CmnUserDTO;
-import com.threeNerds.basketballDiary.mvc.dto.user.user.FindAllUserDTO;
 import com.threeNerds.basketballDiary.mvc.dto.user.user.LoginUserDTO;
 import com.threeNerds.basketballDiary.mvc.dto.user.user.UserDTO;
 import com.threeNerds.basketballDiary.mvc.service.LoginService;
 import com.threeNerds.basketballDiary.mvc.service.UserService;
 import com.threeNerds.basketballDiary.mvc.service.UserTeamManagerService;
-import com.threeNerds.basketballDiary.session.SessionConst;
 import com.threeNerds.basketballDiary.session.SessionUser;
+import com.threeNerds.basketballDiary.utils.SessionUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-import java.time.LocalDate;
 import java.util.List;
 
 import static com.threeNerds.basketballDiary.utils.HttpResponses.*;
@@ -74,15 +72,13 @@ public class UserController {
      */
     @PostMapping("/login")
     public ResponseEntity<SessionUser> login (
-            @RequestBody LoginUserDTO loginUserDTO,
-            HttpSession session
+            @RequestBody LoginUserDTO loginUserDTO
     ) {
         log.info("로그인 시도");
         SessionUser sessionUser = loginService.login(loginUserDTO);
-        session.setAttribute(SessionConst.LOGIN_MEMBER, sessionUser);
-        log.info(session.getId());
+        SessionUtil.setSessionUser(sessionUser);
+//      TODO 세션ID 로그찍기  log.info(SessionUtil.get.getId());
         // TODO 쿠키생성 로직 - https://reflectoring.io/spring-boot-cookies/
-//        ResponseCookie cookie = ResponseCookie.from("teset", "cookie").httpOnly(false).build();
         return ResponseEntity.ok().body(sessionUser);
     }
 

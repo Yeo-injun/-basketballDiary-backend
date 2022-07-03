@@ -3,6 +3,7 @@ package com.threeNerds.basketballDiary.utils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+// TODO 패키지 변경 : 현재 >> constant
 public class HttpResponses {
 
     /** 사용법

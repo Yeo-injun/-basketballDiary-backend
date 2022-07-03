@@ -1,10 +1,17 @@
 package com.threeNerds.basketballDiary.session;
 
+import com.threeNerds.basketballDiary.mvc.domain.User;
+import com.threeNerds.basketballDiary.mvc.dto.TeamAuthDTO;
+import com.threeNerds.basketballDiary.mvc.repository.UserRepository;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -19,6 +26,9 @@ public class SessionUser {
         this.userAuth = userAuth;
     }
 
+    public SessionUser() {
+    }
+
     public SessionUser(Long userSeq, String userId) {
         this.userSeq = userSeq;
         this.userId = userId;
@@ -28,5 +38,20 @@ public class SessionUser {
         this.userSeq = userSeq;
         this.userId = userId;
         this.userAuth = userAuth;
+    }
+
+    public static SessionUser create(User loginUser) {
+        return new SessionUser(loginUser.getUserSeq(), loginUser.getUserId());
+    }
+
+    public SessionUser updateAuthority(List<TeamAuthDTO> authList)
+    {
+        Map<Long, Long> userAuth = authList.stream()
+                .collect(Collectors.toMap(authDTO -> Long.parseLong(authDTO.getTeamSeq()),
+                                          authDTO -> Long.parseLong(authDTO.getTeamAuthCode())
+                                          )
+                         );
+        this.userAuth = userAuth;
+        return this;
     }
 }
