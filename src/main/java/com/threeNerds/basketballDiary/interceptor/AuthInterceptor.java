@@ -1,5 +1,7 @@
 package com.threeNerds.basketballDiary.interceptor;
 
+import com.threeNerds.basketballDiary.constant.Constant;
+import com.threeNerds.basketballDiary.constant.TeamAuthCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.utils.SessionUtil;
@@ -44,11 +46,15 @@ public class AuthInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        Map<Long, Long> userAuth = SessionUtil.getAuth();
-        Long teamSeq = Long.parseLong(pathVariables.get("teamSeq"));
+        Long apiAuthGrade = apiAuth.GRADE();
+        boolean isUserGrade = apiAuthGrade == Constant.USER;
+        if (isUserGrade) {
+            return true;
+        }
 
         // 현재 나의 권한이 api의 권한보다 크거나 같을때 접근가능
-        Long apiAuthGrade = apiAuth.GRADE();
+        Map<Long, Long> userAuth = SessionUtil.getAuth();
+        Long teamSeq = Long.parseLong(pathVariables.get("teamSeq"));
         Long userAuthGrade = userAuth.get(teamSeq);
         boolean isAuthorized = userAuthGrade >= apiAuthGrade;
         if (isAuthorized) {

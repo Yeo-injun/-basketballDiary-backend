@@ -17,7 +17,8 @@ public enum PositionCode {
     SHOOTING_GAURD("슈팅가드", "12"),
     SMALL_FORWARD("스몰포워드", "21"),
     POWER_FORWARD("파워포워드", "22"),
-    TEMP_CODE("임시용코드", "40"); // TODO 임시 코드 차후 데이터 변경후 삭제 예정
+    TEMP_CODE("임시용코드", "40"), // TODO 임시 코드 차후 데이터 변경후 삭제 예정
+    NULL_CODE("임시용코드", null); // TODO 임시 코드 차후 데이터 변경후 삭제 예정
 
     private final String name;
     private final String code;

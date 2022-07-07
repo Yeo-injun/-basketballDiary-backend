@@ -30,6 +30,13 @@ public class TeamMember {
     /* 탈퇴여부 */
     private String withdrawalYn;
 
+    // TODO 도메인객체를 추상화시켜서 부모클래스로 구현하기
+    public boolean isExist() {
+        if (this.teamMemberSeq == null) {
+            return false;
+        }
+        return true;
+    }
     /* TODO 도메인 객체의 기본적인 데이터 세팅 동작을 메소드로 구현 */
     public static TeamMember toManager(CmnMyTeamDTO teamMember)
     {
@@ -69,4 +76,6 @@ public class TeamMember {
                 .withdrawalYn(Constant.YES)
                 .build();
     }
+
+
 }
