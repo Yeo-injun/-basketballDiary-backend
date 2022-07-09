@@ -14,10 +14,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.Option;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static com.threeNerds.basketballDiary.exception.Error.*;
 
@@ -49,9 +48,8 @@ public class UserTeamManagerService {
     {
         TeamJoinRequest joinRequestInfo = TeamJoinRequest.createJoinRequest(loginUserDTO);
         /** 초대-가입요청 존재여부 확인 : 대기중인 가입요청 혹은 초대가 있을 경우 중복가입요청 방지 */
-        boolean isExistPrevJoinRequest = teamJoinRequestRepository.checkPendingJoinRequest(joinRequestInfo) == 1 ? true : false;
-        if (isExistPrevJoinRequest)
-        {
+        boolean isExistPrevJoinRequest = teamJoinRequestRepository.checkPendingJoinRequest(joinRequestInfo) == 1;
+        if (isExistPrevJoinRequest) {
             throw new CustomException(ALREADY_EXIST_JOIN_REQUEST);
         }
 
@@ -59,6 +57,13 @@ public class UserTeamManagerService {
         Optional
             .ofNullable(teamRepository.findByTeamSeq(joinRequestInfo.getTeamSeq()))
             .orElseThrow(()-> new CustomException(TEAM_NOT_FOUND));
+
+        /** 이미 팀원으로 존재하는지 확인 */
+        TeamMember teamMember = teamMemberRepository.findTeamMember(joinRequestInfo);
+//        if (teamMember.isExist()) { // TODO MyBatis설정 >> 조회가 되지 않을 경우 null을 반환할지 아니면 모든 필드가 null인 빈 객체를 반환할지 결정
+        if (teamMember != null) {
+            throw new CustomException(ALREADY_EXIST_TEAM_MEMBER);
+        }
 
         /** 팀이 존재하고, 초대-가입요청이 없을경우에만 INSERT */
         teamJoinRequestRepository.createJoinRequest(joinRequestInfo);
