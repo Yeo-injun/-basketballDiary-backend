@@ -96,8 +96,12 @@
                       , A.SIGUNGU_CODE
                       , COUNT(B.USER_SEQ) OVER(PARTITION BY B.TEAM_SEQ) AS TOT_MEMBER
                    FROM TEAM A
-              LEFT JOIN (SELECT * FROM TEAM_MEMBER WHERE WITHDRAWAL_YN != 'Y') B
+                   LEFT JOIN (SELECT *
+                                FROM TEAM_MEMBER
+                               WHERE WITHDRAWAL_YN != 'Y') B /* 서브쿼리 보다는 조인으로 하는게 더 성능이 좋은게 아닌가?? 실행계획 검토 필요 */
                      ON A.TEAM_SEQ = B.TEAM_SEQ
+                   LEFT JOIN TEAM_REGULAR_EXERCISE C
+                     ON A.TEAM_SEQ = C.TEAM_SEQ
                   WHERE 1=1
             <if test="teamName != null and !''.equals(teamName)">
                     AND A.TEAM_NAME LIKE CONCAT('%', IFNULL(#{teamName}, ''), '%')
@@ -105,7 +109,10 @@
             <if test="sigungu != null and !''.equals(sigungu)">
                     AND A.SIGUNGU_CODE = #{sigungu}
             </if>
-                  ORDER BY A.TEAM_NAME
+            <if test="startDay != null and !''.equals(startDay) and endDay != null and !''.equals(endDay)">
+                    AND C.DAY_OF_THE_WEEK_CODE BETWEEN #{startDay} AND #{endDay}
+            </if>
+                ORDER BY A.TEAM_NAME
             ) ORDERS LIMIT #{pagerDTO.offset} OFFSET #{pagerDTO.pageNo}
     </select>
 
