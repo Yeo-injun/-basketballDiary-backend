@@ -112,6 +112,10 @@
             <if test="startDay != null and !''.equals(startDay) and endDay != null and !''.equals(endDay)">
                     AND C.DAY_OF_THE_WEEK_CODE BETWEEN #{startDay} AND #{endDay}
             </if>
+            <if test="startTime != null and !''.equals(startTime) and endTime != null and !''.equals(endTime)">
+                    AND C.START_TIME &gt;= #{startTime}
+                    AND C.END_TIME &lt;= #{endTime}
+            </if>
                 ORDER BY A.TEAM_NAME
             ) ORDERS LIMIT #{pagerDTO.offset} OFFSET #{pagerDTO.pageNo}
     </select>
