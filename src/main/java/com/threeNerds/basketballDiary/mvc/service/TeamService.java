@@ -44,6 +44,14 @@ public class TeamService {
      */
     public List<TeamDTO> searchTeams(SearchTeamDTO searchTeamDTO) {
         log.info("TeamService.searchTeams");
+        if (searchTeamDTO.getStartTime() != null
+            && searchTeamDTO.getEndTime() != "")
+        {
+            searchTeamDTO
+                    .startTime(searchTeamDTO.getStartTime().replace(":", ""))
+                    .endTime(searchTeamDTO.getEndTime().replace(":", ""));
+        }
+
         List<TeamDTO> resultTeamList = new ArrayList<>();
         List<TeamDTO> teamList = teamRepository.findPagingTeam(searchTeamDTO);
         if(teamList.isEmpty())
