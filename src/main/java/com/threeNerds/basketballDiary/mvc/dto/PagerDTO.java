@@ -1,11 +1,14 @@
 package com.threeNerds.basketballDiary.mvc.dto;
 
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public class PagerDTO {
     private Integer pageNo = 0;
-    private Integer offset = 10;
+    private Integer offset = 4;
+    private Integer totalCount;
 
     public PagerDTO pageNo (Integer pageNo) {
         this.pageNo = pageNo;
@@ -14,6 +17,11 @@ public class PagerDTO {
 
     public PagerDTO offset (Integer offset) {
         this.offset = offset;
+        return this;
+    }
+
+    public PagerDTO totalCount (Integer totalCount) {
+        this.totalCount = totalCount;
         return this;
     }
 }
