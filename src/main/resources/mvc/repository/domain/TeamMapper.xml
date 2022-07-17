@@ -83,7 +83,8 @@
 
     <select id="findPagingTeam" resultType="com.threeNerds.basketballDiary.mvc.dto.team.team.TeamDTO">
         SELECT *
-          FROM ( SELECT DISTINCT A.TEAM_SEQ
+          FROM ( SELECT COUNT(*) OVER() TOTAL_COUNT
+                      , A.TEAM_SEQ
                       , A.LEADER_ID
                       , A.TEAM_NAME
                       , A.TEAM_IMAGE_PATH
@@ -94,30 +95,43 @@
                       , A.UPDATE_DATE
                       , A.SIDO_CODE
                       , A.SIGUNGU_CODE
-                      , COUNT(B.USER_SEQ) OVER(PARTITION BY B.TEAM_SEQ) AS TOT_MEMBER
+                      , B.TOT_MEMBER
                    FROM TEAM A
-                   LEFT JOIN (SELECT *
-                                FROM TEAM_MEMBER
-                               WHERE WITHDRAWAL_YN != 'Y') B /* 서브쿼리 보다는 조인으로 하는게 더 성능이 좋은게 아닌가?? 실행계획 검토 필요 */
+                   LEFT JOIN (
+                        SELECT TEAM_SEQ, COUNT(*) TOT_MEMBER
+                          FROM TEAM_MEMBER
+                         WHERE WITHDRAWAL_YN != 'Y'
+                         GROUP BY TEAM_SEQ ) B
                      ON A.TEAM_SEQ = B.TEAM_SEQ
-                   LEFT JOIN TEAM_REGULAR_EXERCISE C
+                  INNER JOIN (
+                        SELECT TEAM_SEQ
+                          FROM TEAM_REGULAR_EXERCISE
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="startDay != null and !''.equals(startDay)">
+                           AND DAY_OF_THE_WEEK_CODE <![CDATA[>=]]> #{startDay}
+            </if>
+            <if test="endDay != null and !''.equals(endDay)">
+                           AND DAY_OF_THE_WEEK_CODE <![CDATA[<=]]> #{endDay}
+            </if>
+            <if test="startTime != null and !''.equals(startTime)">
+                           AND START_TIME <![CDATA[>=]]> #{startTime}
+            </if>
+            <if test="endTime != null and !''.equals(endTime)">
+                           AND END_TIME <![CDATA[<=]]> #{endTime}
+            </if>
+        </trim>
+                         GROUP BY TEAM_SEQ ) C
                      ON A.TEAM_SEQ = C.TEAM_SEQ
-                  WHERE 1=1
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
             <if test="teamName != null and !''.equals(teamName)">
                     AND A.TEAM_NAME LIKE CONCAT('%', IFNULL(#{teamName}, ''), '%')
             </if>
             <if test="sigungu != null and !''.equals(sigungu)">
                     AND A.SIGUNGU_CODE = #{sigungu}
             </if>
-            <if test="startDay != null and !''.equals(startDay) and endDay != null and !''.equals(endDay)">
-                    AND C.DAY_OF_THE_WEEK_CODE BETWEEN #{startDay} AND #{endDay}
-            </if>
-            <if test="startTime != null and !''.equals(startTime) and endTime != null and !''.equals(endTime)">
-                    AND C.START_TIME &gt;= #{startTime}
-                    AND C.END_TIME &lt;= #{endTime}
-            </if>
-                ORDER BY A.TEAM_NAME
-            ) ORDERS LIMIT #{pagerDTO.offset} OFFSET #{pagerDTO.pageNo}
+        </trim>
+                  ORDER BY A.TEAM_NAME
+               ) ORDERS LIMIT #{pagerDTO.offset} OFFSET #{pagerDTO.pageNo}
     </select>
 
     <delete id="deleteById">
