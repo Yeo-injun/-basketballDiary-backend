@@ -40,10 +40,8 @@ public class MemberDTO {
     private Integer totGame;
 
     /* 총 count */
-    @Setter
     private Integer totalCount;
     /* 페이징 처리를 위한 VO */
-    @Setter
     private PagerDTO pagerDTO;
 
     public MemberDTO userSeq (Long userSeq) {
@@ -110,9 +108,8 @@ public class MemberDTO {
         this.totGame = totGame;
         return this;
     }
-
-//    public MemberDTO pagerDTO(PagerDTO pagerDTO) {
-//        this.pagerDTO = pagerDTO;
-//        return this;
-//    }
+        public MemberDTO pagerDTO(PagerDTO pagerDTO) {
+        this.pagerDTO = pagerDTO;
+        return this;
+    }
 }

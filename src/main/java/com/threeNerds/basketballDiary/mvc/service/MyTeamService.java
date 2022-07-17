@@ -75,14 +75,14 @@ public class MyTeamService {
                 .offset(3);
         MemberDTO memberDTO = new MemberDTO()
                 .teamSeq(teamSeq);
-        memberDTO.setPagerDTO(pagerDTO);
+        memberDTO.pagerDTO(pagerDTO);
 
         // 소속팀은 팀장과 운영진을 제외하므로, 팀원 정보가 존재하지 않더라도 404 처리하지 않는다.
         List<MemberDTO> resultMemberList = myTeamRepository.findPagingMemberByTeamSeq(memberDTO);
 
         if(!resultMemberList.isEmpty()) {
-            pagerDTO.setTotalCount(resultMemberList.get(0).getTotalCount());
-            resultMemberList.get(0).setPagerDTO(pagerDTO);
+            pagerDTO.totalCount(resultMemberList.get(0).getTotalCount());
+            resultMemberList.get(0).pagerDTO(pagerDTO);
         } else {
             resultMemberList = Collections.emptyList();
         }
