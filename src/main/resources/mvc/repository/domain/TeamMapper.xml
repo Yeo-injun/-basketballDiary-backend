@@ -95,7 +95,7 @@
                       , A.UPDATE_DATE
                       , A.SIDO_CODE
                       , A.SIGUNGU_CODE
-                      , B.TOT_MEMBER
+                      , IFNULL(B.TOT_MEMBER, 0) TOT_MEMBER
                    FROM TEAM A
                    LEFT JOIN (
                         SELECT TEAM_SEQ, COUNT(*) TOT_MEMBER
