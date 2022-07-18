@@ -82,31 +82,56 @@
     </select>
 
     <select id="findPagingTeam" resultType="com.threeNerds.basketballDiary.mvc.dto.team.team.TeamDTO">
-    SELECT *
-    FROM ( SELECT A.TEAM_SEQ
-                , A.LEADER_ID
-                , A.TEAM_NAME
-                , A.TEAM_IMAGE_PATH
-                , A.HOMETOWN
-                , A.INTRODUCTION
-                , A.FOUNDATION_YMD
-                , A.REG_DATE
-                , A.UPDATE_DATE
-                , A.SIDO_CODE
-                , A.SIGUNGU_CODE
-                , COUNT(B.USER_SEQ) OVER(PARTITION BY B.TEAM_SEQ) AS TOT_MEMBER
-             FROM TEAM A
-        LEFT JOIN (SELECT * FROM TEAM_MEMBER WHERE WITHDRAWAL_YN != 'Y') B
-               ON A.TEAM_SEQ = B.TEAM_SEQ
-            WHERE 1=1
-        <if test="teamName != null and !''.equals(teamName)">
-              AND A.TEAM_NAME LIKE '%' || #{teamName} ||'%'
-        </if>
-        <if test="sigungu != null and !''.equals(sigungu)">
-              AND A.SIGUNGU_CODE = #{sigungu}
-        </if>
-         ORDER BY A.TEAM_NAME
-        ) ORDERS LIMIT #{pagerDTO.offset} OFFSET #{pagerDTO.pageNo}
+        SELECT *
+          FROM ( SELECT COUNT(*) OVER() TOTAL_COUNT
+                      , A.TEAM_SEQ
+                      , A.LEADER_ID
+                      , A.TEAM_NAME
+                      , A.TEAM_IMAGE_PATH
+                      , A.HOMETOWN
+                      , A.INTRODUCTION
+                      , A.FOUNDATION_YMD
+                      , A.REG_DATE
+                      , A.UPDATE_DATE
+                      , A.SIDO_CODE
+                      , A.SIGUNGU_CODE
+                      , IFNULL(B.TOT_MEMBER, 0) TOT_MEMBER
+                   FROM TEAM A
+                   LEFT JOIN (
+                        SELECT TEAM_SEQ, COUNT(*) TOT_MEMBER
+                          FROM TEAM_MEMBER
+                         WHERE WITHDRAWAL_YN != 'Y'
+                         GROUP BY TEAM_SEQ ) B
+                     ON A.TEAM_SEQ = B.TEAM_SEQ
+                  INNER JOIN (
+                        SELECT TEAM_SEQ
+                          FROM TEAM_REGULAR_EXERCISE
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="startDay != null and !''.equals(startDay)">
+                           AND DAY_OF_THE_WEEK_CODE <![CDATA[>=]]> #{startDay}
+            </if>
+            <if test="endDay != null and !''.equals(endDay)">
+                           AND DAY_OF_THE_WEEK_CODE <![CDATA[<=]]> #{endDay}
+            </if>
+            <if test="startTime != null and !''.equals(startTime)">
+                           AND START_TIME <![CDATA[>=]]> #{startTime}
+            </if>
+            <if test="endTime != null and !''.equals(endTime)">
+                           AND END_TIME <![CDATA[<=]]> #{endTime}
+            </if>
+        </trim>
+                         GROUP BY TEAM_SEQ ) C
+                     ON A.TEAM_SEQ = C.TEAM_SEQ
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="teamName != null and !''.equals(teamName)">
+                    AND A.TEAM_NAME LIKE CONCAT('%', IFNULL(#{teamName}, ''), '%')
+            </if>
+            <if test="sigungu != null and !''.equals(sigungu)">
+                    AND A.SIGUNGU_CODE = #{sigungu}
+            </if>
+        </trim>
+                  ORDER BY A.TEAM_NAME
+               ) ORDERS LIMIT #{pagerDTO.offset} OFFSET #{pagerDTO.pageNo}
     </select>
 
     <delete id="deleteById">

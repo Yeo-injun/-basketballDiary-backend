@@ -71,17 +71,23 @@ public class MyTeamService {
      */
     public List<MemberDTO> findMembers(Long teamSeq, Integer pageNo) {
         PagerDTO pagerDTO = new PagerDTO()
-                .pageNo(pageNo*4)
-                .offset(4);
+                .pageNo(pageNo*3)
+                .offset(3);
         MemberDTO memberDTO = new MemberDTO()
-                .teamSeq(teamSeq)
-                .pagerDTO(pagerDTO);
+                .teamSeq(teamSeq);
+        memberDTO.pagerDTO(pagerDTO);
 
         // 소속팀은 팀장과 운영진을 제외하므로, 팀원 정보가 존재하지 않더라도 404 처리하지 않는다.
         List<MemberDTO> resultMemberList = myTeamRepository.findPagingMemberByTeamSeq(memberDTO);
 
-        return resultMemberList.isEmpty() ?
-                Collections.emptyList() : resultMemberList;
+        if(!resultMemberList.isEmpty()) {
+            pagerDTO.totalCount(resultMemberList.get(0).getTotalCount());
+            resultMemberList.get(0).pagerDTO(pagerDTO);
+        } else {
+            resultMemberList = Collections.emptyList();
+        }
+
+        return resultMemberList;
     }
 
     /**
