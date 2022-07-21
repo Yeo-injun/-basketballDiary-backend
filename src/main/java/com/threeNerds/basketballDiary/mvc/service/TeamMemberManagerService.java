@@ -86,7 +86,7 @@ public class TeamMemberManagerService {
 
         /** 팀원 추가 */
         TeamJoinRequest joinRequestInfo = teamJoinRequestRepository.findUserByTeamJoinRequestSeq(joinRequest.getTeamJoinRequestSeq());
-        TeamMember newTeamMember = TeamMember.createNewMember(joinRequestInfo);
+        TeamMember newTeamMember = TeamMember.create(joinRequestInfo);
         teamMemberRepository.saveTeamMemeber(newTeamMember);
     }
 

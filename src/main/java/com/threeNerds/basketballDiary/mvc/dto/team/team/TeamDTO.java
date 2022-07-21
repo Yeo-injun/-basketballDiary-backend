@@ -12,7 +12,7 @@ public class TeamDTO {
     /* 팀 정보 */
     private Long teamSeq;
 
-    private String leaderId;
+    private Long leaderId;
 
     private String teamName;
 
@@ -35,14 +35,14 @@ public class TeamDTO {
     private Integer totMember;
 
     /* 정기운동 목록 */
-    private List<TeamRegularExercise> teamRegularExercisesList;
+    private List<TeamRegularExercise> teamRegularExerciseList;
 
     public TeamDTO teamSeq (Long teamSeq) {
         this.teamSeq = teamSeq;
         return this;
     }
 
-    public TeamDTO leaderId(String leaderId){
+    public TeamDTO leaderId(Long leaderId){
         this.leaderId = leaderId;
         return this;
     }
@@ -97,7 +97,7 @@ public class TeamDTO {
     }
 
     public TeamDTO teamRegularExercisesList (List<TeamRegularExercise> teamRegularExercisesList) {
-        this.teamRegularExercisesList = teamRegularExercisesList;
+        this.teamRegularExerciseList = teamRegularExercisesList;
         return this;
     }
 }

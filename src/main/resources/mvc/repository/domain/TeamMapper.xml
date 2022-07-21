@@ -4,25 +4,30 @@
 <mapper namespace="com.threeNerds.basketballDiary.mvc.repository.TeamRepository">
 
     <insert id="saveTeam" parameterType="com.threeNerds.basketballDiary.mvc.domain.Team" useGeneratedKeys="true" keyProperty="teamSeq">
-        INSERT INTO
-            TEAM (     LEADER_ID
-                     , TEAM_NAME
-                     , HOMETOWN
-                     , INTRODUCTION
-                     , FOUNDATION_YMD
-                     , REG_DATE
-                     , UPDATE_DATE
-                     , SIDO_CODE
-                     , SIGUNGU_CODE )
-        VALUES (      #{leaderId}
-                    , #{teamName}
-                    , #{hometown}
-                    , #{introduction}
-                    , #{foundationYmd}
-                    , #{regDate}
-                    , #{updateDate}
-                    , #{sidoCode}
-                    , #{sigunguCode} )
+        <selectKey keyProperty="teamSeq" order="AFTER" resultType="java.lang.Long">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        INSERT INTO TEAM (
+              LEADER_ID
+            , TEAM_NAME
+            , HOMETOWN
+            , INTRODUCTION
+            , FOUNDATION_YMD
+            , REG_DATE
+            , UPDATE_DATE
+            , SIDO_CODE
+            , SIGUNGU_CODE
+        ) VALUES (
+              #{leaderId}
+            , #{teamName}
+            , #{hometown}
+            , #{introduction}
+            , #{foundationYmd}
+            , #{regDate}
+            , #{updateDate}
+            , #{sidoCode}
+            , #{sigunguCode}
+        )
     </insert>
 
     <update id="updateTeam" parameterType="com.threeNerds.basketballDiary.mvc.domain.Team">
