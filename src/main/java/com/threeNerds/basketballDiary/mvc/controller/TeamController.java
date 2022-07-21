@@ -3,8 +3,9 @@ package com.threeNerds.basketballDiary.mvc.controller;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.interceptor.Auth;
-import com.threeNerds.basketballDiary.mvc.domain.Team;
+
 import com.threeNerds.basketballDiary.mvc.dto.PagerDTO;
+import com.threeNerds.basketballDiary.mvc.dto.TeamAuthDTO;
 import com.threeNerds.basketballDiary.mvc.dto.team.team.SearchTeamDTO;
 import com.threeNerds.basketballDiary.mvc.dto.team.team.TeamDTO;
 import com.threeNerds.basketballDiary.mvc.service.TeamService;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.threeNerds.basketballDiary.constant.Constant.USER;
+import static com.threeNerds.basketballDiary.utils.HttpResponses.RESPONSE_CREATED;
 import static com.threeNerds.basketballDiary.utils.SessionUtil.LOGIN_USER;
 
 /**
@@ -81,7 +83,7 @@ public class TeamController {
      */
     @Auth(GRADE = USER)
     @PostMapping
-    public ResponseEntity<Team> registerTeam(
+    public ResponseEntity<?> registerTeam(
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,
             @RequestBody @Valid TeamDTO teamDTO
     ) {
@@ -89,13 +91,16 @@ public class TeamController {
         Optional.ofNullable(sessionUser).orElseThrow(() -> new CustomException(Error.LOGIN_REQUIRED));
 
         Long userSeq = sessionUser.getUserSeq();
-        Team team = teamService.createTeam(userSeq, teamDTO);
+        teamDTO.leaderId(userSeq);
+        List<TeamAuthDTO> authList = teamService.createTeam(teamDTO);
+        sessionUser.updateAuthority(authList);
 
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(team.getTeamSeq())
-                .toUri();
-
-        return ResponseEntity.created(location).build();
+        return RESPONSE_CREATED;
+//        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+//                .path("/{id}")
+//                .buildAndExpand(team.getTeamSeq())
+//                .toUri();
+//
+//        return ResponseEntity.created(location).build();
     }
 }
