@@ -57,34 +57,17 @@ public class TeamService {
                     .endTime(searchTeamDTO.getEndTime().replace(":", ""));
         }
 
-        List<TeamDTO> resultTeamList = new ArrayList<>();
-        List<TeamDTO> teamList = teamRepository.findPagingTeam(searchTeamDTO);
-        if(teamList.isEmpty())
-            teamList = Collections.emptyList();
+        List<TeamDTO> teamSearchResults = teamRepository.findPagingTeam(searchTeamDTO);
+        if(teamSearchResults.isEmpty())
+            teamSearchResults = Collections.emptyList();
 
-        teamList.forEach(team -> {
-            Long teamSeq = team.getTeamSeq();
-            List<TeamRegularExercise> exerciseList = teamRegularExerciseRepository.findByTeamSeq(teamSeq);
-            TeamDTO teamDTO = new TeamDTO()
-                    .teamSeq(team.getTeamSeq())
-                    .leaderId(team.getLeaderId())
-                    .teamName(team.getTeamName())
-                    .teamImagePath(team.getTeamImagePath())
-                    .hometown(team.getHometown())
-                    .introduction(team.getIntroduction())
-                    .foundationYmd(team.getFoundationYmd())
-                    .regDate(team.getRegDate())
-                    .updateDate(team.getUpdateDate())
-                    .sidoCode(team.getSidoCode())
-                    .sigunguCode(team.getSigunguCode())
-                    .totMember(team.getTotMember())
-                    .teamRegularExercisesList(exerciseList.isEmpty() ? Collections.emptyList() : exerciseList);
-
-            resultTeamList.add(teamDTO);
+        teamSearchResults.forEach(teamDTO -> {
+            Long teamSeq = teamDTO.getTeamSeq();
+            List<TeamRegularExercise> exercises = teamRegularExerciseRepository.findByTeamSeq(teamSeq);
+            teamDTO.teamRegularExercisesList(exercises.isEmpty() ? Collections.emptyList() : exercises);
         });
 
-        return resultTeamList.isEmpty() ?
-                Collections.emptyList() : resultTeamList;
+        return teamSearchResults;
     }
 
     /**
