@@ -118,7 +118,7 @@
                                 FROM TEAM_REGULAR_EXERCISE
                               ) C
                      ON A.TEAM_SEQ = C.TEAM_SEQ
-        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                  WHERE 1=1
             <if test="teamName != null and !''.equals(teamName)">
                     AND A.TEAM_NAME LIKE CONCAT('%', IFNULL(#{teamName}, ''), '%')
             </if>
@@ -133,10 +133,9 @@
                     AND START_TIME <![CDATA[>=]]> #{startTime}
                     AND END_TIME <![CDATA[<=]]> #{endTime}
             </if>
-        </trim>
                   GROUP BY A.TEAM_SEQ
                   ORDER BY A.TEAM_NAME
-        ) ORDERS LIMIT #{pagerDTO.offset} OFFSET #{pagerDTO.pageNo}
+        ) ORDERS LIMIT #{pagerDTO.rowCount} OFFSET #{pagerDTO.offset}
     </select>
 
     <delete id="deleteById">

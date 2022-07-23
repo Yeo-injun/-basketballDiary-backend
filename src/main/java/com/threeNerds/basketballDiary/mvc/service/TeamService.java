@@ -5,12 +5,14 @@ import com.threeNerds.basketballDiary.mvc.domain.TeamMember;
 import com.threeNerds.basketballDiary.mvc.domain.TeamRegularExercise;
 import com.threeNerds.basketballDiary.mvc.domain.User;
 import com.threeNerds.basketballDiary.mvc.dto.TeamAuthDTO;
+import com.threeNerds.basketballDiary.mvc.dto.team.team.PaginationTeamDTO;
 import com.threeNerds.basketballDiary.mvc.dto.team.team.SearchTeamDTO;
 import com.threeNerds.basketballDiary.mvc.dto.team.team.TeamDTO;
 import com.threeNerds.basketballDiary.mvc.repository.TeamMemberRepository;
 import com.threeNerds.basketballDiary.mvc.repository.TeamRegularExerciseRepository;
 import com.threeNerds.basketballDiary.mvc.repository.TeamRepository;
 import com.threeNerds.basketballDiary.mvc.repository.UserRepository;
+import com.threeNerds.basketballDiary.pagination.PagerDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -47,7 +49,7 @@ public class TeamService {
      * 팀 목록 조회
      * @return List<TeamDTO>
      */
-    public List<TeamDTO> searchTeams(SearchTeamDTO searchTeamDTO) {
+    public PaginationTeamDTO searchTeams(SearchTeamDTO searchTeamDTO) {
         log.info("TeamService.searchTeams");
         if (searchTeamDTO.getStartTime() != null
             && searchTeamDTO.getEndTime() != "")
@@ -58,8 +60,13 @@ public class TeamService {
         }
 
         List<TeamDTO> teamSearchResults = teamRepository.findPagingTeam(searchTeamDTO);
-        if(teamSearchResults.isEmpty())
+        PagerDTO resultPager = searchTeamDTO.getPagerDTO();
+        if(teamSearchResults.isEmpty()) {
             teamSearchResults = Collections.emptyList();
+            resultPager.totalCount(0);
+            return new PaginationTeamDTO(resultPager, teamSearchResults);
+        }
+        resultPager.totalCount(teamSearchResults.get(0).getTotalCount());
 
         teamSearchResults.forEach(teamDTO -> {
             Long teamSeq = teamDTO.getTeamSeq();
@@ -67,7 +74,7 @@ public class TeamService {
             teamDTO.teamRegularExercisesList(exercises.isEmpty() ? Collections.emptyList() : exercises);
         });
 
-        return teamSearchResults;
+        return new PaginationTeamDTO(resultPager, teamSearchResults);
     }
 
     /**
