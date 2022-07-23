@@ -1,6 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.dto.team.team;
 
-import com.threeNerds.basketballDiary.mvc.dto.PagerDTO;
+import com.threeNerds.basketballDiary.pagination.PagerDTO;
 import com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MemberDTO;
 import lombok.Getter;
 

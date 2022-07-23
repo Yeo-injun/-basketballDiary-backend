@@ -4,7 +4,8 @@ import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.interceptor.Auth;
 
-import com.threeNerds.basketballDiary.mvc.dto.PagerDTO;
+import com.threeNerds.basketballDiary.mvc.dto.team.team.PaginationTeamDTO;
+import com.threeNerds.basketballDiary.pagination.PagerDTO;
 import com.threeNerds.basketballDiary.mvc.dto.TeamAuthDTO;
 import com.threeNerds.basketballDiary.mvc.dto.team.team.SearchTeamDTO;
 import com.threeNerds.basketballDiary.mvc.dto.team.team.TeamDTO;
@@ -50,7 +51,7 @@ public class TeamController {
      * API019 : 팀 목록 조회
      */
     @GetMapping
-    public ResponseEntity<List<TeamDTO>> searchTeams(
+    public ResponseEntity<?> searchTeams(
             @RequestParam(name = "team-name"  , required = false) String teamName,
             @RequestParam(name = "sigungu"    , required = false) String sigungu,
             @RequestParam(name = "start-day"  , required = false) String startDay,
@@ -60,9 +61,7 @@ public class TeamController {
             @RequestParam(name = "pageNo"     , defaultValue = "0") Integer pageNo
     ) {
         log.info("▒▒▒▒▒ API019: TeamController.searchTeams");
-        PagerDTO pagerDTO = new PagerDTO()
-                .pageNo(pageNo*5)
-                .offset(5);
+        PagerDTO pagerDTO = new PagerDTO(pageNo, 5);
         SearchTeamDTO searchTeamDTO = new SearchTeamDTO()
                 .teamName(teamName)
                 .sigungu(sigungu)
@@ -72,9 +71,7 @@ public class TeamController {
                 .endTime(endTime)
                 .pagerDTO(pagerDTO);
 
-        List<TeamDTO> teamList = teamService.searchTeams(searchTeamDTO);
-        teamList = teamList.isEmpty() ? Collections.emptyList() : teamList;
-
+        PaginationTeamDTO teamList = teamService.searchTeams(searchTeamDTO);
         return ResponseEntity.ok().body(teamList);
     }
 
