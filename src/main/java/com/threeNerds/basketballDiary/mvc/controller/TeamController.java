@@ -58,7 +58,7 @@ public class TeamController {
             @RequestParam(name = "end-day"    , required = false) String endDay,
             @RequestParam(name = "start-time" , required = false) String startTime,
             @RequestParam(name = "end-time"   , required = false) String endTime,
-            @RequestParam(name = "pageNo"     , defaultValue = "0") Integer pageNo
+            @RequestParam(name = "page-no"     , defaultValue = "0") Integer pageNo
     ) {
         log.info("▒▒▒▒▒ API019: TeamController.searchTeams");
         PagerDTO pagerDTO = new PagerDTO(pageNo, 5);
