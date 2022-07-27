@@ -2,26 +2,32 @@ package com.threeNerds.basketballDiary.mvc.controller;
 
 import com.threeNerds.basketballDiary.interceptor.Auth;
 import com.threeNerds.basketballDiary.mvc.dto.PlayerDTO;
-import com.threeNerds.basketballDiary.mvc.dto.PlayerSearchDTO;
-import com.threeNerds.basketballDiary.mvc.dto.loginUser.userTeamManager.JoinRequestDTO;
-import com.threeNerds.basketballDiary.mvc.dto.myTeam.*;
+import com.threeNerds.basketballDiary.mvc.dto.myTeam.MyTeamProfileDTO;
+import com.threeNerds.basketballDiary.mvc.dto.myTeam.CmnMyTeamDTO;
+import com.threeNerds.basketballDiary.mvc.dto.myTeam.FindMyTeamProfileDTO;
+import com.threeNerds.basketballDiary.mvc.dto.myTeam.ModifyMyTeamProfileDTO;
 import com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MemberDTO;
 import com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MyTeamDTO;
 import com.threeNerds.basketballDiary.mvc.service.MyTeamService;
 import com.threeNerds.basketballDiary.mvc.service.TeamMemberManagerService;
 import com.threeNerds.basketballDiary.mvc.service.TeamMemberService;
 import com.threeNerds.basketballDiary.session.SessionUser;
-import lombok.Data;
+import com.threeNerds.basketballDiary.utils.SessionUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static com.threeNerds.basketballDiary.constant.Constant.*;
-import static com.threeNerds.basketballDiary.session.SessionConst.LOGIN_MEMBER;
 import static com.threeNerds.basketballDiary.utils.HttpResponses.RESPONSE_OK;
+import static com.threeNerds.basketballDiary.utils.SessionUtil.LOGIN_USER;
 
 /**
  * 소속팀과 관련된 업무를 처리하는 Controller
@@ -59,7 +65,7 @@ public class MyTeamController {
     @Auth(GRADE = TEAM_MEMBER)
     @GetMapping("/{teamSeq}/managers")
     public ResponseEntity<List<MemberDTO>> searchManagers(
-            @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser,
+            @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,
             @PathVariable(value = "teamSeq") Long teamSeq
     ) {
         log.info("▒▒▒▒▒ API001: MyTeamController.searchManagers");
@@ -74,7 +80,7 @@ public class MyTeamController {
     @Auth(GRADE = TEAM_MEMBER)
     @GetMapping("/{teamSeq}/members")
     public ResponseEntity<List<MemberDTO>> searchMembers(
-            @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser,
+            @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,
             @PathVariable(value = "teamSeq") Long teamSeq,
             @RequestParam(name = "pageNo", defaultValue = "0") Integer pageNo
     ) {
@@ -222,8 +228,9 @@ public class MyTeamController {
      */
     @GetMapping("/{teamSeq}/profile")
     public ResponseEntity<MemberDTO> findMyTeamsProfile(
-            @SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO,
-            @PathVariable Long teamSeq){
+            @SessionAttribute(value = LOGIN_USER,required = false) SessionUser sessionDTO,
+            @PathVariable Long teamSeq
+    ) {
 
         Long id = sessionDTO.getUserSeq();
 
@@ -240,11 +247,13 @@ public class MyTeamController {
     /**
      * API012 소속팀 개인프로필 수정
      */
-    @PatchMapping("/{teamSeq}/profile")
+    @PostMapping("/{teamSeq}/profile")
     public ResponseEntity<?> modifyMyTeamsProfile(
-            @SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO,
+            @SessionAttribute(value = LOGIN_USER,required = false) SessionUser sessionDTO,
             @PathVariable Long teamSeq,
-            @RequestBody BackNumber backNumber){
+            @ModelAttribute MyTeamProfileDTO myTeamProfileDTO){
+
+        uploadFile(myTeamProfileDTO.getImageFile());
 
         Long id = sessionDTO.getUserSeq();
 
@@ -252,12 +261,39 @@ public class MyTeamController {
                 .userSeq(id)
                 .teamSeq(teamSeq);
 
-        ModifyMyTeamProfileDTO myTeamProfileDTO = new ModifyMyTeamProfileDTO()
+        ModifyMyTeamProfileDTO teamProfileDTO = new ModifyMyTeamProfileDTO()
                 .findMyTeamProfileDTO(findMyTeamProfileDTO)
-                .backNumber(backNumber.getBackNumber());
+                .backNumber(myTeamProfileDTO.getBackNumber());
 
-        teamMemberService.updateMyTeamProfile(myTeamProfileDTO);
+        teamMemberService.updateMyTeamProfile(teamProfileDTO);
         return RESPONSE_OK;
+    }
+
+    public void uploadFile(MultipartFile file){
+        /**
+         * 파일을 저장할 경로를 미리 생성
+         * ex) 오늘이 2022/06/18 이라면 D드라이브 upload 폴더에 2022->06->18 이라는 폴더들이 계층별로 생성됨
+        */
+        String uploadFolder = "D:\\upload";
+
+        String date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd")).replace("/", File.separator);
+
+        File uploadPath = new File(uploadFolder,date);
+
+        if(!uploadPath.exists()) {
+            uploadPath.mkdirs();
+        }
+
+        String uploadFileName = file.getOriginalFilename();
+        File saveFile = new File(uploadPath,uploadFileName);
+
+        try{
+            file.transferTo(saveFile);
+        }catch(IllegalStateException e){
+            throw new RuntimeException(e.getMessage(),e);
+        }catch(IOException e){
+            throw new RuntimeException(e.getMessage(),e);
+        }
     }
 
     /**
@@ -265,7 +301,7 @@ public class MyTeamController {
      */
     @DeleteMapping("/{teamSeq}/profile")
     public ResponseEntity<?> deleteMyTeamsProfile(
-            @SessionAttribute(value = LOGIN_MEMBER,required = false) SessionUser sessionDTO,
+            @SessionAttribute(value = LOGIN_USER,required = false) SessionUser sessionDTO,
             @PathVariable Long teamSeq)
     {
         Long id = sessionDTO.getUserSeq();
@@ -280,13 +316,13 @@ public class MyTeamController {
     /**
      * API014 : 소속팀 목록 조회
      */
-//    @Auth(GRADE = TEAM_MEMBER)
+    @Auth(GRADE = TEAM_MEMBER)
     @GetMapping
     public ResponseEntity<List<MyTeamDTO>> searchTeams(
-            @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser
+            @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser
     ) {
         log.info("▒▒▒▒▒ API014: MyTeamController.searchTeams");
-        Long userSeq = sessionUser.getUserSeq();
+        Long userSeq = SessionUtil.getUserSeq();
         List<MyTeamDTO> myTeamList = myTeamService.findTeams(userSeq);
 
         return ResponseEntity.ok().body(myTeamList);
@@ -316,12 +352,15 @@ public class MyTeamController {
     @Auth(GRADE = TEAM_MEMBER)
     @GetMapping("/{teamSeq}/info")
     public ResponseEntity<MyTeamDTO> searchTeam(
-            @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser,
+            @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,
             @PathVariable(value = "teamSeq") Long teamSeq
     ) {
         log.info("▒▒▒▒▒ API016: MyTeamController.searchTeam");
         Long userSeq = sessionUser.getUserSeq();
-        MyTeamDTO myTeam = myTeamService.findTeam(userSeq, teamSeq);
+        FindMyTeamProfileDTO paramDTO = new FindMyTeamProfileDTO()
+                .teamSeq(teamSeq)
+                .userSeq(userSeq);
+        MyTeamDTO myTeam = myTeamService.findTeam(paramDTO);
 
         return ResponseEntity.ok().body(myTeam);
     }
@@ -330,16 +369,15 @@ public class MyTeamController {
      * API017 : 소속팀 정보 수정
      */
     @Auth(GRADE = MANAGER)
-    @PutMapping("/{teamSeq}/info")
+    @PostMapping("/{teamSeq}/info")
     public ResponseEntity<?> modifyMyTeam(
-            @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser,
+            @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,
             @PathVariable(value = "teamSeq") Long teamSeq,
             @RequestBody MyTeamDTO dto
     ) {
         log.info("▒▒▒▒▒ API017: MyTeamController.modifyMyTeam");
         Long userSeq = sessionUser.getUserSeq();
         myTeamService.modifyMyTeam(teamSeq, dto);
-        MyTeamDTO myTeam = myTeamService.findTeam(userSeq, teamSeq);
 
         return RESPONSE_OK;
     }

@@ -3,8 +3,10 @@ package com.threeNerds.basketballDiary.mvc.controller;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.interceptor.Auth;
-import com.threeNerds.basketballDiary.mvc.domain.Team;
-import com.threeNerds.basketballDiary.mvc.dto.PagerDTO;
+
+import com.threeNerds.basketballDiary.mvc.dto.team.team.PaginationTeamDTO;
+import com.threeNerds.basketballDiary.pagination.PagerDTO;
+import com.threeNerds.basketballDiary.mvc.dto.TeamAuthDTO;
 import com.threeNerds.basketballDiary.mvc.dto.team.team.SearchTeamDTO;
 import com.threeNerds.basketballDiary.mvc.dto.team.team.TeamDTO;
 import com.threeNerds.basketballDiary.mvc.service.TeamService;
@@ -22,7 +24,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.threeNerds.basketballDiary.constant.Constant.USER;
-import static com.threeNerds.basketballDiary.session.SessionConst.LOGIN_MEMBER;
+import static com.threeNerds.basketballDiary.utils.HttpResponses.RESPONSE_CREATED;
+import static com.threeNerds.basketballDiary.utils.SessionUtil.LOGIN_USER;
 
 /**
  * ... 수행하는 Controller
@@ -48,19 +51,17 @@ public class TeamController {
      * API019 : 팀 목록 조회
      */
     @GetMapping
-    public ResponseEntity<List<TeamDTO>> searchTeams(
+    public ResponseEntity<?> searchTeams(
             @RequestParam(name = "team-name"  , required = false) String teamName,
             @RequestParam(name = "sigungu"    , required = false) String sigungu,
             @RequestParam(name = "start-day"  , required = false) String startDay,
             @RequestParam(name = "end-day"    , required = false) String endDay,
             @RequestParam(name = "start-time" , required = false) String startTime,
             @RequestParam(name = "end-time"   , required = false) String endTime,
-            @RequestParam(name = "pageNo"     , defaultValue = "0") Integer pageNo
+            @RequestParam(name = "page-no"     , defaultValue = "0") Integer pageNo
     ) {
         log.info("▒▒▒▒▒ API019: TeamController.searchTeams");
-        PagerDTO pagerDTO = new PagerDTO()
-                .pageNo(pageNo*5)
-                .offset(5);
+        PagerDTO pagerDTO = new PagerDTO(pageNo, 5);
         SearchTeamDTO searchTeamDTO = new SearchTeamDTO()
                 .teamName(teamName)
                 .sigungu(sigungu)
@@ -70,9 +71,7 @@ public class TeamController {
                 .endTime(endTime)
                 .pagerDTO(pagerDTO);
 
-        List<TeamDTO> teamList = teamService.searchTeams(searchTeamDTO);
-        teamList = teamList.isEmpty() ? Collections.emptyList() : teamList;
-
+        PaginationTeamDTO teamList = teamService.searchTeams(searchTeamDTO);
         return ResponseEntity.ok().body(teamList);
     }
 
@@ -81,21 +80,24 @@ public class TeamController {
      */
     @Auth(GRADE = USER)
     @PostMapping
-    public ResponseEntity<Team> registerTeam(
-            @SessionAttribute(value = LOGIN_MEMBER, required = false) SessionUser sessionUser,
+    public ResponseEntity<?> registerTeam(
+            @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,
             @RequestBody @Valid TeamDTO teamDTO
     ) {
         log.info("▒▒▒▒▒ API021: TeamController.registerTeam");
         Optional.ofNullable(sessionUser).orElseThrow(() -> new CustomException(Error.LOGIN_REQUIRED));
 
-        String userId = sessionUser.getUserId();
-        Team team = teamService.createTeam(userId, teamDTO);
+        Long userSeq = sessionUser.getUserSeq();
+        teamDTO.leaderId(userSeq);
+        List<TeamAuthDTO> authList = teamService.createTeam(teamDTO);
+        sessionUser.updateAuthority(authList);
 
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(team.getTeamSeq())
-                .toUri();
-
-        return ResponseEntity.created(location).build();
+        return RESPONSE_CREATED;
+//        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+//                .path("/{id}")
+//                .buildAndExpand(team.getTeamSeq())
+//                .toUri();
+//
+//        return ResponseEntity.created(location).build();
     }
 }

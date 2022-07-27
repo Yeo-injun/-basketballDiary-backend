@@ -13,4 +13,5 @@ public interface TeamRegularExerciseRepository {
     List<TeamRegularExercise> findByTeamSeq(Long teamSeq);
     void saveTeamRegularExercise(TeamRegularExercise teamRegularExercise);
     void updateTeamRegularExercise(TeamRegularExercise teamRegularExercise);
+    void deleteTeamRegularExercise(Long teamRegularExerciseSeq);
 }

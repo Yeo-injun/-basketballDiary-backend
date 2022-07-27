@@ -2,6 +2,7 @@ package com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam;
 
 import com.threeNerds.basketballDiary.mvc.domain.TeamRegularExercise;
 import lombok.Getter;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -18,6 +19,8 @@ public class MyTeamDTO {
     private String teamName;
     /* 팀 이미지 경로 */
     private String teamImagePath;
+    /* 팀 이미지 */
+    private MultipartFile teamImage;
     /* 연고지 */
     private String hometown;
     /* 시도코드 */
@@ -51,6 +54,11 @@ public class MyTeamDTO {
 
     public MyTeamDTO teamImagePath (String teamImagePath) {
         this.teamImagePath = teamImagePath;
+        return this;
+    }
+
+    public MyTeamDTO teamImage (MultipartFile teamImage) {
+        this.teamImage = teamImage;
         return this;
     }
 

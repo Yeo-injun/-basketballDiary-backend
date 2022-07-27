@@ -4,17 +4,17 @@ import com.threeNerds.basketballDiary.constant.JoinRequestTypeCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.mvc.domain.TeamJoinRequest;
 import com.threeNerds.basketballDiary.mvc.domain.TeamMember;
+import com.threeNerds.basketballDiary.mvc.domain.User;
+import com.threeNerds.basketballDiary.mvc.dto.TeamAuthDTO;
 import com.threeNerds.basketballDiary.mvc.dto.loginUser.userTeamManager.JoinRequestDTO;
 import com.threeNerds.basketballDiary.mvc.dto.loginUser.CmnLoginUserDTO;
-import com.threeNerds.basketballDiary.mvc.repository.TeamJoinRequestRepository;
-import com.threeNerds.basketballDiary.mvc.repository.TeamMemberRepository;
-import com.threeNerds.basketballDiary.mvc.repository.TeamRepository;
-import com.threeNerds.basketballDiary.mvc.repository.UserTeamManagerRepository;
+import com.threeNerds.basketballDiary.mvc.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,15 +41,15 @@ public class UserTeamManagerService {
     private final TeamMemberRepository teamMemberRepository;
     private final TeamJoinRequestRepository teamJoinRequestRepository;
     private final UserTeamManagerRepository userTeamManagerRepository;
+    private final UserRepository userRepository;
 
     // 농구팀에 가입요청 보내기
     public void sendJoinRequestToTeam(CmnLoginUserDTO loginUserDTO)
     {
         TeamJoinRequest joinRequestInfo = TeamJoinRequest.createJoinRequest(loginUserDTO);
         /** 초대-가입요청 존재여부 확인 : 대기중인 가입요청 혹은 초대가 있을 경우 중복가입요청 방지 */
-        boolean isExistPrevJoinRequest = teamJoinRequestRepository.checkPendingJoinRequest(joinRequestInfo) == 1 ? true : false;
-        if (isExistPrevJoinRequest)
-        {
+        boolean isExistPrevJoinRequest = teamJoinRequestRepository.checkPendingJoinRequest(joinRequestInfo) == 1;
+        if (isExistPrevJoinRequest) {
             throw new CustomException(ALREADY_EXIST_JOIN_REQUEST);
         }
 
@@ -57,6 +57,13 @@ public class UserTeamManagerService {
         Optional
             .ofNullable(teamRepository.findByTeamSeq(joinRequestInfo.getTeamSeq()))
             .orElseThrow(()-> new CustomException(TEAM_NOT_FOUND));
+
+        /** 이미 팀원으로 존재하는지 확인 */
+        TeamMember teamMember = teamMemberRepository.findTeamMember(joinRequestInfo);
+//        if (teamMember.isExist()) { // TODO MyBatis설정 >> 조회가 되지 않을 경우 null을 반환할지 아니면 모든 필드가 null인 빈 객체를 반환할지 결정
+        if (teamMember != null) {
+            throw new CustomException(ALREADY_EXIST_TEAM_MEMBER);
+        }
 
         /** 팀이 존재하고, 초대-가입요청이 없을경우에만 INSERT */
         teamJoinRequestRepository.createJoinRequest(joinRequestInfo);
@@ -105,19 +112,25 @@ public class UserTeamManagerService {
     }
 
     // 사용자가 팀의 초대를 승인하는 API
-    public void approveInvitation(CmnLoginUserDTO loginUserDTO)
+    public List<TeamAuthDTO> approveInvitation(CmnLoginUserDTO loginUserDTO)
     {
         /** 초대요청 상태 업데이트 하기 */
-        boolean isSuccess = teamJoinRequestRepository.updateJoinRequestState(TeamJoinRequest.approveInvitation(loginUserDTO)) == 1 ? true : false;
-        if (!isSuccess)
-        {
+        boolean isSuccess = teamJoinRequestRepository.updateJoinRequestState(TeamJoinRequest.approveInvitation(loginUserDTO)) == 1;
+        if (!isSuccess) {
             throw new CustomException(JOIN_REQUEST_NOT_FOUND);
         }
 
         /** 팀원 추가 */
         TeamJoinRequest joinInfo = teamJoinRequestRepository.findUserByTeamJoinRequestSeq(loginUserDTO.getTeamJoinRequestSeq());
-        TeamMember newTeamMember = TeamMember.createNewMember(joinInfo);
+        TeamMember newTeamMember = TeamMember.create(joinInfo);
         teamMemberRepository.saveTeamMemeber(newTeamMember);
+
+        /** 변경된 권한정보 조회 */
+        User user = new User().builder()
+                .userSeq(loginUserDTO.getUserSeq())
+                .build();
+        List<TeamAuthDTO> authList = userRepository.findAuthList(user);
+        return authList;
     }
 
     // 팀 초대 거절 API

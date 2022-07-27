@@ -111,7 +111,8 @@
 
     <select id="findPagingMemberByTeamSeq" parameterType="com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MemberDTO" resultType="com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MemberDTO">
         SELECT *
-        FROM (SELECT A.USER_SEQ
+        FROM (SELECT COUNT(*) OVER() TOTAL_COUNT
+                   , A.USER_SEQ
                    , B.TEAM_MEMBER_SEQ
                    , B.TEAM_SEQ
                    , B.TEAM_AUTH_CODE

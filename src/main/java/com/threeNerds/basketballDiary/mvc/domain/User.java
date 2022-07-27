@@ -1,5 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.domain;
 
+import com.threeNerds.basketballDiary.mvc.dto.user.CmnUserDTO;
 import com.threeNerds.basketballDiary.mvc.dto.user.user.UserDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -43,24 +44,35 @@ public class User {
     private String sidoCode;
     /* 시군구코드 */
     private String sigunguCode;
+    /* 도로명주소 */
+    private String roadAddress;
 
-    public static User createUser(UserDTO userDTO){
+    public static User createUserForRegistration(CmnUserDTO userDTO)
+    {
+        LocalDate today = LocalDate.now();
         return User.builder()
-                .userSeq(userDTO.getUserSeq())
                 .userId(userDTO.getUserId())
                 .password(userDTO.getPassword())
                 .userName(userDTO.getUserName())
-                .positionCode(userDTO.getPositionCode())
                 .email(userDTO.getEmail())
                 .gender(userDTO.getGender())
                 .birthYmd(userDTO.getBirthYmd())
                 .height(userDTO.getHeight())
                 .weight(userDTO.getWeight())
-                .regDate(userDTO.getRegDate())
-                .updateDate(userDTO.getUpdateDate())
-                .userRegYn(userDTO.getUserRegYn())
+                .regDate(today)
+                .updateDate(today)
+                .userRegYn("Y")
                 .sidoCode(userDTO.getSidoCode())
                 .sigunguCode(userDTO.getSigunguCode())
                 .build();
     }
+
+    // 로그인 상태 확인
+    public boolean isLogin() {
+        if (this.userSeq == null) {
+            return false;
+        }
+        return true;
+    }
+
 }

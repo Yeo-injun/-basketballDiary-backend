@@ -8,41 +8,32 @@ import java.util.List;
 
 @Getter
 public class TeamDTO {
+    /* 페이징을 위한 총 row갯수 */
+    private Integer totalCount;
 
     /* 팀 정보 */
     private Long teamSeq;
-
-    private String leaderId;
-
+    private Long leaderId;
     private String teamName;
-
     private String teamImagePath;
-
     private String hometown;
-
     private String introduction;
-
     private String foundationYmd;
-
     private LocalDate regDate;
-
     private LocalDate updateDate;
-
     private String sidoCode;
-
     private String sigunguCode;
-
     private Integer totMember;
 
     /* 정기운동 목록 */
-    private List<TeamRegularExercise> teamRegularExercisesList;
+    private List<TeamRegularExercise> teamRegularExerciseList;
 
     public TeamDTO teamSeq (Long teamSeq) {
         this.teamSeq = teamSeq;
         return this;
     }
 
-    public TeamDTO leaderId(String leaderId){
+    public TeamDTO leaderId(Long leaderId){
         this.leaderId = leaderId;
         return this;
     }
@@ -97,7 +88,7 @@ public class TeamDTO {
     }
 
     public TeamDTO teamRegularExercisesList (List<TeamRegularExercise> teamRegularExercisesList) {
-        this.teamRegularExercisesList = teamRegularExercisesList;
+        this.teamRegularExerciseList = teamRegularExercisesList;
         return this;
     }
 }

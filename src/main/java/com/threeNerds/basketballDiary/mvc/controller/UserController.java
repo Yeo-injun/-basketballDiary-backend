@@ -1,30 +1,24 @@
 package com.threeNerds.basketballDiary.mvc.controller;
 
-import com.threeNerds.basketballDiary.interceptor.Auth;
 import com.threeNerds.basketballDiary.mvc.domain.User;
 import com.threeNerds.basketballDiary.mvc.dto.user.CmnUserDTO;
-import com.threeNerds.basketballDiary.mvc.dto.user.user.FindAllUserDTO;
 import com.threeNerds.basketballDiary.mvc.dto.user.user.LoginUserDTO;
 import com.threeNerds.basketballDiary.mvc.dto.user.user.UserDTO;
 import com.threeNerds.basketballDiary.mvc.service.LoginService;
 import com.threeNerds.basketballDiary.mvc.service.UserService;
 import com.threeNerds.basketballDiary.mvc.service.UserTeamManagerService;
-import com.threeNerds.basketballDiary.session.SessionConst;
 import com.threeNerds.basketballDiary.session.SessionUser;
+import com.threeNerds.basketballDiary.utils.SessionUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-import java.time.LocalDate;
 import java.util.List;
 
 import static com.threeNerds.basketballDiary.utils.HttpResponses.*;
-import static com.threeNerds.basketballDiary.constant.Constant.*;
 
 /**
  * ... 수행하는 Controller
@@ -48,28 +42,27 @@ public class UserController {
     private final UserTeamManagerService userTeamManagerService;
 
     /**
+     * API034 사용자ID 중복확인
+     */
+    @PostMapping("/duplicationCheck")
+    public ResponseEntity<?> checkDuplicateUserId (
+            @RequestBody CmnUserDTO cmnUserDTO
+    ) {
+        User checkForDuplication = User.builder()
+                .userId(cmnUserDTO.getUserId())
+                .build();
+        userService.checkDuplicationUserId(checkForDuplication);
+        return RESPONSE_OK;
+    }
+    /**
      * API029 회원가입
      */
     @PostMapping("/registration")
-    public ResponseEntity<?> createUser(@RequestBody @Valid CmnUserDTO userDTO){
+    public ResponseEntity<?> createUser(
+            @RequestBody @Valid CmnUserDTO userDTO
+    ) {
 
-        User user = User.builder()
-                .userId(userDTO.getUserId())
-                .password(userDTO.getPassword())
-                .userName(userDTO.getUserName())
-                .positionCode(userDTO.getPositionCode())
-                .email(userDTO.getEmail())
-                .gender(userDTO.getGender())
-                .birthYmd(userDTO.getBirthYmd())
-                .height(userDTO.getHeight())
-                .weight(userDTO.getWeight())
-                .regDate(LocalDate.now())
-                .updateDate(LocalDate.now())
-                .userRegYn("Y")
-                .sidoCode(userDTO.getSidoCode())
-                .sigunguCode(userDTO.getSigunguCode())
-                .build();
-
+        User user = User.createUserForRegistration(userDTO);
         userService.createMember(user);
         return RESPONSE_OK;
     }
@@ -79,15 +72,13 @@ public class UserController {
      */
     @PostMapping("/login")
     public ResponseEntity<SessionUser> login (
-            @RequestBody LoginUserDTO loginUserDTO,
-            HttpSession session
+            @RequestBody LoginUserDTO loginUserDTO
     ) {
         log.info("로그인 시도");
         SessionUser sessionUser = loginService.login(loginUserDTO);
-        session.setAttribute(SessionConst.LOGIN_MEMBER, sessionUser);
-        log.info(session.getId());
+        SessionUtil.setSessionUser(sessionUser);
+//      TODO 세션ID 로그찍기  log.info(SessionUtil.get.getId());
         // TODO 쿠키생성 로직 - https://reflectoring.io/spring-boot-cookies/
-//        ResponseCookie cookie = ResponseCookie.from("teset", "cookie").httpOnly(false).build();
         return ResponseEntity.ok().body(sessionUser);
     }
 
@@ -105,24 +96,15 @@ public class UserController {
      * API006 사용자 검색
      */
     @GetMapping
-    public ResponseEntity<?> findUserInfo(@RequestParam String userName,@RequestParam String email){
-        log.info("사용자 검색");
-        FindAllUserDTO findAllUserDTO = new FindAllUserDTO()
-                                            .userName(userName)
-                                            .email(email);
-        List<UserDTO> allUser = userService.findAllUser(findAllUserDTO);
-        return ResponseEntity.ok().body(allUser);
+    public ResponseEntity<?> findUserInfo(
+            @RequestParam(required = false) String userName,    // @RequestParam에 required=false가 없으면  get요청시 쿼리스트링이 반드시 있어야 함.
+            @RequestParam(required = false) String email
+    ){
+        CmnUserDTO findUserCond = new CmnUserDTO()
+                                        .userName(userName)
+                                        .email(email);
+        List<UserDTO> findUserList = userService.findUserByCond(findUserCond);
+        return ResponseEntity.ok().body(findUserList);
     }
 
-/*    @Auth(GRADE = LEADER)
-    @GetMapping("/testAnnotation/{teamId}")
-    public void test(){
-        log.info("Auth : 1");
-    }
-
-    @Auth(GRADE = MANAGER)
-    @GetMapping("/testAnnotation2/{teamId}")
-    public void test2(){
-        log.info("Auth : 2");
-    }*/
 }

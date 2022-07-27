@@ -1,8 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.repository;
 
-import com.threeNerds.basketballDiary.mvc.controller.MyTeamController;
+import com.threeNerds.basketballDiary.mvc.domain.TeamJoinRequest;
 import com.threeNerds.basketballDiary.mvc.domain.TeamMember;
-import com.threeNerds.basketballDiary.mvc.dto.loginUser.userTeamManager.JoinRequestDTO;
 import com.threeNerds.basketballDiary.mvc.dto.myTeam.CmnMyTeamDTO;
 import com.threeNerds.basketballDiary.mvc.dto.myTeam.FindMyTeamProfileDTO;
 import com.threeNerds.basketballDiary.mvc.dto.myTeam.ModifyMyTeamProfileDTO;
@@ -19,6 +18,13 @@ public interface TeamMemberRepository {
     int saveTeamMemeber(TeamMember teamMember);
 
     /**
+     * 팀원 조회
+     * @param joinRequest
+     * @return
+     */
+     TeamMember findTeamMember(TeamJoinRequest joinRequest);
+
+    /** TODO 삭제검토
      * 팀원 중복여부 확인
      * @param joinRequest
      * @return JoinRequestDTO

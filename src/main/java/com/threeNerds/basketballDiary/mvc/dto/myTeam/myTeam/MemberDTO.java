@@ -2,6 +2,7 @@ package com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam;
 
 import com.threeNerds.basketballDiary.mvc.dto.PagerDTO;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Author: 강창기
@@ -23,6 +24,8 @@ public class MemberDTO {
     private Long positionCode;
     /* 이름 */
     private String userName;
+    /* 팀이름 */
+    private String teamName;
     /* 생년월일 */
     private String birthYmd;
     /* 신장 */
@@ -36,6 +39,8 @@ public class MemberDTO {
     /* 경기참여횟수 */
     private Integer totGame;
 
+    /* 총 count */
+    private Integer totalCount;
     /* 페이징 처리를 위한 VO */
     private PagerDTO pagerDTO;
 
@@ -69,6 +74,11 @@ public class MemberDTO {
         return this;
     }
 
+    public MemberDTO teamName(String teamName){
+        this.teamName = teamName;
+        return this;
+    }
+
     public MemberDTO birthYmd (String birthYmd) {
         this.birthYmd = birthYmd;
         return this;
@@ -98,8 +108,7 @@ public class MemberDTO {
         this.totGame = totGame;
         return this;
     }
-
-    public MemberDTO pagerDTO(PagerDTO pagerDTO) {
+        public MemberDTO pagerDTO(PagerDTO pagerDTO) {
         this.pagerDTO = pagerDTO;
         return this;
     }

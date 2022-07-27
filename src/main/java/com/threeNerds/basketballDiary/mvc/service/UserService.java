@@ -1,8 +1,12 @@
 package com.threeNerds.basketballDiary.mvc.service;
 
+import com.threeNerds.basketballDiary.exception.CustomException;
+import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.mvc.domain.User;
 import com.threeNerds.basketballDiary.mvc.dto.loginUser.PasswordDTO;
+import com.threeNerds.basketballDiary.mvc.dto.user.CmnUserDTO;
 import com.threeNerds.basketballDiary.mvc.dto.user.user.FindAllUserDTO;
+import com.threeNerds.basketballDiary.mvc.dto.user.user.UpdateUserDTO;
 import com.threeNerds.basketballDiary.mvc.dto.user.user.UserDTO;
 import com.threeNerds.basketballDiary.mvc.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -34,16 +38,18 @@ public class UserService {
     public Long findSeq(String userId){
         return userRepository.findSeq(userId);
     }
+
     @Transactional
     public User findUser(Long id) {
         return userRepository.findUser(id);
     }
     @Transactional
     public Long createMember(User user) {
-        return userRepository.saveUser(user);
+        userRepository.saveUser(user);
+        return user.getUserSeq();
     }
     @Transactional
-    public void updateUser(User user){
+    public void updateUser(UpdateUserDTO user){
         userRepository.updateUser(user);
     }
 
@@ -52,13 +58,28 @@ public class UserService {
         userRepository.deleteUser(id);
     }
 
-    @Transactional
+    @Transactional  // TODO 삭제 검토 (22.06.09부 인준 제안)
     public List<UserDTO> findAllUser(FindAllUserDTO findAllUserDTO){
         return userRepository.findAllUser(findAllUserDTO);
+    }
+
+    public void checkDuplicationUserId(User checkForDuplication)
+    {
+        User user = userRepository.findUserByUserId(checkForDuplication);
+        if (user != null) {
+            throw new CustomException(Error.DUPLICATE_USER_ID);
+        }
+
     }
 
     @Transactional
     public void updatePassword(PasswordDTO passwordDTO){
         userRepository.updatePassword(passwordDTO);
+    }
+
+    public List<UserDTO> findUserByCond(CmnUserDTO findUserCond)
+    {
+        // TODO 페이징 처리 추가
+        return userRepository.findUserByUserNameOrEmail(findUserCond);
     }
 }

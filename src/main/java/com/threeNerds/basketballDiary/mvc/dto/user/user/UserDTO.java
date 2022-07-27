@@ -1,5 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.dto.user.user;
 
+import com.threeNerds.basketballDiary.mvc.domain.User;
 import lombok.Getter;
 
 import java.time.LocalDate;
@@ -37,6 +38,8 @@ public class UserDTO {
     private String sidoCode;
     /* 시군구코드 */
     private String sigunguCode;
+    /* 도로명 주소*/
+    private String roadAddress;
 
     public UserDTO userSeq(Long userSeq){
         this.userSeq = userSeq;
@@ -97,5 +100,27 @@ public class UserDTO {
     public UserDTO sigunguCode(String sigunguCode){
         this.sigunguCode = sigunguCode;
         return this;
+    }
+    public UserDTO roadAddress(String roadAddress){
+        this.roadAddress = roadAddress;
+        return this;
+    }
+
+    public static UserDTO getUserDto(User user) {
+        return new UserDTO().userId(user.getUserId())
+                .password(user.getPassword())
+                .userName(user.getUserName())
+                .positionCode(user.getPositionCode())
+                .email(user.getEmail())
+                .gender(user.getGender())
+                .birthYmd(user.getBirthYmd())
+                .height(user.getHeight())
+                .weight(user.getWeight())
+                .regDate(user.getRegDate())
+                .updateDate(user.getUpdateDate())
+                .userRegYn(user.getUserRegYn())
+                .sidoCode(user.getSidoCode())
+                .sigunguCode(user.getSigunguCode())
+                .roadAddress(user.getRoadAddress());
     }
 }

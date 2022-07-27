@@ -4,25 +4,30 @@
 <mapper namespace="com.threeNerds.basketballDiary.mvc.repository.TeamRepository">
 
     <insert id="saveTeam" parameterType="com.threeNerds.basketballDiary.mvc.domain.Team" useGeneratedKeys="true" keyProperty="teamSeq">
-        INSERT INTO
-            TEAM (     LEADER_ID
-                     , TEAM_NAME
-                     , HOMETOWN
-                     , INTRODUCTION
-                     , FOUNDATION_YMD
-                     , REG_DATE
-                     , UPDATE_DATE
-                     , SIDO_CODE
-                     , SIGUNGU_CODE )
-        VALUES (      #{leaderId}
-                    , #{teamName}
-                    , #{hometown}
-                    , #{introduction}
-                    , #{foundationYmd}
-                    , #{regDate}
-                    , #{updateDate}
-                    , #{sidoCode}
-                    , #{sigunguCode} )
+        <selectKey keyProperty="teamSeq" order="AFTER" resultType="java.lang.Long">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        INSERT INTO TEAM (
+              LEADER_ID
+            , TEAM_NAME
+            , HOMETOWN
+            , INTRODUCTION
+            , FOUNDATION_YMD
+            , REG_DATE
+            , UPDATE_DATE
+            , SIDO_CODE
+            , SIGUNGU_CODE
+        ) VALUES (
+              #{leaderId}
+            , #{teamName}
+            , #{hometown}
+            , #{introduction}
+            , #{foundationYmd}
+            , #{regDate}
+            , #{updateDate}
+            , #{sidoCode}
+            , #{sigunguCode}
+        )
     </insert>
 
     <update id="updateTeam" parameterType="com.threeNerds.basketballDiary.mvc.domain.Team">
@@ -82,35 +87,60 @@
     </select>
 
     <select id="findPagingTeam" resultType="com.threeNerds.basketballDiary.mvc.dto.team.team.TeamDTO">
-    SELECT *
-    FROM ( SELECT A.TEAM_SEQ
-                , A.LEADER_ID
-                , A.TEAM_NAME
-                , A.TEAM_IMAGE_PATH
-                , A.HOMETOWN
-                , A.INTRODUCTION
-                , A.FOUNDATION_YMD
-                , A.REG_DATE
-                , A.UPDATE_DATE
-                , A.SIDO_CODE
-                , A.SIGUNGU_CODE
-                , COUNT(B.USER_SEQ) OVER(PARTITION BY B.TEAM_SEQ) AS TOT_MEMBER
-             FROM TEAM A
-        LEFT JOIN (SELECT * FROM TEAM_MEMBER WHERE WITHDRAWAL_YN != 'Y') B
-               ON A.TEAM_SEQ = B.TEAM_SEQ
-            WHERE 1=1
-        <if test="teamName != null and !''.equals(teamName)">
-              AND A.TEAM_NAME LIKE '%' || #{teamName} ||'%'
-        </if>
-        <if test="sigungu != null and !''.equals(sigungu)">
-              AND A.SIGUNGU_CODE = #{sigungu}
-        </if>
-         ORDER BY A.TEAM_NAME
-        ) ORDERS LIMIT #{pagerDTO.offset} OFFSET #{pagerDTO.pageNo}
+        SELECT *
+          FROM ( SELECT COUNT(*) OVER() TOTAL_COUNT
+                      , A.TEAM_SEQ
+                      , A.LEADER_ID
+                      , A.TEAM_NAME
+                      , A.TEAM_IMAGE_PATH
+                      , A.HOMETOWN
+                      , A.INTRODUCTION
+                      , A.FOUNDATION_YMD
+                      , A.REG_DATE
+                      , A.UPDATE_DATE
+                      , A.SIDO_CODE
+                      , A.SIGUNGU_CODE
+                      , IFNULL(B.TOT_MEMBER, 0) TOT_MEMBER
+                   FROM TEAM A
+                   LEFT JOIN (
+                              SELECT TEAM_SEQ
+                                   , COUNT(*) TOT_MEMBER
+                                FROM TEAM_MEMBER
+                               WHERE WITHDRAWAL_YN != 'Y'
+                               GROUP BY TEAM_SEQ
+                              ) B
+                     ON A.TEAM_SEQ = B.TEAM_SEQ
+                   LEFT JOIN (
+                              SELECT TEAM_SEQ
+                                   , DAY_OF_THE_WEEK_CODE
+                                   , START_TIME
+                                   , END_TIME
+                                FROM TEAM_REGULAR_EXERCISE
+                              ) C
+                     ON A.TEAM_SEQ = C.TEAM_SEQ
+                  WHERE 1=1
+            <if test="teamName != null and !''.equals(teamName)">
+                    AND A.TEAM_NAME LIKE CONCAT('%', IFNULL(#{teamName}, ''), '%')
+            </if>
+            <if test="sigungu != null and !''.equals(sigungu)">
+                    AND A.SIGUNGU_CODE = #{sigungu}
+            </if>
+            <if test="startDay != null and !''.equals(startDay) and endDay != null and !''.equals(endDay)">
+                    AND DAY_OF_THE_WEEK_CODE <![CDATA[>=]]> #{startDay}
+                    AND DAY_OF_THE_WEEK_CODE <![CDATA[<=]]> #{endDay}
+            </if>
+            <if test="startTime != null and !''.equals(startTime) and endTime != null and !''.equals(endTime)">
+                    AND START_TIME <![CDATA[>=]]> #{startTime}
+                    AND END_TIME <![CDATA[<=]]> #{endTime}
+            </if>
+                  GROUP BY A.TEAM_SEQ
+                  ORDER BY A.TEAM_NAME
+        ) ORDERS LIMIT #{pagerDTO.rowCount} OFFSET #{pagerDTO.offset}
     </select>
 
     <delete id="deleteById">
-        DELETE FROM TEAM WHERE TEAM_SEQ = #{teamSeq}
+        DELETE FROM TEAM
+         WHERE TEAM_SEQ = #{teamSeq}
     </delete>
 
 </mapper>
