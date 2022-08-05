@@ -32,10 +32,13 @@
              , B.INTRODUCTION
              , COUNT(A.USER_SEQ) OVER(PARTITION BY A.TEAM_SEQ) AS TOT_MEMBER
              , B.FOUNDATION_YMD
-        FROM (SELECT * FROM TEAM_MEMBER WHERE WITHDRAWAL_YN != 'Y') A
-                 JOIN TEAM B
-                      ON A.TEAM_SEQ = B.TEAM_SEQ
-        WHERE A.USER_SEQ = #{userSeq}
+          FROM (SELECT *
+                  FROM TEAM_MEMBER
+                 WHERE 1=1
+                   AND WITHDRAWAL_YN != 'Y'
+                   AND USER_SEQ = #{userSeq}) A
+         INNER JOIN TEAM B
+            ON A.TEAM_SEQ = B.TEAM_SEQ
     </select>
 
     <select id="findProfileByUserSeqAndTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MemberDTO">

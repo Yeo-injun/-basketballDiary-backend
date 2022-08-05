@@ -95,29 +95,20 @@ public class MyTeamService {
      * @param userSeq
      * @return List<MyTeamDTO>
      */
-    public List<MyTeamDTO> findTeams(Long userSeq) {
-        List<MyTeamDTO> resultMyTeamList = new ArrayList<MyTeamDTO>();
+    public List<MyTeamDTO> findTeams(Long userSeq)
+    {
         List<MyTeamDTO> myTeamInfoList = myTeamRepository.findAllByUserSeq(userSeq);
+
+        if (myTeamInfoList.isEmpty()) {
+            return Collections.emptyList();
+        }
 
         myTeamInfoList.forEach(myTeamInfo -> {
             Long teamSeq = myTeamInfo.getTeamSeq();
             List<TeamRegularExercise> exerciseList = teamRegularExerciseRepository.findByTeamSeq(teamSeq);
-            MyTeamDTO myTeamDTO = new MyTeamDTO()
-                    .teamSeq(myTeamInfo.getTeamSeq())
-                    .teamName(myTeamInfo.getTeamName())
-                    .teamImagePath(myTeamInfo.getTeamImagePath())
-                    .hometown(myTeamInfo.getHometown())
-                    .sidoCode(myTeamInfo.getSidoCode())
-                    .sigunguCode(myTeamInfo.getSigunguCode())
-                    .foundationYmd(myTeamInfo.getFoundationYmd())
-                    .introduction(myTeamInfo.getIntroduction())
-                    .totMember(myTeamInfo.getTotMember())
-                    .teamRegularExercisesList(exerciseList.isEmpty() ? Collections.emptyList() : exerciseList);
-            resultMyTeamList.add(myTeamDTO);
+            myTeamInfo.teamRegularExercisesList(exerciseList.isEmpty() ? Collections.emptyList() : exerciseList);
         });
-
-        return resultMyTeamList.isEmpty() ?
-                Collections.emptyList() : resultMyTeamList;
+        return myTeamInfoList;
     }
 
     /**
