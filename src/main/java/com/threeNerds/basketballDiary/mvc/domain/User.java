@@ -21,7 +21,8 @@ public class User {
     /* 패스워드 */
     private String password;
     /* 이름 */
-    private String userName;
+    private String userName; // TODO name으로 통일 - DB컬럼명과 일치해야 함.
+    private String name;
     /* 포지션 코드 */
     private String positionCode;
     /* 이메일 */
@@ -47,13 +48,13 @@ public class User {
     /* 도로명주소 */
     private String roadAddress;
 
-    public static User createUserForRegistration(CmnUserDTO userDTO)
+    public static User createForRegistration(CmnUserDTO userDTO)
     {
         LocalDate today = LocalDate.now();
         return User.builder()
                 .userId(userDTO.getUserId())
                 .password(userDTO.getPassword())
-                .userName(userDTO.getUserName())
+                .name(userDTO.getName())
                 .email(userDTO.getEmail())
                 .gender(userDTO.getGender())
                 .birthYmd(userDTO.getBirthYmd())
@@ -64,6 +65,7 @@ public class User {
                 .userRegYn("Y")
                 .sidoCode(userDTO.getSidoCode())
                 .sigunguCode(userDTO.getSigunguCode())
+                .positionCode(userDTO.getPositionCode())
                 .build();
     }
 

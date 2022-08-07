@@ -44,7 +44,8 @@ public class UserService {
         return userRepository.findUser(id);
     }
     @Transactional
-    public Long createMember(User user) {
+    public Long createMember(CmnUserDTO userDTO) {
+        User user = User.createForRegistration(userDTO);
         userRepository.saveUser(user);
         return user.getUserSeq();
     }
