@@ -61,9 +61,7 @@ public class UserController {
     public ResponseEntity<?> createUser(
             @RequestBody @Valid CmnUserDTO userDTO
     ) {
-
-        User user = User.createUserForRegistration(userDTO);
-        userService.createMember(user);
+        userService.createMember(userDTO);
         return RESPONSE_OK;
     }
 

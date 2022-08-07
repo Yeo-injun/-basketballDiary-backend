@@ -15,8 +15,8 @@ public enum PositionCode {
     CENTER("센터", "30"),
     POINT_GUARD("포인트가드", "11"),
     SHOOTING_GAURD("슈팅가드", "12"),
-    SMALL_FORWARD("스몰포워드", "21"),
-    POWER_FORWARD("파워포워드", "22"),
+    SMALL_FORWARD("스몰포워드", "23"),
+    POWER_FORWARD("파워포워드", "24"),
     TEMP_CODE("임시용코드", "40"), // TODO 임시 코드 차후 데이터 변경후 삭제 예정
     NULL_CODE("임시용코드", null); // TODO 임시 코드 차후 데이터 변경후 삭제 예정
 
