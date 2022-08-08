@@ -2,9 +2,9 @@ package com.threeNerds.basketballDiary.mvc.domain;
 
 import com.threeNerds.basketballDiary.constant.Constant;
 import com.threeNerds.basketballDiary.constant.TeamAuthCode;
-import com.threeNerds.basketballDiary.mvc.dto.loginUser.userTeamManager.JoinRequestDTO;
+import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.mvc.dto.myTeam.CmnMyTeamDTO;
-import com.threeNerds.basketballDiary.mvc.dto.team.team.TeamDTO;
+import com.threeNerds.basketballDiary.exception.Error;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -48,13 +48,13 @@ public class TeamMember {
                 .build();
     }
 
-    public static TeamMember toMember(CmnMyTeamDTO teamMember)
+    public TeamMember toMember()
     {
-        return TeamMember.builder()
-                .teamSeq(teamMember.getTeamSeq())
-                .teamMemberSeq(teamMember.getTeamMemberSeq())
-                .teamAuthCode(TeamAuthCode.TEAM_MEMBER.getCode())
-                .build();
+        if (this.teamAuthCode != TeamAuthCode.MANAGER.getCode()) {
+            throw new CustomException(Error.CANT_DISMISSAL_MANAGER);
+        }
+        this.teamAuthCode = TeamAuthCode.TEAM_MEMBER.getCode();
+        return this;
     }
 
     public static TeamMember create(TeamJoinRequest joinRequest) {

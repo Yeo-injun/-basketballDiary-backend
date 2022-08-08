@@ -26,6 +26,7 @@ public enum Error {
     MY_TEAM_NOT_FOUND(NOT_FOUND, "소속팀 정보가 존재하지 않습니다"),
     REGULAR_EXERCISE_NOT_FOUND(NOT_FOUND, "정기운동 정보가 존재하지 않습니다"),
     REFRESH_TOKEN_NOT_FOUND(NOT_FOUND, "로그아웃 된 사용자입니다"),
+    CANT_DISMISSAL_MANAGER(NOT_FOUND, "관리자가 아닙니다. 팀장이나 팀원은 관리자에서 해임할 수 없습니다."),
 
     /*403 FORBIDDEN : 서버에 정상적인 요청이 전송됐지만, 권한 문제로 거절*/
     INCORRECT_PASSWORD(FORBIDDEN,"비밀번호가 일치하지 않습니다"),
