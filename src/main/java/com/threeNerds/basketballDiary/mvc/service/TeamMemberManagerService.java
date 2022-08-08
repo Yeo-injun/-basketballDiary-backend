@@ -162,11 +162,11 @@ public class TeamMemberManagerService {
      * @param teamMemberKey
      */
     public void appointManager(CmnMyTeamDTO teamMemberKey) {
-        TeamMember toManagerMember = TeamMember.toManager(teamMemberKey);
+        // TODO key로 도메인 객체를 조회해서 도메인 객체의 메소드로 작업하기
+        TeamMember memberToManager = TeamMember.toManager(teamMemberKey);
 
-        boolean isSuccess = teamMemberRepository.updateTeamAuth(toManagerMember) == 1 ? true : false;
-        if (!isSuccess)
-        {
+        boolean isSuccess = teamMemberRepository.updateTeamAuth(memberToManager) == 1;
+        if (!isSuccess) {
             throw new CustomException(USER_NOT_FOUND);
         }
     }
@@ -175,12 +175,13 @@ public class TeamMemberManagerService {
      * 소속팀 관리자 해임하기
      * @param teamMemberKeys
      */
-    public void dismissManager(CmnMyTeamDTO teamMemberKeys) {
-        TeamMember toMember = TeamMember.toMember(teamMemberKeys);
+    public void dismissManager(CmnMyTeamDTO teamMemberKeys)
+    {
+        TeamMember manager = teamMemberRepository.findByTeamMemberSeq(teamMemberKeys.getTeamMemberSeq());
+        TeamMember managerToMember = manager.toMember();
 
-        boolean isSuccess = teamMemberRepository.updateTeamAuth(toMember) == 1 ? true : false;
-        if (!isSuccess)
-        {
+        boolean isSuccess = teamMemberRepository.updateTeamAuth(managerToMember) == 1;
+        if (!isSuccess) {
             throw new CustomException(USER_NOT_FOUND);
         }
     }

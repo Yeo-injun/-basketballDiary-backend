@@ -96,7 +96,7 @@ public class MyTeamController {
      * 22.03.29 인준 : 권한어노테이션 추가
      */
     @Auth(GRADE = LEADER)
-    @PostMapping("{teamSeq}/members/{teamMemberSeq}/manager")
+    @PatchMapping("{teamSeq}/members/{teamMemberSeq}/manager")
     public ResponseEntity<?> appointManager (
             @PathVariable Long teamSeq,
             @PathVariable Long teamMemberSeq
