@@ -64,6 +64,7 @@ public class AuthInterceptor implements HandlerInterceptor {
         log.info("### 팀Seq : {} / API권한정보 : {} ###", teamSeq, apiAuthGrade);
         log.info("### 사용자권한정보 : {} ###", userAuthGrade);
         log.info("======================================================");
+        // TODO 권한이 없는 경우에 어떤 HTTP state code를 반환하는지 확인하기
 //        throw new CustomException(Error.UNAUTHORIZED_MEMBER);
         return false;
     }

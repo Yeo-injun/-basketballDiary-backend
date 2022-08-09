@@ -38,19 +38,19 @@ public class TeamMember {
         }
         return true;
     }
-    /* TODO 도메인 객체의 기본적인 데이터 세팅 동작을 메소드로 구현 */
-    public static TeamMember toManager(CmnMyTeamDTO teamMember)
+
+    public TeamMember toManager()
     {
-        return TeamMember.builder()
-                .teamSeq(teamMember.getTeamSeq())
-                .teamMemberSeq(teamMember.getTeamMemberSeq())
-                .teamAuthCode(TeamAuthCode.MANAGER.getCode())
-                .build();
+        if (!TeamAuthCode.TEAM_MEMBER.getCode().equals(this.teamAuthCode)) {
+            throw new CustomException(Error.CANT_APPOINTMENT_MANAGER);
+        }
+        this.teamAuthCode = TeamAuthCode.MANAGER.getCode();
+        return this;
     }
 
     public TeamMember toMember()
     {
-        if (this.teamAuthCode != TeamAuthCode.MANAGER.getCode()) {
+        if (!TeamAuthCode.MANAGER.getCode().equals(this.teamAuthCode)) {
             throw new CustomException(Error.CANT_DISMISSAL_MANAGER);
         }
         this.teamAuthCode = TeamAuthCode.TEAM_MEMBER.getCode();
