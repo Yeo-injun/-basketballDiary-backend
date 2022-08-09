@@ -54,15 +54,13 @@ public class TeamMemberManagerService {
 
         /** 초대-가입요청 존재여부 확인 : 대기중인 가입요청 혹은 초대가 있을 경우 중복가입요청 방지 */
         int pendingJoinReqCnt = teamJoinRequestRepository.checkPendingJoinRequest(invitationInfo);
-        if (pendingJoinReqCnt > 0)
-        {
+        if (pendingJoinReqCnt > 0) {
             throw new CustomException(Error.ALREADY_EXIST_JOIN_REQUEST);
         }
 
         /** 팀원으로 존재하는지 확인 : 팀원으로 존재할 경우 예외를 던짐(409에러) */
         int duplicatedTeamMemberCnt = teamMemberRepository.checkDuplicatedTeamMember(joinRequest);
-        if (duplicatedTeamMemberCnt > 0)
-        {
+        if (duplicatedTeamMemberCnt > 0) {
             throw new CustomException(Error.ALREADY_EXIST_TEAM_MEMBER);
         }
 
@@ -79,8 +77,7 @@ public class TeamMemberManagerService {
         /** 가입요청 상태 업데이트 하기 */
         boolean isApproveSuccess = teamJoinRequestRepository
                                         .updateJoinRequestState(TeamJoinRequest.approveJoinRequest(joinRequest)) == 1 ? true : false;
-        if (!isApproveSuccess)
-        {
+        if (!isApproveSuccess) {
             throw new CustomException(USER_NOT_FOUND);
         }
 
@@ -98,10 +95,8 @@ public class TeamMemberManagerService {
     {
         TeamJoinRequest rejectionInfo = TeamJoinRequest.rejectJoinRequest(joinRequest);
 
-        boolean isRejectionSuccess = teamJoinRequestRepository
-                                        .updateJoinRequestState(rejectionInfo) == 1 ? true : false;
-        if (!isRejectionSuccess)
-        {
+        boolean isRejectionSuccess = teamJoinRequestRepository.updateJoinRequestState(rejectionInfo) == 1;
+        if (!isRejectionSuccess) {
             throw new CustomException(Error.JOIN_REQUEST_NOT_FOUND);
         }
     }
@@ -150,7 +145,7 @@ public class TeamMemberManagerService {
     public void removeTeamMember(CmnMyTeamDTO teamMemberKey)
     {
         TeamMember teamMember = TeamMember.withdrawalMember(teamMemberKey);
-        boolean isWithdrawal = teamMemberRepository.updateWithdrawalState(teamMember) == 1 ? true : false;
+        boolean isWithdrawal = teamMemberRepository.updateWithdrawalState(teamMember) == 1;
         if (!isWithdrawal)
         {
             throw new CustomException(USER_NOT_FOUND);
@@ -161,9 +156,10 @@ public class TeamMemberManagerService {
      * 소속팀 관리자 임명하기
      * @param teamMemberKey
      */
-    public void appointManager(CmnMyTeamDTO teamMemberKey) {
-        // TODO key로 도메인 객체를 조회해서 도메인 객체의 메소드로 작업하기
-        TeamMember memberToManager = TeamMember.toManager(teamMemberKey);
+    public void appointManager(CmnMyTeamDTO teamMemberKey)
+    {
+        TeamMember teamMember = teamMemberRepository.findByTeamMemberSeq(teamMemberKey.getTeamMemberSeq());
+        TeamMember memberToManager = teamMember.toManager();
 
         boolean isSuccess = teamMemberRepository.updateTeamAuth(memberToManager) == 1;
         if (!isSuccess) {
@@ -178,9 +174,9 @@ public class TeamMemberManagerService {
     public void dismissManager(CmnMyTeamDTO teamMemberKeys)
     {
         TeamMember manager = teamMemberRepository.findByTeamMemberSeq(teamMemberKeys.getTeamMemberSeq());
-        TeamMember managerToMember = manager.toMember();
+        TeamMember managerToTeamMember = manager.toMember();
 
-        boolean isSuccess = teamMemberRepository.updateTeamAuth(managerToMember) == 1;
+        boolean isSuccess = teamMemberRepository.updateTeamAuth(managerToTeamMember) == 1;
         if (!isSuccess) {
             throw new CustomException(USER_NOT_FOUND);
         }
