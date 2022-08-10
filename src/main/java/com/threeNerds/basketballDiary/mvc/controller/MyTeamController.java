@@ -116,14 +116,14 @@ public class MyTeamController {
      */
     @Auth(GRADE = LEADER)
     @DeleteMapping("{teamSeq}/members/{teamMemberSeq}")
-    public ResponseEntity<?> removeTeamMember(
+    public ResponseEntity<?> dischargeTeamMember(
             @PathVariable Long teamSeq,
             @PathVariable Long teamMemberSeq
     ) {
         CmnMyTeamDTO teamMemberKey = new CmnMyTeamDTO()
                                 .teamSeq(teamSeq)
                                 .teamMemberSeq(teamMemberSeq);
-        teamMemberManagerService.removeTeamMember(teamMemberKey);
+        teamMemberManagerService.dischargeTeamMember(teamMemberKey);
         return RESPONSE_OK;
     }
 
