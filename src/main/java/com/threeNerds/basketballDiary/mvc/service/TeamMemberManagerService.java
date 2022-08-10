@@ -142,12 +142,11 @@ public class TeamMemberManagerService {
      * @param teamMemberKey
      * @return List<PlayerDTO>
      */
-    public void removeTeamMember(CmnMyTeamDTO teamMemberKey)
+    public void dischargeTeamMember(CmnMyTeamDTO teamMemberKey)
     {
         TeamMember teamMember = TeamMember.withdrawalMember(teamMemberKey);
         boolean isWithdrawal = teamMemberRepository.updateWithdrawalState(teamMember) == 1;
-        if (!isWithdrawal)
-        {
+        if (!isWithdrawal) {
             throw new CustomException(USER_NOT_FOUND);
         }
     }
