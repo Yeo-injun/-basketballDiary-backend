@@ -5,9 +5,7 @@ import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.mvc.domain.TeamJoinRequest;
 import com.threeNerds.basketballDiary.mvc.domain.TeamMember;
-import com.threeNerds.basketballDiary.mvc.dto.loginUser.userTeamManager.JoinRequestDTO;
 import com.threeNerds.basketballDiary.mvc.dto.PlayerDTO;
-import com.threeNerds.basketballDiary.mvc.dto.PlayerSearchDTO;
 import com.threeNerds.basketballDiary.mvc.dto.myTeam.CmnMyTeamDTO;
 import com.threeNerds.basketballDiary.mvc.repository.PlayerRepository;
 import com.threeNerds.basketballDiary.mvc.repository.TeamJoinRequestRepository;
@@ -18,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 import static com.threeNerds.basketballDiary.exception.Error.USER_NOT_FOUND;
 
@@ -113,8 +110,8 @@ public class TeamMemberManagerService {
 
         players.stream() // TODO Stream에서는 빈 List를 어떻게 처리하는지 확인할 필요가 있음.
                 .forEach(player -> {
-                                player.positionCodeName(PositionCode.getName(player.getPositionCode()))
-                                      .joinRequestStateCodeName(JoinRequestStateCode.getName(player.getJoinRequestStateCode()));
+                                player.positionCodeName(PositionCode.nameOf(player.getPositionCode()))
+                                      .joinRequestStateCodeName(JoinRequestStateCode.nameOf(player.getJoinRequestStateCode()));
         });
 
         return players;
@@ -130,8 +127,8 @@ public class TeamMemberManagerService {
         List<PlayerDTO> players = playerRepository.findPlayers(playerSearchCond);
 
         players.stream().forEach(player -> { player
-                                                .positionCodeName(PositionCode.getName(player.getPositionCode()))
-                                                .joinRequestStateCodeName(JoinRequestStateCode.getName(player.getJoinRequestStateCode()));
+                                                .positionCodeName(PositionCode.nameOf(player.getPositionCode()))
+                                                .joinRequestStateCodeName(JoinRequestStateCode.nameOf(player.getJoinRequestStateCode()));
         });
 
         return players;

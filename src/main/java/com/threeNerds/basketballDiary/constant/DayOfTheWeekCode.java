@@ -3,19 +3,22 @@ package com.threeNerds.basketballDiary.constant;
 import lombok.Getter;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 @Getter
-public enum JoinRequestStateCode {
-
-    WAITING("대기중", "01"),
-    APPROVAL("승인", "02"),
-    REJECTION("거절", "03"),
-    CANCEL("취소", "04");
+public enum DayOfTheWeekCode {
+    MON("월", "1"),
+    TUE("화", "2"),
+    WED("수", "3"),
+    THU("목", "4"),
+    FRI("금", "5"),
+    SAT("토", "6"),
+    SUN("일", "7");
 
     private final String name;
     private final String code;
 
-    JoinRequestStateCode(String name, String code) {
+    DayOfTheWeekCode(String name, String code) {
         this.name = name;
         this.code = code;
     }
@@ -24,10 +27,9 @@ public enum JoinRequestStateCode {
     public static String nameOf(String code) {
         String codeName = Arrays.stream(values())
                 .filter(item -> item.getCode().equals(code))
-                .map(JoinRequestStateCode::getName)
+                .map(DayOfTheWeekCode::getName)
                 .findAny()
                 .get();
         return codeName;
     }
-
 }
