@@ -1,5 +1,6 @@
-package com.threeNerds.basketballDiary.constant;
+package com.threeNerds.basketballDiary.constant.code;
 
+import com.threeNerds.basketballDiary.constant.Constant;
 import lombok.Getter;
 
 import java.util.Arrays;

@@ -1,8 +1,8 @@
 package com.threeNerds.basketballDiary.mvc.dto.loginUser.userTeamManager;
 
 
-import com.threeNerds.basketballDiary.constant.JoinRequestStateCode;
-import com.threeNerds.basketballDiary.constant.JoinRequestTypeCode;
+import com.threeNerds.basketballDiary.constant.code.JoinRequestStateCode;
+import com.threeNerds.basketballDiary.constant.code.JoinRequestTypeCode;
 import lombok.Getter;
 
 import java.time.LocalDate;

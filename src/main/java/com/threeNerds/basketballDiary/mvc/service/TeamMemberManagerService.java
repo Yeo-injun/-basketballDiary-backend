@@ -1,6 +1,8 @@
 package com.threeNerds.basketballDiary.mvc.service;
 
-import com.threeNerds.basketballDiary.constant.*;
+import com.threeNerds.basketballDiary.constant.code.JoinRequestStateCode;
+import com.threeNerds.basketballDiary.constant.code.JoinRequestTypeCode;
+import com.threeNerds.basketballDiary.constant.code.PositionCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.mvc.domain.TeamJoinRequest;

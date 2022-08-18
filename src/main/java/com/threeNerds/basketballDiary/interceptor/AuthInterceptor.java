@@ -1,7 +1,6 @@
 package com.threeNerds.basketballDiary.interceptor;
 
 import com.threeNerds.basketballDiary.constant.Constant;
-import com.threeNerds.basketballDiary.constant.TeamAuthCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.utils.SessionUtil;

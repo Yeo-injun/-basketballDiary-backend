@@ -1,6 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.service;
 
-import com.threeNerds.basketballDiary.constant.JoinRequestTypeCode;
+import com.threeNerds.basketballDiary.constant.code.JoinRequestTypeCode;
 import org.junit.jupiter.api.Test;
 
 
