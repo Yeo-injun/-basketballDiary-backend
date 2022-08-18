@@ -38,7 +38,7 @@ public class PagerDTO {
         return this;
     }
 
-    public PagerDTO totalCount (Integer totalCount) {
+    public PagerDTO setPagingData (Integer totalCount) {
         this.totalCount = totalCount;
         this.totalPageCount = (int) Math.ceil((double) totalCount / this.rowCount);
         return this;

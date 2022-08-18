@@ -2,6 +2,7 @@ package com.threeNerds.basketballDiary.mvc.repository;
 
 import com.threeNerds.basketballDiary.mvc.domain.TeamRegularExercise;
 import com.threeNerds.basketballDiary.mvc.dto.team.team.SearchTeamDTO;
+import com.threeNerds.basketballDiary.mvc.dto.team.team.TeamRegularExerciseDTO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
