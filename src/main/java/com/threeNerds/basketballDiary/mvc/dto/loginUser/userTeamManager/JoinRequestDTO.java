@@ -1,8 +1,8 @@
 package com.threeNerds.basketballDiary.mvc.dto.loginUser.userTeamManager;
 
 
-import com.threeNerds.basketballDiary.constant.JoinRequestStateCode;
-import com.threeNerds.basketballDiary.constant.JoinRequestTypeCode;
+import com.threeNerds.basketballDiary.constant.code.JoinRequestStateCode;
+import com.threeNerds.basketballDiary.constant.code.JoinRequestTypeCode;
 import lombok.Getter;
 
 import java.time.LocalDate;
@@ -64,22 +64,22 @@ public class JoinRequestDTO {
 
         if (!stateCode.isEmpty())
         {
-            this.joinRequestStateCodeName = JoinRequestStateCode.getName(stateCode);
+            this.joinRequestStateCodeName = JoinRequestStateCode.nameOf(stateCode);
         }
 
         if (!typeCode.isEmpty())
         {
-            this.joinRequestTypeCodeName = JoinRequestTypeCode.getName(typeCode);
+            this.joinRequestTypeCodeName = JoinRequestTypeCode.nameOf(typeCode);
         }
     }
 
     public JoinRequestDTO joinRequestTypeCodeName(String joinRequestTypeCode) {
-        this.joinRequestTypeCodeName = JoinRequestTypeCode.getName(joinRequestTypeCode);
+        this.joinRequestTypeCodeName = JoinRequestTypeCode.nameOf(joinRequestTypeCode);
         return this;
     }
 
     public JoinRequestDTO joinRequestStateCodeName(String joinRequestStateCode) {
-        this.joinRequestStateCodeName = JoinRequestStateCode.getName(joinRequestStateCode);
+        this.joinRequestStateCodeName = JoinRequestStateCode.nameOf(joinRequestStateCode);
         return this;
     }
 

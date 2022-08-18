@@ -8,6 +8,7 @@ import com.threeNerds.basketballDiary.mvc.dto.TeamAuthDTO;
 import com.threeNerds.basketballDiary.mvc.dto.team.team.PaginationTeamDTO;
 import com.threeNerds.basketballDiary.mvc.dto.team.team.SearchTeamDTO;
 import com.threeNerds.basketballDiary.mvc.dto.team.team.TeamDTO;
+import com.threeNerds.basketballDiary.mvc.dto.team.team.TeamRegularExerciseDTO;
 import com.threeNerds.basketballDiary.mvc.repository.TeamMemberRepository;
 import com.threeNerds.basketballDiary.mvc.repository.TeamRegularExerciseRepository;
 import com.threeNerds.basketballDiary.mvc.repository.TeamRepository;
@@ -62,16 +63,17 @@ public class TeamService {
         List<TeamDTO> teamSearchResults = teamRepository.findPagingTeam(searchTeamDTO);
         PagerDTO resultPager = searchTeamDTO.getPagerDTO();
         if(teamSearchResults.isEmpty()) {
-            teamSearchResults = Collections.emptyList();
-            resultPager.totalCount(0);
-            return new PaginationTeamDTO(resultPager, teamSearchResults);
+            resultPager.setPagingData(0);
+            return new PaginationTeamDTO(resultPager, Collections.emptyList());
         }
-        resultPager.totalCount(teamSearchResults.get(0).getTotalCount());
+        resultPager.setPagingData(teamSearchResults.get(0).getTotalCount());
 
         teamSearchResults.forEach(teamDTO -> {
             Long teamSeq = teamDTO.getTeamSeq();
             List<TeamRegularExercise> exercises = teamRegularExerciseRepository.findByTeamSeq(teamSeq);
-            teamDTO.teamRegularExercisesList(exercises.isEmpty() ? Collections.emptyList() : exercises);
+            // TODO 요일 코드 스트림으로 처리해서 요일 코드명 필드에 값 할당하기
+//            exercises.stream().map();
+            teamDTO.teamRegularExercises(exercises.isEmpty() ? Collections.emptyList() : exercises);
         });
 
         return new PaginationTeamDTO(resultPager, teamSearchResults);
@@ -94,7 +96,7 @@ public class TeamService {
 
         /** 팀 정기운동 정보 저장 */
         Long newTeamSeq = newTeam.getTeamSeq();
-        List<TeamRegularExercise> teamRegularExerciseList = teamDTO.getTeamRegularExerciseList();
+        List<TeamRegularExercise> teamRegularExerciseList = teamDTO.getTeamRegularExercises();
         teamRegularExerciseList.forEach(exercise -> {
             TeamRegularExercise newExercise = TeamRegularExercise.create(newTeamSeq, exercise);
             teamRegularExerciseRepository.saveTeamRegularExercise(newExercise);

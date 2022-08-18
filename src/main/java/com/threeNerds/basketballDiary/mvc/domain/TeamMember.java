@@ -1,7 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.domain;
 
 import com.threeNerds.basketballDiary.constant.Constant;
-import com.threeNerds.basketballDiary.constant.TeamAuthCode;
+import com.threeNerds.basketballDiary.constant.code.TeamAuthCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.mvc.dto.myTeam.CmnMyTeamDTO;
 import com.threeNerds.basketballDiary.exception.Error;

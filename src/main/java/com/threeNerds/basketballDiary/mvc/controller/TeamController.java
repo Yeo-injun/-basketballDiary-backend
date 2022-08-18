@@ -15,16 +15,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
-import java.net.URI;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static com.threeNerds.basketballDiary.constant.Constant.USER;
-import static com.threeNerds.basketballDiary.utils.HttpResponses.RESPONSE_CREATED;
+import static com.threeNerds.basketballDiary.constant.HttpResponseConst.RESPONSE_CREATED;
 import static com.threeNerds.basketballDiary.utils.SessionUtil.LOGIN_USER;
 
 /**

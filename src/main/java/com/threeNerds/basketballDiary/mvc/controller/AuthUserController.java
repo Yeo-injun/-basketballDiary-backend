@@ -22,8 +22,8 @@ import java.util.List;
 
 import static com.threeNerds.basketballDiary.constant.Constant.USER;
 import static com.threeNerds.basketballDiary.exception.Error.INCORRECT_PASSWORD;
-import static com.threeNerds.basketballDiary.utils.HttpResponses.RESPONSE_CREATED;
-import static com.threeNerds.basketballDiary.utils.HttpResponses.RESPONSE_OK;
+import static com.threeNerds.basketballDiary.constant.HttpResponseConst.RESPONSE_CREATED;
+import static com.threeNerds.basketballDiary.constant.HttpResponseConst.RESPONSE_OK;
 import static com.threeNerds.basketballDiary.utils.SessionUtil.LOGIN_USER;
 
 @Slf4j

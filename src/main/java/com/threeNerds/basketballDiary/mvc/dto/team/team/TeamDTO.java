@@ -26,7 +26,8 @@ public class TeamDTO {
     private Integer totMember;
 
     /* 정기운동 목록 */
-    private List<TeamRegularExercise> teamRegularExerciseList;
+    private List<TeamRegularExercise> teamRegularExercises;
+    private List<TeamRegularExerciseDTO> teamRegularExerciseDTOList;
 
     public TeamDTO teamSeq (Long teamSeq) {
         this.teamSeq = teamSeq;
@@ -87,8 +88,12 @@ public class TeamDTO {
         return this;
     }
 
-    public TeamDTO teamRegularExercisesList (List<TeamRegularExercise> teamRegularExercisesList) {
-        this.teamRegularExerciseList = teamRegularExercisesList;
+    public TeamDTO teamRegularExercises (List<TeamRegularExercise> teamRegularExercises) {
+        this.teamRegularExercises = teamRegularExercises;
+        return this;
+    }
+    public TeamDTO teamRegularExerciseDTOList (List<TeamRegularExerciseDTO> teamRegularExerciseDTOList) {
+        this.teamRegularExerciseDTOList = teamRegularExerciseDTOList;
         return this;
     }
 }
