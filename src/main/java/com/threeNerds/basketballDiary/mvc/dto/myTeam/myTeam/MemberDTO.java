@@ -1,5 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam;
 
+import com.threeNerds.basketballDiary.constant.code.PositionCode;
+import com.threeNerds.basketballDiary.constant.code.TeamAuthCode;
 import com.threeNerds.basketballDiary.mvc.dto.PagerDTO;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,9 +21,11 @@ public class MemberDTO {
     /* 팀 pk */
     private Long teamSeq;
     /* 팀권한코드 */
-    private Long teamAuthCode;
+    private String teamAuthCode;
+    private String teamAuthCodeName;
     /* 포지션코드 */
-    private Long positionCode;
+    private String positionCode;
+    private String positionCodeName;
     /* 이름 */
     private String userName;
     /* 팀이름 */
@@ -59,13 +63,23 @@ public class MemberDTO {
         return this;
     }
 
-    public MemberDTO teamAuthCode (Long teamAuthCode) {
+    public MemberDTO teamAuthCode (String teamAuthCode) {
         this.teamAuthCode = teamAuthCode;
         return this;
     }
 
-    public MemberDTO positionCode (Long positionCode) {
+    public MemberDTO teamAuthCodeName () {
+        this.teamAuthCodeName = TeamAuthCode.nameOf(this.teamAuthCode);
+        return this;
+    }
+
+    public MemberDTO positionCode (String positionCode) {
         this.positionCode = positionCode;
+        return this;
+    }
+
+    public MemberDTO positionCodeName () {
+        this.positionCodeName = PositionCode.nameOf(this.positionCodeName);
         return this;
     }
 
@@ -112,4 +126,12 @@ public class MemberDTO {
         this.pagerDTO = pagerDTO;
         return this;
     }
+
+    public MemberDTO setAllCodeName()
+    {
+        teamAuthCodeName();
+        positionCodeName();
+        return this;
+    }
+
 }
