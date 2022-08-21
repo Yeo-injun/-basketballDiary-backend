@@ -79,7 +79,7 @@ public class MemberDTO {
     }
 
     public MemberDTO positionCodeName () {
-        this.positionCodeName = PositionCode.nameOf(this.positionCodeName);
+        this.positionCodeName = PositionCode.nameOf(this.positionCode);
         return this;
     }
 

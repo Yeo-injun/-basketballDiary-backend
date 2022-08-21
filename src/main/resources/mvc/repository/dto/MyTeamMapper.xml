@@ -123,6 +123,7 @@
                    , A.BIRTH_YMD
                    , A.HEIGHT
                    , A.WEIGHT
+                   , A.POSITION_CODE
                    , B.BACK_NUMBER
                    , B.JOIN_YMD
                    , IFNULL(C.TOT_MATCH, 0) TOT_GAME
