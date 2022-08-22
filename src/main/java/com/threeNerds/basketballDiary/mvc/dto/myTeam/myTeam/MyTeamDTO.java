@@ -1,6 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam;
 
 import com.threeNerds.basketballDiary.mvc.domain.TeamRegularExercise;
+import com.threeNerds.basketballDiary.mvc.dto.team.team.TeamRegularExerciseDTO;
 import lombok.Getter;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -39,6 +40,7 @@ public class MyTeamDTO {
     /**
      * 정기운동 목록 정보
      */
+    private List<TeamRegularExerciseDTO> teamRegularExercises;
     private List<TeamRegularExercise> teamRegularExercisesList;
 
 
@@ -92,8 +94,8 @@ public class MyTeamDTO {
         return this;
     }
 
-    public MyTeamDTO teamRegularExercisesList (List<TeamRegularExercise> teamRegularExercisesList) {
-        this.teamRegularExercisesList = teamRegularExercisesList;
+    public MyTeamDTO teamRegularExercises (List<TeamRegularExerciseDTO> teamRegularExercises) {
+        this.teamRegularExercises = teamRegularExercises;
         return this;
     }
 }
