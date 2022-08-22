@@ -1,11 +1,14 @@
 package com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam;
 
 import com.threeNerds.basketballDiary.mvc.domain.TeamRegularExercise;
+import com.threeNerds.basketballDiary.mvc.dto.team.team.TeamDTO;
 import com.threeNerds.basketballDiary.mvc.dto.team.team.TeamRegularExerciseDTO;
 import lombok.Getter;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 public class MyTeamDTO {
@@ -41,6 +44,7 @@ public class MyTeamDTO {
      * 정기운동 목록 정보
      */
     private List<TeamRegularExerciseDTO> teamRegularExercises;
+    // TODO 삭제예정
     private List<TeamRegularExercise> teamRegularExercisesList;
 
 
@@ -96,6 +100,21 @@ public class MyTeamDTO {
 
     public MyTeamDTO teamRegularExercises (List<TeamRegularExerciseDTO> teamRegularExercises) {
         this.teamRegularExercises = teamRegularExercises;
+        return this;
+    }
+
+    public MyTeamDTO setParsedTeamRegularExercises (List<TeamRegularExerciseDTO> exercisesDTO)
+    {
+        if (exercisesDTO.isEmpty()) {
+            this.teamRegularExercises = Collections.emptyList();
+            return this;
+        }
+
+        exercisesDTO.stream()
+                .map(TeamRegularExerciseDTO::dayOfTheWeekCodeName)
+                .collect(Collectors.toList());
+
+        this.teamRegularExercises = exercisesDTO;
         return this;
     }
 }
