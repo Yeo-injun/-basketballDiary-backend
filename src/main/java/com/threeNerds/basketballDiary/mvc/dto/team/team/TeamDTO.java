@@ -4,7 +4,9 @@ import com.threeNerds.basketballDiary.mvc.domain.TeamRegularExercise;
 import lombok.Getter;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 public class TeamDTO {
@@ -87,8 +89,27 @@ public class TeamDTO {
         return this;
     }
 
-    public TeamDTO teamRegularExercises (List<TeamRegularExerciseDTO> teamRegularExerciseDTOList) {
-        this.teamRegularExercises = teamRegularExerciseDTOList;
+    public TeamDTO teamRegularExercises (List<TeamRegularExerciseDTO> exercisesDTO)
+    {
+        this.teamRegularExercises = exercisesDTO;
+        return this;
+    }
+
+    /** TODO 코드 중복 제거 : 같은 내용의 코드가 2곳 이상 작성되어 있음
+     * >> TeamDTO, MyTeamDTO -- 추상클래스를 상속받아 구현된 메소드를 상속받는 것은 어떤지??
+     */
+    public TeamDTO setParsedTeamRegularExercises (List<TeamRegularExerciseDTO> exercisesDTO)
+    {
+        if (exercisesDTO.isEmpty()) {
+            this.teamRegularExercises = Collections.emptyList();
+            return this;
+        }
+
+        exercisesDTO.stream()
+                .map(TeamRegularExerciseDTO::dayOfTheWeekCodeName)
+                .collect(Collectors.toList());
+
+        this.teamRegularExercises = exercisesDTO;
         return this;
     }
 }

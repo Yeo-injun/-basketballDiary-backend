@@ -116,8 +116,8 @@ public class MyTeamService {
 
         myTeamInfoList.forEach(myTeamInfo -> {
             Long teamSeq = myTeamInfo.getTeamSeq();
-            List<TeamRegularExerciseDTO> exerciseList = teamRegularExerciseRepository.findByTeamSeq(teamSeq);
-            myTeamInfo.teamRegularExercises(exerciseList.isEmpty() ? Collections.emptyList() : exerciseList);
+            List<TeamRegularExerciseDTO> exercises = teamRegularExerciseRepository.findByTeamSeq(teamSeq);
+            myTeamInfo.setParsedTeamRegularExercises(exercises);
         });
         return myTeamInfoList;
     }
@@ -131,7 +131,7 @@ public class MyTeamService {
         // 소속되지 않은 팀에 대한 조회는 Interceptor에 의해 처리됨.
 
         MyTeamDTO myTeam = myTeamRepository.findByUserSeqAndTeamSeq(paramDTO);
-        List<TeamRegularExerciseDTO> teamRegularExerciseList
+        List<TeamRegularExerciseDTO> exercisesDTO
                 = teamRegularExerciseRepository.findByTeamSeq(paramDTO.getTeamSeq());
 
         /**
@@ -150,7 +150,7 @@ public class MyTeamService {
                 .foundationYmd(myTeam.getFoundationYmd())
                 .introduction(myTeam.getIntroduction())
                 .totMember(myTeam.getTotMember())
-                .teamRegularExercises(teamRegularExerciseList.isEmpty() ? Collections.emptyList() : teamRegularExerciseList);
+                .setParsedTeamRegularExercises(exercisesDTO);
 
         log.info("teamName = {}", myTeam.getTeamName());
         return resultDTO;

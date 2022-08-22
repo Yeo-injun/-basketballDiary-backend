@@ -72,10 +72,7 @@ public class TeamService {
         teamSearchResults.forEach(teamDTO -> {
             Long teamSeq = teamDTO.getTeamSeq();
             List<TeamRegularExerciseDTO> exercises = teamRegularExerciseRepository.findByTeamSeq(teamSeq);
-            exercises.stream()
-                    .map(TeamRegularExerciseDTO::dayOfTheWeekCodeName)
-                    .collect(Collectors.toList());
-            teamDTO.teamRegularExercises(exercises.isEmpty() ? Collections.emptyList() : exercises);
+            teamDTO.setParsedTeamRegularExercises(exercises);
         });
 
         return new PaginationTeamDTO(resultPager, teamSearchResults);
