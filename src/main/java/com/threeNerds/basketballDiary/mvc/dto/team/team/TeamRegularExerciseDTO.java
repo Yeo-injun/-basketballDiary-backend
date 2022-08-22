@@ -1,5 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.dto.team.team;
 
+import com.threeNerds.basketballDiary.constant.code.DayOfTheWeekCode;
 import lombok.Getter;
 
 @Getter
@@ -21,11 +22,8 @@ public class TeamRegularExerciseDTO {
     /* 정기운동장소명 */
     private String exercisePlaceName;
 
-    public void setCodeName() {
-        if (this.dayOfTheWeekCode != null
-            && this.dayOfTheWeekCode.isBlank())
-        {
-
-        }
+    public TeamRegularExerciseDTO dayOfTheWeekCodeName() {
+        this.dayOfTheWeekCodeName = DayOfTheWeekCode.nameOf(this.dayOfTheWeekCode);
+        return this;
     }
 }

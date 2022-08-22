@@ -9,6 +9,7 @@ import com.threeNerds.basketballDiary.mvc.dto.myTeam.CmnMyTeamDTO;
 import com.threeNerds.basketballDiary.mvc.dto.myTeam.FindMyTeamProfileDTO;
 import com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MemberDTO;
 import com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MyTeamDTO;
+import com.threeNerds.basketballDiary.mvc.dto.team.team.TeamRegularExerciseDTO;
 import com.threeNerds.basketballDiary.mvc.repository.MyTeamRepository;
 import com.threeNerds.basketballDiary.mvc.repository.TeamRegularExerciseRepository;
 import com.threeNerds.basketballDiary.mvc.repository.TeamRepository;
@@ -115,8 +116,8 @@ public class MyTeamService {
 
         myTeamInfoList.forEach(myTeamInfo -> {
             Long teamSeq = myTeamInfo.getTeamSeq();
-            List<TeamRegularExercise> exerciseList = teamRegularExerciseRepository.findByTeamSeq(teamSeq);
-            myTeamInfo.teamRegularExercisesList(exerciseList.isEmpty() ? Collections.emptyList() : exerciseList);
+            List<TeamRegularExerciseDTO> exerciseList = teamRegularExerciseRepository.findByTeamSeq(teamSeq);
+            myTeamInfo.teamRegularExercises(exerciseList.isEmpty() ? Collections.emptyList() : exerciseList);
         });
         return myTeamInfoList;
     }
@@ -130,7 +131,7 @@ public class MyTeamService {
         // 소속되지 않은 팀에 대한 조회는 Interceptor에 의해 처리됨.
 
         MyTeamDTO myTeam = myTeamRepository.findByUserSeqAndTeamSeq(paramDTO);
-        List<TeamRegularExercise> teamRegularExerciseList
+        List<TeamRegularExerciseDTO> teamRegularExerciseList
                 = teamRegularExerciseRepository.findByTeamSeq(paramDTO.getTeamSeq());
 
         /**
@@ -149,7 +150,7 @@ public class MyTeamService {
                 .foundationYmd(myTeam.getFoundationYmd())
                 .introduction(myTeam.getIntroduction())
                 .totMember(myTeam.getTotMember())
-                .teamRegularExercisesList(teamRegularExerciseList.isEmpty() ? Collections.emptyList() : teamRegularExerciseList);
+                .teamRegularExercises(teamRegularExerciseList.isEmpty() ? Collections.emptyList() : teamRegularExerciseList);
 
         log.info("teamName = {}", myTeam.getTeamName());
         return resultDTO;
@@ -160,6 +161,7 @@ public class MyTeamService {
      * @param teamSeq, dto
      */
     public void modifyMyTeam(Long teamSeq, MyTeamDTO dto) {
+        // TODO 차후 TeamRegularExcerciseDTO로 수정하기. 임시 처리
         List<TeamRegularExercise> paramExerciseList = dto.getTeamRegularExercisesList();
 
         /* 1. 팀정보 수정 */
@@ -182,7 +184,7 @@ public class MyTeamService {
 
         /* 2. 정기운동내역 수정 */
         // 실제 db에 저장된 정기운동내역
-        List<TeamRegularExercise> dbExerciseList
+        List<TeamRegularExerciseDTO> dbExerciseList
                 = teamRegularExerciseRepository.findByTeamSeq(teamSeq);
         // Front에서 받아온 정기운동내역
         Map<Long, TeamRegularExercise> paramExerciseMap =

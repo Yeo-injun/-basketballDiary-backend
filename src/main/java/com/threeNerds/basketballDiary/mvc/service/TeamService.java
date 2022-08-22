@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 소속팀에서 팀원관리 및 소속팀정보 관리 등의 업무를 수행하는 Service
@@ -70,9 +71,10 @@ public class TeamService {
 
         teamSearchResults.forEach(teamDTO -> {
             Long teamSeq = teamDTO.getTeamSeq();
-            List<TeamRegularExercise> exercises = teamRegularExerciseRepository.findByTeamSeq(teamSeq);
-            // TODO 요일 코드 스트림으로 처리해서 요일 코드명 필드에 값 할당하기
-//            exercises.stream().map();
+            List<TeamRegularExerciseDTO> exercises = teamRegularExerciseRepository.findByTeamSeq(teamSeq);
+            exercises.stream()
+                    .map(TeamRegularExerciseDTO::dayOfTheWeekCodeName)
+                    .collect(Collectors.toList());
             teamDTO.teamRegularExercises(exercises.isEmpty() ? Collections.emptyList() : exercises);
         });
 
@@ -96,7 +98,7 @@ public class TeamService {
 
         /** 팀 정기운동 정보 저장 */
         Long newTeamSeq = newTeam.getTeamSeq();
-        List<TeamRegularExercise> teamRegularExerciseList = teamDTO.getTeamRegularExercises();
+        List<TeamRegularExerciseDTO> teamRegularExerciseList = teamDTO.getTeamRegularExercises();
         teamRegularExerciseList.forEach(exercise -> {
             TeamRegularExercise newExercise = TeamRegularExercise.create(newTeamSeq, exercise);
             teamRegularExerciseRepository.saveTeamRegularExercise(newExercise);

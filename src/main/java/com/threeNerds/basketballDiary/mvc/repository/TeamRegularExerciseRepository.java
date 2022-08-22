@@ -9,9 +9,7 @@ import java.util.List;
 
 @Mapper
 public interface TeamRegularExerciseRepository {
-    TeamRegularExercise findByTeamRegularExerciseSeq(Long teamRegularExerciseSeq);
-    TeamRegularExercise findBySearchTeamDTO(SearchTeamDTO searchTeamDTO);
-    List<TeamRegularExercise> findByTeamSeq(Long teamSeq);
+    List<TeamRegularExerciseDTO> findByTeamSeq(Long teamSeq);
     void saveTeamRegularExercise(TeamRegularExercise teamRegularExercise);
     void updateTeamRegularExercise(TeamRegularExercise teamRegularExercise);
     void deleteTeamRegularExercise(Long teamRegularExerciseSeq);
