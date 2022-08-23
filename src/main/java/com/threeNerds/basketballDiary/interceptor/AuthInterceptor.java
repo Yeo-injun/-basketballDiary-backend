@@ -19,21 +19,22 @@ public class AuthInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
-        if(!(handler instanceof HandlerMethod)){
+        if(!(handler instanceof HandlerMethod)) {
             return true;
         }
         HandlerMethod hm = (HandlerMethod) handler;
 
         Auth apiAuth = hm.getMethodAnnotation(Auth.class);
-        //1. @Auth 가 없는 경우는 인증이 별도로 필요없음(팀에 속하지 않는 회원에 해당)
+        /** 1. @Auth 가 없는 경우 - 인증이 별도로 필요없음
+         *  (팀에 속하지 않는 회원에 해당) */
         if (apiAuth == null) {
             return true;
         }
 
-        //2. @Auth 가 있는 경우에는 세션이 있는지 확인
-        // TODO API정보를 어노테이션으로 관리해서 log찍어주기
-        String requestURI = request.getRequestURI();
-        log.info("============= 인증 체크 인터셉터 실행 {} =============", requestURI);
+        /** 2. @Auth가 있는 경우 - 세션이 있는지 확인 */
+        log.info("============= 인증 체크 인터셉터 실행 =============");
+        log.info("= {} {} ", request.getMethod(), request.getRequestURI());
+        log.info("===============================================");
 
         if (!SessionUtil.isLogin()) {
             throw new CustomException(Error.LOGIN_REQUIRED);
@@ -60,14 +61,11 @@ public class AuthInterceptor implements HandlerInterceptor {
             return true;
         }
         log.info("==================== 권한이 없습니다. ===================");
-        log.info("### 팀Seq : {} / API권한정보 : {} ###", teamSeq, apiAuthGrade);
-        log.info("### 사용자권한정보 : {} ###", userAuthGrade);
+        log.info("= 팀Seq : {} ", teamSeq);
+        log.info("= API권한정보 : {} / 사용자권한정보 : {} ", userAuthGrade, apiAuthGrade);
         log.info("======================================================");
-        // TODO 권한이 없는 경우에 어떤 HTTP state code를 반환하는지 확인하기
-//        throw new CustomException(Error.UNAUTHORIZED_MEMBER);
-        return false;
+        throw new CustomException(Error.UNAUTHORIZED_ACCESS);
     }
-
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
