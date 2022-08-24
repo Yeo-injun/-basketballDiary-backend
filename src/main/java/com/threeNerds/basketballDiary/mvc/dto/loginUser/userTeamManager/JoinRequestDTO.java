@@ -57,20 +57,19 @@ public class JoinRequestDTO {
         return this;
     }
 
-    public void setCodeNameByInstanceCodeValue()
+    public JoinRequestDTO setCodeNameByInstanceCodeValue()
     {
         String stateCode = this.joinRequestStateCode;
         String typeCode = this.joinRequestTypeCode;
 
-        if (!stateCode.isEmpty())
-        {
+        if (stateCode != null) {
             this.joinRequestStateCodeName = JoinRequestStateCode.nameOf(stateCode);
         }
 
-        if (!typeCode.isEmpty())
-        {
+        if (typeCode != null) {
             this.joinRequestTypeCodeName = JoinRequestTypeCode.nameOf(typeCode);
         }
+        return this;
     }
 
     public JoinRequestDTO joinRequestTypeCodeName(String joinRequestTypeCode) {
