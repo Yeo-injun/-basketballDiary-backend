@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.threeNerds.basketballDiary.exception.Error.*;
 
@@ -72,14 +73,14 @@ public class UserTeamManagerService {
     public List<JoinRequestDTO> getJoinRequestsTo(CmnLoginUserDTO loginUserDTO)
     {
         JoinRequestDTO joinRequestDTO = new JoinRequestDTO()
-                .userSeq(loginUserDTO.getUserSeq())
-                .joinRequestTypeCode(JoinRequestTypeCode.JOIN_REQUEST.getCode());
+                                            .userSeq(loginUserDTO.getUserSeq())
+                                            .joinRequestTypeCode(JoinRequestTypeCode.JOIN_REQUEST.getCode());
 
-        List<JoinRequestDTO> joinRequestDTOList = userTeamManagerRepository.findJoinRequestsByType(joinRequestDTO);
-        for (JoinRequestDTO joinRequest : joinRequestDTOList)
-        {
-            joinRequest.setCodeNameByInstanceCodeValue();
-        }
+        List<JoinRequestDTO> joinRequestDTOList
+                = userTeamManagerRepository.findJoinRequestsByType(joinRequestDTO)
+                    .stream().map(JoinRequestDTO::setCodeNameByInstanceCodeValue)
+                             .collect(Collectors.toList());
+
         return joinRequestDTOList;
     }
 
