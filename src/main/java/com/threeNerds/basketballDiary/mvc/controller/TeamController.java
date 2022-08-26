@@ -82,7 +82,6 @@ public class TeamController {
             @RequestBody @Valid TeamDTO teamDTO
     ) {
         log.info("▒▒▒▒▒ API021: TeamController.registerTeam");
-        Optional.ofNullable(sessionUser).orElseThrow(() -> new CustomException(Error.LOGIN_REQUIRED));
 
         Long userSeq = sessionUser.getUserSeq();
         teamDTO.leaderId(userSeq);
@@ -90,11 +89,5 @@ public class TeamController {
         sessionUser.updateAuthority(authList);
 
         return RESPONSE_CREATED;
-//        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-//                .path("/{id}")
-//                .buildAndExpand(team.getTeamSeq())
-//                .toUri();
-//
-//        return ResponseEntity.created(location).build();
     }
 }
