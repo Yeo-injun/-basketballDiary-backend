@@ -34,15 +34,16 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    @Transactional
-    public Long findSeq(String userId){
-        return userRepository.findSeq(userId);
-    }
+//    @Transactional
+//    public Long findSeq(String userId){
+//        return userRepository.findSeq(userId);
+//    }
 
     @Transactional
     public User findUser(Long id) {
         return userRepository.findUser(id);
     }
+
     @Transactional
     public Long createMember(CmnUserDTO userDTO) {
         User user = User.createForRegistration(userDTO);

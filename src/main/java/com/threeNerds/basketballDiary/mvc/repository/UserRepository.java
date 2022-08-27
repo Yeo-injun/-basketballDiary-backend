@@ -15,18 +15,16 @@ import java.util.List;
 @Mapper
 public interface UserRepository {
     Long findSeq(String userId);
-    User findUser(Long id);
+    User findUser(Long userSeq);
+    User findUserByUserId(String userId);
+    User loginFindUser(LoginUserDTO loginUserDTO); // TODO 삭제 검토
+
+    List<UserDTO> findAllUser(FindAllUserDTO findAllUserDTO);
+    List<UserDTO> findUserByUserNameOrEmail(CmnUserDTO findUserCond);
+    List<TeamAuthDTO> findAuthList(User user);
+
     Long saveUser(User user);
-    User loginFindUser(LoginUserDTO loginUserDTO);
     void updateUser(UpdateUserDTO user);
     void deleteUser(String id);
     void updatePassword(PasswordDTO passwordDTO);
-
-    List<TeamAuthDTO> findAuthList(User user);
-    List<UserDTO> findAllUser(FindAllUserDTO findAllUserDTO);
-
-    // 사용자ID 중복확인 쿼리
-    User findUserByUserId(User checkForDuplication);
-
-    List<UserDTO> findUserByUserNameOrEmail(CmnUserDTO findUserCond);
 }

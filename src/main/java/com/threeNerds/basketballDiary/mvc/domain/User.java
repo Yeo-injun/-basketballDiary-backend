@@ -1,5 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.domain;
 
+import com.threeNerds.basketballDiary.exception.CustomException;
+import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.mvc.dto.user.CmnUserDTO;
 import com.threeNerds.basketballDiary.mvc.dto.user.user.UserDTO;
 import lombok.AllArgsConstructor;
@@ -73,6 +75,19 @@ public class User {
     public boolean isLogin() {
         if (this.userSeq == null) {
             return false;
+        }
+        return true;
+    }
+
+    public boolean isMatchedPassword (String password)
+    {
+        if (password == null) {
+            throw new CustomException(Error.NO_EXIST_PASSWORD);
+        }
+
+        // TODO 비밀번호 암호화 모듈 추가하기
+        if (!this.password.equals(password)) {
+            throw new CustomException(Error.INCORRECT_PASSWORD);
         }
         return true;
     }
