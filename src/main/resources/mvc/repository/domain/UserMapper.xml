@@ -161,6 +161,7 @@
     <select id="findUserByUserId" resultType="com.threeNerds.basketballDiary.mvc.domain.User">
         SELECT USER_ID
              , USER_SEQ
+             , PWD   AS PASSWORD
           FROM USER
          WHERE USER_ID = #{userId}
     </select>

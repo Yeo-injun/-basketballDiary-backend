@@ -11,7 +11,6 @@ import static org.springframework.http.HttpStatus.*;
 public enum Error {
 
     /** 400 BAD_REQUEST : 잘못된 요청 */
-    CANNOT_FOLLOW_MYSELF(BAD_REQUEST, "자기 자신은 팔로우 할 수 없습니다"),
 
     /** 401 UNAUTHORIZED : 인증되지 않은 사용자 */
     UNAUTHORIZED_ACCESS(UNAUTHORIZED, "접근 권한이 없습니다."),
@@ -19,6 +18,7 @@ public enum Error {
 
     /** 404 NOT_FOUND : Resource 를 찾을 수 없음 */
     USER_NOT_FOUND(NOT_FOUND, "해당 사용자를 찾을 수 없습니다"),
+    NO_EXIST_PASSWORD(NOT_FOUND, "비밀번호를 입력해주시기 바랍니다."),
     TEAM_NOT_FOUND(NOT_FOUND, "해당 팀이 존재하지 않습니다."),
     JOIN_REQUEST_NOT_FOUND(NOT_FOUND, "대기 중인 가입요청 건이 존재하지 않습니다."),
     INVITATION_NOT_FOUND(NOT_FOUND, "대기 중인 초대건이 존재하지 않습니다."),

@@ -34,15 +34,16 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    @Transactional
-    public Long findSeq(String userId){
-        return userRepository.findSeq(userId);
-    }
+//    @Transactional
+//    public Long findSeq(String userId){
+//        return userRepository.findSeq(userId);
+//    }
 
     @Transactional
     public User findUser(Long id) {
         return userRepository.findUser(id);
     }
+
     @Transactional
     public Long createMember(CmnUserDTO userDTO) {
         User user = User.createForRegistration(userDTO);
@@ -59,14 +60,9 @@ public class UserService {
         userRepository.deleteUser(id);
     }
 
-    @Transactional  // TODO 삭제 검토 (22.06.09부 인준 제안)
-    public List<UserDTO> findAllUser(FindAllUserDTO findAllUserDTO){
-        return userRepository.findAllUser(findAllUserDTO);
-    }
-
-    public void checkDuplicationUserId(User checkForDuplication)
+    public void checkDuplicationUserId(User checkUser)
     {
-        User user = userRepository.findUserByUserId(checkForDuplication);
+        User user = userRepository.findUserByUserId(checkUser.getUserId());
         if (user != null) {
             throw new CustomException(Error.DUPLICATE_USER_ID);
         }
