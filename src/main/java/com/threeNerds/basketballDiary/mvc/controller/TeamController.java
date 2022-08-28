@@ -58,7 +58,6 @@ public class TeamController {
             @RequestParam(name = "page-no"     , defaultValue = "0") Integer pageNo
     ) {
         log.info("▒▒▒▒▒ API019: TeamController.searchTeams");
-        PagerDTO pagerDTO = new PagerDTO(pageNo, 5);
         SearchTeamDTO searchTeamDTO = new SearchTeamDTO()
                 .teamName(teamName)
                 .sigungu(sigungu)
@@ -66,7 +65,7 @@ public class TeamController {
                 .endDay(endDay)
                 .startTime(startTime)
                 .endTime(endTime)
-                .pagerDTO(pagerDTO);
+                .pageNo(pageNo);
 
         PaginationTeamDTO teamList = teamService.searchTeams(searchTeamDTO);
         return ResponseEntity.ok().body(teamList);
