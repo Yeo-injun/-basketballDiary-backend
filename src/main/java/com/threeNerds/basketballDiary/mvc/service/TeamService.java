@@ -51,7 +51,8 @@ public class TeamService {
      * 팀 목록 조회
      * @return List<TeamDTO>
      */
-    public PaginationTeamDTO searchTeams(SearchTeamDTO searchTeamDTO) {
+    public PaginationTeamDTO searchTeams(SearchTeamDTO searchTeamDTO)
+    {
         log.info("TeamService.searchTeams");
         if (searchTeamDTO.getStartTime() != null
             && searchTeamDTO.getEndTime() != "")
@@ -61,21 +62,28 @@ public class TeamService {
                     .endTime(searchTeamDTO.getEndTime().replace(":", ""));
         }
 
-        List<TeamDTO> teamSearchResults = teamRepository.findPagingTeam(searchTeamDTO);
-        PagerDTO resultPager = searchTeamDTO.getPagerDTO();
-        if(teamSearchResults.isEmpty()) {
-            resultPager.setPagingData(0);
-            return new PaginationTeamDTO(resultPager, Collections.emptyList());
-        }
-        resultPager.setPagingData(teamSearchResults.get(0).getTotalCount());
+        /** 페이징 정보 세팅 */
+        PagerDTO pager = new PagerDTO(searchTeamDTO.getPageNo(), 5);
+        searchTeamDTO.pagerDTO(pager);
 
+        /** 팀목록 조회 */
+        List<TeamDTO> teamSearchResults = teamRepository.findPagingTeam(searchTeamDTO);
+
+        /** 페이징DTO에 조회 결과 세팅 */
+        if(teamSearchResults.isEmpty()) {
+            pager.setPagingData(0);
+            return new PaginationTeamDTO(pager, Collections.emptyList());
+        }
+        pager.setPagingData(teamSearchResults.get(0).getTotalCount());
+
+        /** 팀들의 정기운동시간 조회 및 세팅 */
         teamSearchResults.forEach(teamDTO -> {
             Long teamSeq = teamDTO.getTeamSeq();
             List<TeamRegularExerciseDTO> exercises = teamRegularExerciseRepository.findByTeamSeq(teamSeq);
             teamDTO.setParsedTeamRegularExercises(exercises);
         });
 
-        return new PaginationTeamDTO(resultPager, teamSearchResults);
+        return new PaginationTeamDTO(pager, teamSearchResults);
     }
 
     /**

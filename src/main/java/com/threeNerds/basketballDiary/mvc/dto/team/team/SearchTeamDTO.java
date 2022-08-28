@@ -14,6 +14,7 @@ public class SearchTeamDTO {
     private String endDay;
     private String startTime;
     private String endTime;
+    private Integer pageNo;
 
     /* 페이징 처리를 위한 VO */
     private PagerDTO pagerDTO;
@@ -50,6 +51,11 @@ public class SearchTeamDTO {
 
     public SearchTeamDTO endTime (String endTime) {
         this.endTime = endTime;
+        return this;
+    }
+
+    public SearchTeamDTO pageNo (Integer pageNo) {
+        this.pageNo = pageNo;
         return this;
     }
 
