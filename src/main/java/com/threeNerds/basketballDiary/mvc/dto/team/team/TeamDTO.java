@@ -12,6 +12,8 @@ import java.util.stream.Collectors;
 public class TeamDTO {
     /* 페이징을 위한 총 row갯수 */
     private Integer totalCount;
+    /* 정기운동 목록 */
+    private List<TeamRegularExerciseDTO> teamRegularExercises;
 
     /* 팀 정보 */
     private Long teamSeq;
@@ -27,8 +29,6 @@ public class TeamDTO {
     private String sigunguCode;
     private Integer totMember;
 
-    /* 정기운동 목록 */
-    private List<TeamRegularExerciseDTO> teamRegularExercises;
 
     public TeamDTO teamSeq (Long teamSeq) {
         this.teamSeq = teamSeq;

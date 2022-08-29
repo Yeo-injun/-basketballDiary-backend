@@ -5,7 +5,7 @@ import com.threeNerds.basketballDiary.mvc.domain.TeamMember;
 import com.threeNerds.basketballDiary.mvc.domain.TeamRegularExercise;
 import com.threeNerds.basketballDiary.mvc.domain.User;
 import com.threeNerds.basketballDiary.mvc.dto.TeamAuthDTO;
-import com.threeNerds.basketballDiary.mvc.dto.team.team.PaginationTeamDTO;
+import com.threeNerds.basketballDiary.mvc.dto.pagination.PaginatedTeamDTO;
 import com.threeNerds.basketballDiary.mvc.dto.team.team.SearchTeamDTO;
 import com.threeNerds.basketballDiary.mvc.dto.team.team.TeamDTO;
 import com.threeNerds.basketballDiary.mvc.dto.team.team.TeamRegularExerciseDTO;
@@ -13,16 +13,14 @@ import com.threeNerds.basketballDiary.mvc.repository.TeamMemberRepository;
 import com.threeNerds.basketballDiary.mvc.repository.TeamRegularExerciseRepository;
 import com.threeNerds.basketballDiary.mvc.repository.TeamRepository;
 import com.threeNerds.basketballDiary.mvc.repository.UserRepository;
-import com.threeNerds.basketballDiary.pagination.PagerDTO;
+import com.threeNerds.basketballDiary.mvc.dto.pagination.PagerDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 소속팀에서 팀원관리 및 소속팀정보 관리 등의 업무를 수행하는 Service
@@ -51,7 +49,7 @@ public class TeamService {
      * 팀 목록 조회
      * @return List<TeamDTO>
      */
-    public PaginationTeamDTO searchTeams(SearchTeamDTO searchTeamDTO)
+    public PaginatedTeamDTO searchTeams(SearchTeamDTO searchTeamDTO)
     {
         log.info("TeamService.searchTeams");
         if (searchTeamDTO.getStartTime() != null
@@ -72,7 +70,7 @@ public class TeamService {
         /** 페이징DTO에 조회 결과 세팅 */
         if(teamSearchResults.isEmpty()) {
             pager.setPagingData(0);
-            return new PaginationTeamDTO(pager, Collections.emptyList());
+            return new PaginatedTeamDTO(pager, Collections.emptyList());
         }
         pager.setPagingData(teamSearchResults.get(0).getTotalCount());
 
@@ -83,7 +81,7 @@ public class TeamService {
             teamDTO.setParsedTeamRegularExercises(exercises);
         });
 
-        return new PaginationTeamDTO(pager, teamSearchResults);
+        return new PaginatedTeamDTO(pager, teamSearchResults);
     }
 
     /**

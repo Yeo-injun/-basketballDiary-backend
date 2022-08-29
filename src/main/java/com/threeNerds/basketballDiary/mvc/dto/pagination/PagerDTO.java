@@ -1,4 +1,4 @@
-package com.threeNerds.basketballDiary.pagination;
+package com.threeNerds.basketballDiary.mvc.dto.pagination;
 
 import lombok.Getter;
 

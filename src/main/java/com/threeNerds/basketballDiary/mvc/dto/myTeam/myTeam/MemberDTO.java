@@ -2,9 +2,8 @@ package com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam;
 
 import com.threeNerds.basketballDiary.constant.code.PositionCode;
 import com.threeNerds.basketballDiary.constant.code.TeamAuthCode;
-import com.threeNerds.basketballDiary.mvc.dto.PagerDTO;
+import com.threeNerds.basketballDiary.mvc.dto.pagination.PagerDTO;
 import lombok.Getter;
-import lombok.Setter;
 
 /**
  * Author: 강창기
@@ -13,6 +12,10 @@ import lombok.Setter;
 
 @Getter
 public class MemberDTO {
+    /* 페이징을 위한 총 row갯수 */
+    private Integer totalCount;
+    /* 페이징 처리를 위한 VO */
+    private PagerDTO pagerDTO;
 
     /* 유저 pk */
     private Long userSeq;
@@ -42,11 +45,6 @@ public class MemberDTO {
     private String joinYmd;
     /* 경기참여횟수 */
     private Integer totGame;
-
-    /* 총 count */
-    private Integer totalCount;
-    /* 페이징 처리를 위한 VO */
-    private PagerDTO pagerDTO;
 
     public MemberDTO userSeq (Long userSeq) {
         this.userSeq = userSeq;
