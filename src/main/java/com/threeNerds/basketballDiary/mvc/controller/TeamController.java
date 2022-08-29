@@ -1,11 +1,8 @@
 package com.threeNerds.basketballDiary.mvc.controller;
 
-import com.threeNerds.basketballDiary.exception.CustomException;
-import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.interceptor.Auth;
 
-import com.threeNerds.basketballDiary.mvc.dto.team.team.PaginationTeamDTO;
-import com.threeNerds.basketballDiary.pagination.PagerDTO;
+import com.threeNerds.basketballDiary.mvc.dto.pagination.PaginatedTeamDTO;
 import com.threeNerds.basketballDiary.mvc.dto.TeamAuthDTO;
 import com.threeNerds.basketballDiary.mvc.dto.team.team.SearchTeamDTO;
 import com.threeNerds.basketballDiary.mvc.dto.team.team.TeamDTO;
@@ -18,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 
 import static com.threeNerds.basketballDiary.constant.Constant.USER;
 import static com.threeNerds.basketballDiary.constant.HttpResponseConst.RESPONSE_CREATED;
@@ -67,7 +63,7 @@ public class TeamController {
                 .endTime(endTime)
                 .pageNo(pageNo);
 
-        PaginationTeamDTO teamList = teamService.searchTeams(searchTeamDTO);
+        PaginatedTeamDTO teamList = teamService.searchTeams(searchTeamDTO);
         return ResponseEntity.ok().body(teamList);
     }
 

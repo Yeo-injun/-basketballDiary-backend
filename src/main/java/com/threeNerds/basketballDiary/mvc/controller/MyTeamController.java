@@ -11,6 +11,7 @@ import com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MyTeamDTO;
 import com.threeNerds.basketballDiary.mvc.service.MyTeamService;
 import com.threeNerds.basketballDiary.mvc.service.TeamMemberManagerService;
 import com.threeNerds.basketballDiary.mvc.service.TeamMemberService;
+import com.threeNerds.basketballDiary.mvc.dto.pagination.PaginatedTeamMemeberDTO;
 import com.threeNerds.basketballDiary.session.SessionUser;
 import com.threeNerds.basketballDiary.utils.SessionUtil;
 import lombok.RequiredArgsConstructor;
@@ -79,15 +80,15 @@ public class MyTeamController {
      */
     @Auth(GRADE = TEAM_MEMBER)
     @GetMapping("/{teamSeq}/members")
-    public ResponseEntity<List<MemberDTO>> searchMembers(
+    public ResponseEntity<PaginatedTeamMemeberDTO> searchMembers(
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,
             @PathVariable(value = "teamSeq") Long teamSeq,
             @RequestParam(name = "pageNo", defaultValue = "0") Integer pageNo
     ) {
         log.info("▒▒▒▒▒ API002: MyTeamController.searchMembers");
-        List<MemberDTO> memberList = myTeamService.findMembers(teamSeq, pageNo);
+        PaginatedTeamMemeberDTO teamMembers = myTeamService.findMembers(teamSeq, pageNo);
 
-        return ResponseEntity.ok().body(memberList);
+        return ResponseEntity.ok().body(teamMembers);
     }
 
     /**
