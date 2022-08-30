@@ -34,7 +34,8 @@
                   FROM TEAM_MEMBER
                  WHERE 1=1
                    AND TEAM_SEQ = A.TEAM_SEQ
-                ) AS TOT_MEMBER
+                   AND WITHDRAWAL_YN != 'Y'
+               ) AS TOT_MEMBER
           FROM (SELECT *
                   FROM TEAM_MEMBER
                  WHERE 1=1
