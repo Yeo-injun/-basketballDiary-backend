@@ -2,6 +2,7 @@ package com.threeNerds.basketballDiary.mvc.service;
 
 import com.threeNerds.basketballDiary.mvc.domain.User;
 import com.threeNerds.basketballDiary.mvc.dto.user.CmnUserDTO;
+import com.threeNerds.basketballDiary.mvc.dto.user.user.UserDTO;
 import com.threeNerds.basketballDiary.mvc.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -56,7 +57,7 @@ class UserServiceTest {
 
         //when
         Long userSeq = userService.createMember(testUser);
-        User findByUser = userService.findUser(userSeq);
+        UserDTO findByUser = userService.findUser(userSeq);
         //then
         assertThat(userSeq).isEqualTo(findByUser.getUserSeq());
     }
