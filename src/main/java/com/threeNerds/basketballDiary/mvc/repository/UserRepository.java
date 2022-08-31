@@ -2,7 +2,7 @@ package com.threeNerds.basketballDiary.mvc.repository;
 
 import com.threeNerds.basketballDiary.mvc.domain.User;
 import com.threeNerds.basketballDiary.mvc.dto.TeamAuthDTO;
-import com.threeNerds.basketballDiary.mvc.dto.loginUser.PasswordDTO;
+import com.threeNerds.basketballDiary.mvc.dto.loginUser.PasswordUpdateDTO;
 import com.threeNerds.basketballDiary.mvc.dto.user.CmnUserDTO;
 import com.threeNerds.basketballDiary.mvc.dto.user.user.FindAllUserDTO;
 import com.threeNerds.basketballDiary.mvc.dto.user.user.LoginUserDTO;
@@ -26,5 +26,5 @@ public interface UserRepository {
     Long saveUser(User user);
     void updateUser(UpdateUserDTO user);
     void deleteUser(String id);
-    void updatePassword(PasswordDTO passwordDTO);
+    void updatePassword(PasswordUpdateDTO passwordUpdateDTO);
 }
