@@ -1,14 +1,12 @@
 package com.threeNerds.basketballDiary.mvc.service;
 
 import com.threeNerds.basketballDiary.mvc.domain.User;
+import com.threeNerds.basketballDiary.mvc.dto.user.CmnUserDTO;
+import com.threeNerds.basketballDiary.mvc.dto.user.user.UserDTO;
 import com.threeNerds.basketballDiary.mvc.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpSession;
@@ -36,11 +34,11 @@ class UserServiceTest {
     @Autowired
     private UserRepository userRepository;
 
-    User testUser;
+    CmnUserDTO testUser;
 
     @BeforeEach
     void setUpEach() {
-        testUser = User.builder()
+        testUser = new CmnUserDTO()
                 .userId("User")
                 .password("1111")
                 .userName("Lee")
@@ -48,12 +46,8 @@ class UserServiceTest {
                 .gender("M")
                 .height(176.6)
                 .weight(78.9)
-                .regDate(LocalDate.now())
-                .updateDate(LocalDate.now())
-                .userRegYn("Y")
                 .sidoCode("11")
-                .sigunguCode("31")
-                .build();
+                .sigunguCode("31");
         mockHttpSession = new MockHttpSession();
     }
     @Test
@@ -63,7 +57,7 @@ class UserServiceTest {
 
         //when
         Long userSeq = userService.createMember(testUser);
-        User findByUser = userService.findUser(userSeq);
+        UserDTO findByUser = userService.findUser(userSeq);
         //then
         assertThat(userSeq).isEqualTo(findByUser.getUserSeq());
     }

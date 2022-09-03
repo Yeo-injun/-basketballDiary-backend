@@ -1,5 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.domain;
 
+import com.threeNerds.basketballDiary.mvc.dto.team.team.TeamRegularExerciseDTO;
 import lombok.*;
 
 @Getter
@@ -23,7 +24,7 @@ public class TeamRegularExercise {
     /* 정기운동장소명 */
     private String exercisePlaceName;
 
-    public static TeamRegularExercise create(Long teamSeq, TeamRegularExercise regularExercise)
+    public static TeamRegularExercise create(Long teamSeq, TeamRegularExerciseDTO regularExercise)
     {
         return TeamRegularExercise.builder()
                 .teamSeq(teamSeq)

@@ -18,7 +18,7 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.List;
 
-import static com.threeNerds.basketballDiary.utils.HttpResponses.*;
+import static com.threeNerds.basketballDiary.constant.HttpResponseConst.*;
 
 /**
  * ... 수행하는 Controller
@@ -61,9 +61,7 @@ public class UserController {
     public ResponseEntity<?> createUser(
             @RequestBody @Valid CmnUserDTO userDTO
     ) {
-
-        User user = User.createUserForRegistration(userDTO);
-        userService.createMember(user);
+        userService.createMember(userDTO);
         return RESPONSE_OK;
     }
 

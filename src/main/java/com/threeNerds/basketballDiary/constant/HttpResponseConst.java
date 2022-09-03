@@ -1,13 +1,13 @@
-package com.threeNerds.basketballDiary.utils;
+package com.threeNerds.basketballDiary.constant;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 // TODO 패키지 변경 : 현재 >> constant
-public class HttpResponses {
+public class HttpResponseConst {
 
     /** 사용법
-     * 1. Controller에 HttpResponses 클래스를 static으로 import 시켜주기.
+     * 1. Controller에 HttpResponseConst 클래스를 static으로 import 시켜주기.
      *      - 클래스명 작성하지 않고도 필드를 호출할 수 있게하기 위함.
      * 2. 서비스의 결과에 따라서 HTTP표준응답을 return해주기
      *      - 해당 클래스의 필드를 사용하게 되면 클라이언트로 Http Body값 설정을 하지 못함.

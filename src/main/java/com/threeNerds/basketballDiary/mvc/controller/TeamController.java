@@ -1,11 +1,8 @@
 package com.threeNerds.basketballDiary.mvc.controller;
 
-import com.threeNerds.basketballDiary.exception.CustomException;
-import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.interceptor.Auth;
 
-import com.threeNerds.basketballDiary.mvc.dto.team.team.PaginationTeamDTO;
-import com.threeNerds.basketballDiary.pagination.PagerDTO;
+import com.threeNerds.basketballDiary.mvc.dto.pagination.PaginatedTeamDTO;
 import com.threeNerds.basketballDiary.mvc.dto.TeamAuthDTO;
 import com.threeNerds.basketballDiary.mvc.dto.team.team.SearchTeamDTO;
 import com.threeNerds.basketballDiary.mvc.dto.team.team.TeamDTO;
@@ -15,16 +12,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
-import java.net.URI;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import static com.threeNerds.basketballDiary.constant.Constant.USER;
-import static com.threeNerds.basketballDiary.utils.HttpResponses.RESPONSE_CREATED;
+import static com.threeNerds.basketballDiary.constant.HttpResponseConst.RESPONSE_CREATED;
 import static com.threeNerds.basketballDiary.utils.SessionUtil.LOGIN_USER;
 
 /**
@@ -61,7 +54,6 @@ public class TeamController {
             @RequestParam(name = "page-no"     , defaultValue = "0") Integer pageNo
     ) {
         log.info("▒▒▒▒▒ API019: TeamController.searchTeams");
-        PagerDTO pagerDTO = new PagerDTO(pageNo, 5);
         SearchTeamDTO searchTeamDTO = new SearchTeamDTO()
                 .teamName(teamName)
                 .sigungu(sigungu)
@@ -69,9 +61,9 @@ public class TeamController {
                 .endDay(endDay)
                 .startTime(startTime)
                 .endTime(endTime)
-                .pagerDTO(pagerDTO);
+                .pageNo(pageNo);
 
-        PaginationTeamDTO teamList = teamService.searchTeams(searchTeamDTO);
+        PaginatedTeamDTO teamList = teamService.searchTeams(searchTeamDTO);
         return ResponseEntity.ok().body(teamList);
     }
 
@@ -85,7 +77,6 @@ public class TeamController {
             @RequestBody @Valid TeamDTO teamDTO
     ) {
         log.info("▒▒▒▒▒ API021: TeamController.registerTeam");
-        Optional.ofNullable(sessionUser).orElseThrow(() -> new CustomException(Error.LOGIN_REQUIRED));
 
         Long userSeq = sessionUser.getUserSeq();
         teamDTO.leaderId(userSeq);
@@ -93,11 +84,5 @@ public class TeamController {
         sessionUser.updateAuthority(authList);
 
         return RESPONSE_CREATED;
-//        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-//                .path("/{id}")
-//                .buildAndExpand(team.getTeamSeq())
-//                .toUri();
-//
-//        return ResponseEntity.created(location).build();
     }
 }

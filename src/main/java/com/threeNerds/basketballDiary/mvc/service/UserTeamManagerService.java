@@ -1,6 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.service;
 
-import com.threeNerds.basketballDiary.constant.JoinRequestTypeCode;
+import com.threeNerds.basketballDiary.constant.code.JoinRequestTypeCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.mvc.domain.TeamJoinRequest;
 import com.threeNerds.basketballDiary.mvc.domain.TeamMember;
@@ -14,9 +14,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.threeNerds.basketballDiary.exception.Error.*;
 
@@ -73,14 +73,14 @@ public class UserTeamManagerService {
     public List<JoinRequestDTO> getJoinRequestsTo(CmnLoginUserDTO loginUserDTO)
     {
         JoinRequestDTO joinRequestDTO = new JoinRequestDTO()
-                .userSeq(loginUserDTO.getUserSeq())
-                .joinRequestTypeCode(JoinRequestTypeCode.JOIN_REQUEST.getCode());
+                                            .userSeq(loginUserDTO.getUserSeq())
+                                            .joinRequestTypeCode(JoinRequestTypeCode.JOIN_REQUEST.getCode());
 
-        List<JoinRequestDTO> joinRequestDTOList = userTeamManagerRepository.findJoinRequestsByType(joinRequestDTO);
-        for (JoinRequestDTO joinRequest : joinRequestDTOList)
-        {
-            joinRequest.setCodeNameByInstanceCodeValue();
-        }
+        List<JoinRequestDTO> joinRequestDTOList
+                = userTeamManagerRepository.findJoinRequestsByType(joinRequestDTO)
+                    .stream().map(JoinRequestDTO::setCodeNameByInstanceCodeValue)
+                             .collect(Collectors.toList());
+
         return joinRequestDTOList;
     }
 

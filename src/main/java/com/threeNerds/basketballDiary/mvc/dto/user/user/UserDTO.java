@@ -106,7 +106,7 @@ public class UserDTO {
         return this;
     }
 
-    public static UserDTO getUserDto(User user) {
+    public static UserDTO getInstance(User user) {
         return new UserDTO().userId(user.getUserId())
                 .password(user.getPassword())
                 .userName(user.getUserName())
