@@ -7,6 +7,8 @@ import com.threeNerds.basketballDiary.mvc.domain.TeamRegularExercise;
 import com.threeNerds.basketballDiary.mvc.dto.myTeam.FindMyTeamProfileDTO;
 import com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MemberDTO;
 import com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MyTeamDTO;
+import com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.SearchMyTeamDTO;
+import com.threeNerds.basketballDiary.mvc.dto.pagination.PaginatedMyTeamDTO;
 import com.threeNerds.basketballDiary.mvc.dto.team.team.TeamRegularExerciseDTO;
 import com.threeNerds.basketballDiary.mvc.repository.MyTeamRepository;
 import com.threeNerds.basketballDiary.mvc.repository.TeamRegularExerciseRepository;
@@ -101,23 +103,34 @@ public class MyTeamService {
 
     /**
      * 소속팀 목록 조회
-     * @param userSeq
+     * @param searchMyTeamDTO
      * @return List<MyTeamDTO>
      */
-    public List<MyTeamDTO> findTeams(Long userSeq)
+    public PaginatedMyTeamDTO findTeams(SearchMyTeamDTO searchMyTeamDTO)
     {
-        List<MyTeamDTO> myTeamInfoList = myTeamRepository.findAllByUserSeq(userSeq);
+        /** 페이징 정보 세팅 */
+        PagerDTO pager = new PagerDTO(searchMyTeamDTO.getPageNo(), 3);
+        searchMyTeamDTO.pagerDTO(pager);
 
-        if (myTeamInfoList.isEmpty()) {
-            return Collections.emptyList();
+        /** 소속팀 목록 조회 */
+        List<MyTeamDTO> myTeamSearchResults = myTeamRepository.findPagingMyTeams(searchMyTeamDTO);
+
+        /** 페이징DTO에 조회 결과 세팅 */
+        if (myTeamSearchResults.isEmpty())
+        {
+            pager.setPagingData(0);
+            return new PaginatedMyTeamDTO(pager, Collections.emptyList());
         }
+        pager.setPagingData(myTeamSearchResults.get(0).getTotalCount());
 
-        myTeamInfoList.forEach(myTeamInfo -> {
+        /** 팀들의 정기운동시간 조회 및 세팅 */
+        myTeamSearchResults.forEach(myTeamInfo -> {
             Long teamSeq = myTeamInfo.getTeamSeq();
             List<TeamRegularExerciseDTO> exercises = teamRegularExerciseRepository.findByTeamSeq(teamSeq);
             myTeamInfo.setParsedTeamRegularExercises(exercises);
         });
-        return myTeamInfoList;
+
+        return new PaginatedMyTeamDTO(pager, myTeamSearchResults);
     }
 
     /**
@@ -160,7 +173,7 @@ public class MyTeamService {
      */
     public void modifyMyTeam(Long teamSeq, MyTeamDTO dto) {
         // TODO 차후 TeamRegularExcerciseDTO로 수정하기. 임시 처리
-        List<TeamRegularExercise> paramExerciseList = dto.getTeamRegularExercisesList();
+        List<TeamRegularExerciseDTO> paramExerciseList = dto.getTeamRegularExercises();
 
         /* 1. 팀정보 수정 */
         Team team = Optional.ofNullable(teamRepository.findByTeamSeq(teamSeq))
@@ -185,13 +198,14 @@ public class MyTeamService {
         List<TeamRegularExerciseDTO> dbExerciseList
                 = teamRegularExerciseRepository.findByTeamSeq(teamSeq);
         // Front에서 받아온 정기운동내역
-        Map<Long, TeamRegularExercise> paramExerciseMap =
-                paramExerciseList.stream().collect(Collectors.toMap(TeamRegularExercise::getTeamRegularExerciseSeq, dvo->dvo));
+        Map<Long, TeamRegularExerciseDTO> paramExerciseMap =
+                paramExerciseList.stream()
+                        .collect(Collectors.toMap(TeamRegularExerciseDTO::getTeamRegularExerciseSeq, dvo->dvo));
 
         // DB내용 기준으로 Front 데이터와 비교
         dbExerciseList.forEach(dbData -> {
             Long dbSeq = dbData.getTeamRegularExerciseSeq();
-            TeamRegularExercise paramData = paramExerciseMap.get(dbSeq);
+            TeamRegularExerciseDTO paramData = paramExerciseMap.get(dbSeq);
 
             if (paramData != null) {
                 // Seq가 있으므로 조회 후 수정내역 update
