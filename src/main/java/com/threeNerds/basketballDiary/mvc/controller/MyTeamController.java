@@ -325,7 +325,7 @@ public class MyTeamController {
     @GetMapping
     public ResponseEntity<PaginatedMyTeamDTO> searchMyTeams(
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,
-            @RequestParam(name = "page-no", defaultValue = "0") Integer pageNo
+            @RequestParam(name = "pageNo", defaultValue = "0") Integer pageNo
     ) {
         log.info("▒▒▒▒▒ API014: MyTeamController.searchTeams");
         Long userSeq = SessionUtil.getUserSeq();
