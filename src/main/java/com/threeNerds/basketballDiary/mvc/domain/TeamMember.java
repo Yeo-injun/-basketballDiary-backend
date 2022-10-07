@@ -1,9 +1,10 @@
 package com.threeNerds.basketballDiary.mvc.domain;
 
 import com.threeNerds.basketballDiary.constant.Constant;
-import com.threeNerds.basketballDiary.constant.TeamAuthCode;
-import com.threeNerds.basketballDiary.mvc.dto.loginUser.userTeamManager.JoinRequestDTO;
+import com.threeNerds.basketballDiary.constant.code.TeamAuthCode;
+import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.mvc.dto.myTeam.CmnMyTeamDTO;
+import com.threeNerds.basketballDiary.exception.Error;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -37,32 +38,44 @@ public class TeamMember {
         }
         return true;
     }
-    /* TODO 도메인 객체의 기본적인 데이터 세팅 동작을 메소드로 구현 */
-    public static TeamMember toManager(CmnMyTeamDTO teamMember)
+
+    public TeamMember toManager()
     {
-        return TeamMember.builder()
-                .teamSeq(teamMember.getTeamSeq())
-                .teamMemberSeq(teamMember.getTeamMemberSeq())
-                .teamAuthCode(TeamAuthCode.MANAGER.getCode())
-                .build();
+        if (!TeamAuthCode.TEAM_MEMBER.getCode().equals(this.teamAuthCode)) {
+            throw new CustomException(Error.CANT_APPOINTMENT_MANAGER);
+        }
+        this.teamAuthCode = TeamAuthCode.MANAGER.getCode();
+        return this;
     }
 
-    public static TeamMember toMember(CmnMyTeamDTO teamMember)
+    public TeamMember toMember()
     {
-        return TeamMember.builder()
-                .teamSeq(teamMember.getTeamSeq())
-                .teamMemberSeq(teamMember.getTeamMemberSeq())
-                .teamAuthCode(TeamAuthCode.TEAM_MEMBER.getCode())
-                .build();
+        if (!TeamAuthCode.MANAGER.getCode().equals(this.teamAuthCode)) {
+            throw new CustomException(Error.CANT_DISMISSAL_MANAGER);
+        }
+        this.teamAuthCode = TeamAuthCode.TEAM_MEMBER.getCode();
+        return this;
     }
 
-    public static TeamMember createNewMember(TeamJoinRequest joinRequest)
+    public static TeamMember create(TeamJoinRequest joinRequest) {
+        return TeamMember.create(joinRequest.getTeamSeq(), joinRequest.getUserSeq(), TeamAuthCode.TEAM_MEMBER.getCode());
+    }
+
+    public static TeamMember create(Team team) {
+        return TeamMember.create(team.getTeamSeq(), team.getLeaderId(), TeamAuthCode.TEAM_MEMBER.getCode());
+    }
+
+    public static TeamMember createLeader(Team newTeam) {
+        return TeamMember.create(newTeam.getTeamSeq(), newTeam.getLeaderId(), TeamAuthCode.LEADER.getCode());
+    }
+
+    private static TeamMember create(Long teamSeq, Long userSeq, String teamAuthCode)
     {
         String currentYmd = LocalDate.now().toString().replace("-", "");
         return TeamMember.builder()
-                .teamSeq(joinRequest.getTeamSeq())
-                .userSeq(joinRequest.getUserSeq())
-                .teamAuthCode(TeamAuthCode.TEAM_MEMBER.getCode())
+                .teamSeq(teamSeq)
+                .userSeq(userSeq)
+                .teamAuthCode(teamAuthCode)
                 .joinYmd(currentYmd)
                 .withdrawalYn(Constant.NO)
                 .build();

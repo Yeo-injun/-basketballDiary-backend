@@ -1,12 +1,10 @@
 package com.threeNerds.basketballDiary.mvc.controller;
 
-import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.interceptor.Auth;
-import com.threeNerds.basketballDiary.mvc.domain.User;
 import com.threeNerds.basketballDiary.mvc.dto.TeamAuthDTO;
 import com.threeNerds.basketballDiary.mvc.dto.loginUser.CmnLoginUserDTO;
 import com.threeNerds.basketballDiary.mvc.dto.loginUser.userTeamManager.JoinRequestDTO;
-import com.threeNerds.basketballDiary.mvc.dto.loginUser.PasswordDTO;
+import com.threeNerds.basketballDiary.mvc.dto.loginUser.PasswordUpdateDTO;
 import com.threeNerds.basketballDiary.mvc.dto.user.user.UpdateUserDTO;
 import com.threeNerds.basketballDiary.mvc.dto.user.user.UserDTO;
 import com.threeNerds.basketballDiary.mvc.service.UserService;
@@ -21,9 +19,8 @@ import javax.validation.Valid;
 import java.util.List;
 
 import static com.threeNerds.basketballDiary.constant.Constant.USER;
-import static com.threeNerds.basketballDiary.exception.Error.INCORRECT_PASSWORD;
-import static com.threeNerds.basketballDiary.utils.HttpResponses.RESPONSE_CREATED;
-import static com.threeNerds.basketballDiary.utils.HttpResponses.RESPONSE_OK;
+import static com.threeNerds.basketballDiary.constant.HttpResponseConst.RESPONSE_CREATED;
+import static com.threeNerds.basketballDiary.constant.HttpResponseConst.RESPONSE_OK;
 import static com.threeNerds.basketballDiary.utils.SessionUtil.LOGIN_USER;
 
 @Slf4j
@@ -156,7 +153,6 @@ public class AuthUserController {
                 .userSeq(sessionUser.getUserSeq());
 
         userTeamManagerService.rejectInvitation(loginUserDTO);
-        // TODO 컨트롤러에서 서비스 호출하는 방식을 허용할 것인지 -> 우선 트랜잭션 이슈 검토, 서비스레이어의 역할 및 책임에 대해서 다시 공부 검토
         List<JoinRequestDTO> joinRequestDTOList = userTeamManagerService.getJoinRequestsFrom(loginUserDTO);
         return ResponseEntity.ok().body(joinRequestDTOList);
     }
@@ -170,14 +166,10 @@ public class AuthUserController {
     public ResponseEntity<UserDTO> getMyInfo(
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionDTO
     ){
-
-        Long id = sessionDTO.getUserSeq();
-        User user = userService.findUser(id);
-        UserDTO userDto = UserDTO.getUserDto(user);
+        Long userSeq = sessionDTO.getUserSeq();
+        UserDTO userDto = userService.findUser(userSeq);
         return ResponseEntity.ok().body(userDto);
     }
-
-
 
     /**
      * API026 회원수정 : update 를 수행한 후 update 된 객체를 리턴시켜주자 => 이래야 TEST CODE 작성시 정확히 update 가 되었는지 확인할 수 있다.
@@ -211,17 +203,12 @@ public class AuthUserController {
      * API027 비밀번호 변경
      */
     @PostMapping("/profile/password")
-    public ResponseEntity<?> updatePassword(
+    public ResponseEntity<?> updatePassword (
             @SessionAttribute(value = LOGIN_USER,required = false) SessionUser sessionDTO,
-            @RequestBody PasswordDTO passwordDTO
+            @RequestBody PasswordUpdateDTO passwordUpdateDTO
     ){
-        User user = userService.findUser(sessionDTO.getUserSeq());
-
-        if(!user.getPassword().equals(passwordDTO.getPrevPassword())) {
-            throw new CustomException(INCORRECT_PASSWORD);
-        }
-
-        userService.updatePassword(PasswordDTO.retPasswordDto(passwordDTO,user.getUserSeq()));
+        passwordUpdateDTO.userSeq(sessionDTO.getUserSeq());
+        userService.updatePassword(passwordUpdateDTO);
         return RESPONSE_OK;
     }
 }

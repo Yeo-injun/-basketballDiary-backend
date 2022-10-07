@@ -33,21 +33,23 @@ public class LoginService {
     public SessionUser login(LoginUserDTO loginUserDTO)
     {
         log.info("Check User id = {}", loginUserDTO.getUserId());
-        User findLoginUser = userRepository.loginFindUser(loginUserDTO);
+        User findUser = userRepository.findUserByUserId(loginUserDTO.getUserId());
 
-        if (findLoginUser == null) {
+        if (findUser == null) {
             throw new CustomException(Error.USER_NOT_FOUND);
         }
 
-        SessionUser sessionUser = SessionUser.create(findLoginUser);
+        findUser.isMatchedPassword(loginUserDTO.getPassword());
+
+        SessionUser sessionUser = SessionUser.create(findUser);
         /**만약 소속되어 있는 팀이 존재하지 않는다면 권한 정보 없이 return */
-        Long myTeamCount = teamMemberRepository.findMyTeamCount(findLoginUser.getUserSeq());
-        if(myTeamCount<=0){
+        Long myTeamCount = teamMemberRepository.findMyTeamCount(findUser.getUserSeq());
+        if(myTeamCount <= 0) {
             return sessionUser;
         }
 
         /** 권한정보 생성후 SesstionUser객체 return */
-        List<TeamAuthDTO> authList = userRepository.findAuthList(findLoginUser);
+        List<TeamAuthDTO> authList = userRepository.findAuthList(findUser);
         return sessionUser.updateAuthority(authList);
     }
 }

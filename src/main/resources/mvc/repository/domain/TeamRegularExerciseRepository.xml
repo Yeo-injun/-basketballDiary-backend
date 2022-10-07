@@ -2,20 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.threeNerds.basketballDiary.mvc.repository.TeamRegularExerciseRepository">
-    <select id="findByTeamRegularExerciseSeq"
-            resultType="com.threeNerds.basketballDiary.mvc.domain.TeamRegularExercise">
-        SELECT TEAM_REGULAR_EXERCISE_SEQ
-             , TEAM_SEQ
-             , DAY_OF_THE_WEEK_CODE
-             , START_TIME
-             , END_TIME
-             , EXERCISE_PLACE_ADDRESS
-             , EXERCISE_PLACE_NAME
-        FROM TEAM_REGULAR_EXERCISE
-        WHERE TEAM_REGULAR_EXERCISE_SEQ = #{teamRegularExerciseSeq}
-    </select>
 
-    <select id="findByTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.domain.TeamRegularExercise">
+    <select id="findByTeamSeq"
+            resultType="com.threeNerds.basketballDiary.mvc.dto.team.team.TeamRegularExerciseDTO">
         SELECT TEAM_REGULAR_EXERCISE_SEQ
              , TEAM_SEQ
              , DAY_OF_THE_WEEK_CODE
@@ -25,30 +14,6 @@
              , EXERCISE_PLACE_NAME
           FROM TEAM_REGULAR_EXERCISE
          WHERE TEAM_SEQ = #{teamSeq}
-    </select>
-
-    <select id="findBySearchTeamDTO" resultType="com.threeNerds.basketballDiary.mvc.domain.TeamRegularExercise">
-        SELECT TEAM_REGULAR_EXERCISE_SEQ
-             , TEAM_SEQ
-             , DAY_OF_THE_WEEK_CODE
-             , START_TIME
-             , END_TIME
-             , EXERCISE_PLACE_ADDRESS
-             , EXERCISE_PLACE_NAME
-          FROM TEAM_REGULAR_EXERCISE
-         WHERE TEAM_SEQ = #{teamSeq}
-        <if test="startDate != null and !''.equals(startDate)">
-           AND A.START_DATE = #{startDate}
-        </if>
-        <if test="endDate != null and !''.equals(endDate)">
-           AND A.END_DATE = #{endDate}
-        </if>
-        <if test="startTime != null and !''.equals(startTime)">
-           AND A.START_TIME = #{startTime}
-        </if>
-        <if test="endTime != null and !''.equals(endTime)">
-           AND A.END_TIME = #{endTime}
-        </if>
     </select>
 
     <insert id="saveTeamRegularExercise">

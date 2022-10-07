@@ -1,5 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.domain;
 
+import com.threeNerds.basketballDiary.exception.CustomException;
+import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.mvc.dto.user.CmnUserDTO;
 import com.threeNerds.basketballDiary.mvc.dto.user.user.UserDTO;
 import lombok.AllArgsConstructor;
@@ -21,7 +23,8 @@ public class User {
     /* 패스워드 */
     private String password;
     /* 이름 */
-    private String userName;
+    private String userName; // TODO name으로 통일 - DB컬럼명과 일치해야 함.
+    private String name;
     /* 포지션 코드 */
     private String positionCode;
     /* 이메일 */
@@ -47,13 +50,13 @@ public class User {
     /* 도로명주소 */
     private String roadAddress;
 
-    public static User createUserForRegistration(CmnUserDTO userDTO)
+    public static User createForRegistration(CmnUserDTO userDTO)
     {
         LocalDate today = LocalDate.now();
         return User.builder()
                 .userId(userDTO.getUserId())
                 .password(userDTO.getPassword())
-                .userName(userDTO.getUserName())
+                .name(userDTO.getName())
                 .email(userDTO.getEmail())
                 .gender(userDTO.getGender())
                 .birthYmd(userDTO.getBirthYmd())
@@ -64,6 +67,7 @@ public class User {
                 .userRegYn("Y")
                 .sidoCode(userDTO.getSidoCode())
                 .sigunguCode(userDTO.getSigunguCode())
+                .positionCode(userDTO.getPositionCode())
                 .build();
     }
 
@@ -71,6 +75,19 @@ public class User {
     public boolean isLogin() {
         if (this.userSeq == null) {
             return false;
+        }
+        return true;
+    }
+
+    public boolean isMatchedPassword (String password)
+    {
+        if (password == null) {
+            throw new CustomException(Error.NO_EXIST_PASSWORD);
+        }
+
+        // TODO 비밀번호 암호화 모듈 추가하기
+        if (!this.password.equals(password)) {
+            throw new CustomException(Error.INCORRECT_PASSWORD);
         }
         return true;
     }

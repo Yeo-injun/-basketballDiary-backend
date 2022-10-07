@@ -1,19 +1,24 @@
 package com.threeNerds.basketballDiary.mvc.service;
 
 import com.threeNerds.basketballDiary.mvc.domain.Team;
+import com.threeNerds.basketballDiary.mvc.domain.TeamMember;
 import com.threeNerds.basketballDiary.mvc.domain.TeamRegularExercise;
+import com.threeNerds.basketballDiary.mvc.domain.User;
+import com.threeNerds.basketballDiary.mvc.dto.TeamAuthDTO;
+import com.threeNerds.basketballDiary.mvc.dto.pagination.PaginatedTeamDTO;
 import com.threeNerds.basketballDiary.mvc.dto.team.team.SearchTeamDTO;
 import com.threeNerds.basketballDiary.mvc.dto.team.team.TeamDTO;
+import com.threeNerds.basketballDiary.mvc.dto.team.team.TeamRegularExerciseDTO;
+import com.threeNerds.basketballDiary.mvc.repository.TeamMemberRepository;
 import com.threeNerds.basketballDiary.mvc.repository.TeamRegularExerciseRepository;
 import com.threeNerds.basketballDiary.mvc.repository.TeamRepository;
+import com.threeNerds.basketballDiary.mvc.repository.UserRepository;
+import com.threeNerds.basketballDiary.mvc.dto.pagination.PagerDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -37,12 +42,15 @@ public class TeamService {
 
     private final TeamRepository teamRepository;
     private final TeamRegularExerciseRepository teamRegularExerciseRepository;
+    private final TeamMemberRepository teamMemberRepository;
+    private final UserRepository userRepository;
 
     /**
      * 팀 목록 조회
      * @return List<TeamDTO>
      */
-    public List<TeamDTO> searchTeams(SearchTeamDTO searchTeamDTO) {
+    public PaginatedTeamDTO searchTeams(SearchTeamDTO searchTeamDTO)
+    {
         log.info("TeamService.searchTeams");
         if (searchTeamDTO.getStartTime() != null
             && searchTeamDTO.getEndTime() != "")
@@ -52,34 +60,28 @@ public class TeamService {
                     .endTime(searchTeamDTO.getEndTime().replace(":", ""));
         }
 
-        List<TeamDTO> resultTeamList = new ArrayList<>();
-        List<TeamDTO> teamList = teamRepository.findPagingTeam(searchTeamDTO);
-        if(teamList.isEmpty())
-            teamList = Collections.emptyList();
+        /** 페이징 정보 세팅 */
+        PagerDTO pager = new PagerDTO(searchTeamDTO.getPageNo(), 5);
+        searchTeamDTO.pagerDTO(pager);
 
-        teamList.forEach(team -> {
-            Long teamSeq = team.getTeamSeq();
-            List<TeamRegularExercise> exerciseList = teamRegularExerciseRepository.findByTeamSeq(teamSeq);
-            TeamDTO teamDTO = new TeamDTO()
-                    .teamSeq(team.getTeamSeq())
-                    .leaderId(team.getLeaderId())
-                    .teamName(team.getTeamName())
-                    .teamImagePath(team.getTeamImagePath())
-                    .hometown(team.getHometown())
-                    .introduction(team.getIntroduction())
-                    .foundationYmd(team.getFoundationYmd())
-                    .regDate(team.getRegDate())
-                    .updateDate(team.getUpdateDate())
-                    .sidoCode(team.getSidoCode())
-                    .sigunguCode(team.getSigunguCode())
-                    .totMember(team.getTotMember())
-                    .teamRegularExercisesList(exerciseList.isEmpty() ? Collections.emptyList() : exerciseList);
+        /** 팀목록 조회 */
+        List<TeamDTO> teamSearchResults = teamRepository.findPagingTeam(searchTeamDTO);
 
-            resultTeamList.add(teamDTO);
+        /** 페이징DTO에 조회 결과 세팅 */
+        if(teamSearchResults.isEmpty()) {
+            pager.setPagingData(0);
+            return new PaginatedTeamDTO(pager, Collections.emptyList());
+        }
+        pager.setPagingData(teamSearchResults.get(0).getTotalCount());
+
+        /** 팀들의 정기운동시간 조회 및 세팅 */
+        teamSearchResults.forEach(teamDTO -> {
+            Long teamSeq = teamDTO.getTeamSeq();
+            List<TeamRegularExerciseDTO> exercises = teamRegularExerciseRepository.findByTeamSeq(teamSeq);
+            teamDTO.setParsedTeamRegularExercises(exercises);
         });
 
-        return resultTeamList.isEmpty() ?
-                Collections.emptyList() : resultTeamList;
+        return new PaginatedTeamDTO(pager, teamSearchResults);
     }
 
     /**
@@ -87,32 +89,29 @@ public class TeamService {
      * @return Long
      */
     @Transactional
-    public Team createTeam(Long userSeq, TeamDTO teamDTO) {
-        Team team = Team.builder()
-                .teamName(teamDTO.getTeamName())
-                .hometown(teamDTO.getHometown())
-                .foundationYmd(teamDTO.getFoundationYmd())
-                .introduction(teamDTO.getIntroduction())
-                .teamImagePath(teamDTO.getTeamImagePath())
-                .leaderId(userSeq)
-                .regDate(LocalDate.now(ZoneId.of("Asia/Seoul")))
-                .updateDate(LocalDate.now(ZoneId.of("Asia/Seoul")))
-                .build();
-        teamRepository.saveTeam(team);
+    public List<TeamAuthDTO> createTeam(TeamDTO teamDTO)
+    {
+        /** 팀정보 저장  - seq생성 */
+        Team newTeam = Team.create(teamDTO);
+        teamRepository.saveTeam(newTeam);
 
-        List<TeamRegularExercise> teamRegularExerciseList = teamDTO.getTeamRegularExercisesList();
-        teamRegularExerciseList.forEach(tempDTO -> {
-            TeamRegularExercise teamRegularExercise = TeamRegularExercise.builder()
-                    .teamSeq(team.getTeamSeq())
-                    .startTime(tempDTO.getStartTime())
-                    .endTime(tempDTO.getEndTime())
-                    .dayOfTheWeekCode(tempDTO.getDayOfTheWeekCode())
-                    .exercisePlaceAddress(tempDTO.getExercisePlaceAddress())
-                    .exercisePlaceName(tempDTO.getExercisePlaceName())
-                    .build();
-            teamRegularExerciseRepository.saveTeamRegularExercise(teamRegularExercise);
+        /** 팀장 팀멤버로 등록 */
+        TeamMember newMember = TeamMember.createLeader(newTeam);
+        teamMemberRepository.saveTeamMemeber(newMember);
+
+        /** 팀 정기운동 정보 저장 */
+        Long newTeamSeq = newTeam.getTeamSeq();
+        List<TeamRegularExerciseDTO> teamRegularExerciseList = teamDTO.getTeamRegularExercises();
+        teamRegularExerciseList.forEach(exercise -> {
+            TeamRegularExercise newExercise = TeamRegularExercise.create(newTeamSeq, exercise);
+            teamRegularExerciseRepository.saveTeamRegularExercise(newExercise);
         });
 
-        return team;
+        /** 변경된 권한정보 조회 */
+        User user = new User().builder()
+                .userSeq(teamDTO.getLeaderId())
+                .build();
+        List<TeamAuthDTO> authList = userRepository.findAuthList(user);
+        return authList;
     }
 }

@@ -1,8 +1,8 @@
 package com.threeNerds.basketballDiary.mvc.dto.loginUser.userTeamManager;
 
 
-import com.threeNerds.basketballDiary.constant.JoinRequestStateCode;
-import com.threeNerds.basketballDiary.constant.JoinRequestTypeCode;
+import com.threeNerds.basketballDiary.constant.code.JoinRequestStateCode;
+import com.threeNerds.basketballDiary.constant.code.JoinRequestTypeCode;
 import lombok.Getter;
 
 import java.time.LocalDate;
@@ -57,29 +57,28 @@ public class JoinRequestDTO {
         return this;
     }
 
-    public void setCodeNameByInstanceCodeValue()
+    public JoinRequestDTO setCodeNameByInstanceCodeValue()
     {
         String stateCode = this.joinRequestStateCode;
         String typeCode = this.joinRequestTypeCode;
 
-        if (!stateCode.isEmpty())
-        {
-            this.joinRequestStateCodeName = JoinRequestStateCode.getName(stateCode);
+        if (stateCode != null) {
+            this.joinRequestStateCodeName = JoinRequestStateCode.nameOf(stateCode);
         }
 
-        if (!typeCode.isEmpty())
-        {
-            this.joinRequestTypeCodeName = JoinRequestTypeCode.getName(typeCode);
+        if (typeCode != null) {
+            this.joinRequestTypeCodeName = JoinRequestTypeCode.nameOf(typeCode);
         }
+        return this;
     }
 
     public JoinRequestDTO joinRequestTypeCodeName(String joinRequestTypeCode) {
-        this.joinRequestTypeCodeName = JoinRequestTypeCode.getName(joinRequestTypeCode);
+        this.joinRequestTypeCodeName = JoinRequestTypeCode.nameOf(joinRequestTypeCode);
         return this;
     }
 
     public JoinRequestDTO joinRequestStateCodeName(String joinRequestStateCode) {
-        this.joinRequestStateCodeName = JoinRequestStateCode.getName(joinRequestStateCode);
+        this.joinRequestStateCodeName = JoinRequestStateCode.nameOf(joinRequestStateCode);
         return this;
     }
 

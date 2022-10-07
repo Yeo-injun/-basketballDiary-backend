@@ -8,9 +8,13 @@ import com.threeNerds.basketballDiary.mvc.dto.myTeam.FindMyTeamProfileDTO;
 import com.threeNerds.basketballDiary.mvc.dto.myTeam.ModifyMyTeamProfileDTO;
 import com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MemberDTO;
 import com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MyTeamDTO;
+import com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.SearchMyTeamDTO;
+import com.threeNerds.basketballDiary.mvc.dto.pagination.PaginatedMyTeamDTO;
+import com.threeNerds.basketballDiary.mvc.dto.pagination.PaginatedTeamDTO;
 import com.threeNerds.basketballDiary.mvc.service.MyTeamService;
 import com.threeNerds.basketballDiary.mvc.service.TeamMemberManagerService;
 import com.threeNerds.basketballDiary.mvc.service.TeamMemberService;
+import com.threeNerds.basketballDiary.mvc.dto.pagination.PaginatedTeamMemeberDTO;
 import com.threeNerds.basketballDiary.session.SessionUser;
 import com.threeNerds.basketballDiary.utils.SessionUtil;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +30,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static com.threeNerds.basketballDiary.constant.Constant.*;
-import static com.threeNerds.basketballDiary.utils.HttpResponses.RESPONSE_OK;
+import static com.threeNerds.basketballDiary.constant.HttpResponseConst.RESPONSE_OK;
 import static com.threeNerds.basketballDiary.utils.SessionUtil.LOGIN_USER;
 
 /**
@@ -79,15 +83,15 @@ public class MyTeamController {
      */
     @Auth(GRADE = TEAM_MEMBER)
     @GetMapping("/{teamSeq}/members")
-    public ResponseEntity<List<MemberDTO>> searchMembers(
+    public ResponseEntity<PaginatedTeamMemeberDTO> searchMembers(
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,
             @PathVariable(value = "teamSeq") Long teamSeq,
             @RequestParam(name = "pageNo", defaultValue = "0") Integer pageNo
     ) {
         log.info("▒▒▒▒▒ API002: MyTeamController.searchMembers");
-        List<MemberDTO> memberList = myTeamService.findMembers(teamSeq, pageNo);
+        PaginatedTeamMemeberDTO teamMembers = myTeamService.findMembers(teamSeq, pageNo);
 
-        return ResponseEntity.ok().body(memberList);
+        return ResponseEntity.ok().body(teamMembers);
     }
 
     /**
@@ -96,7 +100,7 @@ public class MyTeamController {
      * 22.03.29 인준 : 권한어노테이션 추가
      */
     @Auth(GRADE = LEADER)
-    @PostMapping("{teamSeq}/members/{teamMemberSeq}/manager")
+    @PatchMapping("{teamSeq}/members/{teamMemberSeq}/manager")
     public ResponseEntity<?> appointManager (
             @PathVariable Long teamSeq,
             @PathVariable Long teamMemberSeq
@@ -116,14 +120,14 @@ public class MyTeamController {
      */
     @Auth(GRADE = LEADER)
     @DeleteMapping("{teamSeq}/members/{teamMemberSeq}")
-    public ResponseEntity<?> removeTeamMember(
+    public ResponseEntity<?> dischargeTeamMember(
             @PathVariable Long teamSeq,
             @PathVariable Long teamMemberSeq
     ) {
         CmnMyTeamDTO teamMemberKey = new CmnMyTeamDTO()
                                 .teamSeq(teamSeq)
                                 .teamMemberSeq(teamMemberSeq);
-        teamMemberManagerService.removeTeamMember(teamMemberKey);
+        teamMemberManagerService.dischargeTeamMember(teamMemberKey);
         return RESPONSE_OK;
     }
 
@@ -251,7 +255,8 @@ public class MyTeamController {
     public ResponseEntity<?> modifyMyTeamsProfile(
             @SessionAttribute(value = LOGIN_USER,required = false) SessionUser sessionDTO,
             @PathVariable Long teamSeq,
-            @ModelAttribute MyTeamProfileDTO myTeamProfileDTO){
+            @ModelAttribute MyTeamProfileDTO myTeamProfileDTO
+    ) {
 
         uploadFile(myTeamProfileDTO.getImageFile());
 
@@ -318,12 +323,17 @@ public class MyTeamController {
      */
     @Auth(GRADE = TEAM_MEMBER)
     @GetMapping
-    public ResponseEntity<List<MyTeamDTO>> searchTeams(
-            @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser
+    public ResponseEntity<PaginatedMyTeamDTO> searchMyTeams(
+            @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,
+            @RequestParam(name = "pageNo", defaultValue = "0") Integer pageNo
     ) {
         log.info("▒▒▒▒▒ API014: MyTeamController.searchTeams");
         Long userSeq = SessionUtil.getUserSeq();
-        List<MyTeamDTO> myTeamList = myTeamService.findTeams(userSeq);
+
+        SearchMyTeamDTO searchMyTeamDTO = new SearchMyTeamDTO()
+                 .pageNo(pageNo)
+                 .userSeq(userSeq);
+        PaginatedMyTeamDTO myTeamList = myTeamService.findTeams(searchMyTeamDTO);
 
         return ResponseEntity.ok().body(myTeamList);
     }

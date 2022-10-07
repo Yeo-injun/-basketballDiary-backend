@@ -33,6 +33,19 @@
         AND WITHDRAWAL_YN = 'N'
     </select>
 
+    <select id="findByTeamMemberSeq" resultType="com.threeNerds.basketballDiary.mvc.domain.TeamMember">
+        SELECT TEAM_MEMBER_SEQ
+             , TEAM_SEQ
+             , USER_SEQ
+             , JOIN_YMD
+             , TEAM_AUTH_CODE
+             , BACK_NUMBER
+          FROM TEAM_MEMBER
+         WHERE 1=1
+           AND TEAM_MEMBER_SEQ = #{teamMemberSeq}
+           AND WITHDRAWAL_YN = 'N'
+    </select>
+
     <select id="checkDuplicatedTeamMember" resultType="int">
         SELECT COUNT(*)
           FROM TEAM_MEMBER

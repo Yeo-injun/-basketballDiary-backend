@@ -4,33 +4,38 @@
 <mapper namespace="com.threeNerds.basketballDiary.mvc.repository.UserRepository">
 
     <insert id="saveUser" parameterType="com.threeNerds.basketballDiary.mvc.domain.User"
-        useGeneratedKeys="true" keyProperty="userSeq">
-        INSERT INTO USER ( USER_ID
-                         , PWD
-                         , NAME
-                         , EMAIL
-                         , REG_DATE
-                         , UPDATE_DATE
-                         , USER_REG_YN
-                         , GENDER
-                         , HEIGHT
-                         , WEIGHT
-                         , SIDO_CODE
-                         , SIGUNGU_CODE
-                         , POSITION_CODE)
+            useGeneratedKeys="true" keyProperty="userSeq">
+        INSERT INTO
+        USER ( USER_ID
+        , PWD
+        , NAME
+        , BIRTH_YMD
+        , EMAIL
+        , REG_DATE
+        , UPDATE_DATE
+        , USER_REG_YN
+        , GENDER
+        , HEIGHT
+        , WEIGHT
+        , SIDO_CODE
+        , SIGUNGU_CODE
+        , POSITION_CODE
+        )
         VALUES ( #{userId}
-               , #{password}
-               , #{userName}
-               , #{email}
-               , #{regDate}
-               , #{updateDate}
-               , #{userRegYn}
-               , #{gender}
-               , #{height}
-               , #{weight}
-               , #{sidoCode}
-               , #{sigunguCode}
-               , #{positionCode})
+        , #{password}
+        , #{name}
+        , #{birthYmd}
+        , #{email}
+        , #{regDate}
+        , #{updateDate}
+        , #{userRegYn}
+        , #{gender}
+        , #{height}
+        , #{weight}
+        , #{sidoCode}
+        , #{sigunguCode}
+        , #{positionCode}
+        )
     </insert>
 
     <select id="findSeq" resultType="long">
@@ -156,13 +161,14 @@
     <select id="findUserByUserId" resultType="com.threeNerds.basketballDiary.mvc.domain.User">
         SELECT USER_ID
              , USER_SEQ
+             , PWD   AS PASSWORD
           FROM USER
          WHERE USER_ID = #{userId}
     </select>
 
-    <update id="updatePassword" parameterType="com.threeNerds.basketballDiary.mvc.dto.loginUser.PasswordDTO">
+    <update id="updatePassword" parameterType="com.threeNerds.basketballDiary.mvc.dto.loginUser.PasswordUpdateDTO">
         UPDATE USER
-        SET PWD=#{curPassword}
-        WHERE USER_SEQ=#{userSeq}
+           SET PWD      = #{newPassword}
+         WHERE USER_SEQ = #{userSeq}
     </update>
 </mapper>

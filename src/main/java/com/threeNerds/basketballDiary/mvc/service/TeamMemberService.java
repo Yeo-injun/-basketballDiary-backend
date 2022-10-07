@@ -30,11 +30,10 @@ public class TeamMemberService {
     private final MyTeamRepository myTeamRepository;
 
     // 2022.05.08. 강창기   소속팀 프로필 api와 프로필 수정조회 api와 함께 사용하기 위해 수정반영
-    //public ResponseMyTeamProfileDTO findProfile(FindMyTeamProfileDTO userDto){
     public MemberDTO findProfile(FindMyTeamProfileDTO userDto){
-        //return teamMemberRepository.findMyTeamProfile(userDto);
-//        return myTeamRepository.findProfileByUserSeqAndTeamSeq(userDto.getUserSeq(), userDto.getTeamSeq());
-        return myTeamRepository.findProfileByUserSeqAndTeamSeq(userDto);
+        MemberDTO myProfile = myTeamRepository.findProfileByUserSeqAndTeamSeq(userDto);
+        myProfile.setAllCodeName();
+        return myProfile;
     }
 
     public int updateMyTeamProfile(ModifyMyTeamProfileDTO userDto){

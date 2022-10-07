@@ -4,25 +4,30 @@
 <mapper namespace="com.threeNerds.basketballDiary.mvc.repository.TeamRepository">
 
     <insert id="saveTeam" parameterType="com.threeNerds.basketballDiary.mvc.domain.Team" useGeneratedKeys="true" keyProperty="teamSeq">
-        INSERT INTO
-            TEAM (     LEADER_ID
-                     , TEAM_NAME
-                     , HOMETOWN
-                     , INTRODUCTION
-                     , FOUNDATION_YMD
-                     , REG_DATE
-                     , UPDATE_DATE
-                     , SIDO_CODE
-                     , SIGUNGU_CODE )
-        VALUES (      #{leaderId}
-                    , #{teamName}
-                    , #{hometown}
-                    , #{introduction}
-                    , #{foundationYmd}
-                    , #{regDate}
-                    , #{updateDate}
-                    , #{sidoCode}
-                    , #{sigunguCode} )
+        <selectKey keyProperty="teamSeq" order="AFTER" resultType="java.lang.Long">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        INSERT INTO TEAM (
+              LEADER_ID
+            , TEAM_NAME
+            , HOMETOWN
+            , INTRODUCTION
+            , FOUNDATION_YMD
+            , REG_DATE
+            , UPDATE_DATE
+            , SIDO_CODE
+            , SIGUNGU_CODE
+        ) VALUES (
+              #{leaderId}
+            , #{teamName}
+            , #{hometown}
+            , #{introduction}
+            , #{foundationYmd}
+            , #{regDate}
+            , #{updateDate}
+            , #{sidoCode}
+            , #{sigunguCode}
+        )
     </insert>
 
     <update id="updateTeam" parameterType="com.threeNerds.basketballDiary.mvc.domain.Team">
@@ -97,7 +102,7 @@
                       , A.SIGUNGU_CODE
                       , IFNULL(B.TOT_MEMBER, 0) TOT_MEMBER
                    FROM TEAM A
-                   LEFT JOIN (
+                   LEFT JOIN ( /* INNER JOIN 으로 변경하는 것이 어떤지 - LEFT JOIN 사용은 지양하는 것이 성능상 유리하다고 함. */
                               SELECT TEAM_SEQ
                                    , COUNT(*) TOT_MEMBER
                                 FROM TEAM_MEMBER
@@ -113,7 +118,7 @@
                                 FROM TEAM_REGULAR_EXERCISE
                               ) C
                      ON A.TEAM_SEQ = C.TEAM_SEQ
-        <trim prefix="WHERE" prefixOverrides="AND|OR">
+                  WHERE 1=1
             <if test="teamName != null and !''.equals(teamName)">
                     AND A.TEAM_NAME LIKE CONCAT('%', IFNULL(#{teamName}, ''), '%')
             </if>
@@ -128,10 +133,9 @@
                     AND START_TIME <![CDATA[>=]]> #{startTime}
                     AND END_TIME <![CDATA[<=]]> #{endTime}
             </if>
-        </trim>
                   GROUP BY A.TEAM_SEQ
                   ORDER BY A.TEAM_NAME
-        ) ORDERS LIMIT #{pagerDTO.offset} OFFSET #{pagerDTO.pageNo}
+        ) ORDERS LIMIT #{pagerDTO.rowCount} OFFSET #{pagerDTO.offset}
     </select>
 
     <delete id="deleteById">
