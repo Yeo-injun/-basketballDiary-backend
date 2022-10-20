@@ -20,29 +20,33 @@
           AND A.TEAM_SEQ = #{teamSeq}
     </select>
 
-    <select id="findAllByUserSeq" resultType="com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MyTeamDTO">
-        SELECT A.TEAM_SEQ
-             , A.TEAM_AUTH_CODE
-             , B.TEAM_NAME
-             , B.TEAM_IMAGE_PATH
-             , B.HOMETOWN
-             , B.SIDO_CODE
-             , B.SIGUNGU_CODE
-             , B.INTRODUCTION
-             , B.FOUNDATION_YMD
-             , (SELECT COUNT(TEAM_MEMBER_SEQ)
-                  FROM TEAM_MEMBER
-                 WHERE 1=1
-                   AND TEAM_SEQ = A.TEAM_SEQ
-                   AND WITHDRAWAL_YN != 'Y'
-               ) AS TOT_MEMBER
-          FROM (SELECT *
-                  FROM TEAM_MEMBER
-                 WHERE 1=1
-                   AND WITHDRAWAL_YN != 'Y'
-                   AND USER_SEQ = #{userSeq}) A
-         INNER JOIN TEAM B
-            ON A.TEAM_SEQ = B.TEAM_SEQ
+    <select id="findPagingMyTeams" resultType="com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MyTeamDTO">
+        /* myTeamRepository.findPagingMyTeams */
+        SELECT *
+        FROM ( SELECT COUNT(*) OVER() TOTAL_COUNT
+                    , A.TEAM_SEQ
+                    , A.TEAM_AUTH_CODE
+                    , B.TEAM_NAME
+                    , B.TEAM_IMAGE_PATH
+                    , B.HOMETOWN
+                    , B.SIDO_CODE
+                    , B.SIGUNGU_CODE
+                    , B.INTRODUCTION
+                    , B.FOUNDATION_YMD
+                    , (SELECT COUNT(TEAM_MEMBER_SEQ)
+                         FROM TEAM_MEMBER
+                        WHERE 1=1
+                          AND TEAM_SEQ = A.TEAM_SEQ
+                          AND WITHDRAWAL_YN != 'Y'
+                       ) AS TOT_MEMBER
+                 FROM (SELECT *
+                        FROM TEAM_MEMBER
+                        WHERE 1=1
+                        AND WITHDRAWAL_YN != 'Y'
+                        AND USER_SEQ = #{userSeq}) A
+                INNER JOIN TEAM B
+                   ON A.TEAM_SEQ = B.TEAM_SEQ
+        ) ORDERS LIMIT #{pagerDTO.rowCount} OFFSET #{pagerDTO.offset}
     </select>
 
     <select id="findProfileByUserSeqAndTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MemberDTO">

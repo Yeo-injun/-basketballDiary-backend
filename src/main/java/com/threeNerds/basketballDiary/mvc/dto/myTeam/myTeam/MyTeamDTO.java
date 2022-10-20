@@ -13,6 +13,9 @@ import java.util.stream.Collectors;
 @Getter
 public class MyTeamDTO {
 
+    /** 페이징 처리를 위한 속성 */
+    private Integer totalCount;
+
     /**
      * 소속팀 단건 정보
      */

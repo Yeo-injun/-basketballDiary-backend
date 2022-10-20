@@ -68,6 +68,7 @@ public class User {
                 .sidoCode(userDTO.getSidoCode())
                 .sigunguCode(userDTO.getSigunguCode())
                 .positionCode(userDTO.getPositionCode())
+                .roadAddress(userDTO.getRoadAddress())
                 .build();
     }
 

@@ -8,6 +8,9 @@ import com.threeNerds.basketballDiary.mvc.dto.myTeam.FindMyTeamProfileDTO;
 import com.threeNerds.basketballDiary.mvc.dto.myTeam.ModifyMyTeamProfileDTO;
 import com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MemberDTO;
 import com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MyTeamDTO;
+import com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.SearchMyTeamDTO;
+import com.threeNerds.basketballDiary.mvc.dto.pagination.PaginatedMyTeamDTO;
+import com.threeNerds.basketballDiary.mvc.dto.pagination.PaginatedTeamDTO;
 import com.threeNerds.basketballDiary.mvc.service.MyTeamService;
 import com.threeNerds.basketballDiary.mvc.service.TeamMemberManagerService;
 import com.threeNerds.basketballDiary.mvc.service.TeamMemberService;
@@ -252,7 +255,8 @@ public class MyTeamController {
     public ResponseEntity<?> modifyMyTeamsProfile(
             @SessionAttribute(value = LOGIN_USER,required = false) SessionUser sessionDTO,
             @PathVariable Long teamSeq,
-            @ModelAttribute MyTeamProfileDTO myTeamProfileDTO){
+            @ModelAttribute MyTeamProfileDTO myTeamProfileDTO
+    ) {
 
         uploadFile(myTeamProfileDTO.getImageFile());
 
@@ -319,12 +323,17 @@ public class MyTeamController {
      */
     @Auth(GRADE = TEAM_MEMBER)
     @GetMapping
-    public ResponseEntity<List<MyTeamDTO>> searchTeams(
-            @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser
+    public ResponseEntity<PaginatedMyTeamDTO> searchMyTeams(
+            @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,
+            @RequestParam(name = "pageNo", defaultValue = "0") Integer pageNo
     ) {
         log.info("▒▒▒▒▒ API014: MyTeamController.searchTeams");
         Long userSeq = SessionUtil.getUserSeq();
-        List<MyTeamDTO> myTeamList = myTeamService.findTeams(userSeq);
+
+        SearchMyTeamDTO searchMyTeamDTO = new SearchMyTeamDTO()
+                 .pageNo(pageNo)
+                 .userSeq(userSeq);
+        PaginatedMyTeamDTO myTeamList = myTeamService.findTeams(searchMyTeamDTO);
 
         return ResponseEntity.ok().body(myTeamList);
     }
