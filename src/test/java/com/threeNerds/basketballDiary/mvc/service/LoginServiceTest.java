@@ -24,13 +24,14 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class LoginServiceTest {
 
     MockHttpSession session;
+
     @Autowired
     private LoginService loginService;
+
     @Autowired
     private UserRepository userRepository;
 
     User user;
-    User wrongUser;
 
     @BeforeEach
     void setUpEach(){

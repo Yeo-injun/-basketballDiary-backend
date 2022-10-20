@@ -17,10 +17,10 @@ public class MemberDTO {
     /* 페이징 처리를 위한 VO */
     private PagerDTO pagerDTO;
 
-    /* 유저 pk */
-    private Long userSeq;
     /* 팀멤버 pk */
     private Long teamMemberSeq;
+    /* 유저 pk */
+    private Long userSeq;
     /* 팀 pk */
     private Long teamSeq;
     /* 팀권한코드 */

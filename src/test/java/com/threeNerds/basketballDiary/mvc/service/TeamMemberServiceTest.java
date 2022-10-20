@@ -5,6 +5,7 @@ import com.threeNerds.basketballDiary.mvc.dto.myTeam.FindMyTeamProfileDTO;
 import com.threeNerds.basketballDiary.mvc.dto.myTeam.ModifyMyTeamProfileDTO;
 import com.threeNerds.basketballDiary.mvc.dto.myTeam.ResponseMyTeamProfileDTO;
 import com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MemberDTO;
+import com.threeNerds.basketballDiary.mvc.repository.MyTeamRepository;
 import com.threeNerds.basketballDiary.mvc.repository.TeamMemberRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,16 +29,18 @@ class TeamMemberServiceTest {
     private TeamMemberService teamMemberService;
     @Mock
     private TeamMemberRepository teamMemberRepository;
+    @Mock
+    private MyTeamRepository myTeamRepository;
 
     FindMyTeamProfileDTO findMyTeamProfileDTO;
 
     ModifyMyTeamProfileDTO modifyMyTeamProfileDTO;
 
-    ResponseMyTeamProfileDTO responseMyTeamProfileDTO;
+    MemberDTO memberDTO;
 
     @BeforeEach
     void setUpEach(){
-        FindMyTeamProfileDTO findMyTeamProfileDTO = new FindMyTeamProfileDTO();
+
         findMyTeamProfileDTO = new FindMyTeamProfileDTO()
                 .userSeq(1L)
                 .teamSeq(3L);
@@ -46,31 +49,40 @@ class TeamMemberServiceTest {
                 .findMyTeamProfileDTO(findMyTeamProfileDTO)
                 .backNumber("11");
 
-        responseMyTeamProfileDTO = new ResponseMyTeamProfileDTO()
-                .responseTeamName("Bird")
-                .responseBackNumber("13")
-                .responseUserName("Jodan");
+        memberDTO = new MemberDTO()
+                .userSeq(1L)
+                .teamSeq(3L)
+                .userName("Dong")
+                .teamName("JIS");
 
         session = new MockHttpSession();
     }
     @Test
     void findProfile(){
         //given
-        when(teamMemberRepository.findMyTeamProfile(findMyTeamProfileDTO)).thenReturn(responseMyTeamProfileDTO);
+        when(myTeamRepository.findProfileByUserSeqAndTeamSeq(findMyTeamProfileDTO)).thenReturn(memberDTO);
         //when
-        //ResponseMyTeamProfileDTO profile = teamMemberService.findProfile(findMyTeamProfileDTO);
         MemberDTO profile = teamMemberService.findProfile(findMyTeamProfileDTO);
         //then
-        assertThat(profile).isEqualTo(responseMyTeamProfileDTO);
+        assertThat(profile).isEqualTo(memberDTO);
     }
     @Test
     void updateProfile(){
         //given
-        doNothing().when(teamMemberRepository).updateMyTeamProfile(modifyMyTeamProfileDTO);
+        when(teamMemberRepository.updateMyTeamProfile(modifyMyTeamProfileDTO)).thenReturn(1);
         //when
-        teamMemberService.updateMyTeamProfile(modifyMyTeamProfileDTO);
+        int ret = teamMemberService.updateMyTeamProfile(modifyMyTeamProfileDTO);
         //then
-        verify(teamMemberRepository).updateMyTeamProfile(modifyMyTeamProfileDTO);
+        assertThat(ret).isEqualTo(1);
     }
 
+    @Test
+    void deleteProfile(){
+        //given
+        doNothing().when(teamMemberRepository).deleteMyTeamProfile(findMyTeamProfileDTO);
+        //when
+        teamMemberService.deleteMyTeamProfile(findMyTeamProfileDTO);
+        //then
+        verify(teamMemberRepository).deleteMyTeamProfile(findMyTeamProfileDTO);
+    }
 }
