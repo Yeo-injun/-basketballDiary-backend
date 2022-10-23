@@ -4,9 +4,7 @@ import com.threeNerds.basketballDiary.mvc.domain.User;
 import com.threeNerds.basketballDiary.mvc.dto.user.CmnUserDTO;
 import com.threeNerds.basketballDiary.mvc.dto.user.user.LoginUserDTO;
 import com.threeNerds.basketballDiary.mvc.dto.user.user.UserDTO;
-import com.threeNerds.basketballDiary.mvc.service.LoginService;
-import com.threeNerds.basketballDiary.mvc.service.UserService;
-import com.threeNerds.basketballDiary.mvc.service.UserTeamManagerService;
+import com.threeNerds.basketballDiary.mvc.service.*;
 import com.threeNerds.basketballDiary.session.SessionUser;
 import com.threeNerds.basketballDiary.utils.SessionUtil;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +38,8 @@ public class GameController {
     private final UserService userService;
     private final UserTeamManagerService userTeamManagerService;
 
+    private final GameService gameService;
+    private final GameJoinManager gameJoinManager;
     /**
      * API044 상대팀 목록 조회
      * /api/games/opponents?sidoCode={sidoCode}&teamName={teamName}&leaderName=${leaderName}
@@ -62,5 +62,40 @@ public class GameController {
     /**
      * API062 게임참가팀확정
      */
+
+    /**
+     * API044 상대팀 목록 조회
+     */
+    @GetMapping("/opponents")
+    public ResponseEntity<?> searchOpponents(
+            @RequestParam(name = "sidoCode") String sidoCode,
+            @RequestParam(name = "teamName") String teamName,
+            @RequestParam(name = "leaderName") String leaderName){
+
+        //1. teamSeq 먼저 get(List 형식으로 return 받아야됨 : sidoCode,teamName,leaderName 중 null 값이 있고 동적으로 쿼리를 작성해야하기 때문)
+        //2. [팀명,팀장이름,설립일,활동지역] 의 dto를 생성하고 return
+
+        return RESPONSE_OK;
+    }
+    /**
+     * API051 게임 삭제
+     */
+    @DeleteMapping("/{gameSeq}")
+    public ResponseEntity<?> deleteGame(
+            @PathVariable(name = "gameSeq") Long gameSeq
+    ){
+        gameService.DeleteGame(gameSeq);
+        return RESPONSE_OK;
+    }
+    /**
+     * API062 게임참가팀 확정
+     */
+    @PostMapping("/{gameSeq}/gameJoinTeams")
+    public ResponseEntity<?> fixedJoinTeam(
+            @PathVariable(name = "gameSeq") Long gaemSeq
+    ){
+        //1. GameJoinTeam 테이블에 홈/어웨이 팀 Insert
+        return RESPONSE_OK;
+    }
 
 }
