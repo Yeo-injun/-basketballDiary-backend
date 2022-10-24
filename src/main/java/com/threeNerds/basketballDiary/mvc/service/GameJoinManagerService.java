@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @RequiredArgsConstructor
 @Transactional
-public class GameJoinManager {
+public class GameJoinManagerService {
 
 
 }

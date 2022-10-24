@@ -1,20 +1,11 @@
 package com.threeNerds.basketballDiary.mvc.controller;
 
-import com.threeNerds.basketballDiary.mvc.domain.User;
 import com.threeNerds.basketballDiary.mvc.dto.user.CmnUserDTO;
-import com.threeNerds.basketballDiary.mvc.dto.user.user.LoginUserDTO;
-import com.threeNerds.basketballDiary.mvc.dto.user.user.UserDTO;
 import com.threeNerds.basketballDiary.mvc.service.*;
-import com.threeNerds.basketballDiary.session.SessionUser;
-import com.threeNerds.basketballDiary.utils.SessionUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
-import java.util.List;
 
 import static com.threeNerds.basketballDiary.constant.HttpResponseConst.RESPONSE_OK;
 
@@ -39,7 +30,7 @@ public class GameController {
     private final UserTeamManagerService userTeamManagerService;
 
     private final GameService gameService;
-    private final GameJoinManager gameJoinManager;
+    private final GameJoinManagerService gameJoinManagerService;
     /**
      * API044 상대팀 목록 조회
      * /api/games/opponents?sidoCode={sidoCode}&teamName={teamName}&leaderName=${leaderName}
@@ -70,7 +61,8 @@ public class GameController {
     public ResponseEntity<?> searchOpponents(
             @RequestParam(name = "sidoCode") String sidoCode,
             @RequestParam(name = "teamName") String teamName,
-            @RequestParam(name = "leaderName") String leaderName){
+            @RequestParam(name = "leaderName") String leaderName
+    ){
 
         //1. teamSeq 먼저 get(List 형식으로 return 받아야됨 : sidoCode,teamName,leaderName 중 null 값이 있고 동적으로 쿼리를 작성해야하기 때문)
         //2. [팀명,팀장이름,설립일,활동지역] 의 dto를 생성하고 return
