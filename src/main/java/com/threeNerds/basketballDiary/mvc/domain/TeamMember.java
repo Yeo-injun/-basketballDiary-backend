@@ -8,6 +8,7 @@ import com.threeNerds.basketballDiary.exception.Error;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 @Getter
 @Builder
@@ -30,14 +31,6 @@ public class TeamMember {
     private String backNumber;
     /* 탈퇴여부 */
     private String withdrawalYn;
-
-    // TODO 도메인객체를 추상화시켜서 부모클래스로 구현하기
-    public boolean isExist() {
-        if (this.teamMemberSeq == null) {
-            return false;
-        }
-        return true;
-    }
 
     public TeamMember toManager()
     {
@@ -91,4 +84,27 @@ public class TeamMember {
     }
 
 
+    /** 팀원객체가 파라미터로 던진 팀에 소속되어 있는지 확인 */
+    public boolean isJoinTeam(Long teamSeq)
+    {
+        // 팀원 객체가 소속팀 정보를 가지고 있는지 체크
+        if (Optional.ofNullable(this.teamSeq).isEmpty()) {
+            return false;
+        }
+        
+        // 팀원 객체가 소속팀 정보를 가지고 있다면 
+        // 넘겨받은 팀seq의 null체크 - null일경우 -1값을 반영하여 팀seq가 무조건 일치하지 않도록 처리
+        teamSeq = Optional.ofNullable(teamSeq)
+                            .orElseGet(()-> Long.valueOf(-1));
+
+        // 팀원 객체가 가지고 있는 팀seq와 넘겨받은 팀seq가 같을 경우에만 true반환
+        if (teamSeq.equals(this.teamSeq)) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isNotJoinTeam(Long teamSeq) {
+        return !isJoinTeam(teamSeq);
+    }
 }

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.threeNerds.basketballDiary.mvc.repository.GameRepository">
+
+    <insert id="saveGame" parameterType="com.threeNerds.basketballDiary.mvc.domain.Game" useGeneratedKeys="true" keyProperty="gameSeq">
+        <selectKey keyProperty="gameSeq" order="AFTER" resultType="java.lang.Long">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        INSERT INTO
+          GAME (
+                CREATOR_TEAM_MEMBER_SEQ
+              , GAME_RECORD_STATE_CODE
+              , GAME_TYPE_CODE
+              , GAME_YMD
+              , GAME_START_TIME
+              , GAME_END_TIME
+              , GAME_PLACE_ADDRESS
+              , GAME_PLACE_NAME
+              , REG_DATE
+              , SIDO_CODE
+              , SIGUNGU_CODE
+        )
+        VALUES (
+                #{creatorTeamMemberSeq}
+              , #{gameRecordStateCode}
+              , #{gameTypeCode}
+              , #{gameYmd}
+              , #{gameStartTime}
+              , #{gameEndTime}
+              , #{gamePlaceAddress}
+              , #{gamePlaceName}
+              , #{regDate}
+              , #{sidoCode}
+              , #{sigunguCode}
+        )
+    </insert>
+</mapper>

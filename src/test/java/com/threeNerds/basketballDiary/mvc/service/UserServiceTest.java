@@ -7,24 +7,17 @@ import com.threeNerds.basketballDiary.mvc.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-<<<<<<< Updated upstream
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.boot.test.context.SpringBootTest;
-=======
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
->>>>>>> Stashed changes
+
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 /**
  * @SpringBootTest 와 @Mock을 함께 사용하면 NoSuchMethodError 가 발생한다.
@@ -42,11 +35,7 @@ class UserServiceTest {
     @Mock
     UserRepository userRepository;
 
-<<<<<<< Updated upstream
     CmnUserDTO testUser;
-=======
-    private User testUser;
->>>>>>> Stashed changes
 
     @BeforeEach
     void setUpEach() {
@@ -68,12 +57,8 @@ class UserServiceTest {
         //given
 //        when(userService.createMember(testUser)).thenReturn("User");
         //when
-<<<<<<< Updated upstream
         Long userSeq = userService.createMember(testUser);
         UserDTO findByUser = userService.findUser(userSeq);
-=======
-//        String userSeq = userService.createMember(testUser);
->>>>>>> Stashed changes
         //then
 //        assertThat(userSeq).isEqualTo("User");
     }

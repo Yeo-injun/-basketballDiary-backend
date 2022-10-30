@@ -1,5 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.controller;
 
+import com.threeNerds.basketballDiary.mvc.dto.game.GameCreationDTO;
 import com.threeNerds.basketballDiary.mvc.dto.user.CmnUserDTO;
 import com.threeNerds.basketballDiary.mvc.service.*;
 import lombok.RequiredArgsConstructor;
@@ -31,31 +32,21 @@ public class GameController {
 
     private final GameService gameService;
     private final GameJoinManagerService gameJoinManagerService;
-    /**
-     * API044 상대팀 목록 조회
-     * /api/games/opponents?sidoCode={sidoCode}&teamName={teamName}&leaderName=${leaderName}
-     */
-    @PostMapping("/opponents")
-    public ResponseEntity<?> searchOpponents (
-            @RequestBody CmnUserDTO cmnUserDTO
-    ) {
-        return RESPONSE_OK;
-    }
-
-    /**
-     * API051 게임 삭제
-     */
 
     /**
      * API053 게임 생성
+     * - 생성한 게임 정보를 반환
      */
-
-    /**
-     * API062 게임참가팀확정
-     */
-
+    @PostMapping
+    public ResponseEntity<?> createGame(
+        @RequestBody  GameCreationDTO gameCreationDTO
+    ) {
+        GameCreationDTO gc = gameService.createGame(gameCreationDTO);
+        return ResponseEntity.ok(gc);
+    }
     /**
      * API044 상대팀 목록 조회
+     * /api/games/opponents?sidoCode={sidoCode}&teamName={teamName}&leaderName=${leaderName}
      */
     @GetMapping("/opponents")
     public ResponseEntity<?> searchOpponents(
