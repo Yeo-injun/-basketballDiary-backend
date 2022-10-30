@@ -62,6 +62,8 @@ public class UserController {
     public ResponseEntity<?> createUser(
             @RequestBody @Valid CmnUserDTO userDTO
     ) {
+        String cryptPassword = EncryptUtil.getEncrypt(userDTO.getPassword(),userDTO.getUserId());
+        userDTO.password(cryptPassword);
         userService.createMember(userDTO);
         return RESPONSE_OK;
     }

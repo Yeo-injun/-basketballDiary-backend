@@ -10,6 +10,7 @@ import com.threeNerds.basketballDiary.mvc.dto.user.user.LoginUserDTO;
 import com.threeNerds.basketballDiary.mvc.repository.TeamMemberRepository;
 import com.threeNerds.basketballDiary.mvc.repository.UserRepository;
 import com.threeNerds.basketballDiary.session.SessionUser;
+import com.threeNerds.basketballDiary.utils.EncryptUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -39,7 +40,9 @@ public class LoginService {
             throw new CustomException(Error.USER_NOT_FOUND);
         }
 
-        findUser.isMatchedPassword(loginUserDTO.getPassword());
+        String cryptPassword = EncryptUtil.getEncrypt(loginUserDTO.getPassword(),loginUserDTO.getUserId());
+        log.info("cryptoPassword = {}",cryptPassword);
+        findUser.isMatchedPassword(cryptPassword);
 
         SessionUser sessionUser = SessionUser.create(findUser);
         /**만약 소속되어 있는 팀이 존재하지 않는다면 권한 정보 없이 return */
