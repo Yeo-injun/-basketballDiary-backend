@@ -1,11 +1,11 @@
 ### UserAPI
 
 ###  API030 로그인
-POST http://localhost:8080//api/user/login
+POST http://localhost:8080/api/user/login
 Content-Type: application/json
 
 {
   "userId" : "test01",
-  "password" : "1234"
+  "pwd" : "1234"
 }
 

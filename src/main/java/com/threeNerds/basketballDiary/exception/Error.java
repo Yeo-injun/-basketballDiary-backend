@@ -32,6 +32,7 @@ public enum Error {
 
     /** 403 FORBIDDEN : 서버에 정상적인 요청이 전송됐지만, 권한 문제로 거절*/
     INCORRECT_PASSWORD(FORBIDDEN,"비밀번호가 일치하지 않습니다"),
+    ONLY_TEAM_MEMBER_HANDLE(FORBIDDEN,"해당팀에 소속된 팀원만 처리할 수 있습니다."),
 
     /** 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재 */
     DUPLICATE_RESOURCE(CONFLICT, "데이터가 이미 존재합니다"),
