@@ -33,21 +33,24 @@ public class LoginService {
     @Transactional
     public SessionUser login(LoginUserDTO loginUserDTO)
     {
-        log.info("Check User id = {}", loginUserDTO.getUserId());
-        User findUser = userRepository.findUserByUserId(loginUserDTO.getUserId());
+        String userId        = loginUserDTO.getUserId();
+        String plainPassword = loginUserDTO.getPassword();
+
+        log.info("Check User id = {}", userId);
+        User findUser = userRepository.findUserByUserId(userId);
 
         if (findUser == null) {
             throw new CustomException(Error.USER_NOT_FOUND);
         }
 
-        String cryptPassword = EncryptUtil.getEncrypt(loginUserDTO.getPassword(),loginUserDTO.getUserId());
-        log.info("cryptoPassword = {}",cryptPassword);
-        findUser.isMatchedPassword(cryptPassword);
-
+        /** 로그인가능여부 체크 */
+        findUser.isAuthUser(userId, plainPassword);
         SessionUser sessionUser = SessionUser.create(findUser);
+
         /**만약 소속되어 있는 팀이 존재하지 않는다면 권한 정보 없이 return */
         Long myTeamCount = teamMemberRepository.findMyTeamCount(findUser.getUserSeq());
-        if(myTeamCount <= 0) {
+        boolean hasNoTeams = myTeamCount <= 0;
+        if(hasNoTeams) {
             return sessionUser;
         }
 

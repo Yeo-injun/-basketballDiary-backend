@@ -4,13 +4,17 @@ import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.mvc.dto.user.CmnUserDTO;
 import com.threeNerds.basketballDiary.mvc.dto.user.user.UserDTO;
+import com.threeNerds.basketballDiary.utils.EncryptUtil;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 
 import java.time.LocalDate;
 
+@Slf4j
 @Getter
 @Builder
 @AllArgsConstructor
@@ -53,9 +57,13 @@ public class User {
     public static User createForRegistration(CmnUserDTO userDTO)
     {
         LocalDate today = LocalDate.now();
+        /** 비밀번호 암호화 */
+        String plainPassword = userDTO.getPassword();
+        String userId        = userDTO.getUserId();
+        String cryptPassword = EncryptUtil.getEncrypt(plainPassword, userId);
         return User.builder()
                 .userId(userDTO.getUserId())
-                .password(userDTO.getPassword())
+                .password(cryptPassword)
                 .name(userDTO.getName())
                 .email(userDTO.getEmail())
                 .gender(userDTO.getGender())
@@ -72,22 +80,19 @@ public class User {
                 .build();
     }
 
-    // 로그인 상태 확인
-    public boolean isLogin() {
-        if (this.userSeq == null) {
-            return false;
-        }
-        return true;
-    }
-
-    public boolean isMatchedPassword (String password)
+    public boolean isAuthUser (String userId, String plainPassword)
     {
-        if (password == null) {
+        /** 평문비밀번호 null체크 */
+        if (plainPassword == null || plainPassword.isEmpty()) {
             throw new CustomException(Error.NO_EXIST_PASSWORD);
         }
 
-        // TODO 비밀번호 암호화 모듈 추가하기
-        if (!this.password.equals(password)) {
+        /** 비밀번호 암호화 : 평문비밀번호 + userId로 */
+        String cryptPassword = EncryptUtil.getEncrypt(plainPassword, userId);
+        log.info("cryptoPassword = {}", cryptPassword);
+
+        boolean isNotCorrectPassword = !this.password.equals(cryptPassword);
+        if (isNotCorrectPassword) {
             throw new CustomException(Error.INCORRECT_PASSWORD);
         }
         return true;

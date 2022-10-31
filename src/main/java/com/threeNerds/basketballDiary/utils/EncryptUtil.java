@@ -19,7 +19,7 @@ public class EncryptUtil {
     }*/
 
     /**
-     * SHA-256 암호화 Getter 함수
+     * SHA-256 암호화 Getter 함수 - 평문(password와 userId)을 파라미터로 받아서 암호문 생성/리턴
      * @param message
      * @param salt : salt는 userId
      * @return
