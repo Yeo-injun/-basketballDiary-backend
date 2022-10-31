@@ -1,5 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.service;
 
+import com.threeNerds.basketballDiary.constant.code.PositionCode;
+import com.threeNerds.basketballDiary.constant.code.TeamAuthCode;
 import com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MemberDTO;
 import com.threeNerds.basketballDiary.mvc.repository.MyTeamRepository;
 import com.threeNerds.basketballDiary.mvc.repository.TeamRegularExerciseRepository;
@@ -41,8 +43,8 @@ class MyTeamServiceTest {
                 .teamMemberSeq(3L)
                 .userSeq(3L)
                 .teamSeq(3L)
-                .teamAuthCode(2L)
-                .positionCode(21L)
+                .teamAuthCode(TeamAuthCode.MANAGER.getCode())
+                .positionCode(PositionCode.SMALL_FORWARD.getCode())
                 .userName("Kim")
                 .birthYmd("2022-01-18")
                 .height("176.5")
