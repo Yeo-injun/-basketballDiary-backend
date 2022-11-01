@@ -3,12 +3,14 @@ package com.threeNerds.basketballDiary.mvc.controller;
 import com.threeNerds.basketballDiary.mvc.dto.game.GameCreationDTO;
 import com.threeNerds.basketballDiary.mvc.dto.user.CmnUserDTO;
 import com.threeNerds.basketballDiary.mvc.service.*;
+import com.threeNerds.basketballDiary.session.SessionUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import static com.threeNerds.basketballDiary.constant.HttpResponseConst.RESPONSE_OK;
+import static com.threeNerds.basketballDiary.utils.SessionUtil.LOGIN_USER;
 
 /**
  * ... 수행하는 Controller
@@ -39,8 +41,13 @@ public class GameController {
      */
     @PostMapping
     public ResponseEntity<?> createGame(
+            @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,
         @RequestBody  GameCreationDTO gameCreationDTO
     ) {
+//        Long userSeq = sessionUser.getUserSeq();
+//        gameCreationDTO.userSeq(userSeq);
+        gameCreationDTO.userSeq(1L);
+
         GameCreationDTO gc = gameService.createGame(gameCreationDTO);
         return ResponseEntity.ok(gc);
     }
