@@ -13,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -32,25 +34,21 @@ public class GameService {
      **/
     public GameCreationDTO createGame(GameCreationDTO gc)
     {
-        Game newGame = Game.create(gc);
-
-        /** 게임유형 체크 */
-        // 게임유형코드가 대회가 아니면
-        boolean isCompetition = newGame.isCompetitionType();
-        if (isCompetition) {
-            // TODO 대회게임 생성 로직 구현 필요 - 차후...
-            return gc;
-        }
-
         /** 게임생성 요청 사용자 검증 - 게임을 생성하는 팀에 소속되어 있는지 확인 */
-        Long creatorTeamMemberSeq = gc.getCreatorTeamMemberSeq();
-        TeamMember teamMember = teamMemberRepository.findByTeamMemberSeq(creatorTeamMemberSeq);
-        if (teamMember.isNotJoinTeam(gc.getTeamSeq())) {
-            throw new CustomException(Error.ONLY_TEAM_MEMBER_HANDLE);
-        }
+        TeamMember tmParam = TeamMember.builder()
+                .userSeq(gc.getUserSeq())
+                .teamSeq(gc.getTeamSeq())
+                .build();
+
+        TeamMember tmResult = Optional.ofNullable(teamMemberRepository.findTeamMemberByUserAndTeamSeq(tmParam))
+                .orElseThrow(()-> new CustomException(Error.ONLY_TEAM_MEMBER_HANDLE));
 
         /** 게임 생성 */
+        gc.creatorTeamMemberSeq(tmResult.getTeamMemberSeq());
+        Game newGame = Game.createDefault(gc);
         gameRepository.saveGame(newGame);
+
+        /** 생성된 게임Seq 반환 */
         gc.gameSeq(newGame.getGameSeq());
         return gc;
     }

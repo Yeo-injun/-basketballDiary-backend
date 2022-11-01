@@ -64,4 +64,11 @@ public interface TeamMemberRepository {
     void deleteMyTeamProfile(FindMyTeamProfileDTO userDto);
 
     Long findMyTeamCount(Long userSeq);
+
+    /**
+     * 사용자 및 팀Seq로 팀원정보 조회
+     * @param tmParam
+     * @return TeamMember
+     **/
+    TeamMember findTeamMemberByUserAndTeamSeq(TeamMember tmParam);
 }

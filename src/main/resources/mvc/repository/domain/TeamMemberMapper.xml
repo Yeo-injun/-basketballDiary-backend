@@ -97,4 +97,20 @@
         FROM TEAM_MEMBER
         WHERE USER_SEQ=#{userSeq}
     </select>
+
+
+    <select id="findTeamMemberByUserAndTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.domain.TeamMember">
+        /* TeamMemberMapper.findTeamMemberByUserAndTeamSeq */
+        SELECT TEAM_MEMBER_SEQ
+             , TEAM_SEQ
+             , USER_SEQ
+             , JOIN_YMD
+             , TEAM_AUTH_CODE
+             , BACK_NUMBER
+          FROM TEAM_MEMBER
+         WHERE 1=1
+           AND USER_SEQ = #{userSeq}
+           AND TEAM_SEQ = #{teamSeq}
+           AND WITHDRAWAL_YN = 'N'
+    </select>
 </mapper>

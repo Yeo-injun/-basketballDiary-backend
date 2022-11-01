@@ -37,7 +37,7 @@ public class Game {
      * - 게임기록상태코드 기본값 : 게임생성(01)
      * - 게임유형코드 기본값 : 자체전(01)
      **/
-    public static Game create(GameCreationDTO gcDTO)
+    public static Game createDefault(GameCreationDTO gcDTO)
     {
         // TODO dto에 있는 값들 null체크하기
         LocalDate now = LocalDate.now(ZoneId.of("Asia/Seoul"));
