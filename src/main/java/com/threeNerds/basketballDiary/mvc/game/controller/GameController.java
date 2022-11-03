@@ -1,7 +1,8 @@
-package com.threeNerds.basketballDiary.mvc.controller;
+package com.threeNerds.basketballDiary.mvc.game.controller;
 
-import com.threeNerds.basketballDiary.mvc.dto.game.GameCreationDTO;
-import com.threeNerds.basketballDiary.mvc.dto.user.CmnUserDTO;
+import com.threeNerds.basketballDiary.mvc.game.dto.GameCreationDTO;
+import com.threeNerds.basketballDiary.mvc.game.service.GameJoinManagerService;
+import com.threeNerds.basketballDiary.mvc.game.service.GameService;
 import com.threeNerds.basketballDiary.mvc.service.*;
 import com.threeNerds.basketballDiary.session.SessionUser;
 import lombok.RequiredArgsConstructor;
@@ -51,6 +52,7 @@ public class GameController {
         GameCreationDTO gc = gameService.createGame(gameCreationDTO);
         return ResponseEntity.ok(gc);
     }
+
     /**
      * API044 상대팀 목록 조회
      * /api/games/opponents?sidoCode={sidoCode}&teamName={teamName}&leaderName=${leaderName}
@@ -67,6 +69,7 @@ public class GameController {
 
         return RESPONSE_OK;
     }
+
     /**
      * API051 게임 삭제
      */

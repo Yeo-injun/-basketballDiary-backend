@@ -1,12 +1,11 @@
-package com.threeNerds.basketballDiary.mvc.service;
+package com.threeNerds.basketballDiary.mvc.game.service;
 
-import com.threeNerds.basketballDiary.constant.code.GameTypeCode;
 import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.exception.CustomException;
-import com.threeNerds.basketballDiary.mvc.domain.Game;
+import com.threeNerds.basketballDiary.mvc.game.domain.Game;
 import com.threeNerds.basketballDiary.mvc.domain.TeamMember;
-import com.threeNerds.basketballDiary.mvc.dto.game.GameCreationDTO;
-import com.threeNerds.basketballDiary.mvc.repository.GameRepository;
+import com.threeNerds.basketballDiary.mvc.game.dto.GameCreationDTO;
+import com.threeNerds.basketballDiary.mvc.game.repository.GameRepository;
 import com.threeNerds.basketballDiary.mvc.repository.TeamMemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
