@@ -1,14 +1,12 @@
-package com.threeNerds.basketballDiary.mvc.domain;
+package com.threeNerds.basketballDiary.mvc.game.domain;
 
 import com.threeNerds.basketballDiary.constant.code.GameRecordStateCode;
 import com.threeNerds.basketballDiary.constant.code.GameTypeCode;
-import com.threeNerds.basketballDiary.mvc.dto.game.GameCreationDTO;
-import com.threeNerds.basketballDiary.mvc.dto.team.team.TeamDTO;
+import com.threeNerds.basketballDiary.mvc.game.dto.GameCreationDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.apache.tomcat.jni.Local;
 
 import java.time.LocalDate;
 import java.time.ZoneId;

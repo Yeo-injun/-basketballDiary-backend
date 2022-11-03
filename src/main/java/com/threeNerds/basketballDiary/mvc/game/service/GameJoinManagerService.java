@@ -1,4 +1,4 @@
-package com.threeNerds.basketballDiary.mvc.service;
+package com.threeNerds.basketballDiary.mvc.game.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
