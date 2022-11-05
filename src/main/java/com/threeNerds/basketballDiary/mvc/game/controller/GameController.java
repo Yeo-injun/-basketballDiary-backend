@@ -1,6 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.game.controller;
 
 import com.threeNerds.basketballDiary.mvc.game.dto.GameCreationDTO;
+import com.threeNerds.basketballDiary.mvc.game.dto.GameJoinTeamCreationDTO;
 import com.threeNerds.basketballDiary.mvc.game.service.GameJoinManagerService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameService;
 import com.threeNerds.basketballDiary.mvc.service.*;
@@ -43,8 +44,9 @@ public class GameController {
     @PostMapping
     public ResponseEntity<?> createGame(
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,
-        @RequestBody  GameCreationDTO gameCreationDTO
+            @RequestBody  GameCreationDTO gameCreationDTO
     ) {
+        //  TODO 임시주석처리로 권한@ 처리 이후 살려야 하는 코드
 //        Long userSeq = sessionUser.getUserSeq();
 //        gameCreationDTO.userSeq(userSeq);
         gameCreationDTO.userSeq(1L);
@@ -80,14 +82,40 @@ public class GameController {
         gameService.DeleteGame(gameSeq);
         return RESPONSE_OK;
     }
+
     /**
      * API062 게임참가팀 확정
      */
     @PostMapping("/{gameSeq}/gameJoinTeams")
-    public ResponseEntity<?> fixedJoinTeam(
-            @PathVariable(name = "gameSeq") Long gaemSeq
+    public ResponseEntity<?> confirmJoinTeam (
+            @PathVariable(name = "gameSeq") Long gameSeq,
+            @RequestBody  GameJoinTeamCreationDTO joinTeamCreationDTO
     ){
-        //1. GameJoinTeam 테이블에 홈/어웨이 팀 Insert
+        /**
+         * {
+         *      gameTypeCode : ,    // 필수값
+         *      homeTeamSeq : ,     // gameTypeCode가 03일경우 필수 아님
+         *      awqyTeamSeq : ,     // gameTypeCode가 03일경우 필수 아님
+         * }
+         */
+        joinTeamCreationDTO.gameSeq(gameSeq);
+
+        gameJoinManagerService.confirmJoinTeam(joinTeamCreationDTO);
+        // 게임참가팀이 확정되면
+        // 게임에 참가하는 참가팀 정보를 리턴
+        /**
+         * {
+         *      gameSeq : 1,
+         *      homeTeam : {
+         *          gameJoinTeamSeq :
+         *          teamSeq :
+         *      },
+         *      awayTeam : {
+         *          gameJoinTeamSeq :
+         *          teamSeq :
+         *      }
+         */
+
         return RESPONSE_OK;
     }
 

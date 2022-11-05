@@ -11,6 +11,7 @@ import static org.springframework.http.HttpStatus.*;
 public enum Error {
 
     /** 400 BAD_REQUEST : 잘못된 요청 */
+    NO_PARAMETER(BAD_REQUEST, "'{0}' 파라미터가 없습니다."),
 
     /** 401 UNAUTHORIZED : 인증되지 않은 사용자 */
     UNAUTHORIZED_ACCESS(UNAUTHORIZED, "접근 권한이 없습니다."),
@@ -39,6 +40,7 @@ public enum Error {
     DUPLICATE_USER_ID(CONFLICT, "중복된 ID가 존재합니다."),
     ALREADY_EXIST_TEAM_MEMBER(CONFLICT, "이미 팀원으로 존재합니다"),
     ALREADY_EXIST_JOIN_REQUEST(CONFLICT, "아직 처리 대기중인 가입요청이 존재합니다."),
+    ALREADY_EXIST_JOIN_TEAM(CONFLICT, "이미 게임참가팀이 존재합니다."),
 
     /** 500 INTERNAL_SERVER_ERROR : null point에러 등 */
     INTERNAL_ERROR(INTERNAL_SERVER_ERROR, "서버 내부에서 오류가 발생했습니다.");
