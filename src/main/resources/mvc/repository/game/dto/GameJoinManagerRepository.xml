@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.threeNerds.basketballDiary.mvc.game.repository.dto.GameJoinManagerRepository">
+
+    <select id="findGameCreatorTeam" resultType="com.threeNerds.basketballDiary.mvc.domain.Team">
+        /* GameJoinManagerRepository.findGameCreatorTeam */
+        SELECT G.GAME_SEQ
+             , TM.TEAM_MEMBER_SEQ
+             , T.TEAM_SEQ
+             , T.TEAM_NAME
+          FROM GAME G
+         INNER JOIN TEAM_MEMBER TM
+            ON G.CREATOR_TEAM_MEMBER_SEQ = TM.TEAM_MEMBER_SEQ
+         INNER JOIN TEAM T
+            ON TM.TEAM_SEQ = T.TEAM_SEQ
+         WHERE 1=1
+           AND GAME_SEQ = #{gameSeq}
+    </select>
+</mapper>
