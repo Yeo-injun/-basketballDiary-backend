@@ -1,6 +1,6 @@
-package com.threeNerds.basketballDiary.mvc.repository;
+package com.threeNerds.basketballDiary.mvc.myTeam.repository;
 
-import com.threeNerds.basketballDiary.mvc.domain.TeamJoinRequest;
+import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamJoinRequest;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper

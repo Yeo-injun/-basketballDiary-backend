@@ -1,12 +1,10 @@
-package com.threeNerds.basketballDiary.mvc.repository;
+package com.threeNerds.basketballDiary.mvc.myTeam.repository;
 
-import com.threeNerds.basketballDiary.mvc.dto.myTeam.CmnMyTeamDTO;
-import com.threeNerds.basketballDiary.mvc.dto.myTeam.FindMyTeamProfileDTO;
-import com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MemberDTO;
-import com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MyTeamDTO;
-import com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.SearchMyTeamDTO;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.FindMyTeamProfileDTO;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.MemberDTO;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.MyTeamDTO;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.SearchMyTeamDTO;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 

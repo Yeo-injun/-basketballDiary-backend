@@ -10,14 +10,12 @@ import com.threeNerds.basketballDiary.mvc.game.dto.GameJoinTeamCreationDTO;
 import com.threeNerds.basketballDiary.mvc.game.repository.GameJoinTeamRepository;
 import com.threeNerds.basketballDiary.mvc.game.repository.GameRepository;
 import com.threeNerds.basketballDiary.mvc.game.repository.dto.GameJoinManagerRepository;
-import com.threeNerds.basketballDiary.mvc.repository.TeamMemberRepository;
 import com.threeNerds.basketballDiary.mvc.repository.TeamRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Objects;
 import java.util.Optional;
 
 @Service

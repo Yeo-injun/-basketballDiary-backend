@@ -1,20 +1,14 @@
-package com.threeNerds.basketballDiary.mvc.controller;
+package com.threeNerds.basketballDiary.mvc.myTeam.controller;
 
 import com.threeNerds.basketballDiary.interceptor.Auth;
 import com.threeNerds.basketballDiary.mvc.dto.PlayerDTO;
-import com.threeNerds.basketballDiary.mvc.dto.myTeam.MyTeamProfileDTO;
-import com.threeNerds.basketballDiary.mvc.dto.myTeam.CmnMyTeamDTO;
-import com.threeNerds.basketballDiary.mvc.dto.myTeam.FindMyTeamProfileDTO;
-import com.threeNerds.basketballDiary.mvc.dto.myTeam.ModifyMyTeamProfileDTO;
-import com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MemberDTO;
-import com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MyTeamDTO;
-import com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.SearchMyTeamDTO;
+import com.threeNerds.basketballDiary.mvc.game.service.GameRecordManagerService;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.*;
 import com.threeNerds.basketballDiary.mvc.dto.pagination.PaginatedMyTeamDTO;
-import com.threeNerds.basketballDiary.mvc.dto.pagination.PaginatedTeamDTO;
-import com.threeNerds.basketballDiary.mvc.service.MyTeamService;
-import com.threeNerds.basketballDiary.mvc.service.TeamMemberManagerService;
-import com.threeNerds.basketballDiary.mvc.service.TeamMemberService;
 import com.threeNerds.basketballDiary.mvc.dto.pagination.PaginatedTeamMemeberDTO;
+import com.threeNerds.basketballDiary.mvc.myTeam.service.MyTeamService;
+import com.threeNerds.basketballDiary.mvc.myTeam.service.TeamMemberManagerService;
+import com.threeNerds.basketballDiary.mvc.myTeam.service.TeamMemberService;
 import com.threeNerds.basketballDiary.session.SessionUser;
 import com.threeNerds.basketballDiary.utils.SessionUtil;
 import lombok.RequiredArgsConstructor;
@@ -61,6 +55,8 @@ public class MyTeamController {
     private final MyTeamService myTeamService;
     private final TeamMemberService teamMemberService;
     private final TeamMemberManagerService teamMemberManagerService;
+
+    private final GameRecordManagerService gameRecordManagerService;
 
 
     /**
@@ -405,6 +401,35 @@ public class MyTeamController {
 
         // 삭제가 정상적으로 완료된 경우 204 No Content로 응답한다.
         return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * API052 : 소속팀 게임목록조회
+     */
+//    @Auth(GRADE = LEADER) TODO 권한설정 필요
+    @GetMapping("/{teamSeq}/games")
+    public ResponseEntity<?> searchMyTeamGames (
+            @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,
+            @PathVariable(value = "teamSeq") Long teamSeq,
+            @RequestParam(name = "gameBgngYmd") String gameBgngYmd,
+            @RequestParam(name = "gameEndYmd") String gameEndYmd,
+            @RequestParam(name = "sidoCode") String sidoCode,
+            @RequestParam(name = "gamePlaceName") String gamePlaceName,
+            @RequestParam(name = "gameTypeCode") String gameTypeCode,
+            @RequestParam(name = "homeAwayCode") String homeAwayCode
+    ) {
+        log.info("▒▒▒▒▒ API052: MyTeamController.searchMyTeamGames");
+        GameCondDTO condDTO = new GameCondDTO()
+                                            .teamSeq(teamSeq)
+                                            .gameBgngYmd(gameBgngYmd)
+                                            .gameEndYmd(gameEndYmd)
+                                            .sidoCode(sidoCode)
+                                            .gamePlaceName(gamePlaceName)
+                                            .gameTypeCode(gameTypeCode)
+                                            .homeAwayCode(homeAwayCode);
+
+        List<GameRecordDTO> myTeamGames = gameRecordManagerService.searchMyTeamGames(condDTO);
+        return ResponseEntity.ok(myTeamGames);
     }
 
 }
