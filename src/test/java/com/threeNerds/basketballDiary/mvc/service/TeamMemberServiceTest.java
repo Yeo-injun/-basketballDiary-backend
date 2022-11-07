@@ -1,12 +1,11 @@
 package com.threeNerds.basketballDiary.mvc.service;
 
-import com.threeNerds.basketballDiary.mvc.controller.MyTeamController;
-import com.threeNerds.basketballDiary.mvc.dto.myTeam.FindMyTeamProfileDTO;
-import com.threeNerds.basketballDiary.mvc.dto.myTeam.ModifyMyTeamProfileDTO;
-import com.threeNerds.basketballDiary.mvc.dto.myTeam.ResponseMyTeamProfileDTO;
-import com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MemberDTO;
-import com.threeNerds.basketballDiary.mvc.repository.MyTeamRepository;
-import com.threeNerds.basketballDiary.mvc.repository.TeamMemberRepository;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.FindMyTeamProfileDTO;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.ModifyMyTeamProfileDTO;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.MemberDTO;
+import com.threeNerds.basketballDiary.mvc.myTeam.service.TeamMemberService;
+import com.threeNerds.basketballDiary.mvc.myTeam.repository.MyTeamRepository;
+import com.threeNerds.basketballDiary.mvc.myTeam.repository.TeamMemberRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

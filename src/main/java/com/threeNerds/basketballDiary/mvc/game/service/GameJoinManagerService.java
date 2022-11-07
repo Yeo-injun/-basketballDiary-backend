@@ -12,7 +12,6 @@ import com.threeNerds.basketballDiary.mvc.game.dto.SearchOppenentsDTO;
 import com.threeNerds.basketballDiary.mvc.game.repository.GameJoinTeamRepository;
 import com.threeNerds.basketballDiary.mvc.game.repository.GameRepository;
 import com.threeNerds.basketballDiary.mvc.game.repository.dto.GameJoinManagerRepository;
-import com.threeNerds.basketballDiary.mvc.repository.TeamMemberRepository;
 import com.threeNerds.basketballDiary.mvc.repository.TeamRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

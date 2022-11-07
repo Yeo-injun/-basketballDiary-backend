@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.threeNerds.basketballDiary.mvc.repository.TeamJoinRequestRepository">
-    <select id="findUserByTeamJoinRequestSeq" resultType="com.threeNerds.basketballDiary.mvc.domain.TeamJoinRequest">
+<mapper namespace="com.threeNerds.basketballDiary.mvc.myTeam.repository.TeamJoinRequestRepository">
+    <select id="findUserByTeamJoinRequestSeq" resultType="com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamJoinRequest">
         SELECT TEAM_SEQ
              , USER_SEQ
           FROM TEAM_JOIN_REQUEST
          WHERE TEAM_JOIN_REQUEST_SEQ = #{teamJoinRequestSeq}
     </select>
 
-    <insert id="createJoinRequest" parameterType="com.threeNerds.basketballDiary.mvc.domain.TeamJoinRequest">
+    <insert id="createJoinRequest" parameterType="com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamJoinRequest">
         INSERT INTO TEAM_JOIN_REQUEST (
             TEAM_SEQ
             , USER_SEQ
@@ -35,7 +35,7 @@
            AND JOIN_REQUEST_STATE_CODE = '01'  /* 대기중(01)인 경우에만 체크 */
     </select>
 
-    <update id="updateJoinRequestState" parameterType="com.threeNerds.basketballDiary.mvc.domain.TeamJoinRequest">
+    <update id="updateJoinRequestState" parameterType="com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamJoinRequest">
         UPDATE TEAM_JOIN_REQUEST
            SET JOIN_REQUEST_STATE_CODE  = #{joinRequestStateCode}
              , CONFIRMATION_DATE        = CURRENT_TIMESTAMP()

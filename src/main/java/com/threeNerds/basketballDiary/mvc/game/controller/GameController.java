@@ -53,7 +53,7 @@ public class GameController {
         //  TODO 임시주석처리로 권한@ 처리 이후 살려야 하는 코드
 //        Long userSeq = sessionUser.getUserSeq();
 //        gameCreationDTO.userSeq(userSeq);
-        gameCreationDTO.userSeq(1L);
+        gameCreationDTO.userSeq(5L);
 
         GameCreationDTO gc = gameService.createGame(gameCreationDTO);
         return ResponseEntity.ok(gc);

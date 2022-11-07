@@ -1,7 +1,11 @@
 package com.threeNerds.basketballDiary.mvc.game.repository;
 
 import com.threeNerds.basketballDiary.mvc.game.domain.Game;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameCondDTO;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameRecordDTO;
 import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
 
 @Mapper
 public interface GameRepository {
@@ -13,4 +17,10 @@ public interface GameRepository {
      * @return Long insert된 데이터의 갯수 할당.
      */
     Long saveGame(Game newGame);
+
+    /** 게임기록조회
+     * @param gc
+     * @return
+     */
+    List<GameRecordDTO> findGameRecordsByTeamSeq(GameCondDTO gc);
 }

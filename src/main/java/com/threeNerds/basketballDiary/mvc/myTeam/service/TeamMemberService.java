@@ -1,11 +1,10 @@
-package com.threeNerds.basketballDiary.mvc.service;
+package com.threeNerds.basketballDiary.mvc.myTeam.service;
 
-import com.threeNerds.basketballDiary.mvc.dto.myTeam.FindMyTeamProfileDTO;
-import com.threeNerds.basketballDiary.mvc.dto.myTeam.ModifyMyTeamProfileDTO;
-import com.threeNerds.basketballDiary.mvc.dto.myTeam.ResponseMyTeamProfileDTO;
-import com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MemberDTO;
-import com.threeNerds.basketballDiary.mvc.repository.TeamMemberRepository;
-import com.threeNerds.basketballDiary.mvc.repository.MyTeamRepository;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.FindMyTeamProfileDTO;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.ModifyMyTeamProfileDTO;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.MemberDTO;
+import com.threeNerds.basketballDiary.mvc.myTeam.repository.TeamMemberRepository;
+import com.threeNerds.basketballDiary.mvc.myTeam.repository.MyTeamRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

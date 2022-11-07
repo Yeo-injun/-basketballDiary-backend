@@ -2,12 +2,14 @@ package com.threeNerds.basketballDiary.mvc.service;
 
 import com.threeNerds.basketballDiary.constant.code.JoinRequestTypeCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
-import com.threeNerds.basketballDiary.mvc.domain.TeamJoinRequest;
-import com.threeNerds.basketballDiary.mvc.domain.TeamMember;
+import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamJoinRequest;
+import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember;
 import com.threeNerds.basketballDiary.mvc.domain.User;
 import com.threeNerds.basketballDiary.mvc.dto.TeamAuthDTO;
 import com.threeNerds.basketballDiary.mvc.dto.loginUser.userTeamManager.JoinRequestDTO;
 import com.threeNerds.basketballDiary.mvc.dto.loginUser.CmnLoginUserDTO;
+import com.threeNerds.basketballDiary.mvc.myTeam.repository.TeamJoinRequestRepository;
+import com.threeNerds.basketballDiary.mvc.myTeam.repository.TeamMemberRepository;
 import com.threeNerds.basketballDiary.mvc.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

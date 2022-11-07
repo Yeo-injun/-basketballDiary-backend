@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.threeNerds.basketballDiary.mvc.repository.MyTeamRepository">
+<mapper namespace="com.threeNerds.basketballDiary.mvc.myTeam.repository.MyTeamRepository">
 
-    <select id="findByUserSeqAndTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MyTeamDTO">
+    <select id="findByUserSeqAndTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.myTeam.dto.MyTeamDTO">
         SELECT A.TEAM_SEQ
              , A.TEAM_AUTH_CODE -- 팀정보 수정 권한을 위해
              , B.TEAM_NAME
@@ -20,7 +20,7 @@
           AND A.TEAM_SEQ = #{teamSeq}
     </select>
 
-    <select id="findPagingMyTeams" resultType="com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MyTeamDTO">
+    <select id="findPagingMyTeams" resultType="com.threeNerds.basketballDiary.mvc.myTeam.dto.MyTeamDTO">
         /* myTeamRepository.findPagingMyTeams */
         SELECT *
         FROM ( SELECT COUNT(*) OVER() TOTAL_COUNT
@@ -49,7 +49,7 @@
         ) ORDERS LIMIT #{pagerDTO.rowCount} OFFSET #{pagerDTO.offset}
     </select>
 
-    <select id="findProfileByUserSeqAndTeamSeqOld" resultType="com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MemberDTO">
+    <select id="findProfileByUserSeqAndTeamSeqOld" resultType="com.threeNerds.basketballDiary.mvc.myTeam.dto.MemberDTO">
         SELECT A.USER_SEQ
         , B.TEAM_SEQ
         , A.NAME 			"USER_NAME"
@@ -75,7 +75,7 @@
         AND B.TEAM_SEQ = #{teamSeq}
     </select>
 
-    <select id="findProfileByUserSeqAndTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MemberDTO">
+    <select id="findProfileByUserSeqAndTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.myTeam.dto.MemberDTO">
         SELECT TM.USER_SEQ
              , TM.TEAM_SEQ
              , TM.TEAM_MEMBER_SEQ
@@ -107,7 +107,7 @@
            AND TM.TEAM_SEQ = #{teamSeq}
     </select>
 
-    <select id="findAllManagerByTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MemberDTO">
+    <select id="findAllManagerByTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.myTeam.dto.MemberDTO">
         SELECT A.USER_SEQ
              , B.TEAM_MEMBER_SEQ
              , B.TEAM_SEQ
@@ -127,7 +127,7 @@
           AND B.TEAM_SEQ = #{teamSeq}
     </select>
 
-    <select id="findAllMemberByTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MemberDTO">
+    <select id="findAllMemberByTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.myTeam.dto.MemberDTO">
         SELECT A.USER_SEQ
              , B.TEAM_MEMBER_SEQ
              , B.TEAM_SEQ
@@ -155,7 +155,7 @@
           AND B.TEAM_SEQ = #{teamSeq}
     </select>
 
-    <select id="findAllMemberByTeamSeqOld" resultType="com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MemberDTO">
+    <select id="findAllMemberByTeamSeqOld" resultType="com.threeNerds.basketballDiary.mvc.myTeam.dto.MemberDTO">
         SELECT A.USER_SEQ
         , B.TEAM_MEMBER_SEQ
         , B.TEAM_SEQ
@@ -180,7 +180,7 @@
         AND B.TEAM_SEQ = #{teamSeq}
     </select>
 
-    <select id="findPagingMemberByTeamSeq" parameterType="com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MemberDTO" resultType="com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MemberDTO">
+    <select id="findPagingMemberByTeamSeq" parameterType="com.threeNerds.basketballDiary.mvc.myTeam.dto.MemberDTO" resultType="com.threeNerds.basketballDiary.mvc.myTeam.dto.MemberDTO">
         SELECT *
           FROM (SELECT COUNT(*) OVER() TOTAL_COUNT
                      , A.USER_SEQ

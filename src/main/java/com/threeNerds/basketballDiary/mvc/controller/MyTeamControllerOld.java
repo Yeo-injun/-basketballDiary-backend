@@ -2,18 +2,17 @@ package com.threeNerds.basketballDiary.mvc.controller;
 
 import com.threeNerds.basketballDiary.interceptor.Auth;
 import com.threeNerds.basketballDiary.mvc.dto.PlayerDTO;
-import com.threeNerds.basketballDiary.mvc.dto.myTeam.MyTeamProfileDTO;
-import com.threeNerds.basketballDiary.mvc.dto.myTeam.CmnMyTeamDTO;
-import com.threeNerds.basketballDiary.mvc.dto.myTeam.FindMyTeamProfileDTO;
-import com.threeNerds.basketballDiary.mvc.dto.myTeam.ModifyMyTeamProfileDTO;
-import com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MemberDTO;
-import com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.MyTeamDTO;
-import com.threeNerds.basketballDiary.mvc.dto.myTeam.myTeam.SearchMyTeamDTO;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.MyTeamProfileDTO;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.CmnMyTeamDTO;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.FindMyTeamProfileDTO;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.ModifyMyTeamProfileDTO;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.MemberDTO;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.MyTeamDTO;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.SearchMyTeamDTO;
 import com.threeNerds.basketballDiary.mvc.dto.pagination.PaginatedMyTeamDTO;
-import com.threeNerds.basketballDiary.mvc.dto.pagination.PaginatedTeamDTO;
-import com.threeNerds.basketballDiary.mvc.service.MyTeamService;
-import com.threeNerds.basketballDiary.mvc.service.TeamMemberManagerService;
-import com.threeNerds.basketballDiary.mvc.service.TeamMemberService;
+import com.threeNerds.basketballDiary.mvc.myTeam.service.MyTeamService;
+import com.threeNerds.basketballDiary.mvc.myTeam.service.TeamMemberManagerService;
+import com.threeNerds.basketballDiary.mvc.myTeam.service.TeamMemberService;
 import com.threeNerds.basketballDiary.mvc.dto.pagination.PaginatedTeamMemeberDTO;
 import com.threeNerds.basketballDiary.session.SessionUser;
 import com.threeNerds.basketballDiary.utils.SessionUtil;
@@ -55,8 +54,8 @@ import static com.threeNerds.basketballDiary.utils.SessionUtil.LOGIN_USER;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/myTeams")
-public class MyTeamController {
+@RequestMapping("/api/old/myTeams")
+public class MyTeamControllerOld {
 
     private final MyTeamService myTeamService;
     private final TeamMemberService teamMemberService;

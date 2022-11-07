@@ -1,11 +1,10 @@
-package com.threeNerds.basketballDiary.mvc.repository;
+package com.threeNerds.basketballDiary.mvc.myTeam.repository;
 
-import com.threeNerds.basketballDiary.mvc.domain.TeamJoinRequest;
-import com.threeNerds.basketballDiary.mvc.domain.TeamMember;
-import com.threeNerds.basketballDiary.mvc.dto.myTeam.CmnMyTeamDTO;
-import com.threeNerds.basketballDiary.mvc.dto.myTeam.FindMyTeamProfileDTO;
-import com.threeNerds.basketballDiary.mvc.dto.myTeam.ModifyMyTeamProfileDTO;
-import com.threeNerds.basketballDiary.mvc.dto.myTeam.ResponseMyTeamProfileDTO;
+import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamJoinRequest;
+import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.CmnMyTeamDTO;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.FindMyTeamProfileDTO;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.ModifyMyTeamProfileDTO;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
@@ -51,13 +50,6 @@ public interface TeamMemberRepository {
      * @return int
      */
     int updateTeamAuth(TeamMember teamMember);
-
-    /**
-     * 소속팀 프로필 조회
-     * @param userDto
-     * @return
-     */
-    ResponseMyTeamProfileDTO findMyTeamProfile(FindMyTeamProfileDTO userDto);
 
     int updateMyTeamProfile(ModifyMyTeamProfileDTO userDto);
 
