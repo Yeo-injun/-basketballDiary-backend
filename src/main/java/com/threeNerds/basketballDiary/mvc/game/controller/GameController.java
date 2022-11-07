@@ -1,5 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.game.controller;
 
+import com.threeNerds.basketballDiary.mvc.domain.Team;
+import com.threeNerds.basketballDiary.mvc.dto.team.team.TeamDTO;
 import com.threeNerds.basketballDiary.mvc.game.dto.GameCreationDTO;
 import com.threeNerds.basketballDiary.mvc.game.dto.GameJoinTeamCreationDTO;
 import com.threeNerds.basketballDiary.mvc.game.service.GameJoinManagerService;
@@ -10,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 import static com.threeNerds.basketballDiary.constant.HttpResponseConst.RESPONSE_OK;
 import static com.threeNerds.basketballDiary.utils.SessionUtil.LOGIN_USER;
@@ -68,6 +72,18 @@ public class GameController {
 
         //1. teamSeq 먼저 get(List 형식으로 return 받아야됨 : sidoCode,teamName,leaderName 중 null 값이 있고 동적으로 쿼리를 작성해야하기 때문)
         //2. [팀명,팀장이름,설립일,활동지역] 의 dto를 생성하고 return
+        List<TeamDTO> teams = gameJoinManagerService.searchOpponents(sidoCode, teamName, leaderName);
+
+        return ResponseEntity.ok(teams);
+    }
+
+    /**
+     * API046 게임기록 상세조회
+     */
+    @GetMapping("{gameSeq}/info")
+    public ResponseEntity<?> findGameRecords(
+            @PathVariable(name = "gameSeq")Long gameSeq
+    ){
 
         return RESPONSE_OK;
     }
