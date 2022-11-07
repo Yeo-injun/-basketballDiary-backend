@@ -32,6 +32,9 @@ public class GameRecordManagerService {
          *      - 참가팀 조회하여 GameRecordDTO안에 필드채우기
          *  3. 참가팀 조회시 쿼터별기록을 조회해서 GameJoinTeamRecord필드에 할당해주기
          **/
+        // 게임참가팀 테이블에서 TEAM_SEQ를 조회
+        List<GameRecordDTO> gameRecords = gameRepository.findGameRecordsByTeamSeq(gc);
+
         return null;
     }
 }

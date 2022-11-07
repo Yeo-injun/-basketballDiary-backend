@@ -420,13 +420,13 @@ public class MyTeamController {
     ) {
         log.info("▒▒▒▒▒ API052: MyTeamController.searchMyTeamGames");
         GameCondDTO condDTO = new GameCondDTO()
-                                            .teamSeq(teamSeq)
-                                            .gameBgngYmd(gameBgngYmd)
-                                            .gameEndYmd(gameEndYmd)
-                                            .sidoCode(sidoCode)
-                                            .gamePlaceName(gamePlaceName)
-                                            .gameTypeCode(gameTypeCode)
-                                            .homeAwayCode(homeAwayCode);
+                                    .teamSeq(teamSeq)
+                                    .gameBgngYmd(gameBgngYmd)
+                                    .gameEndYmd(gameEndYmd)
+                                    .sidoCode(sidoCode)
+                                    .gamePlaceName(gamePlaceName)
+                                    .gameTypeCode(gameTypeCode)
+                                    .homeAwayCode(homeAwayCode);
 
         List<GameRecordDTO> myTeamGames = gameRecordManagerService.searchMyTeamGames(condDTO);
         return ResponseEntity.ok(myTeamGames);
