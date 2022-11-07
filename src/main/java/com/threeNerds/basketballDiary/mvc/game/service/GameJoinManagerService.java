@@ -5,8 +5,10 @@ import com.threeNerds.basketballDiary.constant.code.HomeAwayCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.mvc.domain.Team;
+import com.threeNerds.basketballDiary.mvc.dto.team.team.TeamDTO;
 import com.threeNerds.basketballDiary.mvc.game.domain.GameJoinTeam;
 import com.threeNerds.basketballDiary.mvc.game.dto.GameJoinTeamCreationDTO;
+import com.threeNerds.basketballDiary.mvc.game.dto.SearchOppenentsDTO;
 import com.threeNerds.basketballDiary.mvc.game.repository.GameJoinTeamRepository;
 import com.threeNerds.basketballDiary.mvc.game.repository.GameRepository;
 import com.threeNerds.basketballDiary.mvc.game.repository.dto.GameJoinManagerRepository;
@@ -17,8 +19,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @Slf4j
@@ -118,5 +123,14 @@ public class GameJoinManagerService {
             return false;
         }
         return true;
+    }
+
+    public List<TeamDTO> searchOpponents(String sidoCode,String teamName,String leaderName){
+        SearchOppenentsDTO searchOppenentsDTO = new SearchOppenentsDTO()
+                                                        .sidoCode(sidoCode)
+                                                        .teamName(teamName)
+                                                        .leaderName(leaderName);
+        List<TeamDTO> teams = gameJoinManagerRepository.searchOpponents(searchOppenentsDTO);
+        return teams;
     }
 }
