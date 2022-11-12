@@ -14,5 +14,15 @@ public class GameRecordDTO {
     private String gameTypeCode;
     private String gameTypeCodeName;
 
-    private List<GameJoinTeamRecordDTO> gameJoinTeams;
+    private GameJoinTeamRecordDTO homeTeam;
+    private GameJoinTeamRecordDTO awayTeam;
+
+    public GameRecordDTO homeTeam(GameJoinTeamRecordDTO homeTeam) {
+        this.homeTeam = homeTeam;
+        return this;
+    }
+    public GameRecordDTO awayTeam(GameJoinTeamRecordDTO awayTeam) {
+        this.awayTeam = awayTeam;
+        return this;
+    }
 }

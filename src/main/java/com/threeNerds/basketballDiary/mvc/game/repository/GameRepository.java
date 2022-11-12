@@ -18,9 +18,5 @@ public interface GameRepository {
      */
     Long saveGame(Game newGame);
 
-    /** 게임기록조회
-     * @param gc
-     * @return
-     */
-    List<GameRecordDTO> findGameRecordsByTeamSeq(GameCondDTO gc);
+
 }
