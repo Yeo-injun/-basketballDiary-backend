@@ -40,4 +40,6 @@
     <delete id="deleteGame">
         DELETE FROM GAME T1 WHERE T1.GAME_SEQ = {gameSeq}
     </delete>
+
+
 </mapper>

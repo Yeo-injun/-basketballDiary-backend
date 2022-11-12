@@ -34,4 +34,33 @@
             AND T2.USER_NAME = #{leaderName}
         </if>
     </select>
+
+    <select id="findGamesByTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.myTeam.dto.GameRecordDTO">
+        /* GameJoinManagerRepository.findGamesByTeamSeq */
+        SELECT GAME_SEQ
+             , GAME_RECORD_STATE_CODE
+             , GAME_TYPE_CODE
+             , GAME_YMD
+             , GAME_START_TIME
+             , GAME_END_TIME
+             , GAME_PLACE_ADDRESS
+             , GAME_PLACE_NAME
+          FROM GAME
+         WHERE 1=1
+           AND GAME_SEQ IN ( SELECT GAME_SEQ
+                               FROM GAME_JOIN_TEAM
+                              WHERE TEAM_SEQ = #{teamSeq} )
+    </select>
+
+    <select id="findGameJoinTeamRecords" resultType="com.threeNerds.basketballDiary.mvc.myTeam.dto.GameJoinTeamRecordDTO">
+        /* GameJoinManagerRepository.findGameJoinTeamRecords */
+        SELECT GAME_JOIN_TEAM_SEQ
+             , GAME_SEQ
+             , TEAM_SEQ
+             , TEAM_NAME
+             , HOME_AWAY_CODE
+          FROM GAME
+         WHERE 1=1
+           AND GAME_SEQ = #{gameSeq}
+    </select>
 </mapper>

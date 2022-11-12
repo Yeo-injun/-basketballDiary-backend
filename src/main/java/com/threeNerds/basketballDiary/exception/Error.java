@@ -20,13 +20,16 @@ public enum Error {
     /** 404 NOT_FOUND : Resource 를 찾을 수 없음 */
     USER_NOT_FOUND(NOT_FOUND, "해당 사용자를 찾을 수 없습니다"),
     NO_EXIST_PASSWORD(NOT_FOUND, "비밀번호를 입력해주시기 바랍니다."),
-    TEAM_NOT_FOUND(NOT_FOUND, "해당 팀이 존재하지 않습니다."),
     JOIN_REQUEST_NOT_FOUND(NOT_FOUND, "대기 중인 가입요청 건이 존재하지 않습니다."),
     INVITATION_NOT_FOUND(NOT_FOUND, "대기 중인 초대건이 존재하지 않습니다."),
     MANAGER_NOT_FOUND(NOT_FOUND, "운영진 정보가 존재하지 않습니다"),
     MY_TEAM_NOT_FOUND(NOT_FOUND, "소속팀 정보가 존재하지 않습니다"),
     REGULAR_EXERCISE_NOT_FOUND(NOT_FOUND, "정기운동 정보가 존재하지 않습니다"),
     REFRESH_TOKEN_NOT_FOUND(NOT_FOUND, "로그아웃 된 사용자입니다"),
+
+    TEAM_NOT_FOUND(NOT_FOUND, "해당 팀이 존재하지 않습니다."),
+    NOT_FOUND_HOME_TEAM(NOT_FOUND, "홈팀 정보가 존재하지 않습니다."),
+    NOT_FOUND_AWAY_TEAM(NOT_FOUND, "어웨이팀 정보가 존재하지 않습니다."),
     
     CANT_DISMISSAL_MANAGER(NOT_FOUND, "관리자가 아닙니다. 팀장이나 팀원은 관리자에서 해임할 수 없습니다."),
     CANT_APPOINTMENT_MANAGER(NOT_FOUND, "팀원이 아닙니다. 팀원만 관리자로 임명할 수 있습니다."),
