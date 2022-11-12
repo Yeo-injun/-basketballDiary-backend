@@ -30,6 +30,7 @@ public enum Error {
     TEAM_NOT_FOUND(NOT_FOUND, "해당 팀이 존재하지 않습니다."),
     NOT_FOUND_HOME_TEAM(NOT_FOUND, "홈팀 정보가 존재하지 않습니다."),
     NOT_FOUND_AWAY_TEAM(NOT_FOUND, "어웨이팀 정보가 존재하지 않습니다."),
+    NOT_FOUND_GAME(NOT_FOUND,"게임 정보가 존재하지 않습니다."),
     
     CANT_DISMISSAL_MANAGER(NOT_FOUND, "관리자가 아닙니다. 팀장이나 팀원은 관리자에서 해임할 수 없습니다."),
     CANT_APPOINTMENT_MANAGER(NOT_FOUND, "팀원이 아닙니다. 팀원만 관리자로 임명할 수 있습니다."),

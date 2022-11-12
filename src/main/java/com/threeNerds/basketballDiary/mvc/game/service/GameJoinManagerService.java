@@ -124,6 +124,7 @@ public class GameJoinManagerService {
         return true;
     }
 
+    //TODO 상대팀 목록 조회
     public List<TeamDTO> searchOpponents(String sidoCode,String teamName,String leaderName){
         SearchOppenentsDTO searchOppenentsDTO = new SearchOppenentsDTO()
                                                         .sidoCode(sidoCode)

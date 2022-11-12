@@ -19,7 +19,9 @@
     </select>
 
     <select id="searchOpponents" resultType="com.threeNerds.basketballDiary.mvc.dto.team.team.TeamDTO">
-        SELECT T1.*
+        SELECT T1.TEAM_SEQ
+            ,  T1.LEADER_ID
+            ,  T1.TEAM_NAME
         FROM TEAM T1
         INNER JOIN USER T2
         ON T1.LEADER_ID = T2.USER_ID

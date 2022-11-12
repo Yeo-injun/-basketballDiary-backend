@@ -41,5 +41,15 @@
         DELETE FROM GAME T1 WHERE T1.GAME_SEQ = {gameSeq}
     </delete>
 
+    <select id="getGameInfo" resultType="com.threeNerds.basketballDiary.mvc.game.dto.GameInfoDTO">
+        SELECT T1.GAME_YMD
+             , T1.GAME_START_TIME
+             , T1.GAME_END_TIME
+             , T1.GAME_PLACE_NAME
+             , T1.GAME_PLACE_ADDRESS
+        FROM GAME T1
+        WHERE 1=1
+            AND T1.GAME_SEQ = {gameSeq}
+    </select>
 
 </mapper>

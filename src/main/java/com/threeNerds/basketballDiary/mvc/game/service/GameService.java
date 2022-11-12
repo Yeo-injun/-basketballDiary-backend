@@ -3,6 +3,7 @@ package com.threeNerds.basketballDiary.mvc.game.service;
 import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.mvc.game.domain.Game;
+import com.threeNerds.basketballDiary.mvc.game.dto.GameInfoDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember;
 import com.threeNerds.basketballDiary.mvc.game.dto.GameCreationDTO;
 import com.threeNerds.basketballDiary.mvc.game.repository.GameRepository;
@@ -12,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.Option;
 import java.util.Optional;
 
 @Service
@@ -50,5 +52,15 @@ public class GameService {
         /** 생성된 게임Seq 반환 */
         gc.gameSeq(newGame.getGameSeq());
         return gc;
+    }
+
+    /**
+     * 22.11.12
+     * 게임기록 상세조회
+     * @author 이성주
+     */
+    public GameInfoDTO getGameInfo(Long gameSeq){
+        return Optional.ofNullable(gameRepository.getGameInfo(gameSeq))
+                .orElseThrow(()->new CustomException(Error.NOT_FOUND_GAME));
     }
 }

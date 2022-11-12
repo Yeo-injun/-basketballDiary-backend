@@ -3,6 +3,7 @@ package com.threeNerds.basketballDiary.mvc.game.controller;
 import com.threeNerds.basketballDiary.mvc.domain.Team;
 import com.threeNerds.basketballDiary.mvc.dto.team.team.TeamDTO;
 import com.threeNerds.basketballDiary.mvc.game.dto.GameCreationDTO;
+import com.threeNerds.basketballDiary.mvc.game.dto.GameInfoDTO;
 import com.threeNerds.basketballDiary.mvc.game.dto.GameJoinTeamCreationDTO;
 import com.threeNerds.basketballDiary.mvc.game.service.GameJoinManagerService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameService;
@@ -84,8 +85,8 @@ public class GameController {
     public ResponseEntity<?> findGameRecords(
             @PathVariable(name = "gameSeq")Long gameSeq
     ){
-
-        return RESPONSE_OK;
+        GameInfoDTO gameInfo = gameService.getGameInfo(gameSeq);
+        return ResponseEntity.ok(gameInfo);
     }
 
     /**
