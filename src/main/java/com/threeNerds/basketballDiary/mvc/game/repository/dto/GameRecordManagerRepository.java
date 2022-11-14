@@ -1,4 +1,4 @@
-package com.threeNerds.basketballDiary.mvc.game.repository;
+package com.threeNerds.basketballDiary.mvc.game.repository.dto;
 
 import com.threeNerds.basketballDiary.mvc.game.domain.GameJoinTeam;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameCondDTO;

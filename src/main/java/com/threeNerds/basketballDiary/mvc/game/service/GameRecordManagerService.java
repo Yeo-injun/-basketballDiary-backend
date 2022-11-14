@@ -1,10 +1,14 @@
 package com.threeNerds.basketballDiary.mvc.game.service;
 
+import com.threeNerds.basketballDiary.constant.code.GameRecordStateCode;
 import com.threeNerds.basketballDiary.constant.code.HomeAwayCode;
+import com.threeNerds.basketballDiary.constant.code.QuarterCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
+import com.threeNerds.basketballDiary.mvc.game.domain.QuarterTeamRecords;
 import com.threeNerds.basketballDiary.mvc.game.repository.GameJoinTeamRepository;
-import com.threeNerds.basketballDiary.mvc.game.repository.GameRecordManagerRepository;
+import com.threeNerds.basketballDiary.mvc.game.repository.QuarterTeamRecordsRepository;
+import com.threeNerds.basketballDiary.mvc.game.repository.dto.GameRecordManagerRepository;
 import com.threeNerds.basketballDiary.mvc.game.repository.GameRepository;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameCondDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameJoinTeamRecordDTO;
@@ -16,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -26,6 +31,7 @@ public class GameRecordManagerService {
 
     private final GameRepository gameRepository;
     private final GameJoinTeamRepository gameJoinTeamRepository;
+    private final QuarterTeamRecordsRepository quarterTeamRecordsRepository;
     private final TeamMemberRepository teamMemberRepository;
 
     private final GameRecordManagerRepository gameRecordManagerRepository;
@@ -48,12 +54,12 @@ public class GameRecordManagerService {
         // TODO 추가 구현 및 테스트 필요!!
         for (GameRecordDTO gr : games)
         {
-            Long gameSeq = gr.getGameSeq();
-            List<GameJoinTeamRecordDTO> joinTeams = gameRecordManagerRepository.findGameJoinTeamRecordsByGameSeq(gameSeq);
-            // 게임은 생성되었으나 게임 참가팀이 없는경우에 게임참가팀의 기록정보를 조회하지 않음.
-            if (joinTeams.isEmpty()) {
+            if (GameRecordStateCode.CREATION.getCode().equals(gr.getGameTypeCode())) {
                 continue;
             }
+            Long gameSeq = gr.getGameSeq();
+            List<GameJoinTeamRecordDTO> joinTeams = gameRecordManagerRepository.findGameJoinTeamRecordsByGameSeq(gameSeq);
+
             GameJoinTeamRecordDTO homeTeam = filterGameJoinTeamByHomeAwayCode(joinTeams, HomeAwayCode.HOME_TEAM);
             GameJoinTeamRecordDTO awayTeam = filterGameJoinTeamByHomeAwayCode(joinTeams, HomeAwayCode.AWAY_TEAM);
 
@@ -66,16 +72,35 @@ public class GameRecordManagerService {
 
     private GameJoinTeamRecordDTO filterGameJoinTeamByHomeAwayCode(List<GameJoinTeamRecordDTO> joinTeams, HomeAwayCode homeAwayCode)
     {
+        /** 참가팀 구분 - 홈/어웨이팀 */
         GameJoinTeamRecordDTO joinTeam = joinTeams.stream()
                                 .filter(t -> homeAwayCode.getCode().equals(t.getHomeAwayCode()))
                                 .findFirst()
                                 // TODO 에러메세지 동적으로 처리하기 homeAwayCode.getName();
                                 .orElseThrow(() -> new CustomException(Error.NOT_FOUND_HOME_TEAM));
 
-        // TODO 쿼리 구현 필요
+        /** 참가팀의 기록 조회 */
         Long gameJoinTeamSeq = joinTeam.getGameJoinTeamSeq();
-        List<QuarterRecordDTO> joinTeamQuarterRecords = gameRecordManagerRepository.findJoinTeamQuarterRecords(gameJoinTeamSeq);
+        List<QuarterTeamRecords> quarterRecords = quarterTeamRecordsRepository.findQuarterRecordsByJoinTeamSeq(gameJoinTeamSeq);
 
+        // 총점수 계산
+        List<QuarterRecordDTO> joinTeamQuarterRecords = new ArrayList<>();
+        Integer gameTotalScore = 0;
+        for (QuarterTeamRecords qtr : quarterRecords)
+        {
+            int quarterScore = qtr.getQuarterTotalScore();
+            gameTotalScore += quarterScore;
+
+            String quarterCode = qtr.getQuarterCode();
+            QuarterRecordDTO quarterRecordDTO = new QuarterRecordDTO()
+                    .quarterTeamRecordsSeq(qtr.getQuarterTeamRecordsSeq())
+                    .quarterCode(quarterCode)
+                    .quarterCodeName(QuarterCode.nameOf(quarterCode))
+                    .quarterScore(quarterScore);
+            joinTeamQuarterRecords.add(quarterRecordDTO);
+        }
+
+        joinTeam.gameTotalScore(gameTotalScore);
         joinTeam.quarters(joinTeamQuarterRecords);
         return joinTeam;
     }
