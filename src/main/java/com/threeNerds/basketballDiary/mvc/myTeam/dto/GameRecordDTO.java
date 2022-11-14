@@ -8,6 +8,7 @@ import java.util.List;
 public class GameRecordDTO {
 
     private Long gameSeq;
+    private String gameRecordStateCode;
     private String gameYmd;
     private String gamePlaceAddress;
     private String gamePlaceName;

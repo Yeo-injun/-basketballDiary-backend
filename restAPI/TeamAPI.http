@@ -4,8 +4,8 @@
 ### API021 : 팀 생성
 POST http://127.0.0.1:8080/api/teams
 Content-Type : application/json
-Cookie: basketballDiary=F050DEC167B2AA33B27CA60251BE30A0
+Cookie: basketballDiary=A54591900B64027CBE3A71CC86CBDDEB
 
 {
-    
+
 }
