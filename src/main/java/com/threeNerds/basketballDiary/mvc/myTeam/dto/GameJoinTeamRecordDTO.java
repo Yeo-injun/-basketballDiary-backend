@@ -1,5 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.myTeam.dto;
 
+import com.threeNerds.basketballDiary.constant.code.HomeAwayCode;
 import lombok.Getter;
 
 import java.util.List;
@@ -20,11 +21,14 @@ public class GameJoinTeamRecordDTO {
     // 쿼터 점수
     private List<QuarterRecordDTO> quarters;
 
+    public GameJoinTeamRecordDTO homeAwayCodeName(String homeAwayCode) {
+        this.homeAwayCodeName = HomeAwayCode.nameOf(homeAwayCode);
+        return this;
+    }
     public GameJoinTeamRecordDTO gameTotalScore(Integer gameTotalScore) {
         this.gameTotalScore = gameTotalScore;
         return this;
     }
-
     public GameJoinTeamRecordDTO quarters(List<QuarterRecordDTO> quarters) {
         this.quarters = quarters;
         return this;
