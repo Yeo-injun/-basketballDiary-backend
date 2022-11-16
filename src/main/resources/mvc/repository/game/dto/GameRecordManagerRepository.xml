@@ -18,6 +18,21 @@
            AND GAME_SEQ IN ( SELECT GAME_SEQ
                                FROM GAME_JOIN_TEAM
                               WHERE TEAM_SEQ = #{teamSeq} )
+        <if test="gameBgngYmd != null and gameBgngYmd != ''">
+           AND GAME_BGNG_YMD &gt;= #{gameBgngYmd}
+        </if>
+        <if test="gameEndYmd != null and gameEndYmd != ''">
+            AND GAME_END_YMD &lt;= #{gameEndYmd}
+        </if>
+        <if test="sidoCode != null and sidoCode != ''">
+            AND SIDO_CODE = #{sidoCode}
+        </if>
+        <if test="gamePlaceName != null and gamePlaceName != ''">
+            AND INSTR(GAME_PLACE_NAME, #{gamePlaceName}) > 0
+        </if>
+        <if test="gameTypeCode != null and gameTypeCode != ''">
+            AND GAME_TYPE_CODE = #{gameTypeCode}
+        </if>
     </select>
 
     <select id="findGameJoinTeamRecordsByGameSeq" resultType="com.threeNerds.basketballDiary.mvc.myTeam.dto.GameJoinTeamRecordDTO">

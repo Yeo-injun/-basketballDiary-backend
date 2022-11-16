@@ -1,6 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.game.service;
 
 import com.threeNerds.basketballDiary.constant.code.GameRecordStateCode;
+import com.threeNerds.basketballDiary.constant.code.GameTypeCode;
 import com.threeNerds.basketballDiary.constant.code.HomeAwayCode;
 import com.threeNerds.basketballDiary.constant.code.QuarterCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
@@ -42,19 +43,22 @@ public class GameRecordManagerService {
      **/
     public List<GameRecordDTO> searchMyTeamGames(GameCondDTO gc)
     {
-        /** TODO
+        /**
          *  1. 소속팀을 기준으로 게임정보 조회 - List<GameRecordDTO>를 받아서 이후 for순회
          *  2. 조회된 게임정보목록을 순회
          *      - 참가팀 조회하여 GameRecordDTO안에 필드채우기
          *  3. 참가팀 조회시 쿼터별기록을 조회해서 GameJoinTeamRecord필드에 할당해주기
          **/
         // 게임참가팀 테이블에서 TEAM_SEQ를 조회
+        // TODO homeAwayCode로 게임 목록을 조회하기 >> 테이블 조인해야 할듯?
+        // TODO 페이징 처리 구현하기
         List<GameRecordDTO> games = gameRecordManagerRepository.findGamesByTeamSeq(gc);
 
-        // TODO 추가 구현 및 테스트 필요!!
         for (GameRecordDTO gr : games)
         {
-            if (GameRecordStateCode.CREATION.getCode().equals(gr.getGameTypeCode())) {
+            gr.gameRecordStateCodeName(gr.getGameRecordStateCode());
+            gr.gameTypeCodeName(gr.getGameTypeCode());
+            if (GameRecordStateCode.CREATION.getCode().equals(gr.getGameRecordStateCode())) {
                 continue;
             }
             Long gameSeq = gr.getGameSeq();
@@ -78,12 +82,13 @@ public class GameRecordManagerService {
                                 .findFirst()
                                 // TODO 에러메세지 동적으로 처리하기 homeAwayCode.getName();
                                 .orElseThrow(() -> new CustomException(Error.NOT_FOUND_HOME_TEAM));
+        joinTeam.homeAwayCodeName(joinTeam.getHomeAwayCode());
 
         /** 참가팀의 기록 조회 */
         Long gameJoinTeamSeq = joinTeam.getGameJoinTeamSeq();
         List<QuarterTeamRecords> quarterRecords = quarterTeamRecordsRepository.findQuarterRecordsByJoinTeamSeq(gameJoinTeamSeq);
 
-        // 총점수 계산
+        /** 조회한 기록으로 게임총점수 계산 */
         List<QuarterRecordDTO> joinTeamQuarterRecords = new ArrayList<>();
         Integer gameTotalScore = 0;
         for (QuarterTeamRecords qtr : quarterRecords)
