@@ -406,17 +406,16 @@ public class MyTeamController {
     /**
      * API052 : 소속팀 게임목록조회
      */
-//    @Auth(GRADE = LEADER) TODO 권한설정 필요
     @GetMapping("/{teamSeq}/games")
     public ResponseEntity<?> searchMyTeamGames (
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,
-            @PathVariable(value = "teamSeq") Long teamSeq,
-            @RequestParam(name = "gameBgngYmd") String gameBgngYmd,
-            @RequestParam(name = "gameEndYmd") String gameEndYmd,
-            @RequestParam(name = "sidoCode") String sidoCode,
-            @RequestParam(name = "gamePlaceName") String gamePlaceName,
-            @RequestParam(name = "gameTypeCode") String gameTypeCode,
-            @RequestParam(name = "homeAwayCode") String homeAwayCode
+            @PathVariable(value = "teamSeq", required = false) Long teamSeq,
+            @RequestParam(name = "gameBgngYmd", required = false) String gameBgngYmd,
+            @RequestParam(name = "gameEndYmd", required = false) String gameEndYmd,
+            @RequestParam(name = "sidoCode", required = false) String sidoCode,
+            @RequestParam(name = "gamePlaceName", required = false) String gamePlaceName,
+            @RequestParam(name = "gameTypeCode", required = false) String gameTypeCode,
+            @RequestParam(name = "homeAwayCode", required = false) String homeAwayCode
     ) {
         log.info("▒▒▒▒▒ API052: MyTeamController.searchMyTeamGames");
         GameCondDTO condDTO = new GameCondDTO()

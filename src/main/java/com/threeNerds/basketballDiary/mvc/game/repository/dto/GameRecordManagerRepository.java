@@ -1,4 +1,4 @@
-package com.threeNerds.basketballDiary.mvc.game.repository;
+package com.threeNerds.basketballDiary.mvc.game.repository.dto;
 
 import com.threeNerds.basketballDiary.mvc.game.dto.PlayerRecordDTO;
 import com.threeNerds.basketballDiary.mvc.game.dto.SearchGameDTO;

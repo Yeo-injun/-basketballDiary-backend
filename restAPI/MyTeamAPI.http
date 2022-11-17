@@ -8,40 +8,42 @@
 ## sidoCode={sidoCode}
 ## gamePlaceName={gamePlaceName}
 ## gameTypeCode={gameTypeCode}
-## homeAwayCode={homeAwayCode}
+## homeAwayCode={homeAwayCode} - 미구현.. 테이블 조인 필요
 
-GET http://127.0.0.1:8080/api/myTeams/{teamSeq}/games
+GET http://127.0.0.1:8080/api/myTeams/7/games
+# Content-Type : application/json
 
 ## return값
-[
-    {
-        "gameSeq" : Long,
-        "gameYmd" : String,
-        "gamePlaceAddress" : String,
-        "gamePlaceName" : Srting,
-        "gameTypeCode" :  String,
-        "gameTypeCodeName" : String,
-        "gameJoinTeams" : [
-            {
-                "gameJoinTeamSeq" : Long,
-                "teamSeq" : Long,
-                "teamName" : String,
-                "homeAwayCode" : String,
-                "homeAwayCodeName" : String,
-                "quarters" : [
-                    {
-                        "quarterTeamRecordsSeq" : Long,
-                        "quarterCode" : String,
-                        "quarterCodeName" : String,
-                        "quarterScore" : Integer,
-                    },
-                    ...
-                ]
-            },
-            ...
-        ]
-    },
-    ....
-]
+# [
+#     {
+#         "gameSeq" : Long,
+#         "gameYmd" : String,
+#         "gamePlaceAddress" : String,
+#         "gamePlaceName" : Srting,
+#         "gameTypeCode" :  String,
+#         "gameTypeCodeName" : String,
+#         "gameJoinTeams" : [
+#             {
+#                 "gameJoinTeamSeq" : Long,
+#                 "teamSeq" : Long,
+#                 "teamName" : String,
+#                 "homeAwayCode" : String,
+#                 "homeAwayCodeName" : String,
+#                 "quarters" : [
+#                     {
+#                         "quarterTeamRecordsSeq" : Long,
+#                         "quarterCode" : String,
+#                         "quarterCodeName" : String,
+#                         "quarterScore" : Integer,
+#                     },
+#                     ...
+#                 ]
+#             },
+#             ...
+#         ]
+#     },
+#     ....
+# ]
+
     
 
