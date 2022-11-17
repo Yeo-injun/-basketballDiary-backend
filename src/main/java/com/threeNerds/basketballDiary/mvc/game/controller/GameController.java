@@ -1,17 +1,21 @@
 package com.threeNerds.basketballDiary.mvc.game.controller;
 
-import com.threeNerds.basketballDiary.mvc.domain.Team;
+import com.threeNerds.basketballDiary.exception.CustomException;
+import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.mvc.dto.team.team.TeamDTO;
-import com.threeNerds.basketballDiary.mvc.game.dto.GameCreationDTO;
-import com.threeNerds.basketballDiary.mvc.game.dto.GameInfoDTO;
-import com.threeNerds.basketballDiary.mvc.game.dto.GameJoinTeamCreationDTO;
+import com.threeNerds.basketballDiary.mvc.game.dto.*;
 import com.threeNerds.basketballDiary.mvc.game.service.GameJoinManagerService;
+import com.threeNerds.basketballDiary.mvc.game.service.GameRecordManagerService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameService;
-import com.threeNerds.basketballDiary.mvc.service.*;
+import com.threeNerds.basketballDiary.mvc.service.LoginService;
+import com.threeNerds.basketballDiary.mvc.service.UserService;
+import com.threeNerds.basketballDiary.mvc.service.UserTeamManagerService;
 import com.threeNerds.basketballDiary.session.SessionUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -41,6 +45,72 @@ public class GameController {
 
     private final GameService gameService;
     private final GameJoinManagerService gameJoinManagerService;
+    private final GameRecordManagerService gameRecordManagerService;
+
+    /**
+     * API043 게임쿼터별 선수기록조회
+     * @param gameSeq 게임Seq
+     * @param quarterCode 쿼터코드; 01~04(1~4쿼터), 11(전반), 12(후반)
+     * @param homeAwayCode 홈·어웨이코드; 01(홈),02(어웨이)
+     * @result 특정쿼터의 선수별 기록조회
+     */
+    //@Auth(GRADE = USER) TODO
+    @GetMapping("/{gameSeq}/quarters/{quarterCode}/players/homeAway/{homeAwayCode}")
+    public ResponseEntity<?> searchPlayerRecordsByQuarter(
+        @PathVariable(name = "gameSeq") String gameSeq,
+        @PathVariable(name = "quarterCode") String quarterCode,
+        @PathVariable(name = "homeAwayCode") String homeAwayCode
+    ) {
+        // TODO 설계구조상 pagination data를 받지 않음.
+        // TODO 파라미터 값 지정하여 throw처리...
+        if(ObjectUtils.isEmpty(gameSeq) || !StringUtils.hasText(gameSeq))
+            throw new CustomException(Error.NO_PARAMETER);
+        if(ObjectUtils.isEmpty(quarterCode) || !StringUtils.hasText(quarterCode))
+            throw new CustomException(Error.NO_PARAMETER);
+        if(ObjectUtils.isEmpty(homeAwayCode) || !StringUtils.hasText(homeAwayCode))
+            throw new CustomException(Error.NO_PARAMETER);
+
+        //if(quarterCode.contains()) TODO 쿼터코드에 해당하는 값인지 체크필요
+
+        //if(!HomeAwayCode.HOME_TEAM.equals(homeAwayCode) && !HomeAwayCode.AWAY_TEAM.equals(homeAwayCode))
+        //throw new CustomException(); TODO 홈어웨이코드에 해당하는 값인지 체크필요
+
+        SearchGameDTO searchGameDTO = new SearchGameDTO()
+                .gameSeq(Long.parseLong(gameSeq))
+                .quarterCode(quarterCode)
+                .homeAwayCode(homeAwayCode);
+
+        List<PlayerRecordDTO> listPlayerRecordsByQuarter = gameRecordManagerService.getListPlayerRecordsByQuarter(searchGameDTO);
+
+        return ResponseEntity.ok(listPlayerRecordsByQuarter);
+    }
+
+    /**
+     * API048 경기 쿼터기록 조회
+     * @param gameSeq 게임Seq
+     * @param quarterCode 쿼터코드; 01~04(1~4쿼터), 11(전반), 12(후반)
+     * @result 특정쿼터의 선수별 기록조회
+     */
+    //@Auth(GRADE = USER) TODO
+    @GetMapping("/{gameSeq}/quarterRecords/quaterCode/{quaterCode}")
+    public ResponseEntity<?> searchGameRecordByQuarter(
+            @PathVariable(name = "gameSeq") String gameSeq,
+            @PathVariable(name = "quarterCode") String quarterCode
+    ){
+        // TODO 파라미터 값 지정하여 throw처리...
+        if(ObjectUtils.isEmpty(gameSeq) || !StringUtils.hasText(gameSeq))
+            throw new CustomException(Error.NO_PARAMETER);
+        if(ObjectUtils.isEmpty(quarterCode) || !StringUtils.hasText(quarterCode))
+            throw new CustomException(Error.NO_PARAMETER);
+
+        //if(quarterCode.contains()) TODO 쿼터코드에 해당하는 값인지 체크필요
+
+        SearchGameDTO searchGameDTO = new SearchGameDTO()
+                .gameSeq(Long.parseLong(gameSeq))
+                .quarterCode(quarterCode);
+
+        return ResponseEntity.ok(null);
+    }
 
     /**
      * API053 게임 생성

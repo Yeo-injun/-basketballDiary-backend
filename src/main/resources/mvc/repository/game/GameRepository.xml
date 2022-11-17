@@ -49,7 +49,7 @@
              , T1.GAME_PLACE_ADDRESS
         FROM GAME T1
         WHERE 1=1
-            AND T1.GAME_SEQ = {gameSeq}
+            AND T1.GAME_SEQ = #{gameSeq}
     </select>
 
 </mapper>
