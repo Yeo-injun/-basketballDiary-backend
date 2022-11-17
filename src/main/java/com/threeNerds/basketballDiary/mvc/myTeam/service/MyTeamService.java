@@ -180,7 +180,7 @@ public class MyTeamService {
                 .orElseThrow(() -> new CustomException(Error.MY_TEAM_NOT_FOUND));
         Team resultTeam = Team.builder()
                 .teamSeq(teamSeq)
-                .leaderId(team.getLeaderId())
+                .leaderUserSeq(team.getleaderUserSeq())
                 .teamName(dto.getTeamName())
                 .teamImagePath(dto.getTeamImagePath())
                 .hometown(dto.getHometown())

@@ -17,7 +17,7 @@ public class TeamDTO {
 
     /* 팀 정보 */
     private Long teamSeq;
-    private Long leaderId;
+    private Long leaderUserSeq;
     private String teamName;
     private String teamImagePath;
     private String hometown;
@@ -35,8 +35,8 @@ public class TeamDTO {
         return this;
     }
 
-    public TeamDTO leaderId(Long leaderId){
-        this.leaderId = leaderId;
+    public TeamDTO leaderUserSeq(Long leaderUserSeq){
+        this.leaderUserSeq = leaderUserSeq;
         return this;
     }
 

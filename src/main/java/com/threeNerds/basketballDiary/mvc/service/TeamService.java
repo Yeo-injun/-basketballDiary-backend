@@ -112,7 +112,7 @@ public class TeamService {
 
         /** 변경된 권한정보 조회 */
         User user = new User().builder()
-                .userSeq(teamDTO.getLeaderId())
+                .userSeq(teamDTO.getleaderUserSeq())
                 .build();
         List<TeamAuthDTO> authList = userRepository.findAuthList(user);
         return authList;
