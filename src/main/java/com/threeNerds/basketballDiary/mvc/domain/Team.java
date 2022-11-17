@@ -15,7 +15,7 @@ public class Team {
     private Long teamSeq;
 
     // 팀장ID
-    private Long leaderId;
+    private Long leaderUserSeq;
 
     // 팀명
     private String teamName;
@@ -53,7 +53,7 @@ public class Team {
                     .foundationYmd(teamDTO.getFoundationYmd())
                     .introduction(teamDTO.getIntroduction())
                     .teamImagePath(teamDTO.getTeamImagePath())
-                    .leaderId(teamDTO.getLeaderId())
+                    .leaderUserSeq(teamDTO.getleaderUserSeq())
                     .regDate(now)
                     .updateDate(now)
                     .build();

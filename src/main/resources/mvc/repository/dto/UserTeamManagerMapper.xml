@@ -16,7 +16,7 @@
          INNER JOIN TEAM B
             ON A.TEAM_SEQ = B.TEAM_SEQ
          INNER JOIN USER C
-            ON B.LEADER_ID = C.USER_SEQ
+            ON B.LEADER_USER_SEQ = C.USER_SEQ
          WHERE 1=1
            AND A.USER_SEQ = #{userSeq}
            AND A.JOIN_REQUEST_TYPE_CODE = #{joinRequestTypeCode}

@@ -79,7 +79,7 @@ public class TeamController {
         log.info("▒▒▒▒▒ API021: TeamController.registerTeam");
 
         Long userSeq = sessionUser.getUserSeq();
-        teamDTO.leaderId(userSeq);
+        teamDTO.leaderUserSeq(userSeq);
         List<TeamAuthDTO> authList = teamService.createTeam(teamDTO);
         sessionUser.updateAuthority(authList);
 
