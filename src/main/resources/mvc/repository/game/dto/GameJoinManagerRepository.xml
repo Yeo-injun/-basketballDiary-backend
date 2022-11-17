@@ -24,7 +24,7 @@
             ,  T1.TEAM_NAME
         FROM TEAM T1
         INNER JOIN USER T2
-        ON T1.LEADER_USER_SEQ = T2.USER_ID
+        ON T1.LEADER_USER_SEQ = T2.USER_SEQ
         WHERE 1=1
         <if test="sidoCode != null">
             AND T1.SIDO_CODE = #{sidoCode}
