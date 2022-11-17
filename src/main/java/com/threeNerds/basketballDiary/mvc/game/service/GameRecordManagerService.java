@@ -6,6 +6,8 @@ import com.threeNerds.basketballDiary.constant.code.HomeAwayCode;
 import com.threeNerds.basketballDiary.constant.code.QuarterCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
+import com.threeNerds.basketballDiary.mvc.game.dto.PlayerRecordDTO;
+import com.threeNerds.basketballDiary.mvc.game.dto.SearchGameDTO;
 import com.threeNerds.basketballDiary.mvc.game.domain.QuarterTeamRecords;
 import com.threeNerds.basketballDiary.mvc.game.repository.GameJoinTeamRepository;
 import com.threeNerds.basketballDiary.mvc.game.repository.QuarterTeamRecordsRepository;
@@ -20,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +39,38 @@ public class GameRecordManagerService {
     private final TeamMemberRepository teamMemberRepository;
 
     private final GameRecordManagerRepository gameRecordManagerRepository;
+
+    /**
+     * 22.11.06
+     * 특정쿼터의 선수별 기록조회
+     * homeAwayCode에 따라 특정쿼터의 선수별 기록을 조회한다.
+     * @param searchGameDTO 게임조회용 DTO
+     * @author 강창기
+     */
+    public List<PlayerRecordDTO> getListPlayerRecordsByQuarter(SearchGameDTO searchGameDTO) {
+        if(ObjectUtils.isEmpty(searchGameDTO))
+            throw new CustomException(Error.NO_PARAMETER);
+
+        // gameSeq에 해당하는 게임내역이 존재하는지 확인.
+        Long gameSeq = searchGameDTO.getGameSeq();
+        if(ObjectUtils.isEmpty(gameRepository.getGameInfo(gameSeq)))
+            throw new CustomException(Error.NOT_FOUND_GAME);  // 게임 정보가 존재하지 않습니다.
+
+        List<PlayerRecordDTO> resultList = gameRecordManagerRepository.findAllPlayerRecordsByQuarter(searchGameDTO);
+        return resultList;
+    }
+
+    /**
+     * 22.11.06
+     * 특정쿼터의 팀별 기록조회
+     * 홈&어웨이의 쿼터별 팀 합산기록을 조회한다.
+     * @param searchGameDTO 게임조회용 DTO
+     * @author 강창기
+     */
+    public List<GameJoinTeamRecordDTO> getTeamRecordByQuarter(SearchGameDTO searchGameDTO) {
+        return null;
+    }
+
 
     /** 22.11.06
      * 소속팀의 게임기록조회

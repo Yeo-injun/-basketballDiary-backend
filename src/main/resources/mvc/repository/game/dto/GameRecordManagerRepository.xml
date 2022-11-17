@@ -18,21 +18,6 @@
            AND GAME_SEQ IN ( SELECT GAME_SEQ
                                FROM GAME_JOIN_TEAM
                               WHERE TEAM_SEQ = #{teamSeq} )
-        <if test="gameBgngYmd != null and gameBgngYmd != ''">
-           AND GAME_BGNG_YMD &gt;= #{gameBgngYmd}
-        </if>
-        <if test="gameEndYmd != null and gameEndYmd != ''">
-            AND GAME_END_YMD &lt;= #{gameEndYmd}
-        </if>
-        <if test="sidoCode != null and sidoCode != ''">
-            AND SIDO_CODE = #{sidoCode}
-        </if>
-        <if test="gamePlaceName != null and gamePlaceName != ''">
-            AND INSTR(GAME_PLACE_NAME, #{gamePlaceName}) > 0
-        </if>
-        <if test="gameTypeCode != null and gameTypeCode != ''">
-            AND GAME_TYPE_CODE = #{gameTypeCode}
-        </if>
     </select>
 
     <select id="findGameJoinTeamRecordsByGameSeq" resultType="com.threeNerds.basketballDiary.mvc.myTeam.dto.GameJoinTeamRecordDTO">
@@ -66,4 +51,47 @@
                              WHERE TEAM_SEQ = #{teamSeq} )
     </select>
 
+
+
+    <select id="findAllPlayerRecordsByQuarter" resultType="com.threeNerds.basketballDiary.mvc.game.dto.PlayerRecordDTO">
+        /**
+         * API043 게임쿼터 선수기록조회하기
+         * G005P01 농구게임 쿼터 조회
+         */
+        SELECT B.USER_SEQ
+             , B.NAME
+             , B.BACK_NUMBER
+             , B.POSITION_CODE
+             , (  SELECT USER_IMAGE_PATH
+                  FROM USER
+                  WHERE USER_SEQ = B.USER_SEQ
+               ) USER_IMAGE_PATH
+             , C.QUARTER_CODE
+             , C.FREE_THROW
+             , C.TWO_POINT
+             , C.THREE_POINT
+             , C.FREE_THROW + C.TWO_POINT + C.THREE_POINT TOTAL_POINT
+             -- , C.ASSIST 누락
+             , C.REBOUND
+             , C.STEAL
+             , C.BLOCK
+             , C.TURNOVER
+             , C.FOUL
+          FROM GAME_JOIN_TEAM A
+         INNER JOIN GAME_JOIN_PLAYER B
+            ON A.GAME_JOIN_TEAM_SEQ = B.GAME_JOIN_TEAM_SEQ
+         INNER JOIN QUARTER_PLAYER_RECORDS C
+            ON B.GAME_JOIN_PLAYER_SEQ = C.GAME_JOIN_PLAYER_SEQ
+         WHERE A.GAME_SEQ = #{gameSeq}
+           AND A.HOME_AWAY_CODE = #{homeAwayCode}
+           AND C.QUARTER_CODE = #{quarterCode}
+    </select>
+
+    <select id="findTeamRecordByQuarter" resultType="com.threeNerds.basketballDiary.mvc.game.dto.PlayerRecordDTO">
+        /**
+         * API048 게임쿼터 팀별기록조회하기
+         * G005P01 농구게임 쿼터 조회
+         */
+        SELECT 1 FROM DUAL
+    </select>
 </mapper>
