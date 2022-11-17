@@ -1,7 +1,8 @@
 package com.threeNerds.basketballDiary.mvc.service;
 
+import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.mvc.domain.Team;
-import com.threeNerds.basketballDiary.mvc.domain.TeamMember;
+import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember;
 import com.threeNerds.basketballDiary.mvc.domain.TeamRegularExercise;
 import com.threeNerds.basketballDiary.mvc.domain.User;
 import com.threeNerds.basketballDiary.mvc.dto.TeamAuthDTO;
@@ -9,7 +10,7 @@ import com.threeNerds.basketballDiary.mvc.dto.pagination.PaginatedTeamDTO;
 import com.threeNerds.basketballDiary.mvc.dto.team.team.SearchTeamDTO;
 import com.threeNerds.basketballDiary.mvc.dto.team.team.TeamDTO;
 import com.threeNerds.basketballDiary.mvc.dto.team.team.TeamRegularExerciseDTO;
-import com.threeNerds.basketballDiary.mvc.repository.TeamMemberRepository;
+import com.threeNerds.basketballDiary.mvc.myTeam.repository.TeamMemberRepository;
 import com.threeNerds.basketballDiary.mvc.repository.TeamRegularExerciseRepository;
 import com.threeNerds.basketballDiary.mvc.repository.TeamRepository;
 import com.threeNerds.basketballDiary.mvc.repository.UserRepository;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 소속팀에서 팀원관리 및 소속팀정보 관리 등의 업무를 수행하는 Service
@@ -99,9 +101,10 @@ public class TeamService {
         TeamMember newMember = TeamMember.createLeader(newTeam);
         teamMemberRepository.saveTeamMemeber(newMember);
 
-        /** 팀 정기운동 정보 저장 */
+        /** 팀 정기운동 정보 저장 - 없으면 비어있는 리스트로 처리 */
         Long newTeamSeq = newTeam.getTeamSeq();
-        List<TeamRegularExerciseDTO> teamRegularExerciseList = teamDTO.getTeamRegularExercises();
+        List<TeamRegularExerciseDTO> teamRegularExerciseList = Optional.ofNullable(teamDTO.getTeamRegularExercises())
+                                                                        .orElseGet(() -> Collections.emptyList());
         teamRegularExerciseList.forEach(exercise -> {
             TeamRegularExercise newExercise = TeamRegularExercise.create(newTeamSeq, exercise);
             teamRegularExerciseRepository.saveTeamRegularExercise(newExercise);

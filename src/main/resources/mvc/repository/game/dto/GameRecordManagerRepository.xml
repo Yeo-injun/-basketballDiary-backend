@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.threeNerds.basketballDiary.mvc.game.repository.dto.GameRecordManagerRepository">
+
+    <select id="findGamesByTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.myTeam.dto.GameRecordDTO">
+        /* GameRecordManagerRepository.findGamesByTeamSeq */
+        SELECT GAME_SEQ
+             , GAME_RECORD_STATE_CODE
+             , GAME_TYPE_CODE
+             , GAME_YMD
+             , GAME_START_TIME
+             , GAME_END_TIME
+             , GAME_PLACE_ADDRESS
+             , GAME_PLACE_NAME
+          FROM GAME
+         WHERE 1=1
+           AND GAME_SEQ IN ( SELECT GAME_SEQ
+                               FROM GAME_JOIN_TEAM
+                              WHERE TEAM_SEQ = #{teamSeq} )
+    </select>
+
+    <select id="findGameJoinTeamRecordsByGameSeq" resultType="com.threeNerds.basketballDiary.mvc.myTeam.dto.GameJoinTeamRecordDTO">
+        /* GameRecordManagerRepository.findGameJoinTeamRecordsByGameSeq */
+        SELECT gjt.GAME_JOIN_TEAM_SEQ
+             , g.GAME_SEQ
+             , gjt.TEAM_SEQ
+             , gjt.TEAM_NAME
+             , gjt.HOME_AWAY_CODE
+          FROM GAME g
+         INNER JOIN GAME_JOIN_TEAM gjt
+            ON g.GAME_SEQ = gjt.GAME_SEQ
+         WHERE 1=1
+           AND g.GAME_SEQ = #{gameSeq}
+    </select>
+
+    <select id="findJoinTeamQuarterRecords" resultType="com.threeNerds.basketballDiary.mvc.myTeam.dto.QuarterRecordDTO">
+        /* GameRecordManagerRepository.findJoinTeamQuarterRecords */
+        SELECT GAME_SEQ
+             , GAME_RECORD_STATE_CODE
+             , GAME_TYPE_CODE
+             , GAME_YMD
+             , GAME_START_TIME
+             , GAME_END_TIME
+             , GAME_PLACE_ADDRESS
+             , GAME_PLACE_NAME
+         FROM GAME
+        WHERE 1=1
+          AND GAME_SEQ IN ( SELECT GAME_SEQ
+                              FROM GAME_JOIN_TEAM
+                             WHERE TEAM_SEQ = #{teamSeq} )
+    </select>
+
+
+
+    <select id="findAllPlayerRecordsByQuarter" resultType="com.threeNerds.basketballDiary.mvc.game.dto.PlayerRecordDTO">
+        /**
+         * API043 게임쿼터 선수기록조회하기
+         * G005P01 농구게임 쿼터 조회
+         */
+        SELECT B.USER_SEQ
+             , B.NAME
+             , B.BACK_NUMBER
+             , B.POSITION_CODE
+             , (  SELECT USER_IMAGE_PATH
+                  FROM USER
+                  WHERE USER_SEQ = B.USER_SEQ
+               ) USER_IMAGE_PATH
+             , C.QUARTER_CODE
+             , C.FREE_THROW
+             , C.TWO_POINT
+             , C.THREE_POINT
+             , C.FREE_THROW + C.TWO_POINT + C.THREE_POINT TOTAL_POINT
+             -- , C.ASSIST 누락
+             , C.REBOUND
+             , C.STEAL
+             , C.BLOCK
+             , C.TURNOVER
+             , C.FOUL
+          FROM GAME_JOIN_TEAM A
+         INNER JOIN GAME_JOIN_PLAYER B
+            ON A.GAME_JOIN_TEAM_SEQ = B.GAME_JOIN_TEAM_SEQ
+         INNER JOIN QUARTER_PLAYER_RECORDS C
+            ON B.GAME_JOIN_PLAYER_SEQ = C.GAME_JOIN_PLAYER_SEQ
+         WHERE A.GAME_SEQ = #{gameSeq}
+           AND A.HOME_AWAY_CODE = #{homeAwayCode}
+           AND C.QUARTER_CODE = #{quarterCode}
+    </select>
+
+    <select id="findTeamRecordByQuarter" resultType="com.threeNerds.basketballDiary.mvc.game.dto.PlayerRecordDTO">
+        /**
+         * API048 게임쿼터 팀별기록조회하기
+         * G005P01 농구게임 쿼터 조회
+         */
+        SELECT 1 FROM DUAL
+    </select>
+</mapper>

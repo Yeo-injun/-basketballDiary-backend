@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.threeNerds.basketballDiary.mvc.game.repository.dto.GameJoinManagerRepository">
+
+    <select id="findGameCreatorTeam" resultType="com.threeNerds.basketballDiary.mvc.domain.Team">
+        /* GameJoinManagerRepository.findGameCreatorTeam */
+        SELECT G.GAME_SEQ
+             , TM.TEAM_MEMBER_SEQ
+             , T.TEAM_SEQ
+             , T.TEAM_NAME
+          FROM GAME G
+         INNER JOIN TEAM_MEMBER TM
+            ON G.CREATOR_TEAM_MEMBER_SEQ = TM.TEAM_MEMBER_SEQ
+         INNER JOIN TEAM T
+            ON TM.TEAM_SEQ = T.TEAM_SEQ
+         WHERE 1=1
+           AND GAME_SEQ = #{gameSeq}
+    </select>
+
+    <select id="searchOpponents" resultType="com.threeNerds.basketballDiary.mvc.dto.team.team.TeamDTO">
+        SELECT T1.TEAM_SEQ
+            ,  T1.LEADER_ID
+            ,  T1.TEAM_NAME
+        FROM TEAM T1
+        INNER JOIN USER T2
+        ON T1.LEADER_ID = T2.USER_ID
+        WHERE 1=1
+        <if test="sidoCode != null">
+            AND T1.SIDO_CODE = #{sidoCode}
+        </if>
+        <if test="teamName != null">
+            AND T1.TEAM_NAME = #{teamName}
+        </if>
+        <if test="leaderName">
+            AND T2.USER_NAME = #{leaderName}
+        </if>
+    </select>
+
+    <select id="findGamesByTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.myTeam.dto.GameRecordDTO">
+        /* GameJoinManagerRepository.findGamesByTeamSeq */
+        SELECT GAME_SEQ
+             , GAME_RECORD_STATE_CODE
+             , GAME_TYPE_CODE
+             , GAME_YMD
+             , GAME_START_TIME
+             , GAME_END_TIME
+             , GAME_PLACE_ADDRESS
+             , GAME_PLACE_NAME
+          FROM GAME
+         WHERE 1=1
+           AND GAME_SEQ IN ( SELECT GAME_SEQ
+                               FROM GAME_JOIN_TEAM
+                              WHERE TEAM_SEQ = #{teamSeq} )
+    </select>
+
+    <select id="findGameJoinTeamRecords" resultType="com.threeNerds.basketballDiary.mvc.myTeam.dto.GameJoinTeamRecordDTO">
+        /* GameJoinManagerRepository.findGameJoinTeamRecords */
+        SELECT GAME_JOIN_TEAM_SEQ
+             , GAME_SEQ
+             , TEAM_SEQ
+             , TEAM_NAME
+             , HOME_AWAY_CODE
+          FROM GAME
+         WHERE 1=1
+           AND GAME_SEQ = #{gameSeq}
+    </select>
+</mapper>

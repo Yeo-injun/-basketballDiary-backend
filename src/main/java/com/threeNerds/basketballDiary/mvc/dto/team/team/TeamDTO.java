@@ -96,7 +96,7 @@ public class TeamDTO {
     }
 
     /** TODO 코드 중복 제거 : 같은 내용의 코드가 2곳 이상 작성되어 있음
-     * >> TeamDTO, MyTeamDTO -- 추상클래스를 상속받아 구현된 메소드를 상속받는 것은 어떤지??
+     * >> SearchOppenentsDTO, MyTeamDTO -- 추상클래스를 상속받아 구현된 메소드를 상속받는 것은 어떤지??
      * >> 상속은 is-A관계에서 주로 사용. 따라서 다른 방법 검토 필요 참고자료 : https://jgrammer.tistory.com/entry/%EC%9D%B4%ED%8E%99%ED%8B%B0%EB%B8%8C-%EC%9E%90%EB%B0%94-%EC%83%81%EC%86%8D%EB%B3%B4%EB%8B%A4%EB%8A%94-%EC%BB%B4%ED%8F%AC%EC%A7%80%EC%85%98%EC%9D%84-%EC%82%AC%EC%9A%A9%ED%95%98%EB%9D%BC
      */
     public TeamDTO setParsedTeamRegularExercises (List<TeamRegularExerciseDTO> exercisesDTO)

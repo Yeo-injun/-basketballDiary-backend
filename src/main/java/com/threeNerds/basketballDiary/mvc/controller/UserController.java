@@ -8,6 +8,7 @@ import com.threeNerds.basketballDiary.mvc.service.LoginService;
 import com.threeNerds.basketballDiary.mvc.service.UserService;
 import com.threeNerds.basketballDiary.mvc.service.UserTeamManagerService;
 import com.threeNerds.basketballDiary.session.SessionUser;
+import com.threeNerds.basketballDiary.utils.EncryptUtil;
 import com.threeNerds.basketballDiary.utils.SessionUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -58,7 +59,7 @@ public class UserController {
      * API029 회원가입
      */
     @PostMapping("/registration")
-    public ResponseEntity<?> createUser(
+    public ResponseEntity<?> createUser (
             @RequestBody @Valid CmnUserDTO userDTO
     ) {
         userService.createMember(userDTO);
@@ -94,7 +95,7 @@ public class UserController {
      * API006 사용자 검색
      */
     @GetMapping
-    public ResponseEntity<?> findUserInfo(
+    public ResponseEntity<?> findUserInfo (
             @RequestParam(required = false) String userName,    // @RequestParam에 required=false가 없으면  get요청시 쿼리스트링이 반드시 있어야 함.
             @RequestParam(required = false) String email
     ){

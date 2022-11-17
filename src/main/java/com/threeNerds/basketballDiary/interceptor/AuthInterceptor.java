@@ -42,7 +42,8 @@ public class AuthInterceptor implements HandlerInterceptor {
 
         /** 소속팀의 권한 체크 - pathVariables에 teamSeq가 없는 경우는 권한체크를 할 필요없음. */
         final Map<String, String> pathVariables = (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
-        if (!pathVariables.containsKey("teamSeq")) {
+        boolean hasTeamSeq = pathVariables.containsKey("teamSeq");
+        if (!hasTeamSeq) {
             return true;
         }
 
