@@ -53,7 +53,7 @@ public class Team {
                     .foundationYmd(teamDTO.getFoundationYmd())
                     .introduction(teamDTO.getIntroduction())
                     .teamImagePath(teamDTO.getTeamImagePath())
-                    .leaderUserSeq(teamDTO.getleaderUserSeq())
+                    .leaderUserSeq(teamDTO.getLeaderUserSeq())
                     .regDate(now)
                     .updateDate(now)
                     .build();

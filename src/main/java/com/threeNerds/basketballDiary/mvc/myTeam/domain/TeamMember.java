@@ -56,11 +56,11 @@ public class TeamMember {
     }
 
     public static TeamMember create(Team team) {
-        return TeamMember.create(team.getTeamSeq(), team.getleaderUserSeq(), TeamAuthCode.TEAM_MEMBER.getCode());
+        return TeamMember.create(team.getTeamSeq(), team.getLeaderUserSeq(), TeamAuthCode.TEAM_MEMBER.getCode());
     }
 
     public static TeamMember createLeader(Team newTeam) {
-        return TeamMember.create(newTeam.getTeamSeq(), newTeam.getleaderUserSeq(), TeamAuthCode.LEADER.getCode());
+        return TeamMember.create(newTeam.getTeamSeq(), newTeam.getLeaderUserSeq(), TeamAuthCode.LEADER.getCode());
     }
 
     private static TeamMember create(Long teamSeq, Long userSeq, String teamAuthCode)
