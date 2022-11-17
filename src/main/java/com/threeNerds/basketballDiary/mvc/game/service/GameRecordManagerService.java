@@ -34,7 +34,10 @@ public class GameRecordManagerService {
     private final GameRecordManagerRepository gameRecordManagerRepository;
 
     /**
+     * 22.11.06
      * 특정쿼터의 선수별 기록조회
+     * homeAwayCode에 따라 특정쿼터의 선수별 기록을 조회한다.
+     * @param searchGameDTO 게임조회용 DTO
      * @author 강창기
      */
     public List<PlayerRecordDTO> getListPlayerRecordsByQuarter(SearchGameDTO searchGameDTO) {
@@ -49,6 +52,18 @@ public class GameRecordManagerService {
         List<PlayerRecordDTO> resultList = gameRecordManagerRepository.findAllPlayerRecordsByQuarter(searchGameDTO);
         return resultList;
     }
+
+    /**
+     * 22.11.06
+     * 특정쿼터의 팀별 기록조회
+     * 홈&어웨이의 쿼터별 팀 합산기록을 조회한다.
+     * @param searchGameDTO 게임조회용 DTO
+     * @author 강창기
+     */
+    public List<GameJoinTeamRecordDTO> getTeamRecordByQuarter(SearchGameDTO searchGameDTO) {
+        return null;
+    }
+
 
     /** 22.11.06
      * 소속팀의 게임기록조회

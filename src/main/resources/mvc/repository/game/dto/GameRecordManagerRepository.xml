@@ -65,4 +65,12 @@
            AND A.HOME_AWAY_CODE = #{homeAwayCode}
            AND C.QUARTER_CODE = #{quarterCode}
     </select>
+
+    <select id="findTeamRecordByQuarter" resultType="com.threeNerds.basketballDiary.mvc.game.dto.PlayerRecordDTO">
+        /**
+         * API048 게임쿼터 팀별기록조회하기
+         * G005P01 농구게임 쿼터 조회
+         */
+        SELECT 1 FROM DUAL
+    </select>
 </mapper>

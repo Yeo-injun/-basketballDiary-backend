@@ -26,7 +26,13 @@ public interface GameRecordManagerRepository {
     List<QuarterRecordDTO> findJoinTeamQuarterRecords(Long gameJoinTeamSeq);
 
     /** 특정쿼터의 선수별 기록조회
-     * @param searchGameDTO 게임조회DTO
+     * @param searchGameDTO 게임조회용 DTO
      */
     List<PlayerRecordDTO> findAllPlayerRecordsByQuarter(SearchGameDTO searchGameDTO);
+
+    /**
+     * 특정쿼터의 팀별 기록조회
+     * @param searchGameDTO 게임조회용 DTO
+     */
+    List<GameJoinTeamRecordDTO> findTeamRecordByQuarter(SearchGameDTO searchGameDTO);
 }

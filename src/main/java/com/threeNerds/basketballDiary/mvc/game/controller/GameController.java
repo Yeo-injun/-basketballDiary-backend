@@ -48,7 +48,7 @@ public class GameController {
     private final GameRecordManagerService gameRecordManagerService;
 
     /**
-     * API043 게임쿼터별 선수기록조회 (목록)
+     * API043 게임쿼터별 선수기록조회
      * @param gameSeq 게임Seq
      * @param quarterCode 쿼터코드; 01~04(1~4쿼터), 11(전반), 12(후반)
      * @param homeAwayCode 홈·어웨이코드; 01(홈),02(어웨이)
@@ -83,6 +83,33 @@ public class GameController {
         List<PlayerRecordDTO> listPlayerRecordsByQuarter = gameRecordManagerService.getListPlayerRecordsByQuarter(searchGameDTO);
 
         return ResponseEntity.ok(listPlayerRecordsByQuarter);
+    }
+
+    /**
+     * API048 경기 쿼터기록 조회
+     * @param gameSeq 게임Seq
+     * @param quarterCode 쿼터코드; 01~04(1~4쿼터), 11(전반), 12(후반)
+     * @result 특정쿼터의 선수별 기록조회
+     */
+    //@Auth(GRADE = USER) TODO
+    @GetMapping("/{gameSeq}/quarterRecords/quaterCode/{quaterCode}")
+    public ResponseEntity<?> searchGameRecordByQuarter(
+            @PathVariable(name = "gameSeq") String gameSeq,
+            @PathVariable(name = "quarterCode") String quarterCode
+    ){
+        // TODO 파라미터 값 지정하여 throw처리...
+        if(ObjectUtils.isEmpty(gameSeq) || !StringUtils.hasText(gameSeq))
+            throw new CustomException(Error.NO_PARAMETER);
+        if(ObjectUtils.isEmpty(quarterCode) || !StringUtils.hasText(quarterCode))
+            throw new CustomException(Error.NO_PARAMETER);
+
+        //if(quarterCode.contains()) TODO 쿼터코드에 해당하는 값인지 체크필요
+
+        SearchGameDTO searchGameDTO = new SearchGameDTO()
+                .gameSeq(Long.parseLong(gameSeq))
+                .quarterCode(quarterCode);
+
+        return ResponseEntity.ok(null);
     }
 
     /**
