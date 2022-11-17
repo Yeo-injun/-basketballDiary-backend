@@ -13,7 +13,7 @@ public class PlayerRecordDTO {
     private Long freeThrow;
     private Long twoPoint;
     private Long threePoint;
-    private Long totalPoint;
+    private Long totalScore;
     private Long assist;
     private Long rebound;
     private Long steal;
@@ -58,8 +58,8 @@ public class PlayerRecordDTO {
         this.threePoint = threePoint;
         return this;
     }
-    public PlayerRecordDTO totalPoint(Long totalPoint) {
-        this.totalPoint = totalPoint;
+    public PlayerRecordDTO totalScore(Long totalScore) {
+        this.totalScore = totalScore;
         return this;
     }
     public PlayerRecordDTO assist(Long assist) {

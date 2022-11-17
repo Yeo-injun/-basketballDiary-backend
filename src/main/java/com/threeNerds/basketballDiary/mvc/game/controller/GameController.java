@@ -48,6 +48,24 @@ public class GameController {
     private final GameRecordManagerService gameRecordManagerService;
 
     /**
+     * API038 쿼터 저장하기/수정하기
+     * @param gameSeq 게임Seq
+     * @param quarterCode 쿼터코드; 01~04(1~4쿼터), 11(전반), 12(후반)
+     * @result 특정 경기의 쿼터 기록을 저장한다.
+     */
+    //@Auth(GRADE = USER) TODO
+    @PatchMapping("/{gameSeq}/quarters/{quarterCode}")
+    public ResponseEntity<?> test(
+        @PathVariable(name = "gameSeq") String gameSeq,
+        @PathVariable(name = "quarterCode") String quarterCode,
+        @RequestBody GameCreationDTO gameCreationDTO
+    ) {
+        
+
+        return ResponseEntity.ok(null);
+    }
+
+    /**
      * API043 게임쿼터별 선수기록조회
      * @param gameSeq 게임Seq
      * @param quarterCode 쿼터코드; 01~04(1~4쿼터), 11(전반), 12(후반)
