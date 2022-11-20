@@ -7,6 +7,7 @@ import com.threeNerds.basketballDiary.mvc.game.dto.*;
 import com.threeNerds.basketballDiary.mvc.game.service.GameJoinManagerService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameRecordManagerService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameService;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.FindGameHomeAwayDTO;
 import com.threeNerds.basketballDiary.mvc.service.LoginService;
 import com.threeNerds.basketballDiary.mvc.service.UserService;
 import com.threeNerds.basketballDiary.mvc.service.UserTeamManagerService;
@@ -150,7 +151,6 @@ public class GameController {
 
     /**
      * API044 상대팀 목록 조회
-     * /api/games/opponents?sidoCode={sidoCode}&teamName={teamName}&leaderName=${leaderName}
      */
     @GetMapping("/opponents")
     public ResponseEntity<?> searchOpponents(
@@ -167,14 +167,26 @@ public class GameController {
     }
 
     /**
-     * API046 게임기록 상세조회
+     * API046 경기 상세정보 조회
      */
     @GetMapping("{gameSeq}/info")
-    public ResponseEntity<?> findGameRecords(
+    public ResponseEntity<?> findGameDetailRecords(
             @PathVariable(name = "gameSeq")Long gameSeq
     ){
         GameInfoDTO gameInfo = gameService.getGameInfo(gameSeq);
         return ResponseEntity.ok(gameInfo);
+    }
+
+    /**
+     * API047 경기 참가팀 조회
+     */
+    @GetMapping("{gameSeq}/teams")
+    public ResponseEntity<?> findGameHomeAwayInfo(
+            @PathVariable(name = "gameSeq") Long gameSeq,
+            @RequestParam(name = "homeAwayCode") String homeAwayCode
+    ){
+        List<FindGameHomeAwayDTO> gameHomeAwayInfo = gameJoinManagerService.findGameHomeAwayInfo(gameSeq, homeAwayCode);
+        return ResponseEntity.ok(gameHomeAwayInfo);
     }
 
     /**
