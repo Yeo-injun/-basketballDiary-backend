@@ -8,10 +8,12 @@ import com.threeNerds.basketballDiary.mvc.domain.Team;
 import com.threeNerds.basketballDiary.mvc.dto.team.team.TeamDTO;
 import com.threeNerds.basketballDiary.mvc.game.domain.GameJoinTeam;
 import com.threeNerds.basketballDiary.mvc.game.dto.GameJoinTeamCreationDTO;
+import com.threeNerds.basketballDiary.mvc.game.dto.SearchGameHomeAwayDTO;
 import com.threeNerds.basketballDiary.mvc.game.dto.SearchOppenentsDTO;
 import com.threeNerds.basketballDiary.mvc.game.repository.GameJoinTeamRepository;
 import com.threeNerds.basketballDiary.mvc.game.repository.GameRepository;
 import com.threeNerds.basketballDiary.mvc.game.repository.dto.GameJoinManagerRepository;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.FindGameHomeAwayDTO;
 import com.threeNerds.basketballDiary.mvc.repository.TeamRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -126,11 +128,21 @@ public class GameJoinManagerService {
 
     //TODO 상대팀 목록 조회
     public List<TeamDTO> searchOpponents(String sidoCode,String teamName,String leaderName){
+
         SearchOppenentsDTO searchOppenentsDTO = new SearchOppenentsDTO()
                                                         .sidoCode(sidoCode)
                                                         .teamName(teamName)
                                                         .leaderName(leaderName);
-        List<TeamDTO> teams = gameJoinManagerRepository.searchOpponents(searchOppenentsDTO);
-        return teams;
+        return gameJoinManagerRepository.searchOpponents(searchOppenentsDTO);
+    }
+
+    public List<FindGameHomeAwayDTO> findGameHomeAwayInfo(Long gameSeq,String homeAwayCode){
+
+        SearchGameHomeAwayDTO searchGameHomeAwayDTO = new SearchGameHomeAwayDTO()
+                .gameSeq(gameSeq)
+                .homeAwayCode(homeAwayCode);
+        List<FindGameHomeAwayDTO> gameTeams = gameJoinManagerRepository.findGameTeams(searchGameHomeAwayDTO);
+        return gameTeams;
+//        return gameJoinManagerRepository.findGameTeams(searchGameHomeAwayDTO);
     }
 }

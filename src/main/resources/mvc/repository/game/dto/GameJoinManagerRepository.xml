@@ -65,4 +65,18 @@
          WHERE 1=1
            AND GAME_SEQ = #{gameSeq}
     </select>
+
+    <select id="findGameTeams" resultType="com.threeNerds.basketballDiary.mvc.myTeam.dto.FindGameHomeAwayDTO">
+        SELECT T2.TEAM_NAME
+              ,T2.HOMETOWN
+              ,T3.USER_ID AS teamLeaderName
+        FROM GAME_JOIN_TEAM T1
+            INNER JOIN TEAM T2 ON T1.TEAM_SEQ = T2.TEAM_SEQ
+            INNER JOIN USER T3 ON T2.LEADER_USER_SEQ = T3.USER_SEQ
+        WHERE 1=1
+            AND T1.GAME_SEQ = #{gameSeq}
+        <if test='homeAwayCode != null and homeAwayCode !="" '>
+            AND T1.HOME_AWAY_CODE = #{homeAwayCode}
+        </if>
+    </select>
 </mapper>
