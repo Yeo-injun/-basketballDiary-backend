@@ -17,9 +17,10 @@ public class GameJoinTeamRecordDTO {
 
     // 게임 총점수
     private Integer gameTotalScore;
-
-    // 쿼터 점수
-    private List<QuarterRecordDTO> quarters;
+    private Integer quarterScore1st;
+    private Integer quarterScore2nd;
+    private Integer quarterScore3rd;
+    private Integer quarterScore4th;
 
     public GameJoinTeamRecordDTO homeAwayCodeName(String homeAwayCode) {
         this.homeAwayCodeName = HomeAwayCode.nameOf(homeAwayCode);
@@ -29,8 +30,20 @@ public class GameJoinTeamRecordDTO {
         this.gameTotalScore = gameTotalScore;
         return this;
     }
-    public GameJoinTeamRecordDTO quarters(List<QuarterRecordDTO> quarters) {
-        this.quarters = quarters;
+    public GameJoinTeamRecordDTO quarterScore1st(Integer quarterScore1st) {
+        this.quarterScore1st = quarterScore1st;
+        return this;
+    }
+    public GameJoinTeamRecordDTO quarterScore2nd(Integer quarterScore2nd) {
+        this.quarterScore2nd = quarterScore2nd;
+        return this;
+    }
+    public GameJoinTeamRecordDTO quarterScore3rd(Integer quarterScore3rd) {
+        this.quarterScore3rd = quarterScore3rd;
+        return this;
+    }
+    public GameJoinTeamRecordDTO quarterScore4th(Integer quarterScore4th) {
+        this.quarterScore4th = quarterScore4th;
         return this;
     }
 }

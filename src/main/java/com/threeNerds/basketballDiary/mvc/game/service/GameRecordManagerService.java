@@ -40,6 +40,11 @@ public class GameRecordManagerService {
 
     private final GameRecordManagerRepository gameRecordManagerRepository;
 
+    private final String QUARTER_1ST_CODE = QuarterCode.FIRST.getCode();
+    private final String QUARTER_2ND_CODE = QuarterCode.SECOND.getCode();
+    private final String QUARTER_3RD_CODE = QuarterCode.THIRD.getCode();
+    private final String QUARTER_4TH_CODE = QuarterCode.FOURTH.getCode();
+
     /**
      * 22.11.06
      * 특정쿼터의 선수별 기록조회
@@ -124,24 +129,41 @@ public class GameRecordManagerService {
         List<QuarterTeamRecords> quarterRecords = quarterTeamRecordsRepository.findQuarterRecordsByJoinTeamSeq(gameJoinTeamSeq);
 
         /** 조회한 기록으로 게임총점수 계산 */
-        List<QuarterRecordDTO> joinTeamQuarterRecords = new ArrayList<>();
         Integer gameTotalScore = 0;
+        if (quarterRecords.isEmpty()) {
+            joinTeam.gameTotalScore(gameTotalScore);
+            joinTeam.quarterScore1st(0);
+            joinTeam.quarterScore2nd(0);
+            joinTeam.quarterScore3rd(0);
+            joinTeam.quarterScore4th(0);
+            return joinTeam;
+        }
+
         for (QuarterTeamRecords qtr : quarterRecords)
         {
             int quarterScore = qtr.getQuarterTotalScore();
             gameTotalScore += quarterScore;
 
             String quarterCode = qtr.getQuarterCode();
-            QuarterRecordDTO quarterRecordDTO = new QuarterRecordDTO()
-                    .quarterTeamRecordsSeq(qtr.getQuarterTeamRecordsSeq())
-                    .quarterCode(quarterCode)
-                    .quarterCodeName(QuarterCode.nameOf(quarterCode))
-                    .quarterScore(quarterScore);
-            joinTeamQuarterRecords.add(quarterRecordDTO);
+            if (QUARTER_1ST_CODE.equals(quarterCode)) {
+                joinTeam.quarterScore1st(quarterScore);
+                continue;
+            }
+            if (QUARTER_2ND_CODE.equals(quarterCode)) {
+                joinTeam.quarterScore2nd(quarterScore);
+                continue;
+            }
+            if (QUARTER_3RD_CODE.equals(quarterCode)) {
+                joinTeam.quarterScore3rd(quarterScore);
+                continue;
+            }
+            if (QUARTER_4TH_CODE.equals(quarterCode)) {
+                joinTeam.quarterScore4th(quarterScore);
+                continue;
+            }
         }
 
         joinTeam.gameTotalScore(gameTotalScore);
-        joinTeam.quarters(joinTeamQuarterRecords);
         return joinTeam;
     }
 }
