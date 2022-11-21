@@ -15,6 +15,7 @@ import com.threeNerds.basketballDiary.session.SessionUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -47,6 +48,39 @@ public class GameController {
     private final GameService gameService;
     private final GameJoinManagerService gameJoinManagerService;
     private final GameRecordManagerService gameRecordManagerService;
+
+    /**
+     * API038 쿼터 저장하기/수정하기
+     * @param gameSeq 게임Seq
+     * @param quarterCode 쿼터코드; 01~04(1~4쿼터), 11(전반), 12(후반)
+     * @result 특정 경기의 쿼터 기록을 저장·수정한다.
+     */
+    //@Auth(GRADE = USER) TODO
+    @PutMapping("/{gameSeq}/quarters/{quarterCode}")
+    public ResponseEntity<?> test(
+        @PathVariable(name = "gameSeq") String gameSeq,
+        @PathVariable(name = "quarterCode") String quarterCode,
+        @RequestBody QuarterCreationDTO quarterCreationDTO
+    ) {
+        log.debug("call test");
+        if(ObjectUtils.isEmpty(gameSeq) || !StringUtils.hasText(gameSeq))
+            throw new CustomException(Error.NO_PARAMETER);
+        // TODO QuarterCode enum parameter값에 해당하는지 체크 필요 ...
+        if(ObjectUtils.isEmpty(quarterCode))
+            throw new CustomException(Error.NO_PARAMETER);
+        if(ObjectUtils.isEmpty(quarterCreationDTO))
+            throw new CustomException(Error.NO_PARAMETER);
+        if(ObjectUtils.isEmpty(quarterCreationDTO.getHomeAwayTeamRecordDTO()))
+            throw new CustomException(Error.NO_PARAMETER);
+        if(CollectionUtils.isEmpty(quarterCreationDTO.getPlayerRecordDTOList()))
+            throw new CustomException(Error.NO_PARAMETER);
+
+        // 저장·수정 분기처리
+        SearchGameDTO searchDTO = new SearchGameDTO();
+
+
+        return ResponseEntity.ok(null);
+    }
 
     /**
      * API043 게임쿼터별 선수기록조회
