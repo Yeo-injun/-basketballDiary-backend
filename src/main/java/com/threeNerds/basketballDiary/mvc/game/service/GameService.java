@@ -49,6 +49,8 @@ public class GameService {
         Game newGame = Game.createDefault(gc);
         gameRepository.saveGame(newGame);
 
+        /** 게임기록권한 정보 생성 - TODO 게임 생성한 사람 입력*/
+
         /** 생성된 게임Seq 반환 */
         gc.gameSeq(newGame.getGameSeq());
         return gc;

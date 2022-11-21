@@ -2,19 +2,26 @@ package com.threeNerds.basketballDiary.mvc.game.service;
 
 import com.threeNerds.basketballDiary.constant.code.GameTypeCode;
 import com.threeNerds.basketballDiary.constant.code.HomeAwayCode;
+import com.threeNerds.basketballDiary.constant.code.PlayerTypeCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.mvc.domain.Team;
+import com.threeNerds.basketballDiary.mvc.domain.User;
 import com.threeNerds.basketballDiary.mvc.dto.team.team.TeamDTO;
+import com.threeNerds.basketballDiary.mvc.game.controller.dto.GameJoinPlayerRegistrationDTO;
+import com.threeNerds.basketballDiary.mvc.game.domain.GameJoinPlayer;
 import com.threeNerds.basketballDiary.mvc.game.domain.GameJoinTeam;
+import com.threeNerds.basketballDiary.mvc.game.dto.GameJoinPlayerDTO;
 import com.threeNerds.basketballDiary.mvc.game.dto.GameJoinTeamCreationDTO;
 import com.threeNerds.basketballDiary.mvc.game.dto.SearchGameHomeAwayDTO;
 import com.threeNerds.basketballDiary.mvc.game.dto.SearchOppenentsDTO;
+import com.threeNerds.basketballDiary.mvc.game.repository.GameJoinPlayerRepository;
 import com.threeNerds.basketballDiary.mvc.game.repository.GameJoinTeamRepository;
 import com.threeNerds.basketballDiary.mvc.game.repository.GameRepository;
 import com.threeNerds.basketballDiary.mvc.game.repository.dto.GameJoinManagerRepository;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.FindGameHomeAwayDTO;
 import com.threeNerds.basketballDiary.mvc.repository.TeamRepository;
+import com.threeNerds.basketballDiary.mvc.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -32,14 +39,16 @@ import java.util.stream.Stream;
 @Transactional
 public class GameJoinManagerService {
 
+    private final UserRepository userRepository;
     private final TeamRepository teamRepository;
     private final GameRepository gameRepository;
     private final GameJoinTeamRepository gameJoinTeamRepository;
+    private final GameJoinPlayerRepository gameJoinPlayerRepository;
 
     private final GameJoinManagerRepository gameJoinManagerRepository;
 
 
-    /** 게임참가팀 확정 */
+    /** 게임참가팀 확정  TODO 리팩토링하기... */
     public void confirmJoinTeam(GameJoinTeamCreationDTO joinTeamCreationDTO)
     {
         String gameTypeCode = joinTeamCreationDTO.getGameTypeCode();
@@ -53,10 +62,10 @@ public class GameJoinManagerService {
             }
             Team gameCreatorTeam = gameJoinManagerRepository.findGameCreatorTeam(gameSeq);
 
-            GameJoinTeam homeTeamInSelfGame = GameJoinTeam.createHomeTeam(gameSeq, gameCreatorTeam);
+            GameJoinTeam homeTeamInSelfGame = GameJoinTeam.createHomeTeamForSelfGame(gameSeq, gameCreatorTeam);
             gameJoinTeamRepository.saveGameJoinTeam(homeTeamInSelfGame);
 
-            GameJoinTeam awayTeamInSelfGame = GameJoinTeam.createAwayTeam(gameSeq, gameCreatorTeam);
+            GameJoinTeam awayTeamInSelfGame = GameJoinTeam.createAwayTeamForSelfGame(gameSeq, gameCreatorTeam);
             gameJoinTeamRepository.saveGameJoinTeam(awayTeamInSelfGame);
             return;
         }
@@ -69,12 +78,7 @@ public class GameJoinManagerService {
             if (!hasGameJoinTeam(gameSeq, HomeAwayCode.HOME_TEAM))
             {
                 Team gameCreatorTeam = gameJoinManagerRepository.findGameCreatorTeam(gameSeq);
-                GameJoinTeam homeTeam = new GameJoinTeam().builder()
-                                            .gameSeq(gameSeq)
-                                            .teamSeq(gameCreatorTeam.getTeamSeq())
-                                            .teamName(gameCreatorTeam.getTeamName())
-                                            .homeAwayCode(HomeAwayCode.HOME_TEAM.getCode())
-                                            .build();
+                GameJoinTeam homeTeam = GameJoinTeam.create(gameSeq, HomeAwayCode.HOME_TEAM, gameCreatorTeam);
                 gameJoinTeamRepository.saveGameJoinTeam(homeTeam);
             }
 
@@ -88,12 +92,7 @@ public class GameJoinManagerService {
 
             Team opponentTeam = Optional.ofNullable(teamRepository.findByTeamSeq(opponentTeamSeq))
                                         .orElseThrow(()-> new CustomException(Error.TEAM_NOT_FOUND));
-            GameJoinTeam awayTeam = new GameJoinTeam().builder()
-                                        .gameSeq(gameSeq)
-                                        .teamSeq(opponentTeam.getTeamSeq())
-                                        .teamName(opponentTeam.getTeamName())
-                                        .homeAwayCode(HomeAwayCode.AWAY_TEAM.getCode())
-                                        .build();
+            GameJoinTeam awayTeam = GameJoinTeam.create(gameSeq, HomeAwayCode.AWAY_TEAM, opponentTeam);
             gameJoinTeamRepository.saveGameJoinTeam(awayTeam);
             return;
         }
@@ -144,5 +143,40 @@ public class GameJoinManagerService {
         List<FindGameHomeAwayDTO> gameTeams = gameJoinManagerRepository.findGameTeams(searchGameHomeAwayDTO);
         return gameTeams;
 //        return gameJoinManagerRepository.findGameTeams(searchGameHomeAwayDTO);
+    }
+
+    /** TODO 테스트 필요 22.11.22(화)
+     * 게임참가선수 등록
+     **/
+    public void registerGameJoinPlayers(GameJoinPlayerRegistrationDTO playerRegistrationDTO)
+    {
+        Long gameJoinTeamSeq = playerRegistrationDTO.getGameJoinTeamSeq();
+
+        /** 게임참가선수 데이터 존재여부 확인 - 기존 데이터 존재시 삭제 */
+        List<GameJoinPlayer> joinPlayers = gameJoinPlayerRepository.findPlayers(gameJoinTeamSeq);
+        boolean hasJoinPlayers = !joinPlayers.isEmpty();
+        if (hasJoinPlayers) {
+            gameJoinPlayerRepository.deletePlayers(gameJoinTeamSeq);
+        }
+
+        /** 게임참가선수 데이터 저장 - 선수유형에 따라서 처리하기 */
+        List<GameJoinPlayerDTO> gameJoinPlayerDTOList = playerRegistrationDTO.getGameJoinPlayerDTOList();
+        for (GameJoinPlayerDTO joinPlayerDTO : gameJoinPlayerDTOList)
+        {
+            String playerTypeCode = joinPlayerDTO.getPlayerTypeCode();
+            boolean isUnauthGuest = PlayerTypeCode.UNAUTH_GUEST.getCode().equals(playerTypeCode);
+            if (isUnauthGuest)
+            {
+                GameJoinPlayer unauthGuest = GameJoinPlayer.create(gameJoinTeamSeq, joinPlayerDTO);
+                gameJoinPlayerRepository.save(unauthGuest);
+                continue;
+            }
+
+            String backNumber = joinPlayerDTO.getBackNumber();
+            User user = userRepository.findUser(joinPlayerDTO.getUserSeq());
+            GameJoinPlayer authJoinPlayer = GameJoinPlayer.create(gameJoinTeamSeq, playerTypeCode, backNumber, user);
+            gameJoinPlayerRepository.save(authJoinPlayer);
+
+        }
     }
 }

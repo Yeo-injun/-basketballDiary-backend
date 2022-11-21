@@ -3,6 +3,7 @@ package com.threeNerds.basketballDiary.mvc.game.controller;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.mvc.dto.team.team.TeamDTO;
+import com.threeNerds.basketballDiary.mvc.game.controller.dto.GameJoinPlayerRegistrationDTO;
 import com.threeNerds.basketballDiary.mvc.game.dto.*;
 import com.threeNerds.basketballDiary.mvc.game.service.GameJoinManagerService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameRecordManagerService;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.threeNerds.basketballDiary.constant.HttpResponseConst.RESPONSE_CREATED;
 import static com.threeNerds.basketballDiary.constant.HttpResponseConst.RESPONSE_OK;
 import static com.threeNerds.basketballDiary.utils.SessionUtil.LOGIN_USER;
 
@@ -48,6 +50,28 @@ public class GameController {
     private final GameService gameService;
     private final GameJoinManagerService gameJoinManagerService;
     private final GameRecordManagerService gameRecordManagerService;
+
+
+    /**
+     * API035 게임참가 선수등록하기
+     * @result 특정쿼터의 선수별 기록조회
+     */
+    //@Auth(GRADE = USER) 
+    @PostMapping("/{gameSeq}/gameJoinTeam/{gameJoinTeamSeq}/players")
+    public ResponseEntity<?> registerGameJoinPlayers(
+            @PathVariable(name = "gameSeq") Long gameSeq,
+            @PathVariable(name = "gameJoinTeamSeq") Long gameJoinTeamSeq,
+            @RequestBody List<GameJoinPlayerDTO> gameJoinPlayers
+    ) {
+        GameJoinPlayerRegistrationDTO playerRegistrationDTO = new GameJoinPlayerRegistrationDTO()
+                .gameSeq(gameSeq)
+                .gameJoinTeamSeq(gameJoinTeamSeq)
+                .gameJoinPlayerDTOList(gameJoinPlayers);
+
+        gameJoinManagerService.registerGameJoinPlayers(playerRegistrationDTO);
+        return RESPONSE_CREATED;
+    }
+
 
     /**
      * API038 쿼터 저장하기/수정하기
@@ -92,6 +116,7 @@ public class GameController {
     //@Auth(GRADE = USER) TODO
     @GetMapping("/{gameSeq}/quarters/{quarterCode}/players/homeAway/{homeAwayCode}")
     public ResponseEntity<?> searchPlayerRecordsByQuarter(
+            // TODO  인준 : seq는 자료형이 String이 아니라 Long으로 관리하고 있음.
         @PathVariable(name = "gameSeq") String gameSeq,
         @PathVariable(name = "quarterCode") String quarterCode,
         @PathVariable(name = "homeAwayCode") String homeAwayCode
@@ -152,7 +177,7 @@ public class GameController {
      * - 생성한 게임 정보를 반환
      */
     @PostMapping
-    public ResponseEntity<?> createGame(
+    public ResponseEntity<?> createGame (
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,
             @RequestBody  GameCreationDTO gameCreationDTO
     ) {
