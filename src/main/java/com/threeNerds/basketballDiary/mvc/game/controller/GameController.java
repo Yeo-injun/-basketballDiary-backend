@@ -78,6 +78,7 @@ public class GameController {
      * @param gameSeq 게임Seq
      * @param quarterCode 쿼터코드; 01~04(1~4쿼터), 11(전반), 12(후반)
      * @result 특정 경기의 쿼터 기록을 저장·수정한다.
+     * @author 강창기
      */
     //@Auth(GRADE = USER) TODO
     @PutMapping("/{gameSeq}/quarters/{quarterCode}")
@@ -99,8 +100,15 @@ public class GameController {
         if(CollectionUtils.isEmpty(quarterCreationDTO.getPlayerRecordDTOList()))
             throw new CustomException(Error.NO_PARAMETER);
 
+        HomeAwayTeamRecordDTO homeAwayTeamRecordDTO = quarterCreationDTO.getHomeAwayTeamRecordDTO();
+        List<PlayerRecordDTO> playerRecordDTOList = quarterCreationDTO.getPlayerRecordDTOList();
+
         // 저장·수정 분기처리
-        SearchGameDTO searchDTO = new SearchGameDTO();
+        // TODO 조회를 위한 seq 체크 필요
+        SearchGameDTO searchDTO = new SearchGameDTO()
+                .gameSeq(Long.parseLong(gameSeq))
+                .quarterCode(quarterCode);
+
 
 
         return ResponseEntity.ok(null);

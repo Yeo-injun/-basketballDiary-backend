@@ -6,6 +6,7 @@ import com.threeNerds.basketballDiary.constant.code.HomeAwayCode;
 import com.threeNerds.basketballDiary.constant.code.QuarterCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
+import com.threeNerds.basketballDiary.mvc.game.dto.HomeAwayTeamRecordDTO;
 import com.threeNerds.basketballDiary.mvc.game.dto.PlayerRecordDTO;
 import com.threeNerds.basketballDiary.mvc.game.dto.SearchGameDTO;
 import com.threeNerds.basketballDiary.mvc.game.domain.QuarterTeamRecords;
@@ -23,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,9 +48,35 @@ public class GameRecordManagerService {
     private final String QUARTER_4TH_CODE = QuarterCode.FOURTH.getCode();
 
     /**
+     * 22.11.22
+     * 특정쿼터의 선수별 기록조회(단건)
+     * homeAwayCode에 따라 특정쿼터의 선수별 기록 단건을 조회한다.
+     * @param searchGameDTO 게임조회용 DTO
+     * @author 강창기
+     */
+    public PlayerRecordDTO getPlayerRecordsByQuarter(SearchGameDTO searchGameDTO) {
+        if(ObjectUtils.isEmpty(searchGameDTO))
+            throw new CustomException(Error.NO_PARAMETER);
+
+        if(ObjectUtils.isEmpty(searchGameDTO.getQuarterPlayerRecordsSeq())) {
+            if(ObjectUtils.isEmpty(searchGameDTO.getGameSeq())
+                    || ObjectUtils.isEmpty(searchGameDTO.getGameJoinPlayerSeq())
+                    || ObjectUtils.isEmpty(searchGameDTO.getGameJoinTeamSeq())
+                    || ObjectUtils.isEmpty(searchGameDTO.getQuarterCode()))
+                throw new CustomException(Error.NO_PARAMETER);
+
+            if(ObjectUtils.isEmpty(gameRepository.getGameInfo(searchGameDTO.getGameSeq())))
+                throw new CustomException(Error.NOT_FOUND_GAME);  // 게임 정보가 존재하지 않습니다.
+        }
+
+        PlayerRecordDTO resultDVO = gameRecordManagerRepository.findPlayerRecordsByQuarter(searchGameDTO);
+        return resultDVO;
+    }
+
+    /**
      * 22.11.06
-     * 특정쿼터의 선수별 기록조회
-     * homeAwayCode에 따라 특정쿼터의 선수별 기록을 조회한다.
+     * 특정쿼터의 선수별 기록조회(목록)
+     * homeAwayCode에 따라 특정쿼터의 선수별 기록 목록을 조회한다.
      * @param searchGameDTO 게임조회용 DTO
      * @author 강창기
      */
@@ -66,14 +94,27 @@ public class GameRecordManagerService {
     }
 
     /**
-     * 22.11.06
-     * 특정쿼터의 팀별 기록조회
-     * 홈&어웨이의 쿼터별 팀 합산기록을 조회한다.
+     * 22.11.22
+     * 특정쿼터의 홈·어웨이 팀기록조회
+     * 홈 & 어웨이의 쿼터별 팀 합산기록을 조회한다.
      * @param searchGameDTO 게임조회용 DTO
      * @author 강창기
      */
-    public List<GameJoinTeamRecordDTO> getTeamRecordByQuarter(SearchGameDTO searchGameDTO) {
-        return null;
+    public HomeAwayTeamRecordDTO getHomeAwayTeamRecordByQuarter(SearchGameDTO searchGameDTO) {
+        if(ObjectUtils.isEmpty(searchGameDTO))
+            throw new CustomException(Error.NO_PARAMETER);
+
+        if(ObjectUtils.isEmpty(searchGameDTO.getGameSeq())
+                || ObjectUtils.isEmpty(searchGameDTO.getGameJoinTeamSeq())
+                || ObjectUtils.isEmpty(searchGameDTO.getQuarterCode()))
+            throw new CustomException(Error.NO_PARAMETER);
+
+        if(ObjectUtils.isEmpty(gameRepository.getGameInfo(searchGameDTO.getGameSeq())))
+            throw new CustomException(Error.NOT_FOUND_GAME);  // 게임 정보가 존재하지 않습니다.
+
+        HomeAwayTeamRecordDTO resultDVO = gameRecordManagerRepository.findHomeAwayTeamRecordsByQuarter(searchGameDTO);
+
+        return resultDVO;
     }
 
 
