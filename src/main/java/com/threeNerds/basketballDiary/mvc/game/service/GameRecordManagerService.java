@@ -6,11 +6,13 @@ import com.threeNerds.basketballDiary.constant.code.HomeAwayCode;
 import com.threeNerds.basketballDiary.constant.code.QuarterCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
+import com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords;
 import com.threeNerds.basketballDiary.mvc.game.dto.HomeAwayTeamRecordDTO;
 import com.threeNerds.basketballDiary.mvc.game.dto.PlayerRecordDTO;
 import com.threeNerds.basketballDiary.mvc.game.dto.SearchGameDTO;
 import com.threeNerds.basketballDiary.mvc.game.domain.QuarterTeamRecords;
 import com.threeNerds.basketballDiary.mvc.game.repository.GameJoinTeamRepository;
+import com.threeNerds.basketballDiary.mvc.game.repository.QuarterPlayerRecordsRepository;
 import com.threeNerds.basketballDiary.mvc.game.repository.QuarterTeamRecordsRepository;
 import com.threeNerds.basketballDiary.mvc.game.repository.dto.GameRecordManagerRepository;
 import com.threeNerds.basketballDiary.mvc.game.repository.GameRepository;
@@ -38,6 +40,7 @@ public class GameRecordManagerService {
     private final GameRepository gameRepository;
     private final GameJoinTeamRepository gameJoinTeamRepository;
     private final QuarterTeamRecordsRepository quarterTeamRecordsRepository;
+    private QuarterPlayerRecordsRepository quarterPlayerRecordsRepository;
     private final TeamMemberRepository teamMemberRepository;
 
     private final GameRecordManagerRepository gameRecordManagerRepository;
@@ -46,6 +49,32 @@ public class GameRecordManagerService {
     private final String QUARTER_2ND_CODE = QuarterCode.SECOND.getCode();
     private final String QUARTER_3RD_CODE = QuarterCode.THIRD.getCode();
     private final String QUARTER_4TH_CODE = QuarterCode.FOURTH.getCode();
+
+    /**
+     * 22.11.25
+     * 쿼터별 선수기록 조회(단건)
+     * @param quarterPlayerRecords 쿼터별선수기록 DTO
+     * @author 강창기
+     */
+    public QuarterPlayerRecords findQuarterPlayerRecords(QuarterPlayerRecords quarterPlayerRecords) {
+        if(ObjectUtils.isEmpty(quarterPlayerRecords))
+            throw new CustomException(Error.NO_PARAMETER);
+
+        return quarterPlayerRecordsRepository.find(quarterPlayerRecords);
+    }
+
+    /**
+     * 22.11.25
+     * 쿼터별 선수기록 수정
+     * @param quarterPlayerRecords 쿼터별선수기록 DTO
+     * @author 강창기
+     */
+    public void modifyQuarterPlayerRecords(QuarterPlayerRecords quarterPlayerRecords) {
+        if(ObjectUtils.isEmpty(quarterPlayerRecords))
+            throw new CustomException(Error.NO_PARAMETER);
+
+        quarterPlayerRecordsRepository.modify(quarterPlayerRecords);
+    }
 
     /**
      * 22.11.22
