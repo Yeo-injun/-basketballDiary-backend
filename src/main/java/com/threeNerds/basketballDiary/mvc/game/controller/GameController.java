@@ -14,6 +14,7 @@ import com.threeNerds.basketballDiary.mvc.service.LoginService;
 import com.threeNerds.basketballDiary.mvc.service.UserService;
 import com.threeNerds.basketballDiary.mvc.service.UserTeamManagerService;
 import com.threeNerds.basketballDiary.session.SessionUser;
+import com.threeNerds.basketballDiary.utils.CommonUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -120,7 +121,7 @@ public class GameController {
             quarterPlayerRecords = gameRecordManagerService.findQuarterPlayerRecords(quarterPlayerRecords);
 
             if(!ObjectUtils.isEmpty(quarterPlayerRecords)) {
-                BeanUtils.copyProperties(playerRecordDTO, quarterPlayerRecords, getNullPropertyNames(playerRecordDTO));
+                BeanUtils.copyProperties(playerRecordDTO, quarterPlayerRecords, CommonUtil.getNullPropertyNames(playerRecordDTO));
                 gameRecordManagerService.modifyQuarterPlayerRecords(quarterPlayerRecords);
             } else {
                 // 신규생성 필요
@@ -132,22 +133,6 @@ public class GameController {
 
         return ResponseEntity.ok(null);
     }
-
-    // 추후 공통Util로 ...
-    public static String[] getNullPropertyNames (Object source) {
-        final BeanWrapper src = new BeanWrapperImpl(source);
-        java.beans.PropertyDescriptor[] pds = src.getPropertyDescriptors();
-
-        Set<String> emptyNames = new HashSet<>();
-        for(java.beans.PropertyDescriptor pd : pds) {
-            Object srcValue = src.getPropertyValue(pd.getName());
-            if (srcValue == null) emptyNames.add(pd.getName());
-        }
-
-        String[] result = new String[emptyNames.size()];
-        return emptyNames.toArray(result);
-    }
-
 
     /**
      * API043 게임쿼터별 선수기록조회
