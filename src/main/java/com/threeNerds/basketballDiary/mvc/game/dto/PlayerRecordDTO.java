@@ -18,6 +18,7 @@ public class PlayerRecordDTO {
      * GAME_JOIN_PLAYER
      */
     /** 유저 SEQ */
+    private Long gameJoinPlayerSeq;
     private Long userSeq;
     private String name;
     private String backNumber;
@@ -64,6 +65,11 @@ public class PlayerRecordDTO {
 
     public PlayerRecordDTO teamSeq(String teamSeq) {
         this.teamSeq = teamSeq;
+        return this;
+    }
+
+    public PlayerRecordDTO gameJoinPlayerSeq(Long gameJoinPlayerSeq) {
+        this.gameJoinPlayerSeq = gameJoinPlayerSeq;
         return this;
     }
 

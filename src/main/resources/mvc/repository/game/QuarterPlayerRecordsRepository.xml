@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.threeNerds.basketballDiary.mvc.game.repository.QuarterPlayerRecordsRepository">
+    <select id="find" resultType="com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords">
+        SELECT QUARTER_PLAYER_RECORDS_SEQ
+             , GAME_SEQ
+             , GAME_JOIN_PLAYER_SEQ
+             , GAME_JOIN_TEAM_SEQ
+             , QUARTER_CODE
+             , IN_GAME_YN
+             , TRY_FREE_THROW
+             , FREE_THROW
+             , TRY_TWO_POINT
+             , TWO_POINT
+             , TRY_THREE_POINT
+             , THREE_POINT
+             , REBOUND
+             , STEAL
+             , BLOCK
+             , TURNOVER
+             , FOUL
+          FROM QUARTER_PLAYER_RECORDS
+        <where>
+        <choose>
+            <when test="quarterPlayerRecordsSeq != null and !''.equals(quarterPlayerRecordsSeq)">
+               QUARTER_PLAYER_RECORDS_SEQ = #{quarterPlayerRecordsSeq}
+            </when>
+            <otherwise>
+               GAME_SEQ = #{gameSeq}
+           AND GAME_JOIN_PLAYER_SEQ = #{gameJoinPlayerSeq}
+           AND GAME_JOIN_TEAM_SEQ = #{gameJoinTeamSeq}
+           AND QUARTER_CODE = #{quarterCode}
+            </otherwise>
+        </choose>
+        </where>
+    </select>
+
+    <update id="modify" parameterType="com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords">
+        UPDATE QUARTER_PLAYER_RECORDS_SEQ
+           SET QUARTER_CODE = #{quarterCode}
+             , IN_GAME_YN = #{inGameYn}
+             , TRY_FREE_THROW = #{tryFreeThrow}
+             , FREE_THROW = #{freeThrow}
+             , TRY_TWO_POINT = #{tryTwoPoint}
+             , TWO_POINT = #{twoPoint}
+             , TRY_THREE_POINT = #{tryThreePoint}
+             , THREE_POINT = #{threePoint}
+             , REBOUND = #{rebound}
+             , STEAL = #{steal}
+             , BLOCK = #{block}
+             , TURNOVER = #{turnover}
+             , FOUL = #{foul}
+        <where>
+            <choose>
+                <when test="quarterPlayerRecordsSeq != null and !''.equals(quarterPlayerRecordsSeq)">
+               QUARTER_PLAYER_RECORDS_SEQ = #{quarterPlayerRecordsSeq}
+                </when>
+                <otherwise>
+               GAME_SEQ = #{gameSeq}
+           AND GAME_JOIN_PLAYER_SEQ = #{gameJoinPlayerSeq}
+           AND GAME_JOIN_TEAM_SEQ = #{gameJoinTeamSeq}
+           AND QUARTER_CODE = #{quarterCode}
+                </otherwise>
+            </choose>
+        </where>
+    </update>
+</mapper>

@@ -4,6 +4,7 @@ import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.mvc.dto.team.team.TeamDTO;
 import com.threeNerds.basketballDiary.mvc.game.controller.dto.GameJoinPlayerRegistrationDTO;
+import com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords;
 import com.threeNerds.basketballDiary.mvc.game.dto.*;
 import com.threeNerds.basketballDiary.mvc.game.service.GameJoinManagerService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameRecordManagerService;
@@ -15,13 +16,18 @@ import com.threeNerds.basketballDiary.mvc.service.UserTeamManagerService;
 import com.threeNerds.basketballDiary.session.SessionUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static com.threeNerds.basketballDiary.constant.HttpResponseConst.RESPONSE_CREATED;
 import static com.threeNerds.basketballDiary.constant.HttpResponseConst.RESPONSE_OK;
@@ -78,10 +84,11 @@ public class GameController {
      * @param gameSeq 게임Seq
      * @param quarterCode 쿼터코드; 01~04(1~4쿼터), 11(전반), 12(후반)
      * @result 특정 경기의 쿼터 기록을 저장·수정한다.
+     * @author 강창기
      */
     //@Auth(GRADE = USER) TODO
     @PutMapping("/{gameSeq}/quarters/{quarterCode}")
-    public ResponseEntity<?> test(
+    public ResponseEntity<?> modifyQuarterRecords(
         @PathVariable(name = "gameSeq") String gameSeq,
         @PathVariable(name = "quarterCode") String quarterCode,
         @RequestBody QuarterCreationDTO quarterCreationDTO
@@ -99,12 +106,48 @@ public class GameController {
         if(CollectionUtils.isEmpty(quarterCreationDTO.getPlayerRecordDTOList()))
             throw new CustomException(Error.NO_PARAMETER);
 
-        // 저장·수정 분기처리
-        SearchGameDTO searchDTO = new SearchGameDTO();
+        HomeAwayTeamRecordDTO homeAwayTeamRecordDTO = quarterCreationDTO.getHomeAwayTeamRecordDTO();
+        List<PlayerRecordDTO> playerRecordDTOList = quarterCreationDTO.getPlayerRecordDTOList();
 
+        // 쿼터별 선수기록 업데이트
+        for (PlayerRecordDTO playerRecordDTO : playerRecordDTOList) {
+            // QUARTER_PLAYER_RECORDS 업데이트
+            QuarterPlayerRecords quarterPlayerRecords = QuarterPlayerRecords.builder()
+                    .quarterPlayerRecordsSeq(playerRecordDTO.getQuarterPlayerRecordsSeq())
+                    .build();
+
+            // 기존 쿼터기록 조회
+            quarterPlayerRecords = gameRecordManagerService.findQuarterPlayerRecords(quarterPlayerRecords);
+
+            if(!ObjectUtils.isEmpty(quarterPlayerRecords)) {
+                BeanUtils.copyProperties(playerRecordDTO, quarterPlayerRecords, getNullPropertyNames(playerRecordDTO));
+                gameRecordManagerService.modifyQuarterPlayerRecords(quarterPlayerRecords);
+            } else {
+                // 신규생성 필요
+            }
+
+        }
+        
+        // 쿼터별 팀기록 업데이트
 
         return ResponseEntity.ok(null);
     }
+
+    // 추후 공통Util로 ...
+    public static String[] getNullPropertyNames (Object source) {
+        final BeanWrapper src = new BeanWrapperImpl(source);
+        java.beans.PropertyDescriptor[] pds = src.getPropertyDescriptors();
+
+        Set<String> emptyNames = new HashSet<>();
+        for(java.beans.PropertyDescriptor pd : pds) {
+            Object srcValue = src.getPropertyValue(pd.getName());
+            if (srcValue == null) emptyNames.add(pd.getName());
+        }
+
+        String[] result = new String[emptyNames.size()];
+        return emptyNames.toArray(result);
+    }
+
 
     /**
      * API043 게임쿼터별 선수기록조회
