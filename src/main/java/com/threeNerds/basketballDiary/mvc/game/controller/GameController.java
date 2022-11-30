@@ -270,6 +270,17 @@ public class GameController {
     }
 
     /**
+     * API061 경기참가선수 조회
+     */
+    @GetMapping("/{gameSeq}/players")
+    public ResponseEntity<?> getMathPlayers(
+            @RequestParam(name = "homeAwayCode") String homeAwayCode
+    ){
+
+        return RESPONSE_OK;
+    }
+
+    /**
      * API062 게임참가팀 확정
      */
     @PostMapping("/{gameSeq}/gameJoinTeams")

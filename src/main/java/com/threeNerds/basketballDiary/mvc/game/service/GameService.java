@@ -4,6 +4,7 @@ import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.mvc.game.domain.Game;
 import com.threeNerds.basketballDiary.mvc.game.dto.GameInfoDTO;
+import com.threeNerds.basketballDiary.mvc.game.dto.MatchPlayersInfoDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember;
 import com.threeNerds.basketballDiary.mvc.game.dto.GameCreationDTO;
 import com.threeNerds.basketballDiary.mvc.game.repository.GameRepository;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.swing.text.html.Option;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -64,5 +66,22 @@ public class GameService {
     public GameInfoDTO getGameInfo(Long gameSeq){
         return Optional.ofNullable(gameRepository.getGameInfo(gameSeq))
                 .orElseThrow(()->new CustomException(Error.NOT_FOUND_GAME));
+    }
+
+    /**
+     * 22.11.30
+     * 경기참가선수 조회
+     * @author 이성주
+     */
+    public List<MatchPlayersInfoDTO> getMatchPlayersInfo(){
+        // homeAwayCode가 없을때는 홈,어웨이 모두 조회
+        // homeAwayCode가 있을때는 해당하는 팀의 팀원 조회
+
+        // 쿼리는 homeAwayCode에 따라 동적으로 작성
+        // response 객체에 담는 gameSeq, homeAwayCode, teamSeq 는 어떻게 설정해줘야 되는지
+        // response 객체에 단일 데이터와 리스트형식의 데이터를 함께 보내야된다.
+
+        // MatchPlayerInfoDTO 에 대입
+       return null;
     }
 }
