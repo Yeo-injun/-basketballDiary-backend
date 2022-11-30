@@ -1,6 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.game.domain;
 
 import com.threeNerds.basketballDiary.constant.code.HomeAwayCode;
+import com.threeNerds.basketballDiary.constant.code.PlayerTypeCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.mvc.domain.Team;
@@ -26,23 +27,28 @@ public class GameJoinPlayer {
     private String positionCode;        // 포지션코드
     private String email;               // 이메일
 
-    public static GameJoinPlayer create(Long gameJoinTeamSeq, GameJoinPlayerDTO joinPlayerDTO)
+    public static GameJoinPlayer createUnauthPlayer(Long gameJoinTeamSeq, GameJoinPlayerDTO joinPlayerDTO)
     {
-        return GameJoinPlayer.builder()
-                .gameJoinTeamSeq(gameJoinTeamSeq)
-                .playerTypeCode(joinPlayerDTO.getPlayerTypeCode())
-                .name(joinPlayerDTO.getName())
-                .backNumber(joinPlayerDTO.getBackNumber())
-                .positionCode(joinPlayerDTO.getPositionCode())
-                .email(joinPlayerDTO.getEmail())
-                .build();
+        return create(gameJoinTeamSeq,
+                        PlayerTypeCode.UNAUTH_GUEST.getCode(),
+                        null,
+                        joinPlayerDTO.getName(),
+                        joinPlayerDTO.getBackNumber(),
+                        joinPlayerDTO.getPositionCode(),
+                        joinPlayerDTO.getEmail());
     }
 
-    public static GameJoinPlayer create(
+    public static GameJoinPlayer createAuthPlayer(
             Long gameJoinTeamSeq, String playerTypeCode,
             String backNumber, User user
     ) {
-        return create(gameJoinTeamSeq, playerTypeCode, user.getUserSeq(), user.getUserName(), backNumber, user.getPositionCode(), user.getEmail());
+        return create(gameJoinTeamSeq,
+                playerTypeCode,
+                user.getUserSeq(),
+                user.getUserName(),
+                backNumber,
+                user.getPositionCode(),
+                user.getEmail());
     }
 
     private static GameJoinPlayer create(

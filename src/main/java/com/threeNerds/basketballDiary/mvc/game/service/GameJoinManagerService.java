@@ -27,9 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -145,7 +143,7 @@ public class GameJoinManagerService {
 //        return gameJoinManagerRepository.findGameTeams(searchGameHomeAwayDTO);
     }
 
-    /** TODO 테스트 필요 22.11.22(화)
+    /**
      * 게임참가선수 등록
      **/
     public void registerGameJoinPlayers(GameJoinPlayerRegistrationDTO playerRegistrationDTO)
@@ -153,30 +151,43 @@ public class GameJoinManagerService {
         Long gameJoinTeamSeq = playerRegistrationDTO.getGameJoinTeamSeq();
 
         /** 게임참가선수 데이터 존재여부 확인 - 기존 데이터 존재시 삭제 */
-        List<GameJoinPlayer> joinPlayers = gameJoinPlayerRepository.findPlayers(gameJoinTeamSeq);
-        boolean hasJoinPlayers = !joinPlayers.isEmpty();
+        List<GameJoinPlayer> registeredJoinPlayers = gameJoinPlayerRepository.findPlayers(gameJoinTeamSeq);
+        boolean hasJoinPlayers = !registeredJoinPlayers.isEmpty();
         if (hasJoinPlayers) {
             gameJoinPlayerRepository.deletePlayers(gameJoinTeamSeq);
         }
 
-        /** 게임참가선수 데이터 저장 - 선수유형에 따라서 처리하기 */
+        /** 중복된 등번호가 있는지 체크하기 */
         List<GameJoinPlayerDTO> gameJoinPlayerDTOList = playerRegistrationDTO.getGameJoinPlayerDTOList();
+        Set<String> backNumberSet = new HashSet<>();
+        for (GameJoinPlayerDTO player : gameJoinPlayerDTOList)
+        {
+            String backNumber = player.getBackNumber();
+            boolean isDuplicatedBackNumber = !backNumberSet.add(backNumber);
+            if (isDuplicatedBackNumber) {
+                throw new CustomException(Error.DUPLICATE_BACK_NUMBER);
+            }
+        }
+        // TODO 중복된 회원이 있는지 체크하기 - userSeq의 중복이 있는지 stream으로 확인
+
+        /** 게임참가선수 데이터 저장 - 선수유형에 따라서 처리하기 */
         for (GameJoinPlayerDTO joinPlayerDTO : gameJoinPlayerDTOList)
         {
             String playerTypeCode = joinPlayerDTO.getPlayerTypeCode();
             boolean isUnauthGuest = PlayerTypeCode.UNAUTH_GUEST.getCode().equals(playerTypeCode);
+            /** 회원이 아닌 선수는 입력값을 직접 DB에 insert */
             if (isUnauthGuest)
             {
-                GameJoinPlayer unauthGuest = GameJoinPlayer.create(gameJoinTeamSeq, joinPlayerDTO);
+                GameJoinPlayer unauthGuest = GameJoinPlayer.createUnauthPlayer(gameJoinTeamSeq, joinPlayerDTO);
                 gameJoinPlayerRepository.save(unauthGuest);
                 continue;
             }
 
+            /** 회원인 선수는 User테이블에서 데이터를 조회하여 insert */
             String backNumber = joinPlayerDTO.getBackNumber();
             User user = userRepository.findUser(joinPlayerDTO.getUserSeq());
-            GameJoinPlayer authJoinPlayer = GameJoinPlayer.create(gameJoinTeamSeq, playerTypeCode, backNumber, user);
+            GameJoinPlayer authJoinPlayer = GameJoinPlayer.createAuthPlayer(gameJoinTeamSeq, playerTypeCode, backNumber, user);
             gameJoinPlayerRepository.save(authJoinPlayer);
-
         }
     }
 }
