@@ -274,9 +274,10 @@ public class GameController {
      */
     @GetMapping("/{gameSeq}/players")
     public ResponseEntity<?> getMathPlayers(
+            @PathVariable(name = "gameSeq")Long gameSeq,
             @RequestParam(name = "homeAwayCode") String homeAwayCode
     ){
-
+        gameService.getMatchPlayersInfo(gameSeq,homeAwayCode);
         return RESPONSE_OK;
     }
 

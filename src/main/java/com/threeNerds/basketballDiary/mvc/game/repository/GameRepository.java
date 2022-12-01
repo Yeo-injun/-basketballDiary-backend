@@ -2,10 +2,13 @@ package com.threeNerds.basketballDiary.mvc.game.repository;
 
 import com.threeNerds.basketballDiary.mvc.game.domain.Game;
 import com.threeNerds.basketballDiary.mvc.game.dto.GameInfoDTO;
+import com.threeNerds.basketballDiary.mvc.game.dto.PlayerInfoDTO;
+import com.threeNerds.basketballDiary.mvc.game.dto.SearchMatchPlayersDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameCondDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameRecordDTO;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Mapper
@@ -20,4 +23,6 @@ public interface GameRepository {
     Long saveGame(Game newGame);
 
     GameInfoDTO getGameInfo(Long gameSeq);
+
+    ArrayList<PlayerInfoDTO> getMatchPlayers(SearchMatchPlayersDTO matchPlayersDTO);
 }

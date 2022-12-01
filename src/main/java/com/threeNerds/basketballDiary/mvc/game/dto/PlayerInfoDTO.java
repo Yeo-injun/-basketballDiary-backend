@@ -15,5 +15,8 @@ public class PlayerInfoDTO {
 
     private String backNumber;
 
-    private String playerTypeCode;
+    private Long teamSeq;
+
+    private Long gameSeq;
+
 }
