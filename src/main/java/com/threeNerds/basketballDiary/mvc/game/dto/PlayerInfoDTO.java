@@ -19,4 +19,5 @@ public class PlayerInfoDTO {
 
     private Long gameSeq;
 
+    private String homeAwayCode;
 }

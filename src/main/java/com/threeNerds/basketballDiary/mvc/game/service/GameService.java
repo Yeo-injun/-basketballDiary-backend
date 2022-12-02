@@ -13,8 +13,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.swing.text.html.Option;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -82,14 +84,28 @@ public class GameService {
                                                     .gameSeq(gameSeq)
                                                     .homeAwayCode(homeAwayCode);
 
-        List<PlayerInfoDTO> matchPlayers = gameRepository.getMatchPlayers(matchPlayersDTO);
+        List<PlayerInfoDTO> playersInfo = Optional.ofNullable(gameRepository.getMatchPlayers(matchPlayersDTO))
+                .orElseThrow(()->new CustomException(Error.TEAM_NOT_FOUND));
 
-        Long retGameSeq = matchPlayers.get(0).getGameSeq();
-        Long retTeamSeq = matchPlayers.get(0).getTeamSeq();
+        List<PlayerInfoDTO> homePlayers = playersInfo.stream()
+                .filter(v -> v.getHomeAwayCode().equals("01"))
+                .collect(Collectors.toList());
 
-//        MatchPlayersInfoDTO matchPlayersInfoDTO = new MatchPlayersInfoDTO()
-//                .gameSeq()
+        List<PlayerInfoDTO> awayPlayers = playersInfo.stream()
+                .filter(v -> v.getHomeAwayCode().equals("02"))
+                .collect(Collectors.toList());
+
+        List<MatchPlayersInfoDTO> matchPlayers = new ArrayList<>();
+
+        if(homePlayers.size()>0) {
+            Long teamSeq = homePlayers.get(0).getTeamSeq();
+            matchPlayers.add(new MatchPlayersInfoDTO(gameSeq,teamSeq,"01",homePlayers));
+        }
+        if(awayPlayers.size()>0){
+            Long teamSeq = awayPlayers.get(0).getTeamSeq();
+            matchPlayers.add(new MatchPlayersInfoDTO(gameSeq,teamSeq,"02",awayPlayers));
+        }
         // MatchPlayerInfoDTO 에 대입
-       return null;
+       return matchPlayers;
     }
 }

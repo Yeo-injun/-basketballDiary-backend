@@ -17,6 +17,14 @@ public class MatchPlayersInfoDTO {
 
     private List<PlayerInfoDTO> playersInfo;
 
+    public MatchPlayersInfoDTO(Long gameSeq, Long teamSeq, String homeAwayCode, List<PlayerInfoDTO> playersInfo) {
+        this.gameSeq = gameSeq;
+        this.teamSeq = teamSeq;
+        this.homeAwayCode = homeAwayCode;
+        this.playersInfo = playersInfo.stream()
+                .collect(Collectors.toList());
+    }
+
     public MatchPlayersInfoDTO gameSeq(Long gameSeq){
         this.gameSeq = gameSeq;
         return this;

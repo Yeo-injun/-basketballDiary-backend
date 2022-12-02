@@ -277,8 +277,8 @@ public class GameController {
             @PathVariable(name = "gameSeq")Long gameSeq,
             @RequestParam(name = "homeAwayCode") String homeAwayCode
     ){
-        gameService.getMatchPlayersInfo(gameSeq,homeAwayCode);
-        return RESPONSE_OK;
+        List<MatchPlayersInfoDTO> matchPlayersInfo = gameService.getMatchPlayersInfo(gameSeq, homeAwayCode);
+        return ResponseEntity.ok(matchPlayersInfo);
     }
 
     /**

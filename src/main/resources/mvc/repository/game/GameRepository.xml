@@ -66,6 +66,8 @@
                 ON T1.GAME_JOIN_TEAM_SEQ = T2.GAME_JOIN_TEAM_SEQ
         WHERE 1=1
             AND T1.GAME_SEQ = #{gameSeq}
-            AND T1.HOME_AWAY_CODE = #{homeAwayCode}
+          <if test='homeAwayCode != null'>
+              AND T1.HOME_AWAY_CODE = #{homeAwayCode}
+          </if>
     </select>
 </mapper>
