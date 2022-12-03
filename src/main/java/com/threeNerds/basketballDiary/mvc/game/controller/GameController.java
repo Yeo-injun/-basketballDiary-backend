@@ -18,17 +18,17 @@ import com.threeNerds.basketballDiary.utils.CommonUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.BeanWrapper;
-import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashSet;
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
-import java.util.Set;
 
 import static com.threeNerds.basketballDiary.constant.HttpResponseConst.RESPONSE_CREATED;
 import static com.threeNerds.basketballDiary.constant.HttpResponseConst.RESPONSE_OK;
@@ -45,6 +45,7 @@ import static com.threeNerds.basketballDiary.utils.SessionUtil.LOGIN_USER;
  */
 
 @Slf4j
+@Validated
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/games")
@@ -274,7 +275,7 @@ public class GameController {
      */
     @GetMapping("/{gameSeq}/players")
     public ResponseEntity<?> getMathPlayers(
-            @PathVariable(name = "gameSeq")Long gameSeq,
+            @PathVariable(name = "gameSeq") @Min(1) Long gameSeq,
             @RequestParam(name = "homeAwayCode") String homeAwayCode
     ){
         List<MatchPlayersInfoDTO> matchPlayersInfo = gameService.getMatchPlayersInfo(gameSeq, homeAwayCode);
