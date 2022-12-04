@@ -20,6 +20,7 @@ public class HomeAwayTeamRecordDTO {
     /**
      * 쿼터별 팀 기록을 조회할 경우 사용.
      */
+    private Long quarterTeamRecordsSeq;
     // 쿼터코드; 01~04(1~4쿼터), 11(전반), 12(후반)
     private String quarterCode;
     // 쿼터시간(경기시간)
@@ -60,6 +61,11 @@ public class HomeAwayTeamRecordDTO {
 
     public HomeAwayTeamRecordDTO gameEndTime(String gameEndTime) {
         this.gameEndTime = gameEndTime;
+        return this;
+    }
+
+    public HomeAwayTeamRecordDTO quarterTeamRecordsSeq(Long quarterTeamRecordsSeq) {
+        this.quarterTeamRecordsSeq = quarterTeamRecordsSeq;
         return this;
     }
 

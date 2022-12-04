@@ -23,6 +23,98 @@
           AND GAME_JOIN_TEAM_SEQ  = #{gameJoinTeamSeq}
     </select>
 
+    <select id="find" resultType="com.threeNerds.basketballDiary.mvc.game.domain.QuarterTeamRecords">
+        SELECT QUARTER_TEAM_RECORDS_SEQ
+             , GAME_SEQ
+             , GAME_JOIN_TEAM_SEQ
+             , QUARTER_CODE
+             , QUARTER_TIME
+             , FREE_THROW
+             , TWO_POINT
+             , THREE_POINT
+             , ASSIST
+             , REBOUND
+             , STEAL
+             , BLOCK
+             , TURNOVER
+             , FOUL
+        FROM QUARTER_TEAM_RECORDS
+        <where>
+        <choose>
+            <when test='quarterTeamRecordsSeq != null and !"".equals(quarterTeamRecordsSeq)'>
+             QUARTER_TEAM_RECORDS_SEQ = #{quarterTeamRecordsSeq}
+            </when>
+            <otherwise>
+             GAME_SEQ = #{gameSeq}
+         AND GAME_JOIN_TEAM_SEQ = #{gameJoinTeamSeq}
+         AND QUARTER_CODE = #{quarterCode}
+            </otherwise>
+        </choose>
+        </where>
+    </select>
 
+    <update id="modify" parameterType="com.threeNerds.basketballDiary.mvc.game.domain.QuarterTeamRecords">
+        UPDATE QUARTER_TEAM_RECORDS
+           SET QUARTER_CODE = #{quarterCode}
+             , QUARTER_TIME = #{quarterTime}
+             , FREE_THROW = #{freeThrow}
+             , TWO_POINT = #{twoPoint}
+             , THREE_POINT = #{threePoint}
+             , ASSIST = #{assist}
+             , REBOUND = #{rebound}
+             , STEAL = #{steal}
+             ,  BLOCK = #{block}
+             , TURNOVER = #{turnover}
+             , FOUL = #{foul}
+        <where>
+        <choose>
+            <when test='quarterTeamRecordsSeq != null and !"".equals(quarterTeamRecordsSeq)'>
+               QUARTER_TEAM_RECORDS_SEQ = #{quarterTeamRecordsSeq}
+            </when>
+            <otherwise>
+               GAME_SEQ = #{gameSeq}
+           AND GAME_JOIN_TEAM_SEQ = #{gameJoinTeamSeq}
+           AND QUARTER_CODE = #{quarterCode}
+            </otherwise>
+        </choose>
+        </where>
+    </update>
 
+    <insert id="create" parameterType="com.threeNerds.basketballDiary.mvc.game.domain.QuarterTeamRecords">
+        <selectKey keyProperty="quarterTeamRecordsSeq" order="AFTER" resultType="java.lang.Long">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+            INSERT INTO
+                    QUARTER_TEAM_RECORDS
+            (
+              GAME_SEQ
+            , GAME_JOIN_TEAM_SEQ
+            , QUARTER_CODE
+            , QUARTER_TIME
+            , FREE_THROW
+            , TWO_POINT
+            , THREE_POINT
+            , ASSIST
+            , REBOUND
+            , STEAL
+            , BLOCK
+            , TURNOVER
+            , FOUL
+            ) VALUES
+            (
+              #{gameSeq}
+            , #{gameJoinTeamSeq}
+            , #{quarterCode}
+            , #{quarterTime}
+            , #{freeThrow}
+            , #{twoPoint}
+            , #{threePoint}
+            , #{assist}
+            , #{rebound}
+            , #{steal}
+            , #{block}
+            , #{turnover}
+            , #{foul}
+            )
+    </insert>
 </mapper>
