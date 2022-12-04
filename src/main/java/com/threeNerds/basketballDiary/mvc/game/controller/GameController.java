@@ -1,9 +1,12 @@
 package com.threeNerds.basketballDiary.mvc.game.controller;
 
+import com.threeNerds.basketballDiary.constant.code.HomeAwayCode;
+import com.threeNerds.basketballDiary.constant.code.QuarterCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.mvc.dto.team.team.TeamDTO;
 import com.threeNerds.basketballDiary.mvc.game.controller.dto.GameJoinPlayerRegistrationDTO;
+import com.threeNerds.basketballDiary.mvc.game.controller.dto.QuarterEntryDTO;
 import com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords;
 import com.threeNerds.basketballDiary.mvc.game.domain.QuarterTeamRecords;
 import com.threeNerds.basketballDiary.mvc.game.dto.*;
@@ -16,6 +19,7 @@ import com.threeNerds.basketballDiary.mvc.service.UserService;
 import com.threeNerds.basketballDiary.mvc.service.UserTeamManagerService;
 import com.threeNerds.basketballDiary.session.SessionUser;
 import com.threeNerds.basketballDiary.utils.CommonUtil;
+import com.threeNerds.basketballDiary.utils.ValidateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -26,9 +30,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.constraints.Digits;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 import static com.threeNerds.basketballDiary.constant.HttpResponseConst.RESPONSE_CREATED;
@@ -285,6 +287,27 @@ public class GameController {
             @PathVariable(name = "gameSeq") Long gameSeq
     ){
         gameService.DeleteGame(gameSeq);
+        return RESPONSE_OK;
+    }
+
+    /**
+     * API060 쿼터 엔트리 정보 저장
+     */
+    @PostMapping("/{gameSeq}/quarters/{quarterCode}/homeAway/{homeAwayCode}/entry")
+    public ResponseEntity<?> saveQuarterEntryInfo(
+
+            @PathVariable(name = "gameSeq") Long gameSeq,
+            @PathVariable(name = "quarterCode") String quarterCode,
+            @PathVariable(name = "homeAwayCode") String homeAwayCode,
+            @RequestBody List<QuarterEntryDTO> quarterEntryList
+    ) {
+        // TODO @Valid 어노테이션을 활용하여 제약사항 걸기
+        Object[] pathVariables = { gameSeq, quarterCode, homeAwayCode };
+        ValidateUtil.check(pathVariables);
+
+        gameJoinManagerService.saveQuarterEntryInfo(quarterEntryList);
+
+
         return RESPONSE_OK;
     }
 
