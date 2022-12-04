@@ -56,7 +56,7 @@
         SELECT T2.USER_SEQ
              , T2.NAME
              , T2.EMAIL
-             , T2.POSTION_CODE
+             , T2.POSITION_CODE
              , T2.BACK_NUMBER
              , T1.TEAM_SEQ
              , T1.GAME_SEQ
