@@ -9,4 +9,6 @@ public interface QuarterPlayerRecordsRepository {
     QuarterPlayerRecords find(QuarterPlayerRecords quarterPlayerRecords);
 
     void modify(QuarterPlayerRecords quarterPlayerRecords);
+
+    Long create(QuarterPlayerRecords quarterPlayerRecords);
 }

@@ -8,6 +8,7 @@ import com.threeNerds.basketballDiary.mvc.dto.team.team.TeamDTO;
 import com.threeNerds.basketballDiary.mvc.game.controller.dto.GameJoinPlayerRegistrationDTO;
 import com.threeNerds.basketballDiary.mvc.game.controller.dto.QuarterEntryDTO;
 import com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords;
+import com.threeNerds.basketballDiary.mvc.game.domain.QuarterTeamRecords;
 import com.threeNerds.basketballDiary.mvc.game.dto.*;
 import com.threeNerds.basketballDiary.mvc.game.service.GameJoinManagerService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameRecordManagerService;
@@ -92,7 +93,7 @@ public class GameController {
      */
     //@Auth(GRADE = USER) TODO
     @PutMapping("/{gameSeq}/quarters/{quarterCode}")
-    public ResponseEntity<?> modifyQuarterRecords(
+    public ResponseEntity<?> processQuarterRecords(
         @PathVariable(name = "gameSeq") String gameSeq,
         @PathVariable(name = "quarterCode") String quarterCode,
         @RequestBody QuarterCreationDTO quarterCreationDTO
@@ -128,11 +129,26 @@ public class GameController {
                 gameRecordManagerService.modifyQuarterPlayerRecords(quarterPlayerRecords);
             } else {
                 // 신규생성 필요
+                quarterPlayerRecords = new QuarterPlayerRecords();
+                BeanUtils.copyProperties(playerRecordDTO, quarterPlayerRecords);
+                Long quarterPlayerRecordsSeq = gameRecordManagerService.createQuarterPlayerRecords(quarterPlayerRecords);
             }
-
         }
         
         // 쿼터별 팀기록 업데이트
+        QuarterTeamRecords quarterTeamRecords = QuarterTeamRecords.builder()
+                .quarterTeamRecordsSeq(homeAwayTeamRecordDTO.getQuarterTeamRecordsSeq())
+                .build();
+
+        quarterTeamRecords = gameRecordManagerService.findQuarterTeamRecords(quarterTeamRecords);
+        if(!ObjectUtils.isEmpty(quarterTeamRecords)) {
+            BeanUtils.copyProperties(homeAwayTeamRecordDTO, quarterTeamRecords, CommonUtil.getNullPropertyNames(homeAwayTeamRecordDTO));
+            gameRecordManagerService.modifyQuarterTeamRecords(quarterTeamRecords);
+        } else {
+            quarterTeamRecords = new QuarterTeamRecords();
+            BeanUtils.copyProperties(homeAwayTeamRecordDTO, quarterTeamRecords);
+            Long quarterTeamRecordsSeq = gameRecordManagerService.createQuarterTeamRecords(quarterTeamRecords);
+        }
 
         return ResponseEntity.ok(null);
     }
@@ -143,6 +159,7 @@ public class GameController {
      * @param quarterCode 쿼터코드; 01~04(1~4쿼터), 11(전반), 12(후반)
      * @param homeAwayCode 홈·어웨이코드; 01(홈),02(어웨이)
      * @result 특정쿼터의 선수별 기록조회
+     * @author 강창기
      */
     //@Auth(GRADE = USER) TODO
     @GetMapping("/{gameSeq}/quarters/{quarterCode}/players/homeAway/{homeAwayCode}")
@@ -181,6 +198,7 @@ public class GameController {
      * @param gameSeq 게임Seq
      * @param quarterCode 쿼터코드; 01~04(1~4쿼터), 11(전반), 12(후반)
      * @result 특정쿼터의 선수별 기록조회
+     * @author 강창기
      */
     //@Auth(GRADE = USER) TODO
     @GetMapping("/{gameSeq}/quarterRecords/quaterCode/{quaterCode}")
