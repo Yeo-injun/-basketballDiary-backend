@@ -277,14 +277,17 @@ public class GameController {
      */
     @PostMapping("/{gameSeq}/quarters/{quarterCode}/homeAway/{homeAwayCode}/entry")
     public ResponseEntity<?> saveQuarterEntryInfo(
+
             @PathVariable(name = "gameSeq") Long gameSeq,
             @PathVariable(name = "quarterCode") String quarterCode,
             @PathVariable(name = "homeAwayCode") String homeAwayCode,
             @RequestBody List<QuarterEntryDTO> quarterEntryList
     ) {
+        // TODO @Valid 어노테이션을 활용하여 제약사항 걸기
         Object[] pathVariables = { gameSeq, quarterCode, homeAwayCode };
         ValidateUtil.check(pathVariables);
 
+        gameJoinManagerService.saveQuarterEntryInfo(quarterEntryList);
 
 
         return RESPONSE_OK;

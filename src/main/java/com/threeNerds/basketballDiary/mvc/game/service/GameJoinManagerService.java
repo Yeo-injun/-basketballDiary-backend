@@ -9,6 +9,7 @@ import com.threeNerds.basketballDiary.mvc.domain.Team;
 import com.threeNerds.basketballDiary.mvc.domain.User;
 import com.threeNerds.basketballDiary.mvc.dto.team.team.TeamDTO;
 import com.threeNerds.basketballDiary.mvc.game.controller.dto.GameJoinPlayerRegistrationDTO;
+import com.threeNerds.basketballDiary.mvc.game.controller.dto.QuarterEntryDTO;
 import com.threeNerds.basketballDiary.mvc.game.domain.GameJoinPlayer;
 import com.threeNerds.basketballDiary.mvc.game.domain.GameJoinTeam;
 import com.threeNerds.basketballDiary.mvc.game.dto.GameJoinPlayerDTO;
@@ -189,5 +190,19 @@ public class GameJoinManagerService {
             GameJoinPlayer authJoinPlayer = GameJoinPlayer.createAuthPlayer(gameJoinTeamSeq, playerTypeCode, backNumber, user);
             gameJoinPlayerRepository.save(authJoinPlayer);
         }
+    }
+
+    /**
+     * 쿼터 엔트리 목록 저장
+     * @param quarterEntryList
+     */
+    public void saveQuarterEntryInfo(List<QuarterEntryDTO> quarterEntryList)
+    {
+        // TODO 쿼터 엔트리 길이 체크 5명이 되는지
+        // TODO 기존에 엔트리가 등록되어 있는지 조회
+        //  (QUARTER_PLAYER_RECORDS 테이블에 row가 5명이상인지 체크)
+        //      - QUARTER_PLAYER_RECORDS에 존재하지 않으면 quarterEntry로 초기화 insert
+        //      - 존재하면 해당 게임의 해당팀의 모든 선수들의 InGameYn을 N로 일괄 update
+        //      - 그리고 quarterEntry에 있는 선수들의 InGameYn(Y)로 udpate후 경기스탯 update
     }
 }
