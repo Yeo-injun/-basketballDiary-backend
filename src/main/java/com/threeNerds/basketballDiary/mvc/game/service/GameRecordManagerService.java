@@ -40,7 +40,7 @@ public class GameRecordManagerService {
     private final GameRepository gameRepository;
     private final GameJoinTeamRepository gameJoinTeamRepository;
     private final QuarterTeamRecordsRepository quarterTeamRecordsRepository;
-    private QuarterPlayerRecordsRepository quarterPlayerRecordsRepository;
+    private final QuarterPlayerRecordsRepository quarterPlayerRecordsRepository;
     private final TeamMemberRepository teamMemberRepository;
 
     private final GameRecordManagerRepository gameRecordManagerRepository;
@@ -49,6 +49,48 @@ public class GameRecordManagerService {
     private final String QUARTER_2ND_CODE = QuarterCode.SECOND.getCode();
     private final String QUARTER_3RD_CODE = QuarterCode.THIRD.getCode();
     private final String QUARTER_4TH_CODE = QuarterCode.FOURTH.getCode();
+
+
+    /**
+     * 22.12.04
+     * 쿼터별 팀기록 조회(단건)
+     * @param quarterTeamRecords 쿼터별팀기록 DTO
+     * @return 쿼터별팀기록 DTO
+     * @author 강창기
+     */
+    public QuarterTeamRecords findQuarterTeamRecords(QuarterTeamRecords quarterTeamRecords) {
+        if(ObjectUtils.isEmpty(quarterTeamRecords))
+            throw new CustomException(Error.NO_PARAMETER);
+
+        return quarterTeamRecordsRepository.find(quarterTeamRecords);
+    }
+
+    /**
+     * 22.12.04
+     * 쿼터별 선수기록 생성
+     * @param quarterTeamRecords 쿼터별팀기록 DTO
+     * @return QuarterPlayerRecordsSeq
+     * @author 강창기
+     */
+    public Long createQuarterTeamRecords(QuarterTeamRecords quarterTeamRecords) {
+        if(ObjectUtils.isEmpty(quarterTeamRecords))
+            throw new CustomException(Error.NO_PARAMETER);
+
+        return quarterTeamRecordsRepository.create(quarterTeamRecords);
+    }
+
+    /**
+     * 22.12.04
+     * 쿼터별 선수기록 수정
+     * @param quarterTeamRecords 쿼터별팀기록 DTO
+     * @author 강창기
+     */
+    public void modifyQuarterTeamRecords(QuarterTeamRecords quarterTeamRecords) {
+        if(ObjectUtils.isEmpty(quarterTeamRecords))
+            throw new CustomException(Error.NO_PARAMETER);
+
+        quarterTeamRecordsRepository.modify(quarterTeamRecords);
+    }
 
     /**
      * 22.11.25
@@ -61,6 +103,20 @@ public class GameRecordManagerService {
             throw new CustomException(Error.NO_PARAMETER);
 
         return quarterPlayerRecordsRepository.find(quarterPlayerRecords);
+    }
+
+    /**
+     * 22.12.03
+     * 쿼터별 선수기록 생성
+     * @param quarterPlayerRecords 쿼터별선수기록 DTO
+     * @return QuarterPlayerRecordsSeq
+     * @author 강창기
+     */
+    public Long createQuarterPlayerRecords(QuarterPlayerRecords quarterPlayerRecords) {
+        if(ObjectUtils.isEmpty(quarterPlayerRecords))
+            throw new CustomException(Error.NO_PARAMETER);
+
+        return quarterPlayerRecordsRepository.create(quarterPlayerRecords);
     }
 
     /**
