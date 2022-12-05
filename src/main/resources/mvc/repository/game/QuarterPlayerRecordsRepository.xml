@@ -66,6 +66,22 @@
         </where>
     </update>
 
+    <update id="modifyInGameYn" parameterType="com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords">
+        /* QuarterPlayerRecordsRepository.modifyInGameYn */
+        UPDATE QUARTER_PLAYER_RECORDS
+           SET IN_GAME_YN = #{inGameYn}
+         WHERE 1=1
+        <choose>
+            <when test='gameJoinPlayerSeq != null and !"".equals(gameJoinPlayerSeq)'>
+           AND GAME_JOIN_PLAYER_SEQ = #{gameJoinPlayerSeq}
+            </when>
+            <otherwise>
+           AND GAME_JOIN_TEAM_SEQ = #{gameJoinTeamSeq}
+           AND QUARTER_CODE       = #{quarterCode}
+            </otherwise>
+        </choose>
+    </update>
+
     <insert id="create" parameterType="com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords">
         <selectKey keyProperty="quarterPlayerRecordsSeq" order="AFTER" resultType="java.lang.Long">
         SELECT LAST_INSERT_ID()
@@ -90,23 +106,6 @@
         , BLOCK
         , TURNOVER
         , FOUL
-        , GAME_SEQ
-        , GAME_JOIN_PLAYER_SEQ
-        , GAME_JOIN_TEAM_SEQ
-        , QUARTER_CODE
-        , IN_GAME_YN
-        , TRY_FREE_THROW
-        , FREE_THROW
-        , TRY_TWO_POINT
-        , TWO_POINT
-        , TRY_THREE_POINT
-        , THREE_POINT
-        , ASSIST
-        , REBOUND
-        , STEAL
-        , BLOCK
-        , TURNOVER
-        , FOUL
         ) VALUES
         (
           #{gameSeq}
@@ -114,35 +113,18 @@
         , #{gameJoinTeamSeq}
         , #{quarterCode}
         , #{inGameYn}
-        , #{tryFreeThrow}
-        , #{freeThrow}
-        , #{tryTwoPoint}
-        , #{twoPoint}
-        , #{tryThreePoint}
-        , #{threePoint}
-        , #{assist}
-        , #{rebound}
-        , #{steal}
-        , #{block}
-        , #{turnover}
-        , #{foul}
-        , #{gameSeq}
-        , #{gameJoinPlayerSeq}
-        , #{gameJoinTeamSeq}
-        , #{quarterCode}
-        , #{inGameYn}
-        , #{tryFreeThrow}
-        , #{freeThrow}
-        , #{tryTwoPoint}
-        , #{twoPoint}
-        , #{tryThreePoint}
-        , #{threePoint}
-        , #{assist}
-        , #{rebound}
-        , #{steal}
-        , #{block}
-        , #{turnover}
-        , #{foul}
+        , NVL(#{tryFreeThrow}, 0)
+        , NVL(#{freeThrow}, 0)
+        , NVL(#{tryTwoPoint}, 0)
+        , NVL(#{twoPoint}, 0)
+        , NVL(#{tryThreePoint}, 0)
+        , NVL(#{threePoint}, 0)
+        , NVL(#{assist}, 0)
+        , NVL(#{rebound}, 0)
+        , NVL(#{steal}, 0)
+        , NVL(#{block}, 0)
+        , NVL(#{turnover}, 0)
+        , NVL(#{foul}, 0)
         )
     </insert>
 </mapper>

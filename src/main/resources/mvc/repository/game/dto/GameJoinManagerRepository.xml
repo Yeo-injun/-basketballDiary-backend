@@ -3,6 +3,30 @@
 
 <mapper namespace="com.threeNerds.basketballDiary.mvc.game.repository.dto.GameJoinManagerRepository">
 
+    <select id="findEntryList" resultType="com.threeNerds.basketballDiary.mvc.game.dto.QuarterPlayerRecordDTO">
+        /* GameJoinManagerRepository.findEntryList */
+        SELECT QPR.QUARTER_PLAYER_RECORDS_SEQ
+             , QPR.GAME_SEQ
+             , QPR.QUARTER_CODE
+             , QPR.GAME_JOIN_PLAYER_SEQ
+             , QPR.IN_GAME_YN
+             , GJP.PLAYER_TYPE_CODE
+             , GJP.NAME
+             , GJP.BACK_NUMBER
+             , GJP.POSITION_CODE
+        /* 속성 계속 추가 예정 */
+          FROM GAME G
+         INNER JOIN QUARTER_PLAYER_RECORDS QPR
+            ON G.GAME_SEQ = QPR.GAME_SEQ
+         INNER JOIN GAME_JOIN_PLAYER GJP
+            ON QPR.GAME_JOIN_PLAYER_SEQ = GJP.GAME_JOIN_PLAYER_SEQ
+         WHERE 1=1
+           AND G.GAME_SEQ       = #{gameSeq}
+           AND G.HOME_AWAY_CODE = #{homeAwayCode}
+           AND QPR.QUARTER_CODE = #{quarterCode}
+           AND QPR.IN_GAME_YN   = 'Y'
+    </select>
+
     <select id="findGameCreatorTeam" resultType="com.threeNerds.basketballDiary.mvc.domain.Team">
         /* GameJoinManagerRepository.findGameCreatorTeam */
         SELECT G.GAME_SEQ

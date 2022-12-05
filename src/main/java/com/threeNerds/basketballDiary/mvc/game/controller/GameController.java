@@ -321,7 +321,13 @@ public class GameController {
         Object[] pathVariables = { gameSeq, quarterCode, homeAwayCode };
         ValidateUtil.check(pathVariables);
 
-        gameJoinManagerService.saveQuarterEntryInfo(quarterEntryList);
+        QuarterEntryInfoDTO qeiDTO = new QuarterEntryInfoDTO()
+                                        .gameSeq(gameSeq)
+                                        .quarterCode(quarterCode)
+                                        .homeAwayCode(homeAwayCode)
+                                        .quarterEntryList(quarterEntryList);
+
+        gameJoinManagerService.saveQuarterEntryInfo(qeiDTO);
 
 
         return RESPONSE_OK;

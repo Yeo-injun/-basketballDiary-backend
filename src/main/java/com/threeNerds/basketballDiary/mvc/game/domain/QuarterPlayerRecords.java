@@ -38,7 +38,7 @@ public class QuarterPlayerRecords {
     private Long gameJoinPlayerSeq;
     private Long gameJoinTeamSeq;
     private String quarterCode;
-    private Integer inGameYn;
+    private String inGameYn;
     private Integer tryFreeThrow;
     private Integer freeThrow;
     private Integer tryTwoPoint;

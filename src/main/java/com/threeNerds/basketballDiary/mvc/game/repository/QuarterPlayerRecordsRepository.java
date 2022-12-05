@@ -8,7 +8,9 @@ public interface QuarterPlayerRecordsRepository {
 
     QuarterPlayerRecords find(QuarterPlayerRecords quarterPlayerRecords);
 
-    void modify(QuarterPlayerRecords quarterPlayerRecords);
+    int modify(QuarterPlayerRecords quarterPlayerRecords);
+    int modifyInGameYn(QuarterPlayerRecords modParamForInGameYn);
 
     Long create(QuarterPlayerRecords quarterPlayerRecords);
+
 }
