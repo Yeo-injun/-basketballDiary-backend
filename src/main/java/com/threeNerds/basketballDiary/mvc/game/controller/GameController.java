@@ -1,7 +1,5 @@
 package com.threeNerds.basketballDiary.mvc.game.controller;
 
-import com.threeNerds.basketballDiary.constant.code.HomeAwayCode;
-import com.threeNerds.basketballDiary.constant.code.QuarterCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.mvc.dto.team.team.TeamDTO;
@@ -151,6 +149,24 @@ public class GameController {
         }
 
         return ResponseEntity.ok(null);
+    }
+
+    /**
+     * API041 게임쿼터 삭제
+     * @param gameSeq
+     * @param quaterCode
+     * @return
+     */
+    @DeleteMapping("/{gameSeq}/quaters/{quaterCode}")
+    public ResponseEntity<?> deleteQuter(
+            @PathVariable("gameSeq") Long gameSeq,
+            @PathVariable("quaterCode") String quaterCode
+    ){
+        QuarterCodeDTO quarterCodeDTO = new QuarterCodeDTO()
+                        .gameSeq(gameSeq)
+                        .quaterCodeDTO(quaterCode);
+        gameRecordManagerService.deleteQuater(quarterCodeDTO);
+        return RESPONSE_OK;
     }
 
     /**
