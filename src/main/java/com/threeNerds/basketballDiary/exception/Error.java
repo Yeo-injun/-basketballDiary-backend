@@ -13,6 +13,7 @@ public enum Error {
     /** 400 BAD_REQUEST : 잘못된 요청 */
     NO_PARAMETER(BAD_REQUEST, "'{0}' 파라미터가 없습니다."),
     INVALID_PARAMETER(BAD_REQUEST, "유효하지 않은 파라미터입니다."),
+    INSUFFICIENT_PLAYERS_ON_ENTRY(BAD_REQUEST, "엔트리에 등록할 선수가 부족합니다."),
 
     /** 401 UNAUTHORIZED : 인증되지 않은 사용자 */
     UNAUTHORIZED_ACCESS(UNAUTHORIZED, "접근 권한이 없습니다."),

@@ -2,7 +2,11 @@ package com.threeNerds.basketballDiary.mvc.game.repository.dto;
 
 import com.threeNerds.basketballDiary.mvc.domain.Team;
 import com.threeNerds.basketballDiary.mvc.dto.team.team.TeamDTO;
+import com.threeNerds.basketballDiary.mvc.game.controller.dto.QuarterEntryDTO;
 import com.threeNerds.basketballDiary.mvc.game.domain.GameJoinTeam;
+import com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords;
+import com.threeNerds.basketballDiary.mvc.game.dto.QuarterPlayerRecordDTO;
+import com.threeNerds.basketballDiary.mvc.game.dto.SearchEntryDTO;
 import com.threeNerds.basketballDiary.mvc.game.dto.SearchGameHomeAwayDTO;
 import com.threeNerds.basketballDiary.mvc.game.dto.SearchOppenentsDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.FindGameHomeAwayDTO;
@@ -14,6 +18,7 @@ import java.util.List;
 public interface GameJoinManagerRepository {
 
     Team findGameCreatorTeam(Long gameSeq);
+    List<QuarterPlayerRecordDTO> findEntryList(SearchEntryDTO searchEntryDTO);
 
     List<TeamDTO> searchOpponents(SearchOppenentsDTO searchOppenentsDTO);
 
