@@ -194,4 +194,12 @@
              ) A
        GROUP BY GAME_SEQ, GAME_YMD, GAME_START_TIME, GAME_END_TIME
     </select>
+
+    <delete id="deleteQuarterPlayerRecords">
+        DELETE FROM QUARTER_PLAYER_RECORDS T1 WHERE T1.GAME_SEQ = #{gameSeq} AND T1.QUATER_CODE = #{quarterCode}
+    </delete>
+
+    <delete id="deleteQuarterTeamRecords">
+        DELETE FROM QUARTER_TEAM_RECORDS T1 WHERE T1.GAME_SEQ = #{gameSeq} AND T1.QUATER_CODE = #{quarterCode}
+    </delete>
 </mapper>

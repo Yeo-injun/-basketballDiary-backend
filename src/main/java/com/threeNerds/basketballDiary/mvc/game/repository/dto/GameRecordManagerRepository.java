@@ -1,6 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.game.repository.dto;
 
 import com.threeNerds.basketballDiary.mvc.game.dto.PlayerRecordDTO;
+import com.threeNerds.basketballDiary.mvc.game.dto.QuarterCodeDTO;
 import com.threeNerds.basketballDiary.mvc.game.dto.SearchGameDTO;
 import com.threeNerds.basketballDiary.mvc.game.dto.HomeAwayTeamRecordDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameCondDTO;
@@ -42,4 +43,16 @@ public interface GameRecordManagerRepository {
      * @param searchGameDTO 게임조회용 DTO
      */
     HomeAwayTeamRecordDTO findHomeAwayTeamRecordsByQuarter(SearchGameDTO searchGameDTO);
+
+    /**
+     * 쿼터 삭제(QUARTER_PLAYER_RECORDS TABLE)
+     * @param quarterCodeDTO
+     */
+    void deleteQuarterPlayerRecords(QuarterCodeDTO quarterCodeDTO);
+
+    /**
+     * 쿼터 삭제(QUARTER_TEAM_RECORDS TABLE)
+     * @param quarterCodeDTO
+     */
+    void deleteQuarterTeamRecords(QuarterCodeDTO quarterCodeDTO);
 }
