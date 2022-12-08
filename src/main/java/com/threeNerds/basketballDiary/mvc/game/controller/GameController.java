@@ -5,6 +5,7 @@ import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.mvc.dto.team.team.TeamDTO;
 import com.threeNerds.basketballDiary.mvc.game.controller.dto.GameJoinPlayerRegistrationDTO;
 import com.threeNerds.basketballDiary.mvc.game.controller.dto.QuarterEntryDTO;
+import com.threeNerds.basketballDiary.mvc.game.controller.request.APIMessage060;
 import com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords;
 import com.threeNerds.basketballDiary.mvc.game.domain.QuarterTeamRecords;
 import com.threeNerds.basketballDiary.mvc.game.dto.*;
@@ -309,23 +310,18 @@ public class GameController {
     /**
      * API060 쿼터 엔트리 정보 저장
      */
-    @PostMapping("/{gameSeq}/quarters/{quarterCode}/homeAway/{homeAwayCode}/entry")
+    @PostMapping("/{gameSeq}/entry")
     public ResponseEntity<?> saveQuarterEntryInfo(
-
             @PathVariable(name = "gameSeq") Long gameSeq,
-            @PathVariable(name = "quarterCode") String quarterCode,
-            @PathVariable(name = "homeAwayCode") String homeAwayCode,
-            @RequestBody List<QuarterEntryDTO> quarterEntryList
+            @RequestBody APIMessage060 reqBody
     ) {
         // TODO @Valid 어노테이션을 활용하여 제약사항 걸기
-        Object[] pathVariables = { gameSeq, quarterCode, homeAwayCode };
+        Object[] pathVariables = { gameSeq };
         ValidateUtil.check(pathVariables);
 
         QuarterEntryInfoDTO qeiDTO = new QuarterEntryInfoDTO()
                                         .gameSeq(gameSeq)
-                                        .quarterCode(quarterCode)
-                                        .homeAwayCode(homeAwayCode)
-                                        .quarterEntryList(quarterEntryList);
+                                        .playerList(reqBody.getPlayerList());
 
         gameJoinManagerService.saveQuarterEntryInfo(qeiDTO);
 
