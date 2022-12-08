@@ -200,6 +200,9 @@ public class GameJoinManagerService {
      */
     public void saveQuarterEntryInfo(QuarterEntryInfoDTO quarterEntryInfoDTO)
     {
+        /** TODO 게임생성자 권한 체크 - 게임기록권한T 조회해서 권한체크 */
+
+        /** 파라미터 유효성 검증 */
         List<QuarterEntryDTO> quarterEntryList = quarterEntryInfoDTO.getQuarterEntryList();
         ValidateUtil.check(quarterEntryList);
 
