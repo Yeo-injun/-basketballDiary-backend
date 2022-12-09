@@ -4,8 +4,7 @@ import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.mvc.dto.team.team.TeamDTO;
 import com.threeNerds.basketballDiary.mvc.game.controller.dto.GameJoinPlayerRegistrationDTO;
-import com.threeNerds.basketballDiary.mvc.game.controller.dto.QuarterEntryDTO;
-import com.threeNerds.basketballDiary.mvc.game.controller.request.APIMessage060;
+import com.threeNerds.basketballDiary.mvc.game.controller.request.SaveQuarterEntryInfoRequest;
 import com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords;
 import com.threeNerds.basketballDiary.mvc.game.domain.QuarterTeamRecords;
 import com.threeNerds.basketballDiary.mvc.game.dto.*;
@@ -159,7 +158,7 @@ public class GameController {
      * @return
      */
     @DeleteMapping("/{gameSeq}/quaters/{quaterCode}")
-    public ResponseEntity<?> deleteQuter(
+    public ResponseEntity<?> deleteQuarter(
             @PathVariable("gameSeq") Long gameSeq,
             @PathVariable("quaterCode") String quaterCode
     ){
@@ -313,7 +312,7 @@ public class GameController {
     @PostMapping("/{gameSeq}/entry")
     public ResponseEntity<?> saveQuarterEntryInfo(
             @PathVariable(name = "gameSeq") Long gameSeq,
-            @RequestBody APIMessage060 reqBody
+            @RequestBody SaveQuarterEntryInfoRequest reqBody
     ) {
         // TODO @Valid 어노테이션을 활용하여 제약사항 걸기
         Object[] pathVariables = { gameSeq };
