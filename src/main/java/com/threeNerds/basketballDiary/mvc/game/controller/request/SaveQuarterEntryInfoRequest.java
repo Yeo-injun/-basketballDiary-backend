@@ -22,9 +22,11 @@ import java.util.List;
  *       전문단위로 필수값을 지정관리할 수 있음(Message별로 Valid 어노테이션으로 관리 가능)
  * 단점 : API하나 만들때마다 클래스가 생성되면서 클래스가 많아질 수 있음.
  *          >> 허나, 패키지를 잘 구분하여 관리하면 괜찮을지도? (재사용성이 떨어짐... )
+ *
+ * 결론 : 컨트롤러 메소드명 + Request.java
  */
 @Getter
-public class APIMessage060 {
+public class SaveQuarterEntryInfoRequest {
 
     private Long gameJoinTeamSeq;
     private String homeAwayCode;
