@@ -332,11 +332,12 @@ public class GameController {
 
         QuarterEntryInfoDTO qeiDTO = new QuarterEntryInfoDTO()
                                         .gameSeq(gameSeq)
+                                        .gameJoinTeamSeq(reqBody.getGameJoinTeamSeq())
+                                        .homeAwayCode(reqBody.getHomeAwayCode())
+                                        .quarterCode(reqBody.getQuarterCode())
                                         .playerList(reqBody.getPlayerList());
 
         gameJoinManagerService.saveQuarterEntryInfo(qeiDTO);
-
-
         return RESPONSE_OK;
     }
 

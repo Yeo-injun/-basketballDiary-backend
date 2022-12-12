@@ -151,9 +151,16 @@ public class GameJoinManagerService {
      **/
     public void registerGameJoinPlayers(GameJoinPlayerRegistrationDTO playerRegistrationDTO)
     {
-        Long gameJoinTeamSeq = playerRegistrationDTO.getGameJoinTeamSeq();
-
+        /** 해당 게임의 쿼터선수기록 존재여부 확인 - 쿼터기록이 존재할 경우 수정 불가 */
+        // TODO 에러메세지 수정
+        Long gameSeq = playerRegistrationDTO.getGameSeq();
+        List<QuarterPlayerRecords> playersRecord = quarterPlayerRecordsRepo.findAllInGame(gameSeq);
+        boolean hasPlayerRecord = !playersRecord.isEmpty();
+        if (hasPlayerRecord) {
+            throw new CustomException(Error.INVALID_PARAMETER);
+        }
         /** 게임참가선수 데이터 존재여부 확인 - 기존 데이터 존재시 삭제 */
+        Long gameJoinTeamSeq = playerRegistrationDTO.getGameJoinTeamSeq();
         List<GameJoinPlayer> registeredJoinPlayers = gameJoinPlayerRepository.findPlayers(gameJoinTeamSeq);
         boolean hasJoinPlayers = !registeredJoinPlayers.isEmpty();
         if (hasJoinPlayers) {
@@ -203,48 +210,55 @@ public class GameJoinManagerService {
         /** TODO 게임생성자 권한 체크 - 게임기록권한T 조회해서 권한체크 */
 
         /** 파라미터 유효성 검증 */
-        List<QuarterEntryDTO> quarterEntryList = quarterEntryInfoDTO.getQuarterEntryList();
-        ValidateUtil.check(quarterEntryList);
+        List<PlayerInfoDTO> entry = quarterEntryInfoDTO.getPlayerList();
+        ValidateUtil.check(entry);
 
         /** 쿼터 엔트리 길이 체크 5명이 되는지 */
-        boolean hasNotValidEntry = quarterEntryList.size() != 5;
+        boolean hasNotValidEntry = entry.size() != 5;
         if (hasNotValidEntry) {
             throw new CustomException(Error.INSUFFICIENT_PLAYERS_ON_ENTRY);
         }
 
         /** 기존에 엔트리가 등록되어 있는지 조회 */
-        Long gameSeq        = quarterEntryInfoDTO.getGameSeq();
-        String homeAwayCode = quarterEntryInfoDTO.getHomeAwayCode();
-        String quarterCode  = quarterEntryInfoDTO.getQuarterCode();
+        Long gameSeq         = quarterEntryInfoDTO.getGameSeq();
+        Long gameJoinTeamSeq = quarterEntryInfoDTO.getGameJoinTeamSeq();
+        String homeAwayCode  = quarterEntryInfoDTO.getHomeAwayCode();
+        String quarterCode   = quarterEntryInfoDTO.getQuarterCode();
 
         SearchEntryDTO params = new SearchEntryDTO()
-                .gameSeq(gameSeq)
+                .gameJoinTeamSeq(gameJoinTeamSeq)
                 .homeAwayCode(homeAwayCode)
                 .quarterCode(quarterCode);
 
-        List<QuarterPlayerRecordDTO> entryList = gameJoinManagerRepo.findEntryList(params);
-        boolean hasNoEntry = entryList.size() != 5;
+        List<QuarterPlayerRecordDTO> findExistedEntry = gameJoinManagerRepo.findEntryList(params);
+        boolean hasNoEntry = findExistedEntry.size() != 5;
         if (hasNoEntry)
         {
             /** 엔트리가 등록되어 있지 않으면 새로 등록 - insert */
-            for (QuarterEntryDTO quarterEntryDTO : quarterEntryList)
+            for (PlayerInfoDTO playerInfoDTO : entry)
             {
+                /** 게임참가선수 테이블에 존재하는 선수인지 확인 */
+                Long gameJoinPlayerSeq = playerInfoDTO.getGameJoinPlayerSeq();
+                GameJoinPlayer gameJoinPlayerParam = GameJoinPlayer.builder()
+                                .gameJoinTeamSeq(gameJoinTeamSeq)
+                                .gameJoinPlayerSeq(gameJoinPlayerSeq)
+                                .build();
+                Optional.ofNullable(gameJoinPlayerRepository.findPlayer(gameJoinPlayerParam))
+                        .orElseThrow(() -> new CustomException(Error.INVALID_PARAMETER));
+
                 QuarterPlayerRecords paramForCreation = QuarterPlayerRecords.builder()
                         .gameSeq(gameSeq)
-                        .gameJoinPlayerSeq(quarterEntryDTO.getGameJoinPlayerSeq())
-                        .gameJoinTeamSeq(quarterEntryDTO.getGameJoinTeamSeq())
+                        .gameJoinTeamSeq(gameJoinTeamSeq)
+                        .gameJoinPlayerSeq(gameJoinPlayerSeq)
                         .quarterCode(quarterCode)
                         .inGameYn("Y")
                         .build();
                 quarterPlayerRecordsRepo.create(paramForCreation);
             }
-            // TODO 목록 조회해서 return해주기
             return;
         }
 
         /** 엔트리가 등록되어 있다면 InGameYn "N"으로 초기화 후 대상들만 "Y"으로 변경 */
-        Long gameJoinTeamSeq = entryList.get(0).getGameJoinTeamSeq();
-
         QuarterPlayerRecords paramForInitEntry = QuarterPlayerRecords.builder()
                 .gameJoinTeamSeq(gameJoinTeamSeq)
                 .quarterCode(quarterCode)
@@ -253,19 +267,17 @@ public class GameJoinManagerService {
 
         quarterPlayerRecordsRepo.modifyInGameYn(paramForInitEntry);
 
-        for (QuarterEntryDTO quarterEntryDTO : quarterEntryList)
+        for (PlayerInfoDTO playerInfoDTO : entry)
         {
-            Long gameJoinPlayerSeq = quarterEntryDTO.getGameJoinPlayerSeq();
+            Long gameJoinPlayerSeq = playerInfoDTO.getGameJoinPlayerSeq();
             QuarterPlayerRecords paramForEntry = QuarterPlayerRecords.builder()
                     .gameJoinPlayerSeq(gameJoinPlayerSeq)
+                    .quarterCode(quarterCode)
                     .inGameYn("Y")
                     .build();
 
             quarterPlayerRecordsRepo.modifyInGameYn(paramForEntry);
         }
-        // TODO 목록 조회해서 return해주기
         return;
-
-
     }
 }

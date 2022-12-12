@@ -5,15 +5,16 @@ import lombok.Getter;
 @Getter
 public class PlayerInfoDTO {
 
-    private Long gameSeq;   // TODO 삭제검토
-    private Long teamSeq;   // TODO 삭제검토
+    private Long gameSeq;
+    private Long gameJoinTeamSeq;
+    private Long teamSeq;
 
     private Long gameJoinPlayerSeq;
     private Long userSeq;
 
     private String playerTypeCode;
     private String playerTypeCodeName;
-    private String homeAwayCode;   // TODO 삭제검토
+    private String homeAwayCode;
 
     private String teamName;
     private String playerName;
@@ -24,4 +25,8 @@ public class PlayerInfoDTO {
 
     private String email;
 
+    public PlayerInfoDTO gameJoinTeamSeq(Long gameJoinTeamSeq) {
+        this.gameJoinTeamSeq = gameJoinTeamSeq;
+        return this;
+    }
 }
