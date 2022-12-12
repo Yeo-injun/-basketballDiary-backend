@@ -108,4 +108,13 @@ public class GameService {
         // MatchPlayerInfoDTO 에 대입
        return matchPlayers;
     }
+
+    /**
+     * 22.12.12
+     * 게임 확정
+     * @author 이성주
+     */
+    public void confirmGame(Long gameSeq){
+        gameRepository.confirmGame(gameSeq);
+    }
 }
