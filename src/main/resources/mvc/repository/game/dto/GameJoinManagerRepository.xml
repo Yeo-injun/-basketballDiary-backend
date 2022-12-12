@@ -15,16 +15,15 @@
              , GJP.BACK_NUMBER
              , GJP.POSITION_CODE
         /* 속성 계속 추가 예정 */
-          FROM GAME G
+          FROM GAME_JOIN_TEAM GJT
          INNER JOIN QUARTER_PLAYER_RECORDS QPR
-            ON G.GAME_SEQ = QPR.GAME_SEQ
+            ON GJT.GAME_JOIN_TEAM_SEQ = QPR.GAME_JOIN_TEAM_SEQ
          INNER JOIN GAME_JOIN_PLAYER GJP
             ON QPR.GAME_JOIN_PLAYER_SEQ = GJP.GAME_JOIN_PLAYER_SEQ
          WHERE 1=1
-           AND G.GAME_SEQ       = #{gameSeq}
-           AND G.HOME_AWAY_CODE = #{homeAwayCode}
-           AND QPR.QUARTER_CODE = #{quarterCode}
-           AND QPR.IN_GAME_YN   = 'Y'
+           AND GJT.GAME_JOIN_TEAM_SEQ = #{gameJoinTeamSeq}
+           AND QPR.QUARTER_CODE       = #{quarterCode}
+           AND QPR.IN_GAME_YN         = 'Y'
     </select>
 
     <select id="findGameCreatorTeam" resultType="com.threeNerds.basketballDiary.mvc.domain.Team">

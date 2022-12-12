@@ -26,6 +26,7 @@ public class QuarterPlayerRecords {
         twoPoint = qpr.twoPoint;
         tryThreePoint = qpr.tryThreePoint;
         threePoint = qpr.threePoint;
+        assist = qpr.assist;
         rebound = qpr.rebound;
         steal = qpr.steal;
         block = qpr.block;
@@ -45,6 +46,7 @@ public class QuarterPlayerRecords {
     private Integer twoPoint;
     private Integer tryThreePoint;
     private Integer threePoint;
+    private Integer assist;
     private Integer rebound;
     private Integer steal;
     private Integer block;
