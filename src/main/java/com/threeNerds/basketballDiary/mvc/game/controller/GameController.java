@@ -238,6 +238,18 @@ public class GameController {
     }
 
     /**
+     * API050 경기 확정(경기 등록)
+     * @author 이성주
+     */
+    @PostMapping("/{gameSeq}/confirmation")
+    public ResponseEntity<?> confirmGame(
+            @PathVariable("gameSeq") Long gameSeq
+    ){
+        gameService.confirmGame(gameSeq);
+        return ResponseEntity.ok(null);
+    }
+
+    /**
      * API053 게임 생성
      * - 생성한 게임 정보를 반환
      */
