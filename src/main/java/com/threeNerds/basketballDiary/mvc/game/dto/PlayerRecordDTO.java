@@ -11,6 +11,8 @@ public class PlayerRecordDTO {
     /** 게임참여팀 SEQ */
     private Long gameJoinTeamSeq;
     private String homeAwayCode;
+    private String homeAwayCodeName;
+
     private String gameSeq;
     private String teamSeq;
 
@@ -23,7 +25,7 @@ public class PlayerRecordDTO {
     private String name;
     private String backNumber;
     private String positionCode;
-
+    private String positionCodeName;
     private String userImage;
 
     /**

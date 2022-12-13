@@ -6,10 +6,7 @@ import com.threeNerds.basketballDiary.constant.code.QuarterCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords;
-import com.threeNerds.basketballDiary.mvc.game.dto.HomeAwayTeamRecordDTO;
-import com.threeNerds.basketballDiary.mvc.game.dto.PlayerRecordDTO;
-import com.threeNerds.basketballDiary.mvc.game.dto.QuarterCodeDTO;
-import com.threeNerds.basketballDiary.mvc.game.dto.SearchGameDTO;
+import com.threeNerds.basketballDiary.mvc.game.dto.*;
 import com.threeNerds.basketballDiary.mvc.game.domain.QuarterTeamRecords;
 import com.threeNerds.basketballDiary.mvc.game.repository.GameJoinTeamRepository;
 import com.threeNerds.basketballDiary.mvc.game.repository.QuarterPlayerRecordsRepository;
@@ -26,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -299,5 +297,16 @@ public class GameRecordManagerService {
         //TODO 어떤 처리를 할 필요가 없는건지?
         gameRecordManagerRepository.deleteQuarterPlayerRecords(quarterCodeDTO);
         gameRecordManagerRepository.deleteQuarterTeamRecords(quarterCodeDTO);
+    }
+
+    /**
+     * 게임엔트리 조회하기
+     * @param searchDTO
+     * @return List<PlayerRecordDTO>
+     */
+    public List<PlayerRecordDTO> getGameEntry(SearchEntryDTO searchDTO) {
+
+        // TODO 엔트리 조회하기 (GameJoinTeam의 QuarterCode로 조회)
+        return Collections.emptyList();
     }
 }
