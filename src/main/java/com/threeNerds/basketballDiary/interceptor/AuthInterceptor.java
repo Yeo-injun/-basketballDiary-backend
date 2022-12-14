@@ -18,6 +18,9 @@ import java.util.Map;
 public class AuthInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        log.info("============= 인증 체크 인터셉터 실행 =============");
+        log.info("= {} {} ", request.getMethod(), request.getRequestURI());
+        log.info("===============================================");
 
         if(!(handler instanceof HandlerMethod)) {
             return true;
@@ -32,10 +35,6 @@ public class AuthInterceptor implements HandlerInterceptor {
         }
 
         /** 2. @Auth가 있는 경우 - 세션이 있는지 확인 */
-        log.info("============= 인증 체크 인터셉터 실행 =============");
-        log.info("= {} {} ", request.getMethod(), request.getRequestURI());
-        log.info("===============================================");
-
         if (!SessionUtil.isLogin()) {
             throw new CustomException(Error.LOGIN_REQUIRED);
         }
