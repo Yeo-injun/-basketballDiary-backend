@@ -280,4 +280,15 @@ public class GameJoinManagerService {
         }
         return;
     }
+
+    /**
+     * 게임엔트리 조회하기
+     * @param searchDTO
+     * @return List<PlayerRecordDTO>
+     */
+    public List<QuarterPlayerRecordDTO> getGameEntry(SearchEntryDTO searchDTO)
+    {
+        List<QuarterPlayerRecordDTO> playerList = gameJoinManagerRepo.findEntryList(searchDTO);
+        return playerList;
+    }
 }

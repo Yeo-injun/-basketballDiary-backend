@@ -21,12 +21,14 @@ public class PlayerRecordDTO {
      */
     /** 유저 SEQ */
     private Long gameJoinPlayerSeq;
+    private String playerTypeCode;
+    private String playerTypeCodeName;
     private Long userSeq;
     private String name;
     private String backNumber;
     private String positionCode;
     private String positionCodeName;
-    private String userImage;
+//    private String userImage; TODO 불필요 속성 제거 검토
 
     /**
      * QUARTER_PLAYER_RECORDS
@@ -70,6 +72,16 @@ public class PlayerRecordDTO {
         return this;
     }
 
+    public PlayerRecordDTO playerTypeCode(String playerTypeCode) {
+        this.playerTypeCode = playerTypeCode;
+        return this;
+    }
+
+    public PlayerRecordDTO playerTypeCodeName(String playerTypeCodeName) {
+        this.playerTypeCodeName = playerTypeCodeName;
+        return this;
+    }
+
     public PlayerRecordDTO gameJoinPlayerSeq(Long gameJoinPlayerSeq) {
         this.gameJoinPlayerSeq = gameJoinPlayerSeq;
         return this;
@@ -89,10 +101,6 @@ public class PlayerRecordDTO {
     }
     public PlayerRecordDTO positionCode(String positionCode) {
         this.positionCode = positionCode;
-        return this;
-    }
-    public PlayerRecordDTO userImage(String userImage) {
-        this.userImage = userImage;
         return this;
     }
 
