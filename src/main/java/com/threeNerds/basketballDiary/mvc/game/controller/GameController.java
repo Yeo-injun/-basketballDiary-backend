@@ -5,7 +5,9 @@ import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.interceptor.Auth;
 import com.threeNerds.basketballDiary.mvc.dto.team.team.TeamDTO;
 import com.threeNerds.basketballDiary.mvc.game.controller.dto.GameJoinPlayerRegistrationDTO;
-import com.threeNerds.basketballDiary.mvc.game.controller.request.GetGameEntryRequest;
+import com.threeNerds.basketballDiary.mvc.game.controller.request.ConfirmGameJoinTeamRequest;
+import com.threeNerds.basketballDiary.mvc.game.controller.request.CreateGameRequest;
+import com.threeNerds.basketballDiary.mvc.game.controller.request.RegisterGameJoinPlayersRequest;
 import com.threeNerds.basketballDiary.mvc.game.controller.request.SaveQuarterEntryInfoRequest;
 import com.threeNerds.basketballDiary.mvc.game.controller.response.GetGameEntryResponse;
 import com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords;
@@ -67,20 +69,20 @@ public class GameController {
 
     /**
      * API035 게임참가 선수등록하기
-     *
      * @result 특정쿼터의 선수별 기록조회
+     * 22.12.15(목) @ReauestBody부분 Request클래스로 대체
      */
-    //@Auth(GRADE = USER) 
-    @PostMapping("/{gameSeq}/gameJoinTeam/{gameJoinTeamSeq}/players")
+//    @Auth(GRADE = USER)
+    @PostMapping("/{gameSeq}/gameJoinTeams/{gameJoinTeamSeq}/players")
     public ResponseEntity<?> registerGameJoinPlayers(
             @PathVariable(name = "gameSeq") Long gameSeq,
             @PathVariable(name = "gameJoinTeamSeq") Long gameJoinTeamSeq,
-            @RequestBody List<GameJoinPlayerDTO> gameJoinPlayers
+            @RequestBody RegisterGameJoinPlayersRequest reqBody
     ) {
         GameJoinPlayerRegistrationDTO playerRegistrationDTO = new GameJoinPlayerRegistrationDTO()
                 .gameSeq(gameSeq)
                 .gameJoinTeamSeq(gameJoinTeamSeq)
-                .gameJoinPlayerDTOList(gameJoinPlayers);
+                .gameJoinPlayerDTOList(reqBody.getGameJoinPlayers());
 
         gameJoinManagerService.registerGameJoinPlayers(playerRegistrationDTO);
         return RESPONSE_CREATED;
@@ -89,7 +91,6 @@ public class GameController {
 
     /**
      * API038 쿼터 저장하기/수정하기
-     *
      * @param gameSeq     게임Seq
      * @param quarterCode 쿼터코드; 01~04(1~4쿼터), 11(전반), 12(후반)
      * @result 특정 경기의 쿼터 기록을 저장·수정한다.
@@ -286,19 +287,21 @@ public class GameController {
     /**
      * API053 게임 생성
      * - 생성한 게임 정보를 반환
+     * 22.12.15(목) @ReauestBody부분 Request클래스로 대체
      */
+    @Auth(GRADE = USER)
     @PostMapping
     public ResponseEntity<?> createGame (
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,
-            @RequestBody  GameCreationDTO gameCreationDTO
+            @RequestBody CreateGameRequest reqBody
     ) {
-        //  TODO 임시주석처리로 권한@ 처리 이후 살려야 하는 코드
-//        Long userSeq = sessionUser.getUserSeq();
-//        gameCreationDTO.userSeq(userSeq);
-        gameCreationDTO.userSeq(3L);
+        GameCreationDTO gameCreationInfo = reqBody.getGameCreationInfo();
 
-        GameCreationDTO gc = gameService.createGame(gameCreationDTO);
-        return ResponseEntity.ok(gc);
+        Long userSeq = sessionUser.getUserSeq();
+        gameCreationInfo.userSeq(userSeq);
+
+        GameCreationDTO result = gameService.createGame(gameCreationInfo);
+        return ResponseEntity.ok(result);
     }
 
     /**
@@ -354,6 +357,7 @@ public class GameController {
 
     /**
      * API060 쿼터 엔트리 정보 저장
+     * 22.12.15(목) @ReauestBody부분 Request클래스로 대체
      */
     @PostMapping("/{gameSeq}/entry")
     public ResponseEntity<?> saveQuarterEntryInfo(
@@ -389,37 +393,20 @@ public class GameController {
 
     /**
      * API062 게임참가팀 확정
+     * 22.12.15(목) @ReauestBody부분 Request클래스로 대체
      */
     @PostMapping("/{gameSeq}/gameJoinTeams")
     public ResponseEntity<?> confirmJoinTeam (
             @PathVariable(name = "gameSeq") Long gameSeq,
-            @RequestBody  GameJoinTeamCreationDTO joinTeamCreationDTO
-    ){
-        /**
-         * {
-         *      gameTypeCode : ,    // 필수값
-         *      homeTeamSeq : ,     // gameTypeCode가 03일경우 필수 아님
-         *      awqyTeamSeq : ,     // gameTypeCode가 03일경우 필수 아님
-         * }
-         */
-        joinTeamCreationDTO.gameSeq(gameSeq);
+            @RequestBody ConfirmGameJoinTeamRequest reqBody
+    ) {
+        GameJoinTeamCreationDTO joinTeamCreation = new GameJoinTeamCreationDTO()
+                                        .gameSeq(gameSeq)
+                                        .gameTypeCode(reqBody.getGameTypeCode())
+                                        .gameJoinTeamSeq(reqBody.getGameJoinTeamSeq())
+                                        .opponentTeamSeq(reqBody.getOpponentTeamSeq());
 
-        gameJoinManagerService.confirmJoinTeam(joinTeamCreationDTO);
-        // 게임참가팀이 확정되면
-        // 게임에 참가하는 참가팀 정보를 리턴
-        /**
-         * {
-         *      gameSeq : 1,
-         *      homeTeam : {
-         *          gameJoinTeamSeq :
-         *          teamSeq :
-         *      },
-         *      awayTeam : {
-         *          gameJoinTeamSeq :
-         *          teamSeq :
-         *      }
-         */
-
+        gameJoinManagerService.confirmJoinTeam(joinTeamCreation);
         return RESPONSE_OK;
     }
 

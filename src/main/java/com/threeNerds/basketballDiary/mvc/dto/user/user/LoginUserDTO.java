@@ -9,11 +9,11 @@ public class LoginUserDTO {
     private String userId;
     private String password;
 
-    public LoginUserDTO userId(String userId){
+    public LoginUserDTO userId(String userId) {
         this.userId = userId;
         return this;
     }
-    public LoginUserDTO password(String password){
+    public LoginUserDTO password(String password) {
         this.password = password;
         return this;
     }
