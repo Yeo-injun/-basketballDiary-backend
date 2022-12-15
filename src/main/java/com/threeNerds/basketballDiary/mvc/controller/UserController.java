@@ -73,10 +73,11 @@ public class UserController {
     public ResponseEntity<SessionUser> login (
             @RequestBody LoginUserDTO loginUserDTO
     ) {
-        log.info("로그인 시도");
+        log.info("======= Try login =======");
         SessionUser sessionUser = loginService.login(loginUserDTO);
         SessionUtil.setSessionUser(sessionUser);
-//      TODO 세션ID 로그찍기  log.info(SessionUtil.get.getId());
+
+        // TODO 세션ID 로그찍기  log.info(SessionUtil.get.getId());
         // TODO 쿠키생성 로직 - https://reflectoring.io/spring-boot-cookies/
         return ResponseEntity.ok().body(sessionUser);
     }

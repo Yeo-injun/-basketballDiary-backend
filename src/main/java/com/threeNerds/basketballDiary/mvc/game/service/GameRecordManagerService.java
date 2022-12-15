@@ -299,14 +299,4 @@ public class GameRecordManagerService {
         gameRecordManagerRepository.deleteQuarterTeamRecords(quarterCodeDTO);
     }
 
-    /**
-     * 게임엔트리 조회하기
-     * @param searchDTO
-     * @return List<PlayerRecordDTO>
-     */
-    public List<PlayerRecordDTO> getGameEntry(SearchEntryDTO searchDTO) {
-
-        // TODO 엔트리 조회하기 (GameJoinTeam의 QuarterCode로 조회)
-        return Collections.emptyList();
-    }
 }
