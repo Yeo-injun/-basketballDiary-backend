@@ -5,10 +5,7 @@ import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.interceptor.Auth;
 import com.threeNerds.basketballDiary.mvc.dto.team.team.TeamDTO;
 import com.threeNerds.basketballDiary.mvc.game.controller.dto.GameJoinPlayerRegistrationDTO;
-import com.threeNerds.basketballDiary.mvc.game.controller.request.ConfirmGameJoinTeamRequest;
-import com.threeNerds.basketballDiary.mvc.game.controller.request.CreateGameRequest;
-import com.threeNerds.basketballDiary.mvc.game.controller.request.RegisterGameJoinPlayersRequest;
-import com.threeNerds.basketballDiary.mvc.game.controller.request.SaveQuarterEntryInfoRequest;
+import com.threeNerds.basketballDiary.mvc.game.controller.request.*;
 import com.threeNerds.basketballDiary.mvc.game.controller.response.GetGameEntryResponse;
 import com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords;
 import com.threeNerds.basketballDiary.mvc.game.domain.QuarterTeamRecords;
@@ -247,29 +244,30 @@ public class GameController {
     /**
      * API048 경기 쿼터기록 조회
      * @param gameSeq 게임Seq
-     * @param quarterCode 쿼터코드; 01~04(1~4쿼터), 11(전반), 12(후반)
+     * @param gameRecordRequest 경기기록Req
      * @result 특정쿼터의 선수별 기록조회
      * @author 강창기
      */
     //@Auth(GRADE = USER) TODO
-    @GetMapping("/{gameSeq}/quarterRecords/quaterCode/{quaterCode}")
+    @PostMapping("/{gameSeq}/quarterRecord")
     public ResponseEntity<?> searchGameRecordByQuarter(
             @PathVariable(name = "gameSeq") String gameSeq,
-            @PathVariable(name = "quarterCode") String quarterCode
+            @RequestBody GameRecordRequest gameRecordRequest
     ){
-        // TODO 파라미터 값 지정하여 throw처리...
         if(ObjectUtils.isEmpty(gameSeq) || !StringUtils.hasText(gameSeq))
             throw new CustomException(Error.NO_PARAMETER);
-        if(ObjectUtils.isEmpty(quarterCode) || !StringUtils.hasText(quarterCode))
-            throw new CustomException(Error.NO_PARAMETER);
 
-        //if(quarterCode.contains()) TODO 쿼터코드에 해당하는 값인지 체크필요
+        if(ObjectUtils.isEmpty(gameRecordRequest))
+            throw new CustomException(Error.NO_PARAMETER);
 
         SearchGameDTO searchGameDTO = new SearchGameDTO()
                 .gameSeq(Long.parseLong(gameSeq))
-                .quarterCode(quarterCode);
+                .gameJoinTeamSeq(gameRecordRequest.getGameJoinTeamSeq())
+                .quarterCode(gameRecordRequest.getQuarterCode());
 
-        return ResponseEntity.ok(null);
+        HomeAwayTeamRecordDTO homeAwayTeamRecordByQuarter = gameRecordManagerService.getHomeAwayTeamRecordByQuarter(searchGameDTO);
+
+        return ResponseEntity.ok(homeAwayTeamRecordByQuarter);
     }
 
     /**
