@@ -6,13 +6,16 @@ import com.threeNerds.basketballDiary.constant.code.QuarterCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords;
-import com.threeNerds.basketballDiary.mvc.game.dto.*;
 import com.threeNerds.basketballDiary.mvc.game.domain.QuarterTeamRecords;
+import com.threeNerds.basketballDiary.mvc.game.dto.HomeAwayTeamRecordDTO;
+import com.threeNerds.basketballDiary.mvc.game.dto.PlayerRecordDTO;
+import com.threeNerds.basketballDiary.mvc.game.dto.QuarterCodeDTO;
+import com.threeNerds.basketballDiary.mvc.game.dto.SearchGameDTO;
 import com.threeNerds.basketballDiary.mvc.game.repository.GameJoinTeamRepository;
+import com.threeNerds.basketballDiary.mvc.game.repository.GameRepository;
 import com.threeNerds.basketballDiary.mvc.game.repository.QuarterPlayerRecordsRepository;
 import com.threeNerds.basketballDiary.mvc.game.repository.QuarterTeamRecordsRepository;
 import com.threeNerds.basketballDiary.mvc.game.repository.dto.GameRecordManagerRepository;
-import com.threeNerds.basketballDiary.mvc.game.repository.GameRepository;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameCondDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameJoinTeamRecordDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameRecordDTO;
@@ -23,7 +26,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -188,7 +190,7 @@ public class GameRecordManagerService {
                 || ObjectUtils.isEmpty(searchGameDTO.getGameJoinTeamSeq())
                 || ObjectUtils.isEmpty(searchGameDTO.getQuarterCode()))
             throw new CustomException(Error.NO_PARAMETER);
-
+        //쿼터코드; 01~04(1~4쿼터), 11(전반), 12(후반)
         if(ObjectUtils.isEmpty(gameRepository.getGameInfo(searchGameDTO.getGameSeq())))
             throw new CustomException(Error.NOT_FOUND_GAME);  // 게임 정보가 존재하지 않습니다.
 

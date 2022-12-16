@@ -187,7 +187,7 @@
                 INNER JOIN GAME_JOIN_TEAM B
                    ON A.GAME_SEQ = B.GAME_SEQ
                 INNER JOIN QUARTER_TEAM_RECORDS C
-                   ON B.GAME_JOIN_TEAM_SEQ = C.GAME_JOIN_TEAM_SEQ
+                   ON B.GAME_SEQ = C.GAME_SEQ
                 WHERE C.GAME_SEQ = #{gameSeq}
                   AND C.GAME_JOIN_TEAM_SEQ = #{gameJoinTeamSeq}
                   AND C.QUARTER_CODE = #{quarterCode}
