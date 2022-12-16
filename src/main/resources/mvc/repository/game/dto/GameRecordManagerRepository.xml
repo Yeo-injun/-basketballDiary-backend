@@ -147,7 +147,6 @@
          * GameRecordManagerRepository.findHomeAwayTeamRecordsByQuarter
          * 홈·어웨이 쿼터별 팀기록 조회이므로, QUARTER_TEAM_RECORDS_SEQ로 식별할 수 없음.
          * 쿼터별 개별팀 기록조회를 원한다면 GameRecordManagerRepository.findTeamRecordsByQuarter 로 조회할것.
-         * TODO 쿼리 검토 필요
          * @author 강창기
          */
         SELECT GAME_SEQ

@@ -1,5 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.game.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 
 /**
@@ -7,6 +8,7 @@ import lombok.Getter;
  * @author 강창기
  */
 @Getter
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class HomeAwayTeamRecordDTO {
     // 게임Seq
     private String gameSeq;
