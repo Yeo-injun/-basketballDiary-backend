@@ -20,12 +20,13 @@ public enum PlayerTypeCode {
     }
 
     public static String nameOf(String code) {
-        if (code == null) return "";
+//        if (code == null) return "";
         String codeName = Arrays.stream(values())
                 .filter(item -> item.getCode().equals(code))
                 .map(PlayerTypeCode::getName)
                 .findAny()
-                .get();
+                .orElse("");
+//                .get();
         return codeName;
     }
 }
