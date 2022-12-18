@@ -7,6 +7,7 @@ import com.threeNerds.basketballDiary.mvc.dto.team.team.TeamDTO;
 import com.threeNerds.basketballDiary.mvc.game.controller.dto.GameJoinPlayerRegistrationDTO;
 import com.threeNerds.basketballDiary.mvc.game.controller.request.*;
 import com.threeNerds.basketballDiary.mvc.game.controller.response.GetGameEntryResponse;
+import com.threeNerds.basketballDiary.mvc.game.controller.response.GetGameJoinPlayersResponse;
 import com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords;
 import com.threeNerds.basketballDiary.mvc.game.domain.QuarterTeamRecords;
 import com.threeNerds.basketballDiary.mvc.game.dto.*;
@@ -30,7 +31,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.constraints.Min;
+
 import java.util.List;
 
 import static com.threeNerds.basketballDiary.constant.Constant.USER;
@@ -381,12 +382,25 @@ public class GameController {
      * API061 경기참가선수 조회
      */
     @GetMapping("/{gameSeq}/players")
-    public ResponseEntity<?> getMathPlayers(
-            @PathVariable(name = "gameSeq") @Min(1) Long gameSeq,
-            @RequestParam(name = "homeAwayCode") String homeAwayCode
-    ){
-        List<MatchPlayersInfoDTO> matchPlayersInfo = gameService.getMatchPlayersInfo(gameSeq, homeAwayCode);
-        return ResponseEntity.ok(matchPlayersInfo);
+    public ResponseEntity<?> getGameJoinPlayers(
+            @PathVariable(name = "gameSeq") Long gameSeq,
+            @RequestParam(name = "homeAwayCode", required = false) String homeAwayCode
+    ) {
+
+        SearchPlayersDTO searchDTO = new SearchPlayersDTO()
+                                            .gameSeq(gameSeq)
+                                            .homeAwayCode(homeAwayCode);
+
+        List<GameJoinTeamDTO> teams = gameJoinManagerService.getGameJoinPlayers(searchDTO);
+
+        GetGameJoinPlayersResponse resBody = new GetGameJoinPlayersResponse()
+                .gameSeq(gameSeq)
+                .teams(teams);
+
+        return ResponseEntity.ok(resBody);
+
+//        List<MatchPlayersInfoDTO> matchPlayersInfo = gameService.getMatchPlayersInfo(gameSeq, homeAwayCode);
+//        return ResponseEntity.ok(matchPlayersInfo);
     }
 
     /**
