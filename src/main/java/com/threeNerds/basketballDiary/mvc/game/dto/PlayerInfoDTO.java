@@ -1,5 +1,8 @@
 package com.threeNerds.basketballDiary.mvc.game.dto;
 
+import com.threeNerds.basketballDiary.constant.code.HomeAwayCode;
+import com.threeNerds.basketballDiary.constant.code.PlayerTypeCode;
+import com.threeNerds.basketballDiary.constant.code.PositionCode;
 import lombok.Getter;
 
 @Getter
@@ -15,9 +18,10 @@ public class PlayerInfoDTO {
     private String playerTypeCode;
     private String playerTypeCodeName;
     private String homeAwayCode;
+    private String homeAwayCodeName;
 
     private String teamName;
-    private String playerName;
+    private String name;
 
     private String backNumber;
     private String positionCode;
@@ -28,5 +32,20 @@ public class PlayerInfoDTO {
     public PlayerInfoDTO gameJoinTeamSeq(Long gameJoinTeamSeq) {
         this.gameJoinTeamSeq = gameJoinTeamSeq;
         return this;
+    }
+
+    private void setPlayerTypeCode(String playerTypeCode) {
+        this.playerTypeCode = playerTypeCode;
+        this.playerTypeCodeName = PlayerTypeCode.nameOf(playerTypeCode);
+    }
+
+    private void setPositionCode(String positionCode) {
+        this.positionCode = positionCode;
+        this.positionCodeName = PositionCode.nameOf(positionCode);
+    }
+
+    private void setHomeAwayCode(String homeAwayCode) {
+        this.homeAwayCode = homeAwayCode;
+        this.homeAwayCodeName = HomeAwayCode.nameOf(homeAwayCode);
     }
 }
