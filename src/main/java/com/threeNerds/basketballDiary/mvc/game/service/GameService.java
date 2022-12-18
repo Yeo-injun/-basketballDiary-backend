@@ -71,6 +71,7 @@ public class GameService {
     /**
      * 22.11.30
      * 경기참가선수 조회
+     * >> gameJoinManagerService로 이전 ( by 인준 )
      * @author 이성주
      */
     public List<MatchPlayersInfoDTO> getMatchPlayersInfo(Long gameSeq,String homeAwayCode){

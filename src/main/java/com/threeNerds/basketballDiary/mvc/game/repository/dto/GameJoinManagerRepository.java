@@ -5,10 +5,7 @@ import com.threeNerds.basketballDiary.mvc.dto.team.team.TeamDTO;
 import com.threeNerds.basketballDiary.mvc.game.controller.dto.QuarterEntryDTO;
 import com.threeNerds.basketballDiary.mvc.game.domain.GameJoinTeam;
 import com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords;
-import com.threeNerds.basketballDiary.mvc.game.dto.QuarterPlayerRecordDTO;
-import com.threeNerds.basketballDiary.mvc.game.dto.SearchEntryDTO;
-import com.threeNerds.basketballDiary.mvc.game.dto.SearchGameHomeAwayDTO;
-import com.threeNerds.basketballDiary.mvc.game.dto.SearchOppenentsDTO;
+import com.threeNerds.basketballDiary.mvc.game.dto.*;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.FindGameHomeAwayDTO;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -23,4 +20,6 @@ public interface GameJoinManagerRepository {
     List<TeamDTO> searchOpponents(SearchOppenentsDTO searchOppenentsDTO);
 
     List<FindGameHomeAwayDTO> findGameTeams(SearchGameHomeAwayDTO searchGameHomeAwayDTO);
+
+    List<PlayerInfoDTO> findGameJoinPlayers(SearchPlayersDTO searchDTO);
 }
