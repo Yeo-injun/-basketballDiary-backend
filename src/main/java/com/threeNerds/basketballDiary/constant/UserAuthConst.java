@@ -1,10 +1,6 @@
 package com.threeNerds.basketballDiary.constant;
 
-public class Constant {
-
-    // 여부(Yes/No) 상태값을 관리하기 위한 클래스 필드
-    public static final String YES = "Y";
-    public static final String NO = "N";
+public class UserAuthConst {
 
     /** 팀의 권한 등급을 관리하는 상수 */
     public static final long LEADER      = 3L;

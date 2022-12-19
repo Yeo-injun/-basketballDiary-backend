@@ -1,6 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.myTeam.domain;
 
-import com.threeNerds.basketballDiary.constant.Constant;
+import com.threeNerds.basketballDiary.constant.UserAuthConst;
 import com.threeNerds.basketballDiary.constant.code.TeamAuthCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.mvc.domain.Team;
@@ -71,7 +71,7 @@ public class TeamMember {
                 .userSeq(userSeq)
                 .teamAuthCode(teamAuthCode)
                 .joinYmd(currentYmd)
-                .withdrawalYn(Constant.NO)
+                .withdrawalYn("N")
                 .build();
     }
 
@@ -80,7 +80,7 @@ public class TeamMember {
         return TeamMember.builder()
                 .teamMemberSeq(teamMember.getTeamMemberSeq())
                 .teamSeq(teamMember.getTeamSeq())
-                .withdrawalYn(Constant.YES)
+                .withdrawalYn("Y")
                 .build();
     }
 
