@@ -1,6 +1,6 @@
 package com.threeNerds.basketballDiary.interceptor;
 
-import com.threeNerds.basketballDiary.constant.Constant;
+import com.threeNerds.basketballDiary.constant.UserAuthConst;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.utils.SessionUtil;
@@ -47,7 +47,7 @@ public class AuthInterceptor implements HandlerInterceptor {
         }
 
         Long apiAuthGrade = apiAuth.GRADE();
-        boolean isUserGrade = apiAuthGrade == Constant.USER;
+        boolean isUserGrade = apiAuthGrade == UserAuthConst.USER;
         if (isUserGrade) {
             return true;
         }
