@@ -3,6 +3,29 @@
 
 <mapper namespace="com.threeNerds.basketballDiary.mvc.game.repository.dto.GameJoinManagerRepository">
 
+    <select id="findEntryList" resultType="com.threeNerds.basketballDiary.mvc.game.dto.QuarterPlayerRecordDTO">
+        /* GameJoinManagerRepository.findEntryList */
+        SELECT QPR.QUARTER_PLAYER_RECORDS_SEQ
+             , QPR.GAME_SEQ
+             , QPR.QUARTER_CODE
+             , QPR.GAME_JOIN_PLAYER_SEQ
+             , QPR.IN_GAME_YN
+             , GJP.PLAYER_TYPE_CODE
+             , GJP.NAME
+             , GJP.BACK_NUMBER
+             , GJP.POSITION_CODE
+        /* 속성 계속 추가 예정 */
+          FROM GAME_JOIN_TEAM GJT
+         INNER JOIN QUARTER_PLAYER_RECORDS QPR
+            ON GJT.GAME_JOIN_TEAM_SEQ = QPR.GAME_JOIN_TEAM_SEQ
+         INNER JOIN GAME_JOIN_PLAYER GJP
+            ON QPR.GAME_JOIN_PLAYER_SEQ = GJP.GAME_JOIN_PLAYER_SEQ
+         WHERE 1=1
+           AND GJT.GAME_JOIN_TEAM_SEQ = #{gameJoinTeamSeq}
+           AND QPR.QUARTER_CODE       = #{quarterCode}
+           AND QPR.IN_GAME_YN         = 'Y'
+    </select>
+
     <select id="findGameCreatorTeam" resultType="com.threeNerds.basketballDiary.mvc.domain.Team">
         /* GameJoinManagerRepository.findGameCreatorTeam */
         SELECT G.GAME_SEQ
@@ -75,8 +98,29 @@
             INNER JOIN USER T3 ON T2.LEADER_USER_SEQ = T3.USER_SEQ
         WHERE 1=1
             AND T1.GAME_SEQ = #{gameSeq}
-        <if test='homeAwayCode != null and homeAwayCode !="" '>
+        <if test='homeAwayCode != null and homeAwayCode != "" '>
             AND T1.HOME_AWAY_CODE = #{homeAwayCode}
+        </if>
+    </select>
+
+    <select id="findGameJoinPlayers" resultType="com.threeNerds.basketballDiary.mvc.game.dto.PlayerInfoDTO">
+        SELECT GJP.GAME_JOIN_PLAYER_SEQ
+             , GJP.PLAYER_TYPE_CODE
+             , GJP.USER_SEQ
+             , GJP.NAME
+             , GJP.EMAIL
+             , GJP.POSITION_CODE
+             , GJP.BACK_NUMBER
+             , GJT.GAME_JOIN_TEAM_SEQ
+             , GJT.TEAM_SEQ
+             , GJT.HOME_AWAY_CODE
+        FROM GAME_JOIN_TEAM GJT
+         INNER JOIN GAME_JOIN_PLAYER GJP
+            ON GJT.GAME_JOIN_TEAM_SEQ = GJP.GAME_JOIN_TEAM_SEQ
+         WHERE 1=1
+           AND GJT.GAME_SEQ = #{gameSeq}
+        <if test='homeAwayCode != null and homeAwayCode != ""'>
+           AND GJT.HOME_AWAY_CODE = #{homeAwayCode}
         </if>
     </select>
 </mapper>

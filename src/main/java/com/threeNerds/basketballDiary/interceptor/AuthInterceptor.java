@@ -1,6 +1,6 @@
 package com.threeNerds.basketballDiary.interceptor;
 
-import com.threeNerds.basketballDiary.constant.Constant;
+import com.threeNerds.basketballDiary.constant.UserAuthConst;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.utils.SessionUtil;
@@ -18,6 +18,9 @@ import java.util.Map;
 public class AuthInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        log.info("============= 인증 체크 인터셉터 실행 =============");
+        log.info("= {} {} ", request.getMethod(), request.getRequestURI());
+        log.info("===============================================");
 
         if(!(handler instanceof HandlerMethod)) {
             return true;
@@ -32,10 +35,6 @@ public class AuthInterceptor implements HandlerInterceptor {
         }
 
         /** 2. @Auth가 있는 경우 - 세션이 있는지 확인 */
-        log.info("============= 인증 체크 인터셉터 실행 =============");
-        log.info("= {} {} ", request.getMethod(), request.getRequestURI());
-        log.info("===============================================");
-
         if (!SessionUtil.isLogin()) {
             throw new CustomException(Error.LOGIN_REQUIRED);
         }
@@ -48,7 +47,7 @@ public class AuthInterceptor implements HandlerInterceptor {
         }
 
         Long apiAuthGrade = apiAuth.GRADE();
-        boolean isUserGrade = apiAuthGrade == Constant.USER;
+        boolean isUserGrade = apiAuthGrade == UserAuthConst.USER;
         if (isUserGrade) {
             return true;
         }

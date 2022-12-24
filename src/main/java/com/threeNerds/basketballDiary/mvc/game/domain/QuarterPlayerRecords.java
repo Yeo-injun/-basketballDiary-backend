@@ -26,6 +26,7 @@ public class QuarterPlayerRecords {
         twoPoint = qpr.twoPoint;
         tryThreePoint = qpr.tryThreePoint;
         threePoint = qpr.threePoint;
+        assist = qpr.assist;
         rebound = qpr.rebound;
         steal = qpr.steal;
         block = qpr.block;
@@ -38,13 +39,14 @@ public class QuarterPlayerRecords {
     private Long gameJoinPlayerSeq;
     private Long gameJoinTeamSeq;
     private String quarterCode;
-    private Integer inGameYn;
+    private String inGameYn;
     private Integer tryFreeThrow;
     private Integer freeThrow;
     private Integer tryTwoPoint;
     private Integer twoPoint;
     private Integer tryThreePoint;
     private Integer threePoint;
+    private Integer assist;
     private Integer rebound;
     private Integer steal;
     private Integer block;

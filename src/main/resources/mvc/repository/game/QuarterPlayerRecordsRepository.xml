@@ -36,6 +36,30 @@
         </where>
     </select>
 
+    <select id="findAllInGame" resultType="com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords">
+        /* QuarterPlayerRecordsRepository.findAllInGame */
+        SELECT QUARTER_PLAYER_RECORDS_SEQ
+             , GAME_SEQ
+             , GAME_JOIN_PLAYER_SEQ
+             , GAME_JOIN_TEAM_SEQ
+             , QUARTER_CODE
+             , IN_GAME_YN
+             , TRY_FREE_THROW
+             , FREE_THROW
+             , TRY_TWO_POINT
+             , TWO_POINT
+             , TRY_THREE_POINT
+             , THREE_POINT
+             , REBOUND
+             , STEAL
+             , BLOCK
+             , TURNOVER
+             , FOUL
+          FROM QUARTER_PLAYER_RECORDS
+         WHERE 1=1
+           AND GAME_SEQ = #{gameSeq}
+    </select>
+
     <update id="modify" parameterType="com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords">
         UPDATE QUARTER_PLAYER_RECORDS
            SET QUARTER_CODE = #{quarterCode}
@@ -66,6 +90,22 @@
         </where>
     </update>
 
+    <update id="modifyInGameYn" parameterType="com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords">
+        /* QuarterPlayerRecordsRepository.modifyInGameYn */
+        UPDATE QUARTER_PLAYER_RECORDS
+           SET IN_GAME_YN = #{inGameYn}
+         WHERE 1=1
+           AND QUARTER_CODE         = #{quarterCode}
+        <choose>
+            <when test='gameJoinPlayerSeq != null and !"".equals(gameJoinPlayerSeq)'>
+           AND GAME_JOIN_PLAYER_SEQ = #{gameJoinPlayerSeq}
+            </when>
+            <otherwise>
+           AND GAME_JOIN_TEAM_SEQ   = #{gameJoinTeamSeq}
+            </otherwise>
+        </choose>
+    </update>
+
     <insert id="create" parameterType="com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords">
         <selectKey keyProperty="quarterPlayerRecordsSeq" order="AFTER" resultType="java.lang.Long">
         SELECT LAST_INSERT_ID()
@@ -90,23 +130,6 @@
         , BLOCK
         , TURNOVER
         , FOUL
-        , GAME_SEQ
-        , GAME_JOIN_PLAYER_SEQ
-        , GAME_JOIN_TEAM_SEQ
-        , QUARTER_CODE
-        , IN_GAME_YN
-        , TRY_FREE_THROW
-        , FREE_THROW
-        , TRY_TWO_POINT
-        , TWO_POINT
-        , TRY_THREE_POINT
-        , THREE_POINT
-        , ASSIST
-        , REBOUND
-        , STEAL
-        , BLOCK
-        , TURNOVER
-        , FOUL
         ) VALUES
         (
           #{gameSeq}
@@ -114,35 +137,18 @@
         , #{gameJoinTeamSeq}
         , #{quarterCode}
         , #{inGameYn}
-        , #{tryFreeThrow}
-        , #{freeThrow}
-        , #{tryTwoPoint}
-        , #{twoPoint}
-        , #{tryThreePoint}
-        , #{threePoint}
-        , #{assist}
-        , #{rebound}
-        , #{steal}
-        , #{block}
-        , #{turnover}
-        , #{foul}
-        , #{gameSeq}
-        , #{gameJoinPlayerSeq}
-        , #{gameJoinTeamSeq}
-        , #{quarterCode}
-        , #{inGameYn}
-        , #{tryFreeThrow}
-        , #{freeThrow}
-        , #{tryTwoPoint}
-        , #{twoPoint}
-        , #{tryThreePoint}
-        , #{threePoint}
-        , #{assist}
-        , #{rebound}
-        , #{steal}
-        , #{block}
-        , #{turnover}
-        , #{foul}
+        , IFNULL(#{tryFreeThrow}, 0)
+        , IFNULL(#{freeThrow}, 0)
+        , IFNULL(#{tryTwoPoint}, 0)
+        , IFNULL(#{twoPoint}, 0)
+        , IFNULL(#{tryThreePoint}, 0)
+        , IFNULL(#{threePoint}, 0)
+        , IFNULL(#{assist}, 0)
+        , IFNULL(#{rebound}, 0)
+        , IFNULL(#{steal}, 0)
+        , IFNULL(#{block}, 0)
+        , IFNULL(#{turnover}, 0)
+        , IFNULL(#{foul}, 0)
         )
     </insert>
 </mapper>

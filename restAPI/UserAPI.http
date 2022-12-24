@@ -6,6 +6,6 @@ Content-Type: application/json
 
 {
   "userId" : "test01",
-  "pwd" : "1234"
+  "password" : "1234"
 }
 

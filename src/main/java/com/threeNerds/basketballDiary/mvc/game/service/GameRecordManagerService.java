@@ -1,34 +1,31 @@
 package com.threeNerds.basketballDiary.mvc.game.service;
 
 import com.threeNerds.basketballDiary.constant.code.GameRecordStateCode;
-import com.threeNerds.basketballDiary.constant.code.GameTypeCode;
 import com.threeNerds.basketballDiary.constant.code.HomeAwayCode;
 import com.threeNerds.basketballDiary.constant.code.QuarterCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords;
+import com.threeNerds.basketballDiary.mvc.game.domain.QuarterTeamRecords;
 import com.threeNerds.basketballDiary.mvc.game.dto.HomeAwayTeamRecordDTO;
 import com.threeNerds.basketballDiary.mvc.game.dto.PlayerRecordDTO;
+import com.threeNerds.basketballDiary.mvc.game.dto.QuarterCodeDTO;
 import com.threeNerds.basketballDiary.mvc.game.dto.SearchGameDTO;
-import com.threeNerds.basketballDiary.mvc.game.domain.QuarterTeamRecords;
 import com.threeNerds.basketballDiary.mvc.game.repository.GameJoinTeamRepository;
+import com.threeNerds.basketballDiary.mvc.game.repository.GameRepository;
 import com.threeNerds.basketballDiary.mvc.game.repository.QuarterPlayerRecordsRepository;
 import com.threeNerds.basketballDiary.mvc.game.repository.QuarterTeamRecordsRepository;
 import com.threeNerds.basketballDiary.mvc.game.repository.dto.GameRecordManagerRepository;
-import com.threeNerds.basketballDiary.mvc.game.repository.GameRepository;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameCondDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameJoinTeamRecordDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameRecordDTO;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.QuarterRecordDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.repository.TeamMemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -193,7 +190,7 @@ public class GameRecordManagerService {
                 || ObjectUtils.isEmpty(searchGameDTO.getGameJoinTeamSeq())
                 || ObjectUtils.isEmpty(searchGameDTO.getQuarterCode()))
             throw new CustomException(Error.NO_PARAMETER);
-
+        //쿼터코드; 01~04(1~4쿼터), 11(전반), 12(후반)
         if(ObjectUtils.isEmpty(gameRepository.getGameInfo(searchGameDTO.getGameSeq())))
             throw new CustomException(Error.NOT_FOUND_GAME);  // 게임 정보가 존재하지 않습니다.
 
@@ -292,4 +289,16 @@ public class GameRecordManagerService {
         joinTeam.gameTotalScore(gameTotalScore);
         return joinTeam;
     }
+
+    /**
+     * 2022.12.05
+     * 쿼터 삭제
+     * @author 이성주
+     */
+    public void deleteQuater(QuarterCodeDTO quarterCodeDTO){
+        //TODO 어떤 처리를 할 필요가 없는건지?
+        gameRecordManagerRepository.deleteQuarterPlayerRecords(quarterCodeDTO);
+        gameRecordManagerRepository.deleteQuarterTeamRecords(quarterCodeDTO);
+    }
+
 }

@@ -70,4 +70,10 @@
               AND T1.HOME_AWAY_CODE = #{homeAwayCode}
           </if>
     </select>
+
+    <update id="confirmGame">
+        UPDATE GAME T1
+        SET GAME_RECORD_STATE_CODE = '03'
+        WHERE T1.GAME_SEQ = #{gameSeq}
+    </update>
 </mapper>

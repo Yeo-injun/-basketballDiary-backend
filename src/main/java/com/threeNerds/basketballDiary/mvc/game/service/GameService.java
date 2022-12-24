@@ -71,6 +71,7 @@ public class GameService {
     /**
      * 22.11.30
      * 경기참가선수 조회
+     * >> gameJoinManagerService로 이전 ( by 인준 )
      * @author 이성주
      */
     public List<MatchPlayersInfoDTO> getMatchPlayersInfo(Long gameSeq,String homeAwayCode){
@@ -107,5 +108,14 @@ public class GameService {
         }
         // MatchPlayerInfoDTO 에 대입
        return matchPlayers;
+    }
+
+    /**
+     * 22.12.12
+     * 게임 확정
+     * @author 이성주
+     */
+    public void confirmGame(Long gameSeq){
+        gameRepository.confirmGame(gameSeq);
     }
 }

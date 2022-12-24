@@ -147,7 +147,6 @@
          * GameRecordManagerRepository.findHomeAwayTeamRecordsByQuarter
          * 홈·어웨이 쿼터별 팀기록 조회이므로, QUARTER_TEAM_RECORDS_SEQ로 식별할 수 없음.
          * 쿼터별 개별팀 기록조회를 원한다면 GameRecordManagerRepository.findTeamRecordsByQuarter 로 조회할것.
-         * TODO 쿼리 검토 필요
          * @author 강창기
          */
         SELECT GAME_SEQ
@@ -187,11 +186,19 @@
                 INNER JOIN GAME_JOIN_TEAM B
                    ON A.GAME_SEQ = B.GAME_SEQ
                 INNER JOIN QUARTER_TEAM_RECORDS C
-                   ON B.GAME_JOIN_TEAM_SEQ = C.GAME_JOIN_TEAM_SEQ
+                   ON B.GAME_SEQ = C.GAME_SEQ
                 WHERE C.GAME_SEQ = #{gameSeq}
                   AND C.GAME_JOIN_TEAM_SEQ = #{gameJoinTeamSeq}
                   AND C.QUARTER_CODE = #{quarterCode}
              ) A
        GROUP BY GAME_SEQ, GAME_YMD, GAME_START_TIME, GAME_END_TIME
     </select>
+
+    <delete id="deleteQuarterPlayerRecords">
+        DELETE FROM QUARTER_PLAYER_RECORDS T1 WHERE T1.GAME_SEQ = #{gameSeq} AND T1.QUATER_CODE = #{quarterCode}
+    </delete>
+
+    <delete id="deleteQuarterTeamRecords">
+        DELETE FROM QUARTER_TEAM_RECORDS T1 WHERE T1.GAME_SEQ = #{gameSeq} AND T1.QUATER_CODE = #{quarterCode}
+    </delete>
 </mapper>

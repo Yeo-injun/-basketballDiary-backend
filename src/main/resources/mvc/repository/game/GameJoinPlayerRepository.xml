@@ -27,6 +27,22 @@
         )
     </insert>
 
+    <select id="findPlayer" resultType="com.threeNerds.basketballDiary.mvc.game.domain.GameJoinPlayer" >
+        /* GameJoinPlayerRepository.findPlayer */
+        SELECT GAME_JOIN_PLAYER_SEQ
+             , GAME_JOIN_TEAM_SEQ
+             , PLAYER_TYPE_CODE
+             , USER_SEQ
+             , NAME
+             , BACK_NUMBER
+             , POSITION_CODE
+             , EMAIL
+          FROM GAME_JOIN_PLAYER
+         WHERE 1=1
+           AND GAME_JOIN_TEAM_SEQ   = #{gameJoinTeamSeq}
+           AND GAME_JOIN_PLAYER_SEQ = #{gameJoinPlayerSeq}
+    </select>
+
     <select id="findPlayers" resultType="com.threeNerds.basketballDiary.mvc.game.domain.GameJoinPlayer" >
         /* GameJoinPlayerRepository.findPlayers */
         SELECT GAME_JOIN_PLAYER_SEQ

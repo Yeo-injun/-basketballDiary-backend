@@ -25,4 +25,6 @@ public interface GameRepository {
     GameInfoDTO getGameInfo(Long gameSeq);
 
     List<PlayerInfoDTO> getMatchPlayers(SearchMatchPlayersDTO matchPlayersDTO);
+
+    void confirmGame(Long gameSeq);
 }
