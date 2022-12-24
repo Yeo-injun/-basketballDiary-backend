@@ -69,48 +69,6 @@ public class GameService {
     }
 
     /**
-     * 22.11.30
-     * 경기참가선수 조회
-     * >> gameJoinManagerService로 이전 ( by 인준 )
-     * @author 이성주
-     */
-    public List<MatchPlayersInfoDTO> getMatchPlayersInfo(Long gameSeq,String homeAwayCode){
-        // homeAwayCode가 없을때는 홈,어웨이 모두 조회
-        // homeAwayCode가 있을때는 해당하는 팀의 팀원 조회
-
-        // 쿼리는 homeAwayCode에 따라 동적으로 작성
-        // response 객체에 담는 gameSeq, homeAwayCode, teamSeq 는 어떻게 설정해줘야 되는지
-        // response 객체에 단일 데이터와 리스트형식의 데이터를 함께 보내야된다.
-        SearchMatchPlayersDTO matchPlayersDTO = new SearchMatchPlayersDTO()
-                                                    .gameSeq(gameSeq)
-                                                    .homeAwayCode(homeAwayCode);
-
-        List<PlayerInfoDTO> playersInfo = Optional.ofNullable(gameRepository.getMatchPlayers(matchPlayersDTO))
-                .orElseThrow(()->new CustomException(Error.TEAM_NOT_FOUND));
-
-        List<PlayerInfoDTO> homePlayers = playersInfo.stream()
-                .filter(v -> v.getHomeAwayCode().equals("01"))
-                .collect(Collectors.toList());
-
-        List<PlayerInfoDTO> awayPlayers = playersInfo.stream()
-                .filter(v -> v.getHomeAwayCode().equals("02"))
-                .collect(Collectors.toList());
-
-        List<MatchPlayersInfoDTO> matchPlayers = new ArrayList<>();
-
-        if(homePlayers.size()>0) {
-            Long teamSeq = homePlayers.get(0).getTeamSeq();
-            matchPlayers.add(new MatchPlayersInfoDTO(gameSeq,teamSeq,"01",homePlayers));
-        }
-        if(awayPlayers.size()>0){
-            Long teamSeq = awayPlayers.get(0).getTeamSeq();
-            matchPlayers.add(new MatchPlayersInfoDTO(gameSeq,teamSeq,"02",awayPlayers));
-        }
-        // MatchPlayerInfoDTO 에 대입
-       return matchPlayers;
-    }
-
-    /**
      * 22.12.12
      * 게임 확정
      * @author 이성주
