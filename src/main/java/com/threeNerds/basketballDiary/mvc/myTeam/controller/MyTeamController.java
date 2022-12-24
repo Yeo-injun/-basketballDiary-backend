@@ -1,11 +1,11 @@
 package com.threeNerds.basketballDiary.mvc.myTeam.controller;
 
 import com.threeNerds.basketballDiary.interceptor.Auth;
-import com.threeNerds.basketballDiary.mvc.dto.PlayerDTO;
+import com.threeNerds.basketballDiary.mvc.team.dto.PlayerDTO;
 import com.threeNerds.basketballDiary.mvc.game.service.GameRecordManagerService;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.*;
-import com.threeNerds.basketballDiary.mvc.dto.pagination.PaginatedMyTeamDTO;
-import com.threeNerds.basketballDiary.mvc.dto.pagination.PaginatedTeamMemeberDTO;
+import com.threeNerds.basketballDiary.pagination.PaginatedMyTeamDTO;
+import com.threeNerds.basketballDiary.pagination.PaginatedTeamMemeberDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.MyTeamService;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.TeamMemberManagerService;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.TeamMemberService;
