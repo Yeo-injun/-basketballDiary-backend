@@ -1,11 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.game.domain;
 
-import com.threeNerds.basketballDiary.constant.code.HomeAwayCode;
 import com.threeNerds.basketballDiary.constant.code.PlayerTypeCode;
-import com.threeNerds.basketballDiary.exception.CustomException;
-import com.threeNerds.basketballDiary.exception.Error;
-import com.threeNerds.basketballDiary.mvc.domain.Team;
-import com.threeNerds.basketballDiary.mvc.domain.User;
+import com.threeNerds.basketballDiary.mvc.user.domain.User;
 import com.threeNerds.basketballDiary.mvc.game.dto.GameJoinPlayerDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
