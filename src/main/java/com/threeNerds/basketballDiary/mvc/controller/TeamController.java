@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-import static com.threeNerds.basketballDiary.constant.Constant.USER;
+import static com.threeNerds.basketballDiary.constant.UserAuthConst.USER;
 import static com.threeNerds.basketballDiary.constant.HttpResponseConst.RESPONSE_CREATED;
 import static com.threeNerds.basketballDiary.utils.SessionUtil.LOGIN_USER;
 
@@ -79,7 +79,7 @@ public class TeamController {
         log.info("▒▒▒▒▒ API021: TeamController.registerTeam");
 
         Long userSeq = sessionUser.getUserSeq();
-        teamDTO.leaderId(userSeq);
+        teamDTO.leaderUserSeq(userSeq);
         List<TeamAuthDTO> authList = teamService.createTeam(teamDTO);
         sessionUser.updateAuthority(authList);
 

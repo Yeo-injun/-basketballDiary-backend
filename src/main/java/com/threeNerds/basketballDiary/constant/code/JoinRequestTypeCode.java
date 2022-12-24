@@ -28,12 +28,13 @@ public enum JoinRequestTypeCode {
     // Stream으로 구현한 이유 : https://tecoble.techcourse.co.kr/post/2021-09-30-java8-functional-programming/
     // Steam API정리 : https://tecoble.techcourse.co.kr/post/2021-05-23-stream-api-basic/
     public static String nameOf(String code) {
-        if (code == null) return "";
+//        if (code == null) return "";
         String codeName = Arrays.stream(values())
                 .filter(item -> item.getCode().equals(code))
                 .map(JoinRequestTypeCode::getName)
                 .findAny()
-                .get();
+                .orElse("");
+//                .get();
         return codeName;
     }
 }

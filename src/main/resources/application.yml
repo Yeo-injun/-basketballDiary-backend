@@ -1,11 +1,11 @@
 spring:
   datasource:
     ## log4jdbc를 위한 url 및 driver-class-name 변경 (2022.02.26)
-    ## url: jdbc:mysql://basketball-diary.comugfwcpzzw.ap-northeast-2.rds.amazonaws.com/basketballDiaryTest
-    url: jdbc:log4jdbc:mysql://basketball-diary.comugfwcpzzw.ap-northeast-2.rds.amazonaws.com/basketballDiaryTest
+    ## url: jdbc:log4jdbc:mysql://basketdiary.cefnc9yxtv6y.ap-northeast-2.rds.amazonaws.com/basketdiary
+    url: jdbc:log4jdbc:mysql://changkeeroom.iptime.org:53306/basketdiary
     driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
-    username: admin
-    password: Basket5199
+    username: basketdiary
+    password: basket5199
 
   jpa:
     show-sql: true
@@ -37,8 +37,11 @@ server:
       tracking-modes: cookie
       cookie:
         name: basketballDiary
-#        domain: 127.0.0.1:5500 # sameSite 설정을 위한 속성값 - sameSite의 기본값은 lax로 제한적으로만 cookie가 세팅됨. sameSite = none으로 하고 https통신으로 바꿔줘야 함!
-# 참고 : https://yousrain.tistory.com/23, https://velog.io/@kwakwoohyun/%EC%9D%B4%EC%8A%88%EC%B2%98%EB%A6%AC-spring-boot-local-cookie
+        # sameSite 설정을 위한 속성값 - sameSite의 기본값은 lax로 제한적으로만 cookie가 세팅됨.
+        # sameSite = none으로 하고, secure속성값을 추가해야함!
+        # 참고 : https://yousrain.tistory.com/23, https://velog.io/@kwakwoohyun/%EC%9D%B4%EC%8A%88%EC%B2%98%EB%A6%AC-spring-boot-local-cookie
+        same-site: none   # 22.10.25 인준 : SameSite오류 해결 - 개념정리 필요
+        secure: true      # 22.10.25 인준 : SameSite오류 해결 - 개념정리 필요
         http-only: true
         path: /
 

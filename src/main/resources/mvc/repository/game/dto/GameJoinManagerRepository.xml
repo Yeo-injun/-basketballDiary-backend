@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.threeNerds.basketballDiary.mvc.game.repository.dto.GameJoinManagerRepository">
+
+    <select id="findEntryList" resultType="com.threeNerds.basketballDiary.mvc.game.dto.QuarterPlayerRecordDTO">
+        /* GameJoinManagerRepository.findEntryList */
+        SELECT QPR.QUARTER_PLAYER_RECORDS_SEQ
+             , QPR.GAME_SEQ
+             , QPR.QUARTER_CODE
+             , QPR.GAME_JOIN_PLAYER_SEQ
+             , QPR.IN_GAME_YN
+             , GJP.PLAYER_TYPE_CODE
+             , GJP.NAME
+             , GJP.BACK_NUMBER
+             , GJP.POSITION_CODE
+        /* 속성 계속 추가 예정 */
+          FROM GAME_JOIN_TEAM GJT
+         INNER JOIN QUARTER_PLAYER_RECORDS QPR
+            ON GJT.GAME_JOIN_TEAM_SEQ = QPR.GAME_JOIN_TEAM_SEQ
+         INNER JOIN GAME_JOIN_PLAYER GJP
+            ON QPR.GAME_JOIN_PLAYER_SEQ = GJP.GAME_JOIN_PLAYER_SEQ
+         WHERE 1=1
+           AND GJT.GAME_JOIN_TEAM_SEQ = #{gameJoinTeamSeq}
+           AND QPR.QUARTER_CODE       = #{quarterCode}
+           AND QPR.IN_GAME_YN         = 'Y'
+    </select>
+
+    <select id="findGameCreatorTeam" resultType="com.threeNerds.basketballDiary.mvc.domain.Team">
+        /* GameJoinManagerRepository.findGameCreatorTeam */
+        SELECT G.GAME_SEQ
+             , TM.TEAM_MEMBER_SEQ
+             , T.TEAM_SEQ
+             , T.TEAM_NAME
+          FROM GAME G
+         INNER JOIN TEAM_MEMBER TM
+            ON G.CREATOR_TEAM_MEMBER_SEQ = TM.TEAM_MEMBER_SEQ
+         INNER JOIN TEAM T
+            ON TM.TEAM_SEQ = T.TEAM_SEQ
+         WHERE 1=1
+           AND GAME_SEQ = #{gameSeq}
+    </select>
+
+    <select id="searchOpponents" resultType="com.threeNerds.basketballDiary.mvc.dto.team.team.TeamDTO">
+        SELECT T1.TEAM_SEQ
+            ,  T1.LEADER_USER_SEQ
+            ,  T1.TEAM_NAME
+        FROM TEAM T1
+        INNER JOIN USER T2
+        ON T1.LEADER_USER_SEQ = T2.USER_SEQ
+        WHERE 1=1
+        <if test="sidoCode != null">
+            AND T1.SIDO_CODE = #{sidoCode}
+        </if>
+        <if test="teamName != null">
+            AND T1.TEAM_NAME = #{teamName}
+        </if>
+        <if test="leaderName">
+            AND T2.USER_NAME = #{leaderName}
+        </if>
+    </select>
+
+    <select id="findGamesByTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.myTeam.dto.GameRecordDTO">
+        /* GameJoinManagerRepository.findGamesByTeamSeq */
+        SELECT GAME_SEQ
+             , GAME_RECORD_STATE_CODE
+             , GAME_TYPE_CODE
+             , GAME_YMD
+             , GAME_START_TIME
+             , GAME_END_TIME
+             , GAME_PLACE_ADDRESS
+             , GAME_PLACE_NAME
+          FROM GAME
+         WHERE 1=1
+           AND GAME_SEQ IN ( SELECT GAME_SEQ
+                               FROM GAME_JOIN_TEAM
+                              WHERE TEAM_SEQ = #{teamSeq} )
+    </select>
+
+    <select id="findGameJoinTeamRecords" resultType="com.threeNerds.basketballDiary.mvc.myTeam.dto.GameJoinTeamRecordDTO">
+        /* GameJoinManagerRepository.findGameJoinTeamRecords */
+        SELECT GAME_JOIN_TEAM_SEQ
+             , GAME_SEQ
+             , TEAM_SEQ
+             , TEAM_NAME
+             , HOME_AWAY_CODE
+          FROM GAME
+         WHERE 1=1
+           AND GAME_SEQ = #{gameSeq}
+    </select>
+
+    <select id="findGameTeams" resultType="com.threeNerds.basketballDiary.mvc.myTeam.dto.FindGameHomeAwayDTO">
+        SELECT T2.TEAM_NAME
+              ,T2.HOMETOWN
+              ,T3.USER_ID AS teamLeaderName
+        FROM GAME_JOIN_TEAM T1
+            INNER JOIN TEAM T2 ON T1.TEAM_SEQ = T2.TEAM_SEQ
+            INNER JOIN USER T3 ON T2.LEADER_USER_SEQ = T3.USER_SEQ
+        WHERE 1=1
+            AND T1.GAME_SEQ = #{gameSeq}
+        <if test='homeAwayCode != null and homeAwayCode != "" '>
+            AND T1.HOME_AWAY_CODE = #{homeAwayCode}
+        </if>
+    </select>
+
+    <select id="findGameJoinPlayers" resultType="com.threeNerds.basketballDiary.mvc.game.dto.PlayerInfoDTO">
+        SELECT GJP.GAME_JOIN_PLAYER_SEQ
+             , GJP.PLAYER_TYPE_CODE
+             , GJP.USER_SEQ
+             , GJP.NAME
+             , GJP.EMAIL
+             , GJP.POSITION_CODE
+             , GJP.BACK_NUMBER
+             , GJT.GAME_JOIN_TEAM_SEQ
+             , GJT.TEAM_SEQ
+             , GJT.HOME_AWAY_CODE
+        FROM GAME_JOIN_TEAM GJT
+         INNER JOIN GAME_JOIN_PLAYER GJP
+            ON GJT.GAME_JOIN_TEAM_SEQ = GJP.GAME_JOIN_TEAM_SEQ
+         WHERE 1=1
+           AND GJT.GAME_SEQ = #{gameSeq}
+        <if test='homeAwayCode != null and homeAwayCode != ""'>
+           AND GJT.HOME_AWAY_CODE = #{homeAwayCode}
+        </if>
+    </select>
+</mapper>

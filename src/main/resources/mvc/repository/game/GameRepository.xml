@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.threeNerds.basketballDiary.mvc.game.repository.GameRepository">
+
+    <insert id="saveGame" parameterType="com.threeNerds.basketballDiary.mvc.game.domain.Game" useGeneratedKeys="true" keyProperty="gameSeq">
+        <selectKey keyProperty="gameSeq" order="AFTER" resultType="java.lang.Long">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        /* GameRepository.saveGame */
+        INSERT INTO
+          GAME (
+                CREATOR_TEAM_MEMBER_SEQ
+              , GAME_RECORD_STATE_CODE
+              , GAME_TYPE_CODE
+              , GAME_YMD
+              , GAME_START_TIME
+              , GAME_END_TIME
+              , GAME_PLACE_ADDRESS
+              , GAME_PLACE_NAME
+              , REG_DATE
+              , SIDO_CODE
+              , SIGUNGU_CODE
+        )
+        VALUES (
+                #{creatorTeamMemberSeq}
+              , #{gameRecordStateCode}
+              , #{gameTypeCode}
+              , #{gameYmd}
+              , #{gameStartTime}
+              , #{gameEndTime}
+              , #{gamePlaceAddress}
+              , #{gamePlaceName}
+              , #{regDate}
+              , #{sidoCode}
+              , #{sigunguCode}
+        )
+    </insert>
+
+    <delete id="deleteGame">
+        DELETE FROM GAME T1 WHERE T1.GAME_SEQ = {gameSeq}
+    </delete>
+
+    <select id="getGameInfo" resultType="com.threeNerds.basketballDiary.mvc.game.dto.GameInfoDTO">
+        SELECT T1.GAME_YMD
+             , T1.GAME_START_TIME
+             , T1.GAME_END_TIME
+             , T1.GAME_PLACE_NAME
+             , T1.GAME_PLACE_ADDRESS
+        FROM GAME T1
+        WHERE 1=1
+            AND T1.GAME_SEQ = #{gameSeq}
+    </select>
+
+    <select id="getMatchPlayers" resultType="com.threeNerds.basketballDiary.mvc.game.dto.PlayerInfoDTO">
+        SELECT T2.USER_SEQ
+             , T2.NAME
+             , T2.EMAIL
+             , T2.POSITION_CODE
+             , T2.BACK_NUMBER
+             , T1.TEAM_SEQ
+             , T1.GAME_SEQ
+             , T1.HOME_AWAY_CODE
+        FROM GAME_JOIN_TEAM T1
+            INNER JOIN GAME_JOIN_PLAYER T2
+                ON T1.GAME_JOIN_TEAM_SEQ = T2.GAME_JOIN_TEAM_SEQ
+        WHERE 1=1
+            AND T1.GAME_SEQ = #{gameSeq}
+          <if test='homeAwayCode != null'>
+              AND T1.HOME_AWAY_CODE = #{homeAwayCode}
+          </if>
+    </select>
+
+    <update id="confirmGame">
+        UPDATE GAME T1
+        SET GAME_RECORD_STATE_CODE = '03'
+        WHERE T1.GAME_SEQ = #{gameSeq}
+    </update>
+</mapper>

@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.MessageDigest;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,11 +46,13 @@ public class UserService {
     }
 
     @Transactional
-    public Long createMember(CmnUserDTO userDTO) {
+    public Long createMember(CmnUserDTO userDTO)
+    {
         User user = User.createForRegistration(userDTO);
         userRepository.saveUser(user);
         return user.getUserSeq();
     }
+
     @Transactional
     public void updateUser(UpdateUserDTO user){
         userRepository.updateUser(user);

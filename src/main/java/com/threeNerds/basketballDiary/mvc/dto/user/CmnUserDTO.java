@@ -28,6 +28,8 @@ public class CmnUserDTO {
     /** 포지션 코드 **/
     private String positionCode;
 
+    private String roadAddress;
+
     public CmnUserDTO userId(String userId){
         this.userId=userId;
         return this;
@@ -74,6 +76,10 @@ public class CmnUserDTO {
     }
     public CmnUserDTO positionCode(String positionCode){
         this.positionCode = positionCode;
+        return this;
+    }
+    public CmnUserDTO roadAddress(String roadAddress){
+        this.roadAddress = roadAddress;
         return this;
     }
 }

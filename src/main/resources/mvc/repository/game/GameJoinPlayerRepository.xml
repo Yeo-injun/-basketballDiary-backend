@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.threeNerds.basketballDiary.mvc.game.repository.GameJoinPlayerRepository">
+
+    <insert id="save" parameterType="com.threeNerds.basketballDiary.mvc.game.domain.GameJoinPlayer" useGeneratedKeys="true" keyProperty="gameJoinPlayerSeq">
+        <selectKey keyProperty="gameJoinPlayerSeq" order="AFTER" resultType="java.lang.Long">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        /* GameJoinPlayerRepository.save */
+        INSERT INTO GAME_JOIN_PLAYER (
+          GAME_JOIN_TEAM_SEQ
+        , PLAYER_TYPE_CODE
+        , USER_SEQ
+        , NAME
+        , BACK_NUMBER
+        , POSITION_CODE
+        , EMAIL
+        ) VALUES (
+          #{gameJoinTeamSeq}
+        , #{playerTypeCode}
+        , #{userSeq}
+        , #{name}
+        , #{backNumber}
+        , #{positionCode}
+        , #{email}
+        )
+    </insert>
+
+    <select id="findPlayer" resultType="com.threeNerds.basketballDiary.mvc.game.domain.GameJoinPlayer" >
+        /* GameJoinPlayerRepository.findPlayer */
+        SELECT GAME_JOIN_PLAYER_SEQ
+             , GAME_JOIN_TEAM_SEQ
+             , PLAYER_TYPE_CODE
+             , USER_SEQ
+             , NAME
+             , BACK_NUMBER
+             , POSITION_CODE
+             , EMAIL
+          FROM GAME_JOIN_PLAYER
+         WHERE 1=1
+           AND GAME_JOIN_TEAM_SEQ   = #{gameJoinTeamSeq}
+           AND GAME_JOIN_PLAYER_SEQ = #{gameJoinPlayerSeq}
+    </select>
+
+    <select id="findPlayers" resultType="com.threeNerds.basketballDiary.mvc.game.domain.GameJoinPlayer" >
+        /* GameJoinPlayerRepository.findPlayers */
+        SELECT GAME_JOIN_PLAYER_SEQ
+             , GAME_JOIN_TEAM_SEQ
+             , PLAYER_TYPE_CODE
+             , USER_SEQ
+             , NAME
+             , BACK_NUMBER
+             , POSITION_CODE
+             , EMAIL
+          FROM GAME_JOIN_PLAYER
+         WHERE 1=1
+           AND GAME_JOIN_TEAM_SEQ = #{gameJoinTeamSeq}
+    </select>
+
+    <delete id="deletePlayers" parameterType="Long">
+        /* GameJoinPlayerRepository.deletePlayers */
+        DELETE
+          FROM GAME_JOIN_PLAYER
+         WHERE 1=1
+           AND GAME_JOIN_TEAM_SEQ = #{gameJoinTeamSeq}
+    </delete>
+</mapper>
