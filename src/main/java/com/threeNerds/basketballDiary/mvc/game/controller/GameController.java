@@ -198,26 +198,26 @@ public class GameController {
     /**
      * API043 게임쿼터별 선수기록조회
      * @param gameSeq 게임Seq
+     * @param teamSeq 팀Seq
      * @param quarterCode 쿼터코드; 01~04(1~4쿼터), 11(전반), 12(후반)
-     * @param homeAwayCode 홈·어웨이코드; 01(홈),02(어웨이)
      * @result 특정쿼터의 선수별 기록조회
      * @author 강창기
      */
     //@Auth(GRADE = USER) TODO
-    @GetMapping("/{gameSeq}/quarters/{quarterCode}/players/homeAway/{homeAwayCode}")
+    @GetMapping("/{gameSeq}/teams/{teamSeq}/quarters/{quarterCode}/players")
     public ResponseEntity<?> searchPlayerRecordsByQuarter(
             // TODO  인준 : seq는 자료형이 String이 아니라 Long으로 관리하고 있음.
         @PathVariable(name = "gameSeq") String gameSeq,
-        @PathVariable(name = "quarterCode") String quarterCode,
-        @PathVariable(name = "homeAwayCode") String homeAwayCode
+        @PathVariable(name = "teamSeq") String teamSeq,
+        @PathVariable(name = "quarterCode") String quarterCode
     ) {
         // TODO 설계구조상 pagination data를 받지 않음.
         // TODO 파라미터 값 지정하여 throw처리...
         if(ObjectUtils.isEmpty(gameSeq) || !StringUtils.hasText(gameSeq))
             throw new CustomException(Error.NO_PARAMETER);
-        if(ObjectUtils.isEmpty(quarterCode) || !StringUtils.hasText(quarterCode))
+        if(ObjectUtils.isEmpty(teamSeq) || !StringUtils.hasText(teamSeq))
             throw new CustomException(Error.NO_PARAMETER);
-        if(ObjectUtils.isEmpty(homeAwayCode) || !StringUtils.hasText(homeAwayCode))
+        if(ObjectUtils.isEmpty(quarterCode) || !StringUtils.hasText(quarterCode))
             throw new CustomException(Error.NO_PARAMETER);
 
         //if(quarterCode.contains()) TODO 쿼터코드에 해당하는 값인지 체크필요
@@ -227,8 +227,8 @@ public class GameController {
 
         SearchGameDTO searchGameDTO = new SearchGameDTO()
                 .gameSeq(Long.parseLong(gameSeq))
-                .quarterCode(quarterCode)
-                .homeAwayCode(homeAwayCode);
+                .teamSeq(Long.parseLong(teamSeq))
+                .quarterCode(quarterCode);
 
         List<PlayerRecordDTO> listPlayerRecordsByQuarter = gameRecordManagerService.getListPlayerRecordsByQuarter(searchGameDTO);
 
@@ -238,26 +238,25 @@ public class GameController {
     /**
      * API048 경기 쿼터기록 조회
      * @param gameSeq 게임Seq
-     * @param gameRecordRequest 경기기록Req
+     * @param quarterCode 쿼터코드
      * @result 특정쿼터의 선수별 기록조회
      * @author 강창기
      */
     //@Auth(GRADE = USER) TODO
-    @PostMapping("/{gameSeq}/quarterRecord")
+    @GetMapping("/{gameSeq}/quarters/{quarterCode}")
     public ResponseEntity<?> searchGameRecordByQuarter(
             @PathVariable(name = "gameSeq") String gameSeq,
-            @RequestBody GameRecordRequest gameRecordRequest
+            @PathVariable(name = "quarterCode") String quarterCode
     ){
         if(ObjectUtils.isEmpty(gameSeq) || !StringUtils.hasText(gameSeq))
             throw new CustomException(Error.NO_PARAMETER);
 
-        if(ObjectUtils.isEmpty(gameRecordRequest))
+        if(ObjectUtils.isEmpty(quarterCode) || !StringUtils.hasText(quarterCode))
             throw new CustomException(Error.NO_PARAMETER);
 
         SearchGameDTO searchGameDTO = new SearchGameDTO()
                 .gameSeq(Long.parseLong(gameSeq))
-                .gameJoinTeamSeq(gameRecordRequest.getGameJoinTeamSeq())
-                .quarterCode(gameRecordRequest.getQuarterCode());
+                .quarterCode(quarterCode);
 
         HomeAwayTeamRecordDTO homeAwayTeamRecordByQuarter = gameRecordManagerService.getHomeAwayTeamRecordByQuarter(searchGameDTO);
 
@@ -415,4 +414,23 @@ public class GameController {
         return RESPONSE_OK;
     }
 
+    /**
+     * API063 게임전체쿼터 조회
+     * 22.12.25(금)
+     * @author 강창기
+     */
+    @GetMapping("/{gameSeq}/quarters")
+    public ResponseEntity<?> searchGameRecordsByQuarter(
+            @PathVariable(name = "gameSeq") String gameSeq
+    ){
+        if(ObjectUtils.isEmpty(gameSeq) || !StringUtils.hasText(gameSeq))
+            throw new CustomException(Error.NO_PARAMETER);
+
+        SearchGameDTO searchGameDTO = new SearchGameDTO()
+                .gameSeq(Long.parseLong(gameSeq));
+
+        List<HomeAwayTeamRecordDTO> homeAwayTeamRecordByQuarterList = gameRecordManagerService.getListHomeAwayTeamRecordByQuarter(searchGameDTO);
+
+        return ResponseEntity.ok(homeAwayTeamRecordByQuarterList);
+    }
 }
