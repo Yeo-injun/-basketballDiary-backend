@@ -2,7 +2,7 @@ package com.threeNerds.basketballDiary.mvc.myTeam.dto;
 
 import com.threeNerds.basketballDiary.constant.code.PositionCode;
 import com.threeNerds.basketballDiary.constant.code.TeamAuthCode;
-import com.threeNerds.basketballDiary.mvc.dto.pagination.PagerDTO;
+import com.threeNerds.basketballDiary.pagination.PagerDTO;
 import lombok.Getter;
 
 /**

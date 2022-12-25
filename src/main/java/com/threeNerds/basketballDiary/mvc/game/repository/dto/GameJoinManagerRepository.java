@@ -1,10 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.game.repository.dto;
 
-import com.threeNerds.basketballDiary.mvc.domain.Team;
-import com.threeNerds.basketballDiary.mvc.dto.team.team.TeamDTO;
-import com.threeNerds.basketballDiary.mvc.game.controller.dto.QuarterEntryDTO;
-import com.threeNerds.basketballDiary.mvc.game.domain.GameJoinTeam;
-import com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords;
+import com.threeNerds.basketballDiary.mvc.team.domain.Team;
+import com.threeNerds.basketballDiary.mvc.team.dto.TeamDTO;
 import com.threeNerds.basketballDiary.mvc.game.dto.*;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.FindGameHomeAwayDTO;
 import org.apache.ibatis.annotations.Mapper;

@@ -3,7 +3,7 @@ package com.threeNerds.basketballDiary.mvc.game.controller;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.interceptor.Auth;
-import com.threeNerds.basketballDiary.mvc.dto.team.team.TeamDTO;
+import com.threeNerds.basketballDiary.mvc.team.dto.TeamDTO;
 import com.threeNerds.basketballDiary.mvc.game.controller.dto.GameJoinPlayerRegistrationDTO;
 import com.threeNerds.basketballDiary.mvc.game.controller.request.*;
 import com.threeNerds.basketballDiary.mvc.game.controller.response.GetGameEntryResponse;
@@ -15,9 +15,6 @@ import com.threeNerds.basketballDiary.mvc.game.service.GameJoinManagerService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameRecordManagerService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameService;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.FindGameHomeAwayDTO;
-import com.threeNerds.basketballDiary.mvc.service.LoginService;
-import com.threeNerds.basketballDiary.mvc.service.UserService;
-import com.threeNerds.basketballDiary.mvc.service.UserTeamManagerService;
 import com.threeNerds.basketballDiary.session.SessionUser;
 import com.threeNerds.basketballDiary.utils.CommonUtil;
 import com.threeNerds.basketballDiary.utils.ValidateUtil;
@@ -55,10 +52,6 @@ import static com.threeNerds.basketballDiary.utils.SessionUtil.LOGIN_USER;
 @RequiredArgsConstructor
 @RequestMapping("/api/games")
 public class GameController {
-
-    private final LoginService loginService;
-    private final UserService userService;
-    private final UserTeamManagerService userTeamManagerService;
 
     private final GameService gameService;
     private final GameJoinManagerService gameJoinManagerService;
