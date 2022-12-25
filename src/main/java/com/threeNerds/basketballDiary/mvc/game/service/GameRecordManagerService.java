@@ -187,9 +187,9 @@ public class GameRecordManagerService {
             throw new CustomException(Error.NO_PARAMETER);
 
         if(ObjectUtils.isEmpty(searchGameDTO.getGameSeq())
-                || ObjectUtils.isEmpty(searchGameDTO.getGameJoinTeamSeq())
                 || ObjectUtils.isEmpty(searchGameDTO.getQuarterCode()))
             throw new CustomException(Error.NO_PARAMETER);
+
         //쿼터코드; 01~04(1~4쿼터), 11(전반), 12(후반)
         if(ObjectUtils.isEmpty(gameRepository.getGameInfo(searchGameDTO.getGameSeq())))
             throw new CustomException(Error.NOT_FOUND_GAME);  // 게임 정보가 존재하지 않습니다.
@@ -197,6 +197,28 @@ public class GameRecordManagerService {
         HomeAwayTeamRecordDTO resultDVO = gameRecordManagerRepository.findHomeAwayTeamRecordsByQuarter(searchGameDTO);
 
         return resultDVO;
+    }
+
+    /**
+     * 22.12.25
+     * 전체쿼터의 홈·어웨이 팀기록조회
+     * 홈 & 어웨이의 쿼터별 팀 합산기록을 조회한다.
+     * @param searchGameDTO 게임조회용 DTO
+     * @author 강창기
+     */
+    public List<HomeAwayTeamRecordDTO> getListHomeAwayTeamRecordByQuarter(SearchGameDTO searchGameDTO) {
+        if(ObjectUtils.isEmpty(searchGameDTO))
+            throw new CustomException(Error.NO_PARAMETER);
+
+        if(ObjectUtils.isEmpty(searchGameDTO.getGameSeq()))
+            throw new CustomException(Error.NO_PARAMETER);
+        //쿼터코드; 01~04(1~4쿼터), 11(전반), 12(후반)
+        if(ObjectUtils.isEmpty(gameRepository.getGameInfo(searchGameDTO.getGameSeq())))
+            throw new CustomException(Error.NOT_FOUND_GAME);  // 게임 정보가 존재하지 않습니다.
+
+        List<HomeAwayTeamRecordDTO> resultDVOList = gameRecordManagerRepository.findAllHomeAwayTeamRecordsByQuarter(searchGameDTO);
+
+        return resultDVOList;
     }
 
 
