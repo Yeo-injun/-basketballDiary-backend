@@ -35,10 +35,8 @@ import java.util.List;
 public class GameRecordManagerService {
 
     private final GameRepository gameRepository;
-    private final GameJoinTeamRepository gameJoinTeamRepository;
     private final QuarterTeamRecordsRepository quarterTeamRecordsRepository;
     private final QuarterPlayerRecordsRepository quarterPlayerRecordsRepository;
-    private final TeamMemberRepository teamMemberRepository;
 
     private final GameRecordManagerRepository gameRecordManagerRepository;
 
@@ -235,7 +233,7 @@ public class GameRecordManagerService {
          *  3. 참가팀 조회시 쿼터별기록을 조회해서 GameJoinTeamRecord필드에 할당해주기
          **/
         // 게임참가팀 테이블에서 TEAM_SEQ를 조회
-        // TODO homeAwayCode로 게임 목록을 조회하기 >> 테이블 조인해야 할듯?
+        // TODO homeAwayCode로 게임 목록을 조회하기
         // TODO 페이징 처리 구현하기
         List<GameRecordDTO> games = gameRecordManagerRepository.findGamesByTeamSeq(gc);
 

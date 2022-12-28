@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 
 import static com.threeNerds.basketballDiary.constant.UserAuthConst.*;
 import static com.threeNerds.basketballDiary.constant.HttpResponseConst.RESPONSE_OK;
@@ -419,6 +420,7 @@ public class MyTeamController {
     ) {
         log.info("▒▒▒▒▒ API052: MyTeamController.searchMyTeamGames");
         GameCondDTO condDTO = new GameCondDTO()
+                                    .userSeq(sessionUser.getUserSeq())
                                     .teamSeq(teamSeq)
                                     .gameBgngYmd(gameBgngYmd)
                                     .gameEndYmd(gameEndYmd)
