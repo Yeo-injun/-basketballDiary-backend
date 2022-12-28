@@ -3,7 +3,9 @@ package com.threeNerds.basketballDiary.mvc.game.service;
 import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.mvc.game.domain.Game;
+import com.threeNerds.basketballDiary.mvc.game.domain.GameRecordAuth;
 import com.threeNerds.basketballDiary.mvc.game.dto.*;
+import com.threeNerds.basketballDiary.mvc.game.repository.GameRecordAuthRepository;
 import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember;
 import com.threeNerds.basketballDiary.mvc.game.repository.GameRepository;
 import com.threeNerds.basketballDiary.mvc.myTeam.repository.TeamMemberRepository;
@@ -26,6 +28,7 @@ public class GameService {
 
     private final TeamMemberRepository teamMemberRepository;
     private final GameRepository gameRepository;
+    private final GameRecordAuthRepository gameRecordAuthRepo;
 
     public void DeleteGame(Long gameSeq){
         gameRepository.deleteGame(gameSeq);
@@ -43,18 +46,22 @@ public class GameService {
                 .teamSeq(gc.getTeamSeq())
                 .build();
 
-        TeamMember tmResult = Optional.ofNullable(teamMemberRepository.findTeamMemberByUserAndTeamSeq(tmParam))
+        TeamMember tm = Optional.ofNullable(teamMemberRepository.findTeamMemberByUserAndTeamSeq(tmParam))
                 .orElseThrow(()-> new CustomException(Error.ONLY_TEAM_MEMBER_HANDLE));
+        Long teamMemeberSeq = tm.getTeamMemberSeq();
 
         /** 게임 생성 */
-        gc.creatorTeamMemberSeq(tmResult.getTeamMemberSeq());
+        gc.creatorTeamMemberSeq(teamMemeberSeq);
         Game newGame = Game.createDefault(gc);
         gameRepository.saveGame(newGame);
+        Long newGameSeq = newGame.getGameSeq();
 
-        /** 게임기록권한 정보 생성 - TODO 게임 생성한 사람 입력*/
+        /** 게임기록권한 정보 생성 */
+        GameRecordAuth gameCreatorAuth = GameRecordAuth.getCreatorAuth(newGameSeq, teamMemeberSeq);
+        gameRecordAuthRepo.saveGameRecordAuth(gameCreatorAuth);
 
         /** 생성된 게임Seq 반환 */
-        gc.gameSeq(newGame.getGameSeq());
+        gc.gameSeq(newGameSeq);
         return gc;
     }
 

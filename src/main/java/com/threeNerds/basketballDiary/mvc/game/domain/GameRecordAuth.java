@@ -1,5 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.game.domain;
 
+import com.threeNerds.basketballDiary.constant.code.GameRecordAuthCode;
 import com.threeNerds.basketballDiary.constant.code.GameRecordStateCode;
 import com.threeNerds.basketballDiary.constant.code.GameTypeCode;
 import com.threeNerds.basketballDiary.mvc.game.dto.GameCreationDTO;
@@ -20,8 +21,16 @@ public class GameRecordAuth {
 
     private Long gameRecordAuthSeq;     /* 게임기록권한Seq */
     private Long gameSeq;               /* 게임Seq */
-    private String teamMemeberSeq;      /* 팀원Seq */
+    private Long teamMemberSeq;        /* 팀원Seq */
     private String gameRecordAuthCode;  /* 게임기록권한코드 */
     private String regDate;             /* 등록일자 */
 
+    public static GameRecordAuth getCreatorAuth(Long gameSeq, Long teamMemberSeq)
+    {
+        return GameRecordAuth.builder()
+                .gameSeq(gameSeq)
+                .teamMemberSeq(teamMemberSeq)
+                .gameRecordAuthCode(GameRecordAuthCode.CREATOR.getCode())
+                .build();
+    }
 }
