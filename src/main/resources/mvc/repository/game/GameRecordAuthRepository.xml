@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.threeNerds.basketballDiary.mvc.game.repository.GameRecordAuthRepository">
+
+    <insert id="saveGameRecordAuth" parameterType="com.threeNerds.basketballDiary.mvc.game.domain.GameRecordAuth" useGeneratedKeys="true" keyProperty="gameRecordAuthSeq">
+        <selectKey keyProperty="gameRecordAuthSeq" order="AFTER" resultType="java.lang.Long">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        /* GameRecordAuthRepository.saveGameRecordAuth */
+        INSERT INTO GAME_RECORD_AUTH (
+               GAME_SEQ
+             , TEAM_MEMBER_SEQ
+             , GAME_RECORD_AUTH_CODE
+             , REG_DATE
+        )
+        VALUES (
+               #{gameSeq}
+             , #{teamMemberSeq}
+             , #{gameRecordAuthCode}
+             , CURRENT_TIMESTAMP
+        )
+    </insert>
+
+</mapper>

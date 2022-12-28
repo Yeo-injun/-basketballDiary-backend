@@ -5,15 +5,14 @@ import lombok.Getter;
 import java.util.Arrays;
 
 @Getter
-public enum GameRecordStateCode {
-    CREATION("게임생성", "01"),
-    JOIN_TEAM_CONFIRMATION("참가팀확정", "02"),
-    CONFIRMATION("게임확정", "03");
+public enum GameRecordAuthCode {
+    CREATOR("게임생성자", "01"),
+    ONLY_WRITER("입력권한자", "02");
 
     private final String name;
     private final String code;
 
-    GameRecordStateCode(String name, String code) {
+    GameRecordAuthCode(String name, String code) {
         this.name = name;
         this.code = code;
     }
@@ -22,7 +21,7 @@ public enum GameRecordStateCode {
     public static String nameOf(String code) {
         String codeName = Arrays.stream(values())
                 .filter(item -> item.getCode().equals(code))
-                .map(GameRecordStateCode::getName)
+                .map(GameRecordAuthCode::getName)
                 .findAny()
                 .orElse("");
         return codeName;
