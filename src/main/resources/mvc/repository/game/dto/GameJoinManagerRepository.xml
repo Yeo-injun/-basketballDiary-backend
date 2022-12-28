@@ -74,7 +74,19 @@
          WHERE 1=1
            AND GAME_SEQ IN ( SELECT GAME_SEQ
                                FROM GAME_JOIN_TEAM
-                              WHERE TEAM_SEQ = #{teamSeq} )
+                              WHERE 1=1
+                                AND TEAM_SEQ = #{teamSeq}
+                                /* TODO homeAwayCode값이 존재할 경우 동적쿼리 처리하기 */
+                              UNION
+                             SELECT gra.GAME_SEQ
+                               FROM TEAM_MEMBER tm
+                              INNER JOIN GAME_RECORD_AUTH gra
+                                 ON gra.TEAM_MEMBER_SEQ = tm.TEAM_MEMBER_SEQ
+                              WHERE 1=1
+                                AND tm.TEAM_SEQ = #{teamSeq}
+                                AND tm.USER_SEQ = #{userSeq}
+                             )
+        /* TODO 검색조건 동적쿼리 처리하기 */
     </select>
 
     <select id="findGameJoinTeamRecords" resultType="com.threeNerds.basketballDiary.mvc.myTeam.dto.GameJoinTeamRecordDTO">
