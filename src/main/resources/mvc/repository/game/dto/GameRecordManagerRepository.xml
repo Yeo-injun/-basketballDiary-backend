@@ -212,4 +212,5 @@
     <delete id="deleteQuarterTeamRecords">
         DELETE FROM QUARTER_TEAM_RECORDS T1 WHERE T1.GAME_SEQ = #{gameSeq} AND T1.QUATER_CODE = #{quarterCode}
     </delete>
+
 </mapper>

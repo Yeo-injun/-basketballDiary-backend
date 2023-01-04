@@ -3,6 +3,9 @@ package com.threeNerds.basketballDiary.mvc.game.controller;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.interceptor.Auth;
+import com.threeNerds.basketballDiary.mvc.game.controller.dto.GameAuthDTO;
+import com.threeNerds.basketballDiary.mvc.game.controller.dto.GameAuthRecorderDTO;
+import com.threeNerds.basketballDiary.mvc.game.controller.response.GameAuthRecordersResponse;
 import com.threeNerds.basketballDiary.mvc.team.dto.TeamDTO;
 import com.threeNerds.basketballDiary.mvc.game.controller.dto.GameJoinPlayerRegistrationDTO;
 import com.threeNerds.basketballDiary.mvc.game.controller.request.*;
@@ -344,6 +347,35 @@ public class GameController {
     ){
         gameService.DeleteGame(gameSeq);
         return RESPONSE_OK;
+    }
+
+    /**
+     * API055 게임기록자 조회
+     */
+    @GetMapping("/{gameSeq}/gameRecorders")
+    public ResponseEntity<?> searchRecorder(
+            @PathVariable("gameSeq") Long gameSeq
+    ){
+        GameAuthDTO gameAuthDTO = new GameAuthDTO()
+                .gameSeq(gameSeq)
+                .auth("02");
+        List<GameAuthRecordersResponse> gameAuthRecordersResponses = gameRecordManagerService.searchGameRecorders(gameAuthDTO);
+        return ResponseEntity.ok(gameAuthRecordersResponses);
+    }
+
+    /**
+     * API056 게임기록자 저장
+     */
+    @PostMapping("/{gameSeq}/gameRecorder")
+    public ResponseEntity<?> saveGameRecorder(
+            @PathVariable("gameSeq") Long gameSeq,
+            @RequestBody GameAuthRecorderRequest gameAuthRecorderRequest
+    ){
+        GameAuthRecorderDTO gameAuthRecorderDTO = GameAuthRecorderDTO
+                                                    .createGameAuthRecorderDTO(gameSeq,gameAuthRecorderRequest);
+
+
+        return null;
     }
 
     /**

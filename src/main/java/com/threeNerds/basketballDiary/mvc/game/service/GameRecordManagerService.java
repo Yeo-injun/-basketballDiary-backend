@@ -5,13 +5,15 @@ import com.threeNerds.basketballDiary.constant.code.HomeAwayCode;
 import com.threeNerds.basketballDiary.constant.code.QuarterCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
+import com.threeNerds.basketballDiary.mvc.game.controller.dto.GameAuthDTO;
+import com.threeNerds.basketballDiary.mvc.game.controller.response.GameAuthRecordersResponse;
 import com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords;
 import com.threeNerds.basketballDiary.mvc.game.domain.QuarterTeamRecords;
 import com.threeNerds.basketballDiary.mvc.game.dto.HomeAwayTeamRecordDTO;
 import com.threeNerds.basketballDiary.mvc.game.dto.PlayerRecordDTO;
 import com.threeNerds.basketballDiary.mvc.game.dto.QuarterCodeDTO;
 import com.threeNerds.basketballDiary.mvc.game.dto.SearchGameDTO;
-import com.threeNerds.basketballDiary.mvc.game.repository.GameJoinTeamRepository;
+import com.threeNerds.basketballDiary.mvc.game.repository.GameRecordAuthRepository;
 import com.threeNerds.basketballDiary.mvc.game.repository.GameRepository;
 import com.threeNerds.basketballDiary.mvc.game.repository.QuarterPlayerRecordsRepository;
 import com.threeNerds.basketballDiary.mvc.game.repository.QuarterTeamRecordsRepository;
@@ -19,7 +21,6 @@ import com.threeNerds.basketballDiary.mvc.game.repository.dto.GameRecordManagerR
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameCondDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameJoinTeamRecordDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameRecordDTO;
-import com.threeNerds.basketballDiary.mvc.myTeam.repository.TeamMemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -39,6 +40,7 @@ public class GameRecordManagerService {
     private final QuarterPlayerRecordsRepository quarterPlayerRecordsRepository;
 
     private final GameRecordManagerRepository gameRecordManagerRepository;
+    private final GameRecordAuthRepository gameRecordAuthRepository;
 
     private final String QUARTER_1ST_CODE = QuarterCode.FIRST.getCode();
     private final String QUARTER_2ND_CODE = QuarterCode.SECOND.getCode();
@@ -321,4 +323,13 @@ public class GameRecordManagerService {
         gameRecordManagerRepository.deleteQuarterTeamRecords(quarterCodeDTO);
     }
 
+    /**
+     * 2022.01.04
+     * 게임기록자 조회
+     * @author 이성주
+     */
+    public List<GameAuthRecordersResponse> searchGameRecorders(GameAuthDTO gameAuthDTO){
+        List<GameAuthRecordersResponse> gameAuthRecordersResponses = gameRecordAuthRepository.searchGameRecorders(gameAuthDTO);
+        return gameAuthRecordersResponses;
+    }
 }
