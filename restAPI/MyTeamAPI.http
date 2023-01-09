@@ -1,7 +1,7 @@
 ### API001 : 소속팀 운영진 조회
 
 
-### API052 : 소속팀 농구게임 목록조회
+### APIauthUserService : 소속팀 농구게임 목록조회
 ## 쿼리스트링 : 
 ## gameBgngYmd={gameBgngYmd}
 ## gameEndYmd={gameEndYmd}

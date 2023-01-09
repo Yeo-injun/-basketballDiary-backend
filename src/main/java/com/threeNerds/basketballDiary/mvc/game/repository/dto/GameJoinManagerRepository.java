@@ -14,7 +14,7 @@ public interface GameJoinManagerRepository {
     Team findGameCreatorTeam(Long gameSeq);
     List<QuarterPlayerRecordDTO> findEntryList(SearchEntryDTO searchEntryDTO);
 
-    List<TeamDTO> searchOpponents(SearchOppenentsDTO searchOppenentsDTO);
+    List<GameOpponentDTO> findOpponents(SearchOppenentsDTO searchOppenentsDTO);
 
     List<FindGameHomeAwayDTO> findGameTeams(SearchGameHomeAwayDTO searchGameHomeAwayDTO);
 

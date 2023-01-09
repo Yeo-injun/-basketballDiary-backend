@@ -123,14 +123,10 @@ public class GameJoinManagerService {
         return true;
     }
 
-    //TODO 상대팀 목록 조회
-    public List<TeamDTO> searchOpponents(String sidoCode,String teamName,String leaderName){
-
-        SearchOppenentsDTO searchOppenentsDTO = new SearchOppenentsDTO()
-                                                        .sidoCode(sidoCode)
-                                                        .teamName(teamName)
-                                                        .leaderName(leaderName);
-        return gameJoinManagerRepo.searchOpponents(searchOppenentsDTO);
+    public List<GameOpponentDTO> searchOpponents(SearchOppenentsDTO searchCond)
+    {
+        //TODO 상대팀 목록 조회 - 페이징 처리 / 검색조건 >> Like조건
+        return gameJoinManagerRepo.findOpponents(searchCond);
     }
 
     public List<FindGameHomeAwayDTO> findGameHomeAwayInfo(Long gameSeq,String homeAwayCode){
