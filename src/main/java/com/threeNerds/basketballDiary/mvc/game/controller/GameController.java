@@ -6,6 +6,7 @@ import com.threeNerds.basketballDiary.interceptor.Auth;
 import com.threeNerds.basketballDiary.mvc.game.controller.dto.GameAuthDTO;
 import com.threeNerds.basketballDiary.mvc.game.controller.dto.GameAuthRecorderDTO;
 import com.threeNerds.basketballDiary.mvc.game.controller.response.GameAuthRecordersResponse;
+import com.threeNerds.basketballDiary.mvc.game.controller.response.SearchOpponentsResponse;
 import com.threeNerds.basketballDiary.mvc.team.dto.TeamDTO;
 import com.threeNerds.basketballDiary.mvc.game.controller.dto.GameJoinPlayerRegistrationDTO;
 import com.threeNerds.basketballDiary.mvc.game.controller.request.*;
@@ -303,16 +304,18 @@ public class GameController {
      */
     @GetMapping("/opponents")
     public ResponseEntity<?> searchOpponents(
-            @RequestParam(name = "sidoCode") String sidoCode,
-            @RequestParam(name = "teamName") String teamName,
-            @RequestParam(name = "leaderName") String leaderName
+            @RequestParam(name = "sidoCode", required = false) String sidoCode,
+            @RequestParam(name = "teamName", required = false) String teamName,
+            @RequestParam(name = "leaderName", required = false) String leaderName
     ){
-
-        //1. teamSeq 먼저 get(List 형식으로 return 받아야됨 : sidoCode,teamName,leaderName 중 null 값이 있고 동적으로 쿼리를 작성해야하기 때문)
-        //2. [팀명,팀장이름,설립일,활동지역] 의 dto를 생성하고 return
-        List<TeamDTO> teams = gameJoinManagerService.searchOpponents(sidoCode, teamName, leaderName);
-
-        return ResponseEntity.ok(teams);
+        SearchOppenentsDTO searchCond = new SearchOppenentsDTO()
+                .sidoCode(sidoCode)
+                .teamName(teamName)
+                .leaderName(leaderName);
+        List<GameOpponentDTO> opponents = gameJoinManagerService.searchOpponents(searchCond);
+        SearchOpponentsResponse resBody = new SearchOpponentsResponse()
+                                                .opponents(opponents);
+        return ResponseEntity.ok(resBody);
     }
 
     /**
@@ -332,7 +335,7 @@ public class GameController {
     @GetMapping("{gameSeq}/teams")
     public ResponseEntity<?> findGameHomeAwayInfo(
             @PathVariable(name = "gameSeq") Long gameSeq,
-            @RequestParam(name = "homeAwayCode") String homeAwayCode
+            @RequestParam(name = "homeAwayCode", required = false) String homeAwayCode
     ){
         List<FindGameHomeAwayDTO> gameHomeAwayInfo = gameJoinManagerService.findGameHomeAwayInfo(gameSeq, homeAwayCode);
         return ResponseEntity.ok(gameHomeAwayInfo);

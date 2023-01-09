@@ -41,22 +41,25 @@
            AND GAME_SEQ = #{gameSeq}
     </select>
 
-    <select id="searchOpponents" resultType="com.threeNerds.basketballDiary.mvc.team.dto.TeamDTO">
-        SELECT T1.TEAM_SEQ
-            ,  T1.LEADER_USER_SEQ
-            ,  T1.TEAM_NAME
-        FROM TEAM T1
-        INNER JOIN USER T2
-        ON T1.LEADER_USER_SEQ = T2.USER_SEQ
-        WHERE 1=1
-        <if test="sidoCode != null">
-            AND T1.SIDO_CODE = #{sidoCode}
+    <select id="findOpponents" resultType="com.threeNerds.basketballDiary.mvc.game.dto.GameOpponentDTO">
+        /* GameJoinManagerRepository.findOpponents */
+        SELECT T.TEAM_SEQ
+             , T.TEAM_NAME
+             , T.FOUNDATION_YMD
+             , T.HOMETOWN
+             , U.NAME  AS LEADER_NAME
+          FROM TEAM T
+         INNER JOIN USER U
+            ON T.LEADER_USER_SEQ = U.USER_SEQ
+         WHERE 1=1
+        <if test='sidoCode != null and sidoCode != ""'>
+           AND T.SIDO_CODE = #{sidoCode}
         </if>
-        <if test="teamName != null">
-            AND T1.TEAM_NAME = #{teamName}
+        <if test='teamName != null and teamName != ""'>
+           AND T.TEAM_NAME = #{teamName}
         </if>
-        <if test="leaderName">
-            AND T2.USER_NAME = #{leaderName}
+        <if test='leaderName != null and leaderName != ""'>
+           AND U.NAME = #{leaderName}
         </if>
     </select>
 
@@ -76,7 +79,7 @@
                                FROM GAME_JOIN_TEAM
                               WHERE 1=1
                                 AND TEAM_SEQ = #{teamSeq}
-                                /* TODO homeAwayCode값이 존재할 경우 동적쿼리 처리하기 */
+                            /* TODO homeAwayCOde 동적쿼리 구현하기 */
                               UNION
                              SELECT gra.GAME_SEQ
                                FROM TEAM_MEMBER tm
