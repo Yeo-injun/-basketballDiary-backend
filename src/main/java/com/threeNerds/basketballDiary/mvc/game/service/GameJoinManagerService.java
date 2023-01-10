@@ -1,10 +1,12 @@
 package com.threeNerds.basketballDiary.mvc.game.service;
 
+import com.threeNerds.basketballDiary.constant.code.GameRecordStateCode;
 import com.threeNerds.basketballDiary.constant.code.GameTypeCode;
 import com.threeNerds.basketballDiary.constant.code.HomeAwayCode;
 import com.threeNerds.basketballDiary.constant.code.PlayerTypeCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
+import com.threeNerds.basketballDiary.mvc.game.domain.Game;
 import com.threeNerds.basketballDiary.mvc.team.domain.Team;
 import com.threeNerds.basketballDiary.mvc.user.domain.User;
 import com.threeNerds.basketballDiary.mvc.team.dto.TeamDTO;
@@ -46,9 +48,18 @@ public class GameJoinManagerService {
     private final GameJoinManagerRepository gameJoinManagerRepo;
 
 
-    /** 게임참가팀 확정  TODO 리팩토링하기... */
+    /** 게임참가팀 확정  */
+    // TODO 리팩토링하기...
     public void confirmJoinTeam(GameJoinTeamCreationDTO joinTeamCreationDTO)
     {
+        /** 게임기록상태코드 변경 - 게임생성(01) >> 게임참가팀확정(02) */
+        Game joinTeamConfirm = Game.builder()
+                .gameSeq(joinTeamCreationDTO.getGameSeq())
+                .gameRecordStateCode(GameRecordStateCode.JOIN_TEAM_CONFIRMATION.getCode())
+                .build();
+        gameRepository.updateGameRecordState(joinTeamConfirm);
+
+        /** 게임유형코드별 처리 */
         String gameTypeCode = joinTeamCreationDTO.getGameTypeCode();
         if (GameTypeCode.SELF_GAME.getCode().equals(gameTypeCode))
         {

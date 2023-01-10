@@ -425,14 +425,12 @@ public class GameController {
                 .teams(teams);
 
         return ResponseEntity.ok(resBody);
-
-//        List<MatchPlayersInfoDTO> matchPlayersInfo = gameService.getMatchPlayersInfo(gameSeq, homeAwayCode);
-//        return ResponseEntity.ok(matchPlayersInfo);
     }
 
     /**
      * API062 게임참가팀 확정
      * 22.12.15(목) @ReauestBody부분 Request클래스로 대체
+     * 23.01.11(수) 누락된 로직 추가 - 게임기록상태코드 업데이트
      */
     @PostMapping("/{gameSeq}/gameJoinTeams")
     public ResponseEntity<?> confirmJoinTeam (

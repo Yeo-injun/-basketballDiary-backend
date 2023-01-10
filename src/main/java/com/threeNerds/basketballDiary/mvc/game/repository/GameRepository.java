@@ -24,7 +24,9 @@ public interface GameRepository {
 
     GameInfoDTO getGameInfo(Long gameSeq);
 
-    List<PlayerInfoDTO> getMatchPlayers(SearchMatchPlayersDTO matchPlayersDTO);
-
-    void confirmGame(Long gameSeq);
+    /** 게임기록상태 Update
+     * @parma Game (gameSeq, gameRecordStateCode)
+     * @return Long insert된 데이터의 갯수 할당.
+     */
+    Integer updateGameRecordState(Game game);
 }
