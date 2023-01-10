@@ -425,9 +425,6 @@ public class GameController {
                 .teams(teams);
 
         return ResponseEntity.ok(resBody);
-
-//        List<MatchPlayersInfoDTO> matchPlayersInfo = gameService.getMatchPlayersInfo(gameSeq, homeAwayCode);
-//        return ResponseEntity.ok(matchPlayersInfo);
     }
 
     /**

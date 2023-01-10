@@ -52,28 +52,9 @@
             AND T1.GAME_SEQ = #{gameSeq}
     </select>
 
-    <select id="getMatchPlayers" resultType="com.threeNerds.basketballDiary.mvc.game.dto.PlayerInfoDTO">
-        SELECT T2.USER_SEQ
-             , T2.NAME
-             , T2.EMAIL
-             , T2.POSITION_CODE
-             , T2.BACK_NUMBER
-             , T1.TEAM_SEQ
-             , T1.GAME_SEQ
-             , T1.HOME_AWAY_CODE
-        FROM GAME_JOIN_TEAM T1
-            INNER JOIN GAME_JOIN_PLAYER T2
-                ON T1.GAME_JOIN_TEAM_SEQ = T2.GAME_JOIN_TEAM_SEQ
-        WHERE 1=1
-            AND T1.GAME_SEQ = #{gameSeq}
-          <if test='homeAwayCode != null'>
-              AND T1.HOME_AWAY_CODE = #{homeAwayCode}
-          </if>
-    </select>
-
-    <update id="confirmGame">
-        UPDATE GAME T1
-        SET GAME_RECORD_STATE_CODE = '03'
-        WHERE T1.GAME_SEQ = #{gameSeq}
+    <update id="updateGameRecordState" parameterType="com.threeNerds.basketballDiary.mvc.game.domain.Game">
+        UPDATE GAME
+           SET GAME_RECORD_STATE_CODE = #{gameRecordStateCode}
+         WHERE GAME_SEQ = #{gameSeq}
     </update>
 </mapper>

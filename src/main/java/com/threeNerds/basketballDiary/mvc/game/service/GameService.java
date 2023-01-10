@@ -1,5 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.game.service;
 
+import com.threeNerds.basketballDiary.constant.code.GameRecordStateCode;
 import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.mvc.game.domain.Game;
@@ -80,7 +81,13 @@ public class GameService {
      * 게임 확정
      * @author 이성주
      */
-    public void confirmGame(Long gameSeq){
-        gameRepository.confirmGame(gameSeq);
+    public void confirmGame(Long gameSeq)
+    {
+        /** 게임기록상태코드 변경 - >> 게임확정(03) */
+        Game gameConfirm = Game.builder()
+                .gameSeq(gameSeq)
+                .gameRecordStateCode(GameRecordStateCode.CONFIRMATION.getCode())
+                .build();
+        gameRepository.updateGameRecordState(gameConfirm);
     }
 }
