@@ -348,7 +348,7 @@ public class GameController {
     public ResponseEntity<?> deleteGame(
             @PathVariable(name = "gameSeq") Long gameSeq
     ){
-        gameService.DeleteGame(gameSeq);
+        gameService.deleteGame(gameSeq);
         return RESPONSE_OK;
     }
 

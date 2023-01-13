@@ -38,7 +38,9 @@
     </insert>
 
     <delete id="deleteGame">
-        DELETE FROM GAME T1 WHERE T1.GAME_SEQ = {gameSeq}
+        DELETE FROM GAME
+        WHERE 1=1
+        AND GAME_SEQ = #{gameSeq}
     </delete>
 
     <select id="getGameInfo" resultType="com.threeNerds.basketballDiary.mvc.game.dto.GameInfoDTO">

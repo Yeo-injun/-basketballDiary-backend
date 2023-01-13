@@ -31,8 +31,13 @@ public class GameService {
     private final GameRepository gameRepository;
     private final GameRecordAuthRepository gameRecordAuthRepo;
 
-    public void DeleteGame(Long gameSeq){
-        gameRepository.deleteGame(gameSeq);
+    public void deleteGame(Long gameSeq){
+        boolean isDeleteGame = gameRepository.deleteGame(gameSeq).compareTo(0L) > 0;
+        if (!isDeleteGame) {
+            // TODO 임시 에러 던지기 - 삭제할 게임이 없습니다.
+            throw new CustomException(Error.INVALID_PARAMETER);
+        }
+        // TODO 게임참가팀, 게임참가선수, 쿼터기록, 게임기록권한 테이블도 다 삭제해줘야 함....
     }
 
     /** 22.10.31

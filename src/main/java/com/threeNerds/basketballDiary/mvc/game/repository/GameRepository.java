@@ -14,7 +14,7 @@ import java.util.List;
 @Mapper
 public interface GameRepository {
 
-    void deleteGame(Long gameSeq);
+    Long deleteGame(Long gameSeq);
 
     /** 게임생성
      * - Game객체에 채번된 gameSeq가 할당됨.
