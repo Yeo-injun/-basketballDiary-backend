@@ -7,6 +7,7 @@ import com.threeNerds.basketballDiary.mvc.game.controller.dto.GameAuthDTO;
 import com.threeNerds.basketballDiary.mvc.game.controller.dto.GameAuthRecorderDTO;
 import com.threeNerds.basketballDiary.mvc.game.controller.response.GameAuthRecordersResponse;
 import com.threeNerds.basketballDiary.mvc.game.controller.response.SearchOpponentsResponse;
+import com.threeNerds.basketballDiary.mvc.game.domain.GameRecordAuth;
 import com.threeNerds.basketballDiary.mvc.team.dto.TeamDTO;
 import com.threeNerds.basketballDiary.mvc.game.controller.dto.GameJoinPlayerRegistrationDTO;
 import com.threeNerds.basketballDiary.mvc.game.controller.request.*;
@@ -25,6 +26,7 @@ import com.threeNerds.basketballDiary.utils.ValidateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
@@ -372,13 +374,14 @@ public class GameController {
     @PostMapping("/{gameSeq}/gameRecorder")
     public ResponseEntity<?> saveGameRecorder(
             @PathVariable("gameSeq") Long gameSeq,
-            @RequestBody GameAuthRecorderRequest gameAuthRecorderRequest
+            @RequestBody GameRecordAuth gameRecordAuth
     ){
-        GameAuthRecorderDTO gameAuthRecorderDTO = GameAuthRecorderDTO
-                                                    .createGameAuthRecorderDTO(gameSeq,gameAuthRecorderRequest);
+        GameRecordAuth gameAuthRecorderDTO = GameRecordAuth
+                                                    .getOnlyWriterAuth(gameSeq,gameRecordAuth.getTeamMemberSeq());
 
+        gameRecordManagerService.saveAuthRecorder(gameAuthRecorderDTO);
 
-        return null;
+        return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
     /**

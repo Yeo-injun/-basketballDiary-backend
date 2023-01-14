@@ -1,6 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.game.repository;
 
 import com.threeNerds.basketballDiary.mvc.game.controller.dto.GameAuthDTO;
+import com.threeNerds.basketballDiary.mvc.game.controller.dto.GameAuthRecorderDTO;
 import com.threeNerds.basketballDiary.mvc.game.controller.response.GameAuthRecordersResponse;
 import com.threeNerds.basketballDiary.mvc.game.domain.Game;
 import com.threeNerds.basketballDiary.mvc.game.domain.GameRecordAuth;
@@ -22,4 +23,5 @@ public interface GameRecordAuthRepository {
      * 게임기록자 조회
      */
     List<GameAuthRecordersResponse> searchGameRecorders(GameAuthDTO gameAuthDTO);
+
 }

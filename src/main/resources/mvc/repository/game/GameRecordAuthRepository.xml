@@ -36,7 +36,18 @@
           AND T1.GAME_RECORD_AUTH_CODE = #{auth}
     </select>
 
-    <insert id="insertGameRecorders">
-
+    <insert id="">
+        INSERT INTO GAME_RECORD_AUTH (
+               GAME_SEQ
+             , TEAM_MEMBER_SEQ
+             , GAME_RECORD_AUTH_CODE
+             , REG_DATE
+        )
+        VALUES (
+                 #{gameSeq}
+               , #{teamMemberSeq}
+               , #{gameRecordAuthCode}
+               , CURRENT_TIMESTAMP
+               )
     </insert>
 </mapper>

@@ -6,7 +6,9 @@ import com.threeNerds.basketballDiary.constant.code.QuarterCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.mvc.game.controller.dto.GameAuthDTO;
+import com.threeNerds.basketballDiary.mvc.game.controller.dto.GameAuthRecorderDTO;
 import com.threeNerds.basketballDiary.mvc.game.controller.response.GameAuthRecordersResponse;
+import com.threeNerds.basketballDiary.mvc.game.domain.GameRecordAuth;
 import com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords;
 import com.threeNerds.basketballDiary.mvc.game.domain.QuarterTeamRecords;
 import com.threeNerds.basketballDiary.mvc.game.dto.HomeAwayTeamRecordDTO;
@@ -331,5 +333,14 @@ public class GameRecordManagerService {
     public List<GameAuthRecordersResponse> searchGameRecorders(GameAuthDTO gameAuthDTO){
         List<GameAuthRecordersResponse> gameAuthRecordersResponses = gameRecordAuthRepository.searchGameRecorders(gameAuthDTO);
         return gameAuthRecordersResponses;
+    }
+
+    /**
+     * 2022.01.14
+     * 게임기록자 저장
+     * @author 이성주
+     */
+    public void saveAuthRecorder(GameRecordAuth gameRecordAuth){
+        gameRecordAuthRepository.saveGameRecordAuth(gameRecordAuth);
     }
 }

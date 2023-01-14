@@ -1,5 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.game.repository.dto;
 
+import com.threeNerds.basketballDiary.mvc.game.controller.dto.GameAuthRecorderDTO;
 import com.threeNerds.basketballDiary.mvc.game.dto.PlayerRecordDTO;
 import com.threeNerds.basketballDiary.mvc.game.dto.QuarterCodeDTO;
 import com.threeNerds.basketballDiary.mvc.game.dto.SearchGameDTO;
@@ -61,4 +62,5 @@ public interface GameRecordManagerRepository {
      * @param quarterCodeDTO
      */
     void deleteQuarterTeamRecords(QuarterCodeDTO quarterCodeDTO);
+
 }

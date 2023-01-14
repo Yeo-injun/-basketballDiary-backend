@@ -33,4 +33,12 @@ public class GameRecordAuth {
                 .gameRecordAuthCode(GameRecordAuthCode.CREATOR.getCode())
                 .build();
     }
+
+    public static GameRecordAuth getOnlyWriterAuth(Long gameSeq,Long teamMemberSeq){
+        return GameRecordAuth.builder()
+                .gameSeq(gameSeq)
+                .teamMemberSeq(teamMemberSeq)
+                .gameRecordAuthCode(GameRecordAuthCode.ONLY_WRITER.getCode())
+                .build();
+    }
 }
