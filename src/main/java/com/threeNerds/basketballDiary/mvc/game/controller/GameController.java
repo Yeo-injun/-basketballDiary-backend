@@ -5,14 +5,11 @@ import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.interceptor.Auth;
 import com.threeNerds.basketballDiary.mvc.game.controller.dto.GameAuthDTO;
 import com.threeNerds.basketballDiary.mvc.game.controller.dto.GameAuthRecorderDTO;
-import com.threeNerds.basketballDiary.mvc.game.controller.response.GameAuthRecordersResponse;
-import com.threeNerds.basketballDiary.mvc.game.controller.response.SearchOpponentsResponse;
+import com.threeNerds.basketballDiary.mvc.game.controller.response.*;
 import com.threeNerds.basketballDiary.mvc.game.domain.GameRecordAuth;
 import com.threeNerds.basketballDiary.mvc.team.dto.TeamDTO;
 import com.threeNerds.basketballDiary.mvc.game.controller.dto.GameJoinPlayerRegistrationDTO;
 import com.threeNerds.basketballDiary.mvc.game.controller.request.*;
-import com.threeNerds.basketballDiary.mvc.game.controller.response.GetGameEntryResponse;
-import com.threeNerds.basketballDiary.mvc.game.controller.response.GetGameJoinPlayersResponse;
 import com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords;
 import com.threeNerds.basketballDiary.mvc.game.domain.QuarterTeamRecords;
 import com.threeNerds.basketballDiary.mvc.game.dto.*;
@@ -321,14 +318,17 @@ public class GameController {
     }
 
     /**
-     * API046 경기 상세정보 조회
+     * API046 경기 기초정보 조회
      */
     @GetMapping("{gameSeq}/info")
-    public ResponseEntity<?> findGameDetailRecords(
+    public ResponseEntity<?> getGameBasicInfo(
             @PathVariable(name = "gameSeq")Long gameSeq
     ){
         GameInfoDTO gameInfo = gameService.getGameInfo(gameSeq);
-        return ResponseEntity.ok(gameInfo);
+
+        GetGameBasicInfoResponse resBody = new GetGameBasicInfoResponse()
+                                                    .gameInfo(gameInfo);
+        return ResponseEntity.ok(resBody);
     }
 
     /**

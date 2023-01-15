@@ -149,7 +149,7 @@ public class GameRecordManagerService {
                     || ObjectUtils.isEmpty(searchGameDTO.getQuarterCode()))
                 throw new CustomException(Error.NO_PARAMETER);
 
-            if(ObjectUtils.isEmpty(gameRepository.getGameInfo(searchGameDTO.getGameSeq())))
+            if(ObjectUtils.isEmpty(gameRepository.findGameBasicInfo(searchGameDTO.getGameSeq())))
                 throw new CustomException(Error.NOT_FOUND_GAME);  // 게임 정보가 존재하지 않습니다.
         }
 
@@ -170,7 +170,7 @@ public class GameRecordManagerService {
 
         // gameSeq에 해당하는 게임내역이 존재하는지 확인.
         Long gameSeq = searchGameDTO.getGameSeq();
-        if(ObjectUtils.isEmpty(gameRepository.getGameInfo(gameSeq)))
+        if(ObjectUtils.isEmpty(gameRepository.findGameBasicInfo(gameSeq)))
             throw new CustomException(Error.NOT_FOUND_GAME);  // 게임 정보가 존재하지 않습니다.
 
         List<PlayerRecordDTO> resultList = gameRecordManagerRepository.findAllPlayerRecordsByQuarter(searchGameDTO);
@@ -193,7 +193,7 @@ public class GameRecordManagerService {
             throw new CustomException(Error.NO_PARAMETER);
 
         //쿼터코드; 01~04(1~4쿼터), 11(전반), 12(후반)
-        if(ObjectUtils.isEmpty(gameRepository.getGameInfo(searchGameDTO.getGameSeq())))
+        if(ObjectUtils.isEmpty(gameRepository.findGameBasicInfo(searchGameDTO.getGameSeq())))
             throw new CustomException(Error.NOT_FOUND_GAME);  // 게임 정보가 존재하지 않습니다.
 
         HomeAwayTeamRecordDTO resultDVO = gameRecordManagerRepository.findHomeAwayTeamRecordsByQuarter(searchGameDTO);
@@ -215,7 +215,7 @@ public class GameRecordManagerService {
         if(ObjectUtils.isEmpty(searchGameDTO.getGameSeq()))
             throw new CustomException(Error.NO_PARAMETER);
         //쿼터코드; 01~04(1~4쿼터), 11(전반), 12(후반)
-        if(ObjectUtils.isEmpty(gameRepository.getGameInfo(searchGameDTO.getGameSeq())))
+        if(ObjectUtils.isEmpty(gameRepository.findGameBasicInfo(searchGameDTO.getGameSeq())))
             throw new CustomException(Error.NOT_FOUND_GAME);  // 게임 정보가 존재하지 않습니다.
 
         List<HomeAwayTeamRecordDTO> resultDVOList = gameRecordManagerRepository.findAllHomeAwayTeamRecordsByQuarter(searchGameDTO);

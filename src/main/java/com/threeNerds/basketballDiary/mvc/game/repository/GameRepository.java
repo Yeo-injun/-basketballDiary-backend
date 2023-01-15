@@ -22,7 +22,7 @@ public interface GameRepository {
      */
     Long saveGame(Game newGame);
 
-    GameInfoDTO getGameInfo(Long gameSeq);
+    GameInfoDTO findGameBasicInfo(Long gameSeq);
 
     /** 게임기록상태 Update
      * @parma Game (gameSeq, gameRecordStateCode)

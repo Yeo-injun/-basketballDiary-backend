@@ -43,7 +43,7 @@
         AND GAME_SEQ = #{gameSeq}
     </delete>
 
-    <select id="getGameInfo" resultType="com.threeNerds.basketballDiary.mvc.game.dto.GameInfoDTO">
+    <select id="findGameBasicInfo" resultType="com.threeNerds.basketballDiary.mvc.game.dto.GameInfoDTO">
         SELECT T1.GAME_YMD
              , T1.GAME_START_TIME
              , T1.GAME_END_TIME
