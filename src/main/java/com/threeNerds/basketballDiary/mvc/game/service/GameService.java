@@ -76,8 +76,10 @@ public class GameService {
      * 게임기록 상세조회
      * @author 이성주
      */
-    public GameInfoDTO getGameInfo(Long gameSeq){
-        return Optional.ofNullable(gameRepository.getGameInfo(gameSeq))
+    public GameInfoDTO getGameInfo(Long gameSeq)
+    {
+        return Optional
+                .ofNullable(gameRepository.findGameBasicInfo(gameSeq))
                 .orElseThrow(()->new CustomException(Error.NOT_FOUND_GAME));
     }
 
