@@ -1,13 +1,12 @@
 package com.threeNerds.basketballDiary.mvc.game.controller;
 
+import com.threeNerds.basketballDiary.constant.code.HomeAwayCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.interceptor.Auth;
 import com.threeNerds.basketballDiary.mvc.game.controller.dto.GameAuthDTO;
-import com.threeNerds.basketballDiary.mvc.game.controller.dto.GameAuthRecorderDTO;
 import com.threeNerds.basketballDiary.mvc.game.controller.response.*;
 import com.threeNerds.basketballDiary.mvc.game.domain.GameRecordAuth;
-import com.threeNerds.basketballDiary.mvc.team.dto.TeamDTO;
 import com.threeNerds.basketballDiary.mvc.game.controller.dto.GameJoinPlayerRegistrationDTO;
 import com.threeNerds.basketballDiary.mvc.game.controller.request.*;
 import com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords;
@@ -16,7 +15,6 @@ import com.threeNerds.basketballDiary.mvc.game.dto.*;
 import com.threeNerds.basketballDiary.mvc.game.service.GameJoinManagerService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameRecordManagerService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameService;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.FindGameHomeAwayDTO;
 import com.threeNerds.basketballDiary.session.SessionUser;
 import com.threeNerds.basketballDiary.utils.CommonUtil;
 import com.threeNerds.basketballDiary.utils.ValidateUtil;
@@ -33,6 +31,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 import java.util.List;
+import java.util.Map;
 
 import static com.threeNerds.basketballDiary.constant.UserAuthConst.USER;
 import static com.threeNerds.basketballDiary.constant.HttpResponseConst.RESPONSE_CREATED;
@@ -335,12 +334,20 @@ public class GameController {
      * API047 경기 참가팀 조회
      */
     @GetMapping("{gameSeq}/teams")
-    public ResponseEntity<?> findGameHomeAwayInfo(
+    public ResponseEntity<?> getGameJoinTeamsInfo(
             @PathVariable(name = "gameSeq") Long gameSeq,
             @RequestParam(name = "homeAwayCode", required = false) String homeAwayCode
     ){
-        List<FindGameHomeAwayDTO> gameHomeAwayInfo = gameJoinManagerService.findGameHomeAwayInfo(gameSeq, homeAwayCode);
-        return ResponseEntity.ok(gameHomeAwayInfo);
+        SearchGameJoinTeamDTO searchGameHomeAwayDTO = new SearchGameJoinTeamDTO()
+                                                            .gameSeq(gameSeq)
+                                                            .homeAwayCode(homeAwayCode);
+
+        Map<HomeAwayCode, GameJoinTeamInfoDTO> joinTeamsInfo = gameJoinManagerService.getGameJoinTeams(searchGameHomeAwayDTO);
+
+        GetGameJoinTeamsResponse resBody = new GetGameJoinTeamsResponse()
+                                                .homeTeamInfo(joinTeamsInfo.get(HomeAwayCode.HOME_TEAM))
+                                                .awayTeamInfo(joinTeamsInfo.get(HomeAwayCode.AWAY_TEAM));
+        return ResponseEntity.ok(resBody);
     }
 
     /**
