@@ -1,9 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.game.repository.dto;
 
 import com.threeNerds.basketballDiary.mvc.team.domain.Team;
-import com.threeNerds.basketballDiary.mvc.team.dto.TeamDTO;
 import com.threeNerds.basketballDiary.mvc.game.dto.*;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.FindGameHomeAwayDTO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -16,7 +14,7 @@ public interface GameJoinManagerRepository {
 
     List<GameOpponentDTO> findOpponents(SearchOppenentsDTO searchOppenentsDTO);
 
-    List<FindGameHomeAwayDTO> findGameTeams(SearchGameHomeAwayDTO searchGameHomeAwayDTO);
+    List<GameJoinTeamInfoDTO> findGameJoinTeams(SearchGameJoinTeamDTO searchGameJoinTeamDTO);
 
     List<PlayerInfoDTO> findGameJoinPlayers(SearchPlayersDTO searchDTO);
 }

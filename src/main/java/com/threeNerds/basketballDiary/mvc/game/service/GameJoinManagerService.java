@@ -9,7 +9,6 @@ import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.mvc.game.domain.Game;
 import com.threeNerds.basketballDiary.mvc.team.domain.Team;
 import com.threeNerds.basketballDiary.mvc.user.domain.User;
-import com.threeNerds.basketballDiary.mvc.team.dto.TeamDTO;
 import com.threeNerds.basketballDiary.mvc.game.controller.dto.GameJoinPlayerRegistrationDTO;
 import com.threeNerds.basketballDiary.mvc.game.domain.GameJoinPlayer;
 import com.threeNerds.basketballDiary.mvc.game.domain.GameJoinTeam;
@@ -20,7 +19,6 @@ import com.threeNerds.basketballDiary.mvc.game.repository.GameJoinTeamRepository
 import com.threeNerds.basketballDiary.mvc.game.repository.GameRepository;
 import com.threeNerds.basketballDiary.mvc.game.repository.QuarterPlayerRecordsRepository;
 import com.threeNerds.basketballDiary.mvc.game.repository.dto.GameJoinManagerRepository;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.FindGameHomeAwayDTO;
 import com.threeNerds.basketballDiary.mvc.team.repository.TeamRepository;
 import com.threeNerds.basketballDiary.mvc.user.repository.UserRepository;
 import com.threeNerds.basketballDiary.utils.ValidateUtil;
@@ -140,14 +138,25 @@ public class GameJoinManagerService {
         return gameJoinManagerRepo.findOpponents(searchCond);
     }
 
-    public List<FindGameHomeAwayDTO> findGameHomeAwayInfo(Long gameSeq,String homeAwayCode){
+    public Map<HomeAwayCode, GameJoinTeamInfoDTO> getGameJoinTeams(SearchGameJoinTeamDTO searchParam)
+    {
+        List<GameJoinTeamInfoDTO> joinTeams = gameJoinManagerRepo.findGameJoinTeams(searchParam);
 
-        SearchGameHomeAwayDTO searchGameHomeAwayDTO = new SearchGameHomeAwayDTO()
-                .gameSeq(gameSeq)
-                .homeAwayCode(homeAwayCode);
-        List<FindGameHomeAwayDTO> gameTeams = gameJoinManagerRepo.findGameTeams(searchGameHomeAwayDTO);
-        return gameTeams;
-//        return gameJoinManagerRepository.findGameTeams(searchGameHomeAwayDTO);
+        Map<HomeAwayCode, GameJoinTeamInfoDTO> joinTeamsMap = new HashMap<>();
+
+        // TODO home / away 중 한팀만 존재할 수 있음. 따라서 Null일 경우를 허용해야함!! Optional 처리를 어떻게 할 것인지 고민 필요
+        GameJoinTeamInfoDTO homeTeam = joinTeams.stream()
+                .filter( team -> { return HomeAwayCode.HOME_TEAM.getCode().equals(team.getHomeAwayCode()); })
+                .findFirst().orElseGet(() -> null);
+
+        GameJoinTeamInfoDTO awayTeam = joinTeams.stream()
+                .filter( team -> { return HomeAwayCode.AWAY_TEAM.getCode().equals(team.getHomeAwayCode()); })
+                .findFirst().orElseGet(() -> null);
+
+
+        joinTeamsMap.put(HomeAwayCode.HOME_TEAM, homeTeam);
+        joinTeamsMap.put(HomeAwayCode.AWAY_TEAM, awayTeam);
+        return joinTeamsMap;
     }
 
     /**
