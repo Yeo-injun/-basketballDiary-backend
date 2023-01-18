@@ -428,11 +428,12 @@ public class GameController {
                                             .gameSeq(gameSeq)
                                             .homeAwayCode(homeAwayCode);
 
-        List<GameJoinTeamDTO> teams = gameJoinManagerService.getGameJoinPlayers(searchDTO);
+        Map<HomeAwayCode, GameJoinTeamDTO> teams = gameJoinManagerService.getGameJoinPlayers(searchDTO);
 
         GetGameJoinPlayersResponse resBody = new GetGameJoinPlayersResponse()
                 .gameSeq(gameSeq)
-                .teams(teams);
+                .hometeam(teams.get(HomeAwayCode.HOME_TEAM))
+                .awayteam(teams.get(HomeAwayCode.AWAY_TEAM));
 
         return ResponseEntity.ok(resBody);
     }

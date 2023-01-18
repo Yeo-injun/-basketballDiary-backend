@@ -172,6 +172,7 @@ public class GameJoinManagerService {
         if (hasPlayerRecord) {
             throw new CustomException(Error.INVALID_PARAMETER);
         }
+
         /** 게임참가선수 데이터 존재여부 확인 - 기존 데이터 존재시 삭제 */
         Long gameJoinTeamSeq = playerRegistrationDTO.getGameJoinTeamSeq();
         List<GameJoinPlayer> registeredJoinPlayers = gameJoinPlayerRepository.findPlayers(gameJoinTeamSeq);
@@ -217,41 +218,35 @@ public class GameJoinManagerService {
     /**
      * 22.12.18
      * 경기참가선수 조회
-     * >> gameJoinManagerService로 이전 ( by 인준 )
      * @author 이성주
      * @updator 여인준
      * - homeAwayCode가 없을때는 홈,어웨이 모두 조회
      * - homeAwayCode가 있을때는 해당하는 팀의 팀원 조회
-     * // 쿼리는 homeAwayCode에 따라 동적으로 작성
-     *         // response 객체에 담는 gameSeq, homeAwayCode, teamSeq 는 어떻게 설정해줘야 되는지
-     *         // response 객체에 단일 데이터와 리스트형식의 데이터를 함께 보내야된다.
+     * @return enum을 key값으로 사용하여 홈/어웨이팀 구분
      */
-    public List<GameJoinTeamDTO> getGameJoinPlayers(SearchPlayersDTO searchDTO)
+    public Map<HomeAwayCode, GameJoinTeamDTO> getGameJoinPlayers(SearchPlayersDTO searchDTO)
     {
-
         List<PlayerInfoDTO> players = gameJoinManagerRepo.findGameJoinPlayers(searchDTO);
-        if (players.isEmpty()) {
-            // TODO 선수목록이 없습니다. 로 오류 메세지 수정필요
-            throw new CustomException(Error.TEAM_NOT_FOUND);
-        }
 
         /** 한개팀 선수 조회일 경우 */
         String homeAwayCode = searchDTO.getHomeAwayCode();
         boolean isSearchOneTeamPlayers = homeAwayCode != null;
         if (isSearchOneTeamPlayers)
         {
-            GameJoinTeamDTO gameJoinTeam = new GameJoinTeamDTO()
-                    .homeAwayCode(homeAwayCode)
-                    .homeAwayCodeName(homeAwayCode)
-                    .players(players);
-            // TODO  사용법 확인하기
-            return Arrays.asList(gameJoinTeam);
+            Map<HomeAwayCode, GameJoinTeamDTO> teamMap = new HashMap<>();
+            if (HomeAwayCode.HOME_TEAM.getCode().equals(homeAwayCode)) {
+                teamMap.put(HomeAwayCode.HOME_TEAM, createTeamWithPlayers(HomeAwayCode.HOME_TEAM, players));
+                return teamMap;
+            }
+            teamMap.put(HomeAwayCode.AWAY_TEAM, createTeamWithPlayers(HomeAwayCode.AWAY_TEAM, players));
+            return teamMap;
         }
 
         /** 양팀 선수 조회일 경우 */
-        GameJoinTeamDTO homeTeam = createTeamWithPlayers(HomeAwayCode.HOME_TEAM, players);
-        GameJoinTeamDTO awayTeam = createTeamWithPlayers(HomeAwayCode.AWAY_TEAM, players);
-        return Arrays.asList(homeTeam, awayTeam);
+        Map<HomeAwayCode, GameJoinTeamDTO> teamsMap = new HashMap<>();
+        teamsMap.put(HomeAwayCode.HOME_TEAM, createTeamWithPlayers(HomeAwayCode.HOME_TEAM, players));
+        teamsMap.put(HomeAwayCode.AWAY_TEAM, createTeamWithPlayers(HomeAwayCode.AWAY_TEAM, players));
+        return teamsMap;
     }
 
     private GameJoinTeamDTO createTeamWithPlayers(HomeAwayCode code, List<PlayerInfoDTO> players)
