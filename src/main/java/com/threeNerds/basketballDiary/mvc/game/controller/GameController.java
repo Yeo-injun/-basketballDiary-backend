@@ -90,6 +90,8 @@ public class GameController {
      * @author 강창기
      */
     //@Auth(GRADE = USER) TODO
+    // TODO 하나의 서비스로 통일하고(트랜잭션 이슈때문에), 
+    // TODO 컨트롤러에서 호출하는 메소드를 서비스에서 구현하고 private메소드로 구현
     @PutMapping("/{gameSeq}/quarters/{quarterCode}")
     public ResponseEntity<?> processQuarterRecords(
             @PathVariable(name = "gameSeq") String gameSeq,
@@ -432,8 +434,8 @@ public class GameController {
 
         GetGameJoinPlayersResponse resBody = new GetGameJoinPlayersResponse()
                 .gameSeq(gameSeq)
-                .hometeam(teams.get(HomeAwayCode.HOME_TEAM))
-                .awayteam(teams.get(HomeAwayCode.AWAY_TEAM));
+                .homeTeam(teams.get(HomeAwayCode.HOME_TEAM))
+                .awayTeam(teams.get(HomeAwayCode.AWAY_TEAM));
 
         return ResponseEntity.ok(resBody);
     }
@@ -464,16 +466,17 @@ public class GameController {
      * @author 강창기
      */
     @GetMapping("/{gameSeq}/quarters")
-    public ResponseEntity<?> searchGameRecordsByQuarter(
-            @PathVariable(name = "gameSeq") String gameSeq
-    ){
-        if(ObjectUtils.isEmpty(gameSeq) || !StringUtils.hasText(gameSeq))
+    public ResponseEntity<?> getGameAllQuartersRecords (
+            @PathVariable(name = "gameSeq") Long gameSeq
+    ) {
+        if(ObjectUtils.isEmpty(gameSeq)) {
             throw new CustomException(Error.NO_PARAMETER);
+        }
 
         SearchGameDTO searchGameDTO = new SearchGameDTO()
-                .gameSeq(Long.parseLong(gameSeq));
+                                             .gameSeq(gameSeq);
 
-        List<HomeAwayTeamRecordDTO> homeAwayTeamRecordByQuarterList = gameRecordManagerService.getListHomeAwayTeamRecordByQuarter(searchGameDTO);
+        List<HomeAwayTeamRecordDTO> homeAwayTeamRecordByQuarterList = gameRecordManagerService.getGameAllQuartersRecords(searchGameDTO);
 
         return ResponseEntity.ok(homeAwayTeamRecordByQuarterList);
     }
