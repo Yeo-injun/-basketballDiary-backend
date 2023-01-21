@@ -39,21 +39,21 @@ public class GetGameJoinPlayersResponse {
      *
      */
     private Long gameSeq;
-    private GameJoinTeamDTO hometeam;
-    private GameJoinTeamDTO awayteam;
+    private GameJoinTeamDTO homeTeam;
+    private GameJoinTeamDTO awayTeam;
 
     public GetGameJoinPlayersResponse gameSeq(Long gameSeq) {
         this.gameSeq = gameSeq;
         return this;
     }
 
-    public GetGameJoinPlayersResponse hometeam(GameJoinTeamDTO hometeam) {
-        this.hometeam = hometeam;
+    public GetGameJoinPlayersResponse homeTeam(GameJoinTeamDTO homeTeam) {
+        this.homeTeam = homeTeam;
         return this;
     }
 
-    public GetGameJoinPlayersResponse awayteam(GameJoinTeamDTO awayteam) {
-        this.awayteam = awayteam;
+    public GetGameJoinPlayersResponse awayTeam(GameJoinTeamDTO awayTeam) {
+        this.awayTeam = awayTeam;
         return this;
     }
 }
