@@ -1,10 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.game.repository.dto;
 
-import com.threeNerds.basketballDiary.mvc.game.controller.dto.GameAuthRecorderDTO;
-import com.threeNerds.basketballDiary.mvc.game.dto.PlayerRecordDTO;
-import com.threeNerds.basketballDiary.mvc.game.dto.QuarterCodeDTO;
-import com.threeNerds.basketballDiary.mvc.game.dto.SearchGameDTO;
-import com.threeNerds.basketballDiary.mvc.game.dto.HomeAwayTeamRecordDTO;
+import com.threeNerds.basketballDiary.mvc.game.dto.*;
+import com.threeNerds.basketballDiary.mvc.game.dto.response.getGameAllQuartersRecords.QuarterTeamRecordsDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameCondDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameJoinTeamRecordDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameRecordDTO;
@@ -48,8 +45,10 @@ public interface GameRecordManagerRepository {
     /**
      * 모든쿼터의 홈·어웨이 기록조회(목록)
      * @param searchGameDTO 게임조회용 DTO
+     * @return
      */
-    List<HomeAwayTeamRecordDTO> findAllHomeAwayTeamRecordsByQuarter(SearchGameDTO searchGameDTO);
+//    List<HomeAwayTeamRecordDTO> findAllHomeAwayTeamRecordsByQuarter(SearchGameDTO searchGameDTO);
+    List<QuarterTeamRecordsDTO> findAllQuarterRecords(SearchGameDTO searchGameDTO);
 
     /**
      * 쿼터 삭제(QUARTER_PLAYER_RECORDS TABLE)

@@ -202,15 +202,39 @@
     </select>
 
     <select id="findAllHomeAwayTeamRecordsByQuarter" resultType="com.threeNerds.basketballDiary.mvc.game.dto.HomeAwayTeamRecordDTO">
+        /* TODO 삭제 예정 >> findAllQuarterRecords로 대체. 조회후 Java에서 처리하기 */
         <include refid="homeAwayTeamRecordsByQuarter"/>
     </select>
 
+    <select id="findAllQuarterRecords" resultType="com.threeNerds.basketballDiary.mvc.game.dto.response.getGameAllQuartersRecords.QuarterTeamRecordsDTO">
+        /* GameRecordManagerRepository.findAllQuarterRecords */
+        SELECT GJT.GAME_SEQ
+             , GJT.GAME_JOIN_TEAM_SEQ
+             , GJT.TEAM_NAME
+             , GJT.HOME_AWAY_CODE
+             , QTR.QUARTER_CODE
+             , QTR.QUARTER_TIME
+             , QTR.SCORE
+             , QTR.FOUL
+          FROM GAME_JOIN_TEAM GJT
+         INNER JOIN QUARTER_TEAM_RECORDS QTR
+            ON GJT.GAME_JOIN_TEAM_SEQ = QTR.GAME_JOIN_TEAM_SEQ
+         WHERE 1=1
+           AND GJT.GAME_SEQ = #{gameSeq}
+    </select>
+
     <delete id="deleteQuarterPlayerRecords">
-        DELETE FROM QUARTER_PLAYER_RECORDS T1 WHERE T1.GAME_SEQ = #{gameSeq} AND T1.QUATER_CODE = #{quarterCode}
+        DELETE FROM QUARTER_PLAYER_RECORDS T1
+         WHERE 1=1
+           AND T1.GAME_SEQ = #{gameSeq}
+           AND T1.QUATER_CODE = #{quarterCode}
     </delete>
 
     <delete id="deleteQuarterTeamRecords">
-        DELETE FROM QUARTER_TEAM_RECORDS T1 WHERE T1.GAME_SEQ = #{gameSeq} AND T1.QUATER_CODE = #{quarterCode}
+        DELETE FROM QUARTER_TEAM_RECORDS T1
+         WHERE 1=1
+           AND T1.GAME_SEQ = #{gameSeq}
+           AND T1.QUATER_CODE = #{quarterCode}
     </delete>
 
 </mapper>
