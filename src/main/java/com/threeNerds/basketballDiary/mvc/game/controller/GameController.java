@@ -1,6 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.game.controller;
 
 import com.threeNerds.basketballDiary.constant.code.HomeAwayCode;
+import com.threeNerds.basketballDiary.constant.code.QuarterCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.interceptor.Auth;
@@ -12,6 +13,8 @@ import com.threeNerds.basketballDiary.mvc.game.controller.request.*;
 import com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords;
 import com.threeNerds.basketballDiary.mvc.game.domain.QuarterTeamRecords;
 import com.threeNerds.basketballDiary.mvc.game.dto.*;
+import com.threeNerds.basketballDiary.mvc.game.dto.response.getGameAllQuartersRecords.GetGameAllQuartersRecordsResponse;
+import com.threeNerds.basketballDiary.mvc.game.dto.response.getGameAllQuartersRecords.QuarterAllTeamsRecordsDTO;
 import com.threeNerds.basketballDiary.mvc.game.service.GameJoinManagerService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameRecordManagerService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameService;
@@ -476,8 +479,10 @@ public class GameController {
         SearchGameDTO searchGameDTO = new SearchGameDTO()
                                              .gameSeq(gameSeq);
 
-        List<HomeAwayTeamRecordDTO> homeAwayTeamRecordByQuarterList = gameRecordManagerService.getGameAllQuartersRecords(searchGameDTO);
+        Map<QuarterCode, QuarterAllTeamsRecordsDTO> allQuartersRecordsMap = gameRecordManagerService.getGameAllQuartersRecords(searchGameDTO);
 
-        return ResponseEntity.ok(homeAwayTeamRecordByQuarterList);
+        GetGameAllQuartersRecordsResponse resBody = new GetGameAllQuartersRecordsResponse(gameSeq, allQuartersRecordsMap);
+
+        return ResponseEntity.ok(resBody);
     }
 }
