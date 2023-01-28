@@ -465,8 +465,9 @@ public class GameController {
 
     /**
      * API063 게임전체쿼터 조회
-     * 22.12.25(금)
+     * @since 22.12.25(금)
      * @author 강창기
+     * 23.01.25(수) 여인준 - API Body 수정
      */
     @GetMapping("/{gameSeq}/quarters")
     public ResponseEntity<?> getGameAllQuartersRecords (
