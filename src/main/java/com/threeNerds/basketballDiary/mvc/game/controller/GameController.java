@@ -13,8 +13,8 @@ import com.threeNerds.basketballDiary.mvc.game.controller.request.*;
 import com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords;
 import com.threeNerds.basketballDiary.mvc.game.domain.QuarterTeamRecords;
 import com.threeNerds.basketballDiary.mvc.game.dto.*;
-import com.threeNerds.basketballDiary.mvc.game.dto.response.getGameAllQuartersRecords.GetGameAllQuartersRecordsResponse;
-import com.threeNerds.basketballDiary.mvc.game.dto.response.getGameAllQuartersRecords.QuarterAllTeamsRecordsDTO;
+import com.threeNerds.basketballDiary.mvc.game.dto.getGameAllQuartersRecords.GetGameAllQuartersRecordsResponse;
+import com.threeNerds.basketballDiary.mvc.game.dto.getGameAllQuartersRecords.QuarterAllTeamsRecordsDTO;
 import com.threeNerds.basketballDiary.mvc.game.service.GameJoinManagerService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameRecordManagerService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameService;
@@ -484,8 +484,9 @@ public class GameController {
 
     /**
      * API063 게임전체쿼터 조회
-     * 22.12.25(금)
+     * @since 22.12.25(금)
      * @author 강창기
+     * 23.01.25(수) 여인준 - API Body 수정
      */
     @GetMapping("/{gameSeq}/quarters")
     public ResponseEntity<?> getGameAllQuartersRecords (
@@ -498,10 +499,7 @@ public class GameController {
         SearchGameDTO searchGameDTO = new SearchGameDTO()
                                              .gameSeq(gameSeq);
 
-        Map<QuarterCode, QuarterAllTeamsRecordsDTO> allQuartersRecordsMap = gameRecordManagerService.getGameAllQuartersRecords(searchGameDTO);
-
-        GetGameAllQuartersRecordsResponse resBody = new GetGameAllQuartersRecordsResponse(gameSeq, allQuartersRecordsMap);
-
+        GetGameAllQuartersRecordsResponse resBody = gameRecordManagerService.getGameAllQuartersRecords(searchGameDTO);
         return ResponseEntity.ok(resBody);
     }
 }

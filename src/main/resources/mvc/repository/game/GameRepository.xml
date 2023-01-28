@@ -54,6 +54,25 @@
             AND T1.GAME_SEQ = #{gameSeq}
     </select>
 
+    <select id="findGame" resultType="com.threeNerds.basketballDiary.mvc.game.domain.Game">
+        SELECT GAME_SEQ
+        , CREATOR_TEAM_MEMBER_SEQ
+        , GAME_RECORD_STATE_CODE
+        , GAME_TYPE_CODE
+        , GAME_YMD
+        , GAME_START_TIME
+        , GAME_END_TIME
+        , GAME_PLACE_ADDRESS
+        , GAME_PLACE_NAME
+        , REG_DATE
+        , SIDO_CODE
+        , SIGUNGU_CODE
+        FROM GAME
+        WHERE 1=1
+        AND GAME_SEQ = #{gameSeq}
+    </select>
+
+
     <update id="updateGameRecordState" parameterType="com.threeNerds.basketballDiary.mvc.game.domain.Game">
         UPDATE GAME
            SET GAME_RECORD_STATE_CODE = #{gameRecordStateCode}

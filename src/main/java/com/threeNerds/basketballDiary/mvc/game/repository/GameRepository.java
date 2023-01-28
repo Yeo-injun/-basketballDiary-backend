@@ -24,6 +24,8 @@ public interface GameRepository {
 
     GameInfoDTO findGameBasicInfo(Long gameSeq);
 
+    Game findGame(Long gameSeq);
+
     /** 게임기록상태 Update
      * @parma Game (gameSeq, gameRecordStateCode)
      * @return Long insert된 데이터의 갯수 할당.

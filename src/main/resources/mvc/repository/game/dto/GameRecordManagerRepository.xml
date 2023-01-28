@@ -206,7 +206,7 @@
         <include refid="homeAwayTeamRecordsByQuarter"/>
     </select>
 
-    <select id="findAllQuarterRecords" resultType="com.threeNerds.basketballDiary.mvc.game.dto.response.getGameAllQuartersRecords.QuarterTeamRecordsDTO">
+    <select id="findAllQuarterRecords" resultType="com.threeNerds.basketballDiary.mvc.game.dto.getGameAllQuartersRecords.QuarterTeamRecordsDTO">
         /* GameRecordManagerRepository.findAllQuarterRecords */
         SELECT GJT.GAME_SEQ
              , GJT.GAME_JOIN_TEAM_SEQ
