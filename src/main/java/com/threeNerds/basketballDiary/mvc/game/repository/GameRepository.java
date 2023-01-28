@@ -14,7 +14,7 @@ import java.util.List;
 @Mapper
 public interface GameRepository {
 
-    void deleteGame(Long gameSeq);
+    Long deleteGame(Long gameSeq);
 
     /** 게임생성
      * - Game객체에 채번된 gameSeq가 할당됨.
@@ -22,9 +22,11 @@ public interface GameRepository {
      */
     Long saveGame(Game newGame);
 
-    GameInfoDTO getGameInfo(Long gameSeq);
+    GameInfoDTO findGameBasicInfo(Long gameSeq);
 
-    List<PlayerInfoDTO> getMatchPlayers(SearchMatchPlayersDTO matchPlayersDTO);
-
-    void confirmGame(Long gameSeq);
+    /** 게임기록상태 Update
+     * @parma Game (gameSeq, gameRecordStateCode)
+     * @return Long insert된 데이터의 갯수 할당.
+     */
+    Integer updateGameRecordState(Game game);
 }

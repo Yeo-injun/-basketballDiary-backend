@@ -1,6 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.game.controller.response;
 
 import com.threeNerds.basketballDiary.mvc.game.dto.GameJoinTeamDTO;
+import com.threeNerds.basketballDiary.mvc.game.dto.GameJoinTeamInfoDTO;
 import lombok.Getter;
 
 import java.util.List;
@@ -38,15 +39,21 @@ public class GetGameJoinPlayersResponse {
      *
      */
     private Long gameSeq;
-    private List<GameJoinTeamDTO> teams;
+    private GameJoinTeamDTO homeTeam;
+    private GameJoinTeamDTO awayTeam;
 
     public GetGameJoinPlayersResponse gameSeq(Long gameSeq) {
         this.gameSeq = gameSeq;
         return this;
     }
 
-    public GetGameJoinPlayersResponse teams(List<GameJoinTeamDTO> teams) {
-        this.teams = teams;
+    public GetGameJoinPlayersResponse homeTeam(GameJoinTeamDTO homeTeam) {
+        this.homeTeam = homeTeam;
+        return this;
+    }
+
+    public GetGameJoinPlayersResponse awayTeam(GameJoinTeamDTO awayTeam) {
+        this.awayTeam = awayTeam;
         return this;
     }
 }

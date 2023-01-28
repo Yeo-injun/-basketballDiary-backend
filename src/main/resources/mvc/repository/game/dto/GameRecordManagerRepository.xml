@@ -51,29 +51,6 @@
                              WHERE TEAM_SEQ = #{teamSeq} )
     </select>
 
-    <select id="findTeamMembersByGameSeq" resultType="com.threeNerds.basketballDiary.mvc.game.dto.PlayerInfoDTO">
-        SELECT A.GAME_SEQ
-             , A.TEAM_SEQ
-             , A.HOME_AWAY_CODE -- HOME/AWAY 구분을 위한 키, 화면에서 처리하여 구분지어 보여주기
-             , (SELECT TEAM_NAME FROM TEAM WHERE TEAM_SEQ = A.TEAM_SEQ) TEAM_NAME
-             , B.NAME
-             , B.EMAIL
-             , B.BACK_NUMBER
-         FROM GAME_JOIN_TEAM A
-        INNER JOIN GAME_JOIN_PLAYER B
-           ON A.GAME_JOIN_TEAM_SEQ = B.GAME_JOIN_TEAM_SEQ
-        WHERE GAME_SEQ = #{gameSeq}
-          AND NOT EXISTS (
-                SELECT 1
-                FROM GAME_RECORD_AUTH TMP1
-                         INNER JOIN TEAM_MEMBER TMP2
-                                    ON TMP1.TEAM_MEMBER_SEQ = TMP2.TEAM_MEMBER_SEQ
-                WHERE TMP1.GAME_SEQ = A.GAME_SEQ
-                  AND TMP2.USER_SEQ = B.USER_SEQ
-                  AND TMP1.GAME_RECORD_AUTH_CODE = '02' -- 입력권한자
-            ) -- 권한을 이미 부여받은 선수는 제외
-
-    </select>
 
     <select id="findPlayerRecordsByQuarter" resultType="com.threeNerds.basketballDiary.mvc.game.dto.PlayerRecordDTO">
         /** GameRecordManagerRepository.findPlayerRecordsByQuarter */
@@ -157,15 +134,15 @@
         LEFT JOIN USER D
           ON B.USER_SEQ = D.USER_SEQ
        WHERE A.GAME_SEQ = #{gameSeq}
-         <if test="homeAwayCode != null and !''.equals(homeAwayCode)">
-         AND A.HOME_AWAY_CODE = #{homeAwayCode}
+         <if test="teamSeq != null and !''.equals(teamSeq)">
+         AND A.TEAM_SEQ = #{teamSeq}
          </if>
          <if test="quarterCode != null and !''.equals(quarterCode)">
          AND C.QUARTER_CODE = #{quarterCode}
          </if>
     </select>
 
-    <select id="findHomeAwayTeamRecordsByQuarter" resultType="com.threeNerds.basketballDiary.mvc.game.dto.HomeAwayTeamRecordDTO">
+    <sql id="homeAwayTeamRecordsByQuarter">
         /**
          * GameRecordManagerRepository.findHomeAwayTeamRecordsByQuarter
          * 홈·어웨이 쿼터별 팀기록 조회이므로, QUARTER_TEAM_RECORDS_SEQ로 식별할 수 없음.
@@ -174,8 +151,10 @@
          */
         SELECT GAME_SEQ
              , GAME_YMD
+             , QUARTER_CODE
              , GAME_START_TIME
              , GAME_END_TIME
+             , MAX(QUARTER_TIME)
              , MAX(HOME_TEAM_SEQ) HOME_TEAM_SEQ
              , MAX(AWAY_TEAM_SEQ) AWAY_TEAM_SEQ
              , MAX(HOME_TEAM_NAME) HOME_TEAM_NAME
@@ -184,8 +163,6 @@
              , MAX(AWAY_TOTAL_SCORE) AWAY_TOTAL_SCORE
              , MAX(HOME_FOUL) HOME_FOUL
              , MAX(AWAY_FOUL) AWAY_FOUL
-             , MAX(QUARTER_CODE) QUARTER_CODE
-             , MAX(QUARTER_TIME) QUARTER_TIME
         FROM (
                  SELECT A.GAME_SEQ
                       , A.GAME_YMD
@@ -196,32 +173,68 @@
                       , CASE WHEN B.HOME_AWAY_CODE = '01' THEN B.TEAM_NAME ELSE 0 END HOME_TEAM_NAME
                       , CASE WHEN B.HOME_AWAY_CODE = '02' THEN B.TEAM_NAME ELSE 0 END AWAY_TEAM_NAME
                       , CASE WHEN B.HOME_AWAY_CODE = '01'
-                             THEN C.FREE_THROW + 2 * C.TWO_POINT + 3 * C.THREE_POINT ELSE 0
+                                 THEN C.FREE_THROW + 2 * C.TWO_POINT + 3 * C.THREE_POINT ELSE 0
                         END HOME_TOTAL_SCORE
                       , CASE WHEN B.HOME_AWAY_CODE = '02'
-                             THEN C.FREE_THROW + 2 * C.TWO_POINT + 3 * C.THREE_POINT ELSE 0
+                                 THEN C.FREE_THROW + 2 * C.TWO_POINT + 3 * C.THREE_POINT ELSE 0
                         END AWAY_TOTAL_SCORE
                       , CASE WHEN B.HOME_AWAY_CODE = '01' THEN C.FOUL ELSE 0 END HOME_FOUL
                       , CASE WHEN B.HOME_AWAY_CODE = '02' THEN C.FOUL ELSE 0 END AWAY_FOUL
                       , C.QUARTER_CODE
                       , C.QUARTER_TIME
-                 FROM GAME A
-                INNER JOIN GAME_JOIN_TEAM B
-                   ON A.GAME_SEQ = B.GAME_SEQ
-                INNER JOIN QUARTER_TEAM_RECORDS C
-                   ON B.GAME_SEQ = C.GAME_SEQ
-                WHERE C.GAME_SEQ = #{gameSeq}
-                  AND C.GAME_JOIN_TEAM_SEQ = #{gameJoinTeamSeq}
-                  AND C.QUARTER_CODE = #{quarterCode}
+                   FROM GAME A
+                  INNER JOIN GAME_JOIN_TEAM B
+                     ON A.GAME_SEQ = B.GAME_SEQ
+                  INNER JOIN QUARTER_TEAM_RECORDS C
+                     ON B.GAME_SEQ = C.GAME_SEQ
+                    AND B.GAME_JOIN_TEAM_SEQ = C.GAME_JOIN_TEAM_SEQ
+                  WHERE A.GAME_SEQ = #{gameSeq}
              ) A
-       GROUP BY GAME_SEQ, GAME_YMD, GAME_START_TIME, GAME_END_TIME
+        GROUP BY GAME_SEQ, GAME_YMD, QUARTER_CODE, GAME_START_TIME, GAME_END_TIME
+    </sql>
+
+    <select id="findHomeAwayTeamRecordsByQuarter" resultType="com.threeNerds.basketballDiary.mvc.game.dto.HomeAwayTeamRecordDTO">
+       SELECT TMP.*
+         FROM (
+         <include refid="homeAwayTeamRecordsByQuarter"/>
+              ) TMP
+        WHERE TMP.QUARTER_CODE = #{quarterCode}
+    </select>
+
+    <select id="findAllHomeAwayTeamRecordsByQuarter" resultType="com.threeNerds.basketballDiary.mvc.game.dto.HomeAwayTeamRecordDTO">
+        /* TODO 삭제 예정 >> findAllQuarterRecords로 대체. 조회후 Java에서 처리하기 */
+        <include refid="homeAwayTeamRecordsByQuarter"/>
+    </select>
+
+    <select id="findAllQuarterRecords" resultType="com.threeNerds.basketballDiary.mvc.game.dto.response.getGameAllQuartersRecords.QuarterTeamRecordsDTO">
+        /* GameRecordManagerRepository.findAllQuarterRecords */
+        SELECT GJT.GAME_SEQ
+             , GJT.GAME_JOIN_TEAM_SEQ
+             , GJT.TEAM_NAME
+             , GJT.HOME_AWAY_CODE
+             , QTR.QUARTER_CODE
+             , QTR.QUARTER_TIME
+             , QTR.SCORE
+             , QTR.FOUL
+          FROM GAME_JOIN_TEAM GJT
+         INNER JOIN QUARTER_TEAM_RECORDS QTR
+            ON GJT.GAME_JOIN_TEAM_SEQ = QTR.GAME_JOIN_TEAM_SEQ
+         WHERE 1=1
+           AND GJT.GAME_SEQ = #{gameSeq}
     </select>
 
     <delete id="deleteQuarterPlayerRecords">
-        DELETE FROM QUARTER_PLAYER_RECORDS T1 WHERE T1.GAME_SEQ = #{gameSeq} AND T1.QUATER_CODE = #{quarterCode}
+        DELETE FROM QUARTER_PLAYER_RECORDS T1
+         WHERE 1=1
+           AND T1.GAME_SEQ = #{gameSeq}
+           AND T1.QUATER_CODE = #{quarterCode}
     </delete>
 
     <delete id="deleteQuarterTeamRecords">
-        DELETE FROM QUARTER_TEAM_RECORDS T1 WHERE T1.GAME_SEQ = #{gameSeq} AND T1.QUATER_CODE = #{quarterCode}
+        DELETE FROM QUARTER_TEAM_RECORDS T1
+         WHERE 1=1
+           AND T1.GAME_SEQ = #{gameSeq}
+           AND T1.QUATER_CODE = #{quarterCode}
     </delete>
+
 </mapper>

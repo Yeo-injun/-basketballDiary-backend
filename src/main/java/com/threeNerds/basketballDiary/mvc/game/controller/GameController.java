@@ -1,26 +1,30 @@
 package com.threeNerds.basketballDiary.mvc.game.controller;
 
+import com.threeNerds.basketballDiary.constant.code.HomeAwayCode;
+import com.threeNerds.basketballDiary.constant.code.QuarterCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.interceptor.Auth;
-import com.threeNerds.basketballDiary.mvc.team.dto.TeamDTO;
+import com.threeNerds.basketballDiary.mvc.game.controller.dto.GameAuthDTO;
+import com.threeNerds.basketballDiary.mvc.game.controller.response.*;
+import com.threeNerds.basketballDiary.mvc.game.domain.GameRecordAuth;
 import com.threeNerds.basketballDiary.mvc.game.controller.dto.GameJoinPlayerRegistrationDTO;
 import com.threeNerds.basketballDiary.mvc.game.controller.request.*;
-import com.threeNerds.basketballDiary.mvc.game.controller.response.GetGameEntryResponse;
-import com.threeNerds.basketballDiary.mvc.game.controller.response.GetGameJoinPlayersResponse;
 import com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords;
 import com.threeNerds.basketballDiary.mvc.game.domain.QuarterTeamRecords;
 import com.threeNerds.basketballDiary.mvc.game.dto.*;
+import com.threeNerds.basketballDiary.mvc.game.dto.response.getGameAllQuartersRecords.GetGameAllQuartersRecordsResponse;
+import com.threeNerds.basketballDiary.mvc.game.dto.response.getGameAllQuartersRecords.QuarterAllTeamsRecordsDTO;
 import com.threeNerds.basketballDiary.mvc.game.service.GameJoinManagerService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameRecordManagerService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameService;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.FindGameHomeAwayDTO;
 import com.threeNerds.basketballDiary.session.SessionUser;
 import com.threeNerds.basketballDiary.utils.CommonUtil;
 import com.threeNerds.basketballDiary.utils.ValidateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
@@ -30,6 +34,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 import java.util.List;
+import java.util.Map;
 
 import static com.threeNerds.basketballDiary.constant.UserAuthConst.USER;
 import static com.threeNerds.basketballDiary.constant.HttpResponseConst.RESPONSE_CREATED;
@@ -88,6 +93,8 @@ public class GameController {
      * @author 강창기
      */
     //@Auth(GRADE = USER) TODO
+    // TODO 하나의 서비스로 통일하고(트랜잭션 이슈때문에), 
+    // TODO 컨트롤러에서 호출하는 메소드를 서비스에서 구현하고 private메소드로 구현
     @PutMapping("/{gameSeq}/quarters/{quarterCode}")
     public ResponseEntity<?> processQuarterRecords(
             @PathVariable(name = "gameSeq") String gameSeq,
@@ -198,26 +205,26 @@ public class GameController {
     /**
      * API043 게임쿼터별 선수기록조회
      * @param gameSeq 게임Seq
+     * @param teamSeq 팀Seq
      * @param quarterCode 쿼터코드; 01~04(1~4쿼터), 11(전반), 12(후반)
-     * @param homeAwayCode 홈·어웨이코드; 01(홈),02(어웨이)
      * @result 특정쿼터의 선수별 기록조회
      * @author 강창기
      */
     //@Auth(GRADE = USER) TODO
-    @GetMapping("/{gameSeq}/quarters/{quarterCode}/players/homeAway/{homeAwayCode}")
+    @GetMapping("/{gameSeq}/teams/{teamSeq}/quarters/{quarterCode}/players")
     public ResponseEntity<?> searchPlayerRecordsByQuarter(
             // TODO  인준 : seq는 자료형이 String이 아니라 Long으로 관리하고 있음.
         @PathVariable(name = "gameSeq") String gameSeq,
-        @PathVariable(name = "quarterCode") String quarterCode,
-        @PathVariable(name = "homeAwayCode") String homeAwayCode
+        @PathVariable(name = "teamSeq") String teamSeq,
+        @PathVariable(name = "quarterCode") String quarterCode
     ) {
         // TODO 설계구조상 pagination data를 받지 않음.
         // TODO 파라미터 값 지정하여 throw처리...
         if(ObjectUtils.isEmpty(gameSeq) || !StringUtils.hasText(gameSeq))
             throw new CustomException(Error.NO_PARAMETER);
-        if(ObjectUtils.isEmpty(quarterCode) || !StringUtils.hasText(quarterCode))
+        if(ObjectUtils.isEmpty(teamSeq) || !StringUtils.hasText(teamSeq))
             throw new CustomException(Error.NO_PARAMETER);
-        if(ObjectUtils.isEmpty(homeAwayCode) || !StringUtils.hasText(homeAwayCode))
+        if(ObjectUtils.isEmpty(quarterCode) || !StringUtils.hasText(quarterCode))
             throw new CustomException(Error.NO_PARAMETER);
 
         //if(quarterCode.contains()) TODO 쿼터코드에 해당하는 값인지 체크필요
@@ -227,8 +234,8 @@ public class GameController {
 
         SearchGameDTO searchGameDTO = new SearchGameDTO()
                 .gameSeq(Long.parseLong(gameSeq))
-                .quarterCode(quarterCode)
-                .homeAwayCode(homeAwayCode);
+                .teamSeq(Long.parseLong(teamSeq))
+                .quarterCode(quarterCode);
 
         List<PlayerRecordDTO> listPlayerRecordsByQuarter = gameRecordManagerService.getListPlayerRecordsByQuarter(searchGameDTO);
 
@@ -238,26 +245,25 @@ public class GameController {
     /**
      * API048 경기 쿼터기록 조회
      * @param gameSeq 게임Seq
-     * @param gameRecordRequest 경기기록Req
+     * @param quarterCode 쿼터코드
      * @result 특정쿼터의 선수별 기록조회
      * @author 강창기
      */
     //@Auth(GRADE = USER) TODO
-    @PostMapping("/{gameSeq}/quarterRecord")
+    @GetMapping("/{gameSeq}/quarters/{quarterCode}")
     public ResponseEntity<?> searchGameRecordByQuarter(
             @PathVariable(name = "gameSeq") String gameSeq,
-            @RequestBody GameRecordRequest gameRecordRequest
+            @PathVariable(name = "quarterCode") String quarterCode
     ){
         if(ObjectUtils.isEmpty(gameSeq) || !StringUtils.hasText(gameSeq))
             throw new CustomException(Error.NO_PARAMETER);
 
-        if(ObjectUtils.isEmpty(gameRecordRequest))
+        if(ObjectUtils.isEmpty(quarterCode) || !StringUtils.hasText(quarterCode))
             throw new CustomException(Error.NO_PARAMETER);
 
         SearchGameDTO searchGameDTO = new SearchGameDTO()
                 .gameSeq(Long.parseLong(gameSeq))
-                .gameJoinTeamSeq(gameRecordRequest.getGameJoinTeamSeq())
-                .quarterCode(gameRecordRequest.getQuarterCode());
+                .quarterCode(quarterCode);
 
         HomeAwayTeamRecordDTO homeAwayTeamRecordByQuarter = gameRecordManagerService.getHomeAwayTeamRecordByQuarter(searchGameDTO);
 
@@ -301,39 +307,52 @@ public class GameController {
      */
     @GetMapping("/opponents")
     public ResponseEntity<?> searchOpponents(
-            @RequestParam(name = "sidoCode") String sidoCode,
-            @RequestParam(name = "teamName") String teamName,
-            @RequestParam(name = "leaderName") String leaderName
+            @RequestParam(name = "sidoCode", required = false) String sidoCode,
+            @RequestParam(name = "teamName", required = false) String teamName,
+            @RequestParam(name = "leaderName", required = false) String leaderName
     ){
-
-        //1. teamSeq 먼저 get(List 형식으로 return 받아야됨 : sidoCode,teamName,leaderName 중 null 값이 있고 동적으로 쿼리를 작성해야하기 때문)
-        //2. [팀명,팀장이름,설립일,활동지역] 의 dto를 생성하고 return
-        List<TeamDTO> teams = gameJoinManagerService.searchOpponents(sidoCode, teamName, leaderName);
-
-        return ResponseEntity.ok(teams);
+        SearchOppenentsDTO searchCond = new SearchOppenentsDTO()
+                .sidoCode(sidoCode)
+                .teamName(teamName)
+                .leaderName(leaderName);
+        List<GameOpponentDTO> opponents = gameJoinManagerService.searchOpponents(searchCond);
+        SearchOpponentsResponse resBody = new SearchOpponentsResponse()
+                                                .opponents(opponents);
+        return ResponseEntity.ok(resBody);
     }
 
     /**
-     * API046 경기 상세정보 조회
+     * API046 경기 기초정보 조회
      */
     @GetMapping("{gameSeq}/info")
-    public ResponseEntity<?> findGameDetailRecords(
+    public ResponseEntity<?> getGameBasicInfo(
             @PathVariable(name = "gameSeq")Long gameSeq
     ){
         GameInfoDTO gameInfo = gameService.getGameInfo(gameSeq);
-        return ResponseEntity.ok(gameInfo);
+
+        GetGameBasicInfoResponse resBody = new GetGameBasicInfoResponse()
+                                                    .gameInfo(gameInfo);
+        return ResponseEntity.ok(resBody);
     }
 
     /**
      * API047 경기 참가팀 조회
      */
     @GetMapping("{gameSeq}/teams")
-    public ResponseEntity<?> findGameHomeAwayInfo(
+    public ResponseEntity<?> getGameJoinTeamsInfo(
             @PathVariable(name = "gameSeq") Long gameSeq,
-            @RequestParam(name = "homeAwayCode") String homeAwayCode
+            @RequestParam(name = "homeAwayCode", required = false) String homeAwayCode
     ){
-        List<FindGameHomeAwayDTO> gameHomeAwayInfo = gameJoinManagerService.findGameHomeAwayInfo(gameSeq, homeAwayCode);
-        return ResponseEntity.ok(gameHomeAwayInfo);
+        SearchGameJoinTeamDTO searchGameHomeAwayDTO = new SearchGameJoinTeamDTO()
+                                                            .gameSeq(gameSeq)
+                                                            .homeAwayCode(homeAwayCode);
+
+        Map<HomeAwayCode, GameJoinTeamInfoDTO> joinTeamsInfo = gameJoinManagerService.getGameJoinTeams(searchGameHomeAwayDTO);
+
+        GetGameJoinTeamsResponse resBody = new GetGameJoinTeamsResponse()
+                                                .homeTeamInfo(joinTeamsInfo.get(HomeAwayCode.HOME_TEAM))
+                                                .awayTeamInfo(joinTeamsInfo.get(HomeAwayCode.AWAY_TEAM));
+        return ResponseEntity.ok(resBody);
     }
 
     /**
@@ -343,28 +362,38 @@ public class GameController {
     public ResponseEntity<?> deleteGame(
             @PathVariable(name = "gameSeq") Long gameSeq
     ){
-        gameService.DeleteGame(gameSeq);
+        gameService.deleteGame(gameSeq);
         return RESPONSE_OK;
     }
 
     /**
-     * API057 게임참가팀 팀원조회
-     * 23.01.28(토)
-     * @author 강창기
+     * API055 게임기록자 조회
      */
-    @GetMapping("/{gameSeq}/teamMembers")
-    public ResponseEntity<?> searchTeamMembers(
-            @PathVariable(name = "gameSeq") Long gameSeq
-    ) {
-        if(ObjectUtils.isEmpty(gameSeq))
-            throw new CustomException(Error.NO_PARAMETER);
+    @GetMapping("/{gameSeq}/gameRecorders")
+    public ResponseEntity<?> searchRecorder(
+            @PathVariable("gameSeq") Long gameSeq
+    ){
+        GameAuthDTO gameAuthDTO = new GameAuthDTO()
+                .gameSeq(gameSeq)
+                .auth("02");
+        List<GameAuthRecordersResponse> gameAuthRecordersResponses = gameRecordManagerService.searchGameRecorders(gameAuthDTO);
+        return ResponseEntity.ok(gameAuthRecordersResponses);
+    }
 
-        SearchGameDTO searchGameDTO = new SearchGameDTO()
-                .gameSeq(gameSeq);
+    /**
+     * API056 게임기록자 저장
+     */
+    @PostMapping("/{gameSeq}/gameRecorder")
+    public ResponseEntity<?> saveGameRecorder(
+            @PathVariable("gameSeq") Long gameSeq,
+            @RequestBody GameRecordAuth gameRecordAuth
+    ){
+        GameRecordAuth gameAuthRecorderDTO = GameRecordAuth
+                                                    .getOnlyWriterAuth(gameSeq,gameRecordAuth.getTeamMemberSeq());
 
-        List<PlayerInfoDTO> resultList = gameRecordManagerService.getListTeamMembers(searchGameDTO);
+        gameRecordManagerService.saveAuthRecorder(gameAuthRecorderDTO);
 
-        return ResponseEntity.ok(resultList);
+        return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
     /**
@@ -404,21 +433,20 @@ public class GameController {
                                             .gameSeq(gameSeq)
                                             .homeAwayCode(homeAwayCode);
 
-        List<GameJoinTeamDTO> teams = gameJoinManagerService.getGameJoinPlayers(searchDTO);
+        Map<HomeAwayCode, GameJoinTeamDTO> teams = gameJoinManagerService.getGameJoinPlayers(searchDTO);
 
         GetGameJoinPlayersResponse resBody = new GetGameJoinPlayersResponse()
                 .gameSeq(gameSeq)
-                .teams(teams);
+                .homeTeam(teams.get(HomeAwayCode.HOME_TEAM))
+                .awayTeam(teams.get(HomeAwayCode.AWAY_TEAM));
 
         return ResponseEntity.ok(resBody);
-
-//        List<MatchPlayersInfoDTO> matchPlayersInfo = gameService.getMatchPlayersInfo(gameSeq, homeAwayCode);
-//        return ResponseEntity.ok(matchPlayersInfo);
     }
 
     /**
      * API062 게임참가팀 확정
      * 22.12.15(목) @ReauestBody부분 Request클래스로 대체
+     * 23.01.11(수) 누락된 로직 추가 - 게임기록상태코드 업데이트
      */
     @PostMapping("/{gameSeq}/gameJoinTeams")
     public ResponseEntity<?> confirmJoinTeam (
@@ -435,4 +463,26 @@ public class GameController {
         return RESPONSE_OK;
     }
 
+    /**
+     * API063 게임전체쿼터 조회
+     * 22.12.25(금)
+     * @author 강창기
+     */
+    @GetMapping("/{gameSeq}/quarters")
+    public ResponseEntity<?> getGameAllQuartersRecords (
+            @PathVariable(name = "gameSeq") Long gameSeq
+    ) {
+        if(ObjectUtils.isEmpty(gameSeq)) {
+            throw new CustomException(Error.NO_PARAMETER);
+        }
+
+        SearchGameDTO searchGameDTO = new SearchGameDTO()
+                                             .gameSeq(gameSeq);
+
+        Map<QuarterCode, QuarterAllTeamsRecordsDTO> allQuartersRecordsMap = gameRecordManagerService.getGameAllQuartersRecords(searchGameDTO);
+
+        GetGameAllQuartersRecordsResponse resBody = new GetGameAllQuartersRecordsResponse(gameSeq, allQuartersRecordsMap);
+
+        return ResponseEntity.ok(resBody);
+    }
 }
