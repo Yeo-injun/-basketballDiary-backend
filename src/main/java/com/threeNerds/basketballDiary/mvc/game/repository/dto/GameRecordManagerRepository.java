@@ -1,9 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.game.repository.dto;
 
-import com.threeNerds.basketballDiary.mvc.game.dto.PlayerRecordDTO;
-import com.threeNerds.basketballDiary.mvc.game.dto.QuarterCodeDTO;
-import com.threeNerds.basketballDiary.mvc.game.dto.SearchGameDTO;
-import com.threeNerds.basketballDiary.mvc.game.dto.HomeAwayTeamRecordDTO;
+import com.threeNerds.basketballDiary.mvc.game.dto.*;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameCondDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameJoinTeamRecordDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameRecordDTO;
@@ -27,6 +24,10 @@ public interface GameRecordManagerRepository {
     /** 게임참가팀의 쿼터기록 조회 - 쿼터기록 */
     List<QuarterRecordDTO> findJoinTeamQuarterRecords(Long gameJoinTeamSeq);
 
+    /** 게임참가팀의 팀원조회 (이미 입력권한을 부여받은 선수는 제외한다)
+     * @param searchGameDTO 게임조회용 DTO
+     */
+    List<PlayerInfoDTO> findTeamMembersByGameSeq(SearchGameDTO searchGameDTO);
 
     /** 특정쿼터의 선수별 기록조회(단건)
      * @param searchGameDTO 게임조회용 DTO
