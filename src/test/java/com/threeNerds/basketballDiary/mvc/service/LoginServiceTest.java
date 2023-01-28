@@ -1,10 +1,11 @@
 package com.threeNerds.basketballDiary.mvc.service;
 
 import com.threeNerds.basketballDiary.exception.CustomException;
-import com.threeNerds.basketballDiary.mvc.domain.User;
-import com.threeNerds.basketballDiary.mvc.dto.user.user.LoginUserDTO;
-import com.threeNerds.basketballDiary.mvc.dto.user.user.UserDTO;
-import com.threeNerds.basketballDiary.mvc.repository.UserRepository;
+import com.threeNerds.basketballDiary.mvc.auth.service.AuthService;
+import com.threeNerds.basketballDiary.mvc.user.domain.User;
+import com.threeNerds.basketballDiary.mvc.auth.dto.LoginUserDTO;
+import com.threeNerds.basketballDiary.mvc.user.dto.UserDTO;
+import com.threeNerds.basketballDiary.mvc.user.repository.UserRepository;
 import com.threeNerds.basketballDiary.session.SessionUser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -26,7 +27,7 @@ class LoginServiceTest {
     MockHttpSession session;
 
     @Autowired
-    private LoginService loginService;
+    private AuthService loginService;
 
     @Autowired
     private UserRepository userRepository;
@@ -57,7 +58,9 @@ class LoginServiceTest {
     @DisplayName("정상적인 로그인 시도")
     void checkLogin(){
         //given
-        LoginUserDTO loginUserDTO = LoginUserDTO.createLoginUserDTO(user);
+        LoginUserDTO loginUserDTO = new LoginUserDTO()
+                .userId(user.getUserId())
+                .password(user.getPassword());
         //when
         SessionUser sessionUser = loginService.login(loginUserDTO);
         //then
@@ -67,7 +70,9 @@ class LoginServiceTest {
     @DisplayName("비정상적인 로그인 시도 : 아이디 불일치")
     void wrongLogin_Id(){
         //given
-        LoginUserDTO loginUserDTO = LoginUserDTO.createLoginUserDTO(user);
+        LoginUserDTO loginUserDTO = new LoginUserDTO()
+                .userId(user.getUserId())
+                .password(user.getPassword());
         //when
         loginUserDTO.userId("WrongId");
         //then
@@ -78,7 +83,9 @@ class LoginServiceTest {
     @DisplayName("비정상적인 로그인 시도 : 비밀번호 불일치")
     void wrongLogin_Password(){
         //given
-        LoginUserDTO loginUserDTO = LoginUserDTO.createLoginUserDTO(user);
+        LoginUserDTO loginUserDTO = new LoginUserDTO()
+                .userId(user.getUserId())
+                .password(user.getPassword());
         //when
         loginUserDTO.password("test02");
         //then

@@ -1,7 +1,5 @@
 package com.threeNerds.basketballDiary.mvc.game.domain;
 
-import com.threeNerds.basketballDiary.constant.code.HomeAwayCode;
-import com.threeNerds.basketballDiary.mvc.domain.Team;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

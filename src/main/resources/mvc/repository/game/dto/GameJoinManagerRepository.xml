@@ -26,7 +26,7 @@
            AND QPR.IN_GAME_YN         = 'Y'
     </select>
 
-    <select id="findGameCreatorTeam" resultType="com.threeNerds.basketballDiary.mvc.domain.Team">
+    <select id="findGameCreatorTeam" resultType="com.threeNerds.basketballDiary.mvc.team.domain.Team">
         /* GameJoinManagerRepository.findGameCreatorTeam */
         SELECT G.GAME_SEQ
              , TM.TEAM_MEMBER_SEQ
@@ -41,7 +41,7 @@
            AND GAME_SEQ = #{gameSeq}
     </select>
 
-    <select id="searchOpponents" resultType="com.threeNerds.basketballDiary.mvc.dto.team.team.TeamDTO">
+    <select id="searchOpponents" resultType="com.threeNerds.basketballDiary.mvc.team.dto.TeamDTO">
         SELECT T1.TEAM_SEQ
             ,  T1.LEADER_USER_SEQ
             ,  T1.TEAM_NAME
