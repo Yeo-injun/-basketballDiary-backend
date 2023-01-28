@@ -396,6 +396,26 @@ public class GameController {
     }
 
     /**
+     * API057 게임참가팀 팀원조회
+     * 23.01.28(토)
+     * @author 강창기
+     */
+    @GetMapping("/{gameSeq}/teamMembers")
+    public ResponseEntity<?> searchTeamMembers(
+            @PathVariable(name = "gameSeq") Long gameSeq
+    ) {
+        if(ObjectUtils.isEmpty(gameSeq))
+            throw new CustomException(Error.NO_PARAMETER);
+
+        SearchGameDTO searchGameDTO = new SearchGameDTO()
+                .gameSeq(gameSeq);
+
+        List<PlayerInfoDTO> resultList = gameRecordManagerService.getListTeamMembers(searchGameDTO);
+
+        return ResponseEntity.ok(resultList);
+    }
+
+    /**
      * API060 쿼터 엔트리 정보 저장
      * 22.12.15(목) @ReauestBody부분 Request클래스로 대체
      */
