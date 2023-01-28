@@ -7,13 +7,15 @@ import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.mvc.game.controller.dto.GameAuthDTO;
 import com.threeNerds.basketballDiary.mvc.game.controller.response.GameAuthRecordersResponse;
+import com.threeNerds.basketballDiary.mvc.game.domain.Game;
 import com.threeNerds.basketballDiary.mvc.game.domain.GameRecordAuth;
 import com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords;
 import com.threeNerds.basketballDiary.mvc.game.domain.QuarterTeamRecords;
 
 import com.threeNerds.basketballDiary.mvc.game.dto.*;
-import com.threeNerds.basketballDiary.mvc.game.dto.response.getGameAllQuartersRecords.QuarterAllTeamsRecordsDTO;
-import com.threeNerds.basketballDiary.mvc.game.dto.response.getGameAllQuartersRecords.QuarterTeamRecordsDTO;
+import com.threeNerds.basketballDiary.mvc.game.dto.getGameAllQuartersRecords.GetGameAllQuartersRecordsResponse;
+import com.threeNerds.basketballDiary.mvc.game.dto.getGameAllQuartersRecords.QuarterAllTeamsRecordsDTO;
+import com.threeNerds.basketballDiary.mvc.game.dto.getGameAllQuartersRecords.QuarterTeamRecordsDTO;
 
 
 import com.threeNerds.basketballDiary.mvc.game.repository.GameRecordAuthRepository;
@@ -30,11 +32,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 @Service
 @Slf4j
@@ -213,19 +213,20 @@ public class GameRecordManagerService {
      * @param searchGameDTO 게임조회용 DTO
      * @author 강창기
      */
-    public Map<QuarterCode, QuarterAllTeamsRecordsDTO> getGameAllQuartersRecords(SearchGameDTO searchGameDTO)
+    public GetGameAllQuartersRecordsResponse getGameAllQuartersRecords(SearchGameDTO searchGameDTO)
     {
 //        if(ObjectUtils.isEmpty(searchGameDTO.getGameSeq()))
 //            throw new CustomException(Error.NO_PARAMETER);
+        Game game = gameRepository.findGame(searchGameDTO.getGameSeq());
 
-        boolean hasNoGameInfo = ObjectUtils.isEmpty(gameRepository.findGameBasicInfo(searchGameDTO.getGameSeq()));
+        boolean hasNoGameInfo = ObjectUtils.isEmpty(game);
         if(hasNoGameInfo) {
             throw new CustomException(Error.NOT_FOUND_GAME);
         }
 
         List<QuarterTeamRecordsDTO> allQuarterRecords = gameRecordManagerRepository.findAllQuarterRecords(searchGameDTO);
         if (allQuarterRecords.isEmpty()) {
-            return new HashMap<>();
+            return new GetGameAllQuartersRecordsResponse(game, new HashMap<>());
         }
 
         Map<QuarterCode, QuarterAllTeamsRecordsDTO> allQuarterRecordsMap = new HashMap<>();
@@ -248,7 +249,10 @@ public class GameRecordManagerService {
                     .awayTeamRecords(awayTeamRecords);
             allQuarterRecordsMap.put(quarterCode, quarterAllTeamsRecordsDTO);
         }
-        return allQuarterRecordsMap;
+
+        GetGameAllQuartersRecordsResponse resBody = new GetGameAllQuartersRecordsResponse(game, allQuarterRecordsMap);
+
+        return resBody;
     }
 
     private QuarterTeamRecordsDTO filterTeamRecords (QuarterCode quarterCode, HomeAwayCode homeAwayCode, List<QuarterTeamRecordsDTO> allQuarterRecords)

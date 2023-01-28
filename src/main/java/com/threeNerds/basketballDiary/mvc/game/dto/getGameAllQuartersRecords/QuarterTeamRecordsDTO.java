@@ -1,4 +1,4 @@
-package com.threeNerds.basketballDiary.mvc.game.dto.response.getGameAllQuartersRecords;
+package com.threeNerds.basketballDiary.mvc.game.dto.getGameAllQuartersRecords;
 
 import com.threeNerds.basketballDiary.constant.code.HomeAwayCode;
 import com.threeNerds.basketballDiary.constant.code.QuarterCode;
@@ -17,6 +17,16 @@ public class QuarterTeamRecordsDTO {
     private String quarterTime;
     private Integer score;
     private Integer foul;
+
+    public void setHomeAwayCode (String homeAwayCode) {
+        this.homeAwayCode = homeAwayCode;
+        this.homeAwayCodeName = HomeAwayCode.nameOf(homeAwayCode);
+    }
+
+    public void setQuarterCode (String quarterCodeName) {
+        this.quarterCode = quarterCodeName;
+        this.quarterCodeName = QuarterCode.nameOf(quarterCodeName);
+    }
 
     public QuarterTeamRecordsDTO gameSeq (Long gameSeq) {
         this.gameSeq = gameSeq;
