@@ -97,12 +97,12 @@ public class GameController {
     // TODO 컨트롤러에서 호출하는 메소드를 서비스에서 구현하고 private메소드로 구현
     @PutMapping("/{gameSeq}/quarters/{quarterCode}")
     public ResponseEntity<?> processQuarterRecords(
-            @PathVariable(name = "gameSeq") String gameSeq,
+            @PathVariable(name = "gameSeq") Long gameSeq,
             @PathVariable(name = "quarterCode") String quarterCode,
             @RequestBody QuarterCreationDTO quarterCreationDTO
     ) {
         log.debug("call test");
-        if (ObjectUtils.isEmpty(gameSeq) || !StringUtils.hasText(gameSeq))
+        if (ObjectUtils.isEmpty(gameSeq))
             throw new CustomException(Error.NO_PARAMETER);
         // TODO QuarterCode enum parameter값에 해당하는지 체크 필요 ...
         if (ObjectUtils.isEmpty(quarterCode))
@@ -213,16 +213,15 @@ public class GameController {
     //@Auth(GRADE = USER) TODO
     @GetMapping("/{gameSeq}/teams/{teamSeq}/quarters/{quarterCode}/players")
     public ResponseEntity<?> searchPlayerRecordsByQuarter(
-            // TODO  인준 : seq는 자료형이 String이 아니라 Long으로 관리하고 있음.
-        @PathVariable(name = "gameSeq") String gameSeq,
-        @PathVariable(name = "teamSeq") String teamSeq,
+        @PathVariable(name = "gameSeq") Long gameSeq,
+        @PathVariable(name = "teamSeq") Long teamSeq,
         @PathVariable(name = "quarterCode") String quarterCode
     ) {
         // TODO 설계구조상 pagination data를 받지 않음.
         // TODO 파라미터 값 지정하여 throw처리...
-        if(ObjectUtils.isEmpty(gameSeq) || !StringUtils.hasText(gameSeq))
+        if(ObjectUtils.isEmpty(gameSeq))
             throw new CustomException(Error.NO_PARAMETER);
-        if(ObjectUtils.isEmpty(teamSeq) || !StringUtils.hasText(teamSeq))
+        if(ObjectUtils.isEmpty(teamSeq))
             throw new CustomException(Error.NO_PARAMETER);
         if(ObjectUtils.isEmpty(quarterCode) || !StringUtils.hasText(quarterCode))
             throw new CustomException(Error.NO_PARAMETER);
@@ -233,8 +232,8 @@ public class GameController {
         //throw new CustomException(); TODO 홈어웨이코드에 해당하는 값인지 체크필요
 
         SearchGameDTO searchGameDTO = new SearchGameDTO()
-                .gameSeq(Long.parseLong(gameSeq))
-                .teamSeq(Long.parseLong(teamSeq))
+                .gameSeq(gameSeq)
+                .teamSeq(teamSeq)
                 .quarterCode(quarterCode);
 
         List<PlayerRecordDTO> listPlayerRecordsByQuarter = gameRecordManagerService.getListPlayerRecordsByQuarter(searchGameDTO);
@@ -252,17 +251,17 @@ public class GameController {
     //@Auth(GRADE = USER) TODO
     @GetMapping("/{gameSeq}/quarters/{quarterCode}")
     public ResponseEntity<?> searchGameRecordByQuarter(
-            @PathVariable(name = "gameSeq") String gameSeq,
+            @PathVariable(name = "gameSeq") Long gameSeq,
             @PathVariable(name = "quarterCode") String quarterCode
     ){
-        if(ObjectUtils.isEmpty(gameSeq) || !StringUtils.hasText(gameSeq))
+        if(ObjectUtils.isEmpty(gameSeq))
             throw new CustomException(Error.NO_PARAMETER);
 
         if(ObjectUtils.isEmpty(quarterCode) || !StringUtils.hasText(quarterCode))
             throw new CustomException(Error.NO_PARAMETER);
 
         SearchGameDTO searchGameDTO = new SearchGameDTO()
-                .gameSeq(Long.parseLong(gameSeq))
+                .gameSeq(gameSeq)
                 .quarterCode(quarterCode);
 
         HomeAwayTeamRecordDTO homeAwayTeamRecordByQuarter = gameRecordManagerService.getHomeAwayTeamRecordByQuarter(searchGameDTO);
