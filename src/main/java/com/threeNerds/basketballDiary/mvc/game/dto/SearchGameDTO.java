@@ -17,8 +17,6 @@ public class SearchGameDTO {
     private Long gameJoinPlayerSeq;
     /** 팀별 경기 SEQ */
     private Long gameJoinTeamSeq;
-    /** 팀 SEQ*/
-    private Long teamSeq;
 
     /** 쿼터코드 */
     private String quarterCode;
@@ -39,10 +37,6 @@ public class SearchGameDTO {
     }
     public SearchGameDTO gameJoinTeamSeq(Long gameJoinTeamSeq) {
         this.gameJoinTeamSeq = gameJoinTeamSeq;
-        return this;
-    }
-    public SearchGameDTO teamSeq(Long teamSeq) {
-        this.teamSeq = teamSeq;
         return this;
     }
     public SearchGameDTO quarterCode(String quarterCode) {

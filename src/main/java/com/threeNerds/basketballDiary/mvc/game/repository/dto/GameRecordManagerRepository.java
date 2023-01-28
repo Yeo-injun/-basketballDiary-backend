@@ -46,12 +46,6 @@ public interface GameRecordManagerRepository {
     HomeAwayTeamRecordDTO findHomeAwayTeamRecordsByQuarter(SearchGameDTO searchGameDTO);
 
     /**
-     * 모든쿼터의 홈·어웨이 기록조회(목록)
-     * @param searchGameDTO 게임조회용 DTO
-     */
-    List<HomeAwayTeamRecordDTO> findAllHomeAwayTeamRecordsByQuarter(SearchGameDTO searchGameDTO);
-
-    /**
      * 쿼터 삭제(QUARTER_PLAYER_RECORDS TABLE)
      * @param quarterCodeDTO
      */
