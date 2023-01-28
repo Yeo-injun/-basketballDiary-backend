@@ -237,4 +237,28 @@
            AND T1.QUATER_CODE = #{quarterCode}
     </delete>
 
+    <select id="findTeamMembersByGameSeq" resultType="com.threeNerds.basketballDiary.mvc.game.dto.PlayerInfoDTO">
+        SELECT A.GAME_SEQ
+             , A.TEAM_SEQ
+             , A.HOME_AWAY_CODE -- HOME/AWAY 구분을 위한 키, 화면에서 처리하여 구분지어 보여주기
+             , (SELECT TEAM_NAME FROM TEAM WHERE TEAM_SEQ = A.TEAM_SEQ) TEAM_NAME
+             , B.NAME
+             , B.EMAIL
+             , B.BACK_NUMBER
+        FROM GAME_JOIN_TEAM A
+                 INNER JOIN GAME_JOIN_PLAYER B
+                            ON A.GAME_JOIN_TEAM_SEQ = B.GAME_JOIN_TEAM_SEQ
+        WHERE GAME_SEQ = #{gameSeq}
+          AND NOT EXISTS (
+                SELECT 1
+                FROM GAME_RECORD_AUTH TMP1
+                         INNER JOIN TEAM_MEMBER TMP2
+                                    ON TMP1.TEAM_MEMBER_SEQ = TMP2.TEAM_MEMBER_SEQ
+                WHERE TMP1.GAME_SEQ = A.GAME_SEQ
+                  AND TMP2.USER_SEQ = B.USER_SEQ
+                  AND TMP1.GAME_RECORD_AUTH_CODE = '02' -- 입력권한자
+            ) -- 권한을 이미 부여받은 선수는 제외
+
+    </select>
+
 </mapper>
