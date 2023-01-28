@@ -11,10 +11,7 @@ import com.threeNerds.basketballDiary.mvc.game.domain.GameRecordAuth;
 import com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords;
 import com.threeNerds.basketballDiary.mvc.game.domain.QuarterTeamRecords;
 
-import com.threeNerds.basketballDiary.mvc.game.dto.HomeAwayTeamRecordDTO;
-import com.threeNerds.basketballDiary.mvc.game.dto.PlayerRecordDTO;
-import com.threeNerds.basketballDiary.mvc.game.dto.QuarterCodeDTO;
-import com.threeNerds.basketballDiary.mvc.game.dto.SearchGameDTO;
+import com.threeNerds.basketballDiary.mvc.game.dto.*;
 import com.threeNerds.basketballDiary.mvc.game.dto.response.getGameAllQuartersRecords.QuarterAllTeamsRecordsDTO;
 import com.threeNerds.basketballDiary.mvc.game.dto.response.getGameAllQuartersRecords.QuarterTeamRecordsDTO;
 
@@ -382,5 +379,25 @@ public class GameRecordManagerService {
      */
     public void saveAuthRecorder(GameRecordAuth gameRecordAuth){
         gameRecordAuthRepository.saveGameRecordAuth(gameRecordAuth);
+    }
+
+    /**
+     * 23.01.28
+     * 게임참가팀 팀원조회
+     * 게임 입력권한을 부여하기 위해 게임참가팀원을 조회한다.
+     * (이미 권한을 부여받은 선수는 제외한다.)
+     * @param searchGameDTO 게임조회용 DTO
+     * @author 강창기
+     */
+    public List<PlayerInfoDTO> getListTeamMembers(SearchGameDTO searchGameDTO) {
+        if(ObjectUtils.isEmpty(searchGameDTO))
+            throw new CustomException(Error.NO_PARAMETER);
+
+        if(ObjectUtils.isEmpty(searchGameDTO.getGameSeq()))
+            throw new CustomException(Error.NO_PARAMETER);
+
+        List<PlayerInfoDTO> resultDVOList = gameRecordManagerRepository.findTeamMembersByGameSeq(searchGameDTO);
+
+        return resultDVOList;
     }
 }

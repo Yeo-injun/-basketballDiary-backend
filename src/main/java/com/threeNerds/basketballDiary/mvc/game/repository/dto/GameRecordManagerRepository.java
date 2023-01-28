@@ -62,4 +62,8 @@ public interface GameRecordManagerRepository {
      */
     void deleteQuarterTeamRecords(QuarterCodeDTO quarterCodeDTO);
 
+    /** 게임참가팀의 팀원조회 (이미 입력권한을 부여받은 선수는 제외한다)
+     * @param searchGameDTO 게임조회용 DTO
+     */
+    List<PlayerInfoDTO> findTeamMembersByGameSeq(SearchGameDTO searchGameDTO);
 }
