@@ -95,6 +95,6 @@ public class GameService {
                 .gameSeq(gameSeq)
                 .gameRecordStateCode(GameRecordStateCode.CONFIRMATION.getCode())
                 .build();
-        gameRepository.updateGameRecordState(gameConfirm);
+            gameRepository.updateGameRecordState(gameConfirm);
     }
 }

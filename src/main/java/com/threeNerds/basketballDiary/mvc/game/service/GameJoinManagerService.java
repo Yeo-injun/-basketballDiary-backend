@@ -26,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -230,7 +231,7 @@ public class GameJoinManagerService {
 
         /** 한개팀 선수 조회일 경우 */
         String homeAwayCode = searchDTO.getHomeAwayCode();
-        boolean isSearchOneTeamPlayers = homeAwayCode != null;
+        boolean isSearchOneTeamPlayers = StringUtils.hasText(homeAwayCode);
         if (isSearchOneTeamPlayers)
         {
             Map<HomeAwayCode, GameJoinTeamDTO> teamMap = new HashMap<>();
