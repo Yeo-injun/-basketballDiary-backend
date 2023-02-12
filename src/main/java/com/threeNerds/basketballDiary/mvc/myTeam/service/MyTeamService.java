@@ -2,6 +2,9 @@ package com.threeNerds.basketballDiary.mvc.myTeam.service;
 
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.getTeamMembers.request.GetMemeberGradeRequest;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.getTeamMembers.response.GetMemeberGradeResponse;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.searchAllTeamMembers.request.SearchAllTeamMembersRequest;
 import com.threeNerds.basketballDiary.mvc.team.domain.Team;
 import com.threeNerds.basketballDiary.mvc.team.domain.TeamRegularExercise;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.FindMyTeamProfileDTO;
@@ -14,7 +17,7 @@ import com.threeNerds.basketballDiary.mvc.myTeam.repository.MyTeamRepository;
 import com.threeNerds.basketballDiary.mvc.team.repository.TeamRegularExerciseRepository;
 import com.threeNerds.basketballDiary.mvc.team.repository.TeamRepository;
 import com.threeNerds.basketballDiary.pagination.PagerDTO;
-import com.threeNerds.basketballDiary.pagination.PaginatedTeamMemeberDTO;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.searchAllTeamMembers.response.SearchAllTeamMembersResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -72,25 +75,24 @@ public class MyTeamService {
 
     /**
      * 소속팀 팀원 목록 조회
-     * @param teamSeq, pageNo
+     * @param
      * @return List<MemberDTO>
      */
-    public PaginatedTeamMemeberDTO findMembers(Long teamSeq, Integer pageNo)
-    {
-        PagerDTO pager = new PagerDTO(pageNo);
+
+    public GetMemeberGradeResponse getMemberGrade(GetMemeberGradeRequest reqBody) {
+        PagerDTO pager = new PagerDTO(reqBody.getPageNo());
 
         MemberDTO searchMemebrCond = new MemberDTO()
-                .teamSeq(teamSeq)
+                .teamSeq(reqBody.getTeamSeq())
                 .pagerDTO(pager);
 
         // 소속팀은 팀장과 운영진을 제외하므로, 팀원 정보가 존재하지 않더라도 404 처리하지 않는다.
         List<MemberDTO> resultMembers = myTeamRepository.findPagingMemberByTeamSeq(searchMemebrCond);
 
-
         /** 페이징DTO에 조회 결과 세팅 */
         if(resultMembers.isEmpty()) {
             pager.setPagingData(0);
-            return new PaginatedTeamMemeberDTO(pager, Collections.emptyList());
+            return new GetMemeberGradeResponse(pager, Collections.emptyList());
         }
         pager.setPagingData(resultMembers.get(0).getTotalCount());
 
@@ -98,7 +100,31 @@ public class MyTeamService {
                 .map(MemberDTO::setAllCodeName)
                 .collect(Collectors.toList());
 
-        return new PaginatedTeamMemeberDTO(pager, resultMembers);
+        return new GetMemeberGradeResponse(pager, resultMembers);
+    }
+
+    public SearchAllTeamMembersResponse searchAllTeamMembers(SearchAllTeamMembersRequest reqBody)
+    {
+        PagerDTO pager = new PagerDTO(reqBody.getPageNo());
+        MemberDTO searchMemebrCond = new MemberDTO()
+                .teamSeq(reqBody.getTeamSeq())
+                .pagerDTO(pager)
+                .userName(reqBody.getPlayerName());
+
+        List<MemberDTO> resultMembers = myTeamRepository.findAllTeamMemberPaging(searchMemebrCond);
+
+        /** 페이징DTO에 조회 결과 세팅 */
+        if(resultMembers.isEmpty()) {
+            pager.setPagingData(0);
+            return new SearchAllTeamMembersResponse(pager, Collections.emptyList());
+        }
+        pager.setPagingData(resultMembers.get(0).getTotalCount());
+
+        resultMembers.stream()
+                .map(MemberDTO::setAllCodeName)
+                .collect(Collectors.toList());
+
+        return new SearchAllTeamMembersResponse(pager, resultMembers);
     }
 
     /**
@@ -262,4 +288,5 @@ public class MyTeamService {
 
         teamRepository.deleteById(teamSeq);
     }
+
 }

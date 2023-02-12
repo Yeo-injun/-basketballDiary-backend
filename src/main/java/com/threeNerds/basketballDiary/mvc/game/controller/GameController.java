@@ -75,12 +75,13 @@ public class GameController {
             @PathVariable(name = "gameJoinTeamSeq") Long gameJoinTeamSeq,
             @RequestBody RegisterGameJoinPlayersRequest reqBody
     ) {
-        GameJoinPlayerRegistrationDTO playerRegistrationDTO = new GameJoinPlayerRegistrationDTO()
-                .gameSeq(gameSeq)
-                .gameJoinTeamSeq(gameJoinTeamSeq)
-                .gameJoinPlayerDTOList(reqBody.getGameJoinPlayers());
+         reqBody = new RegisterGameJoinPlayersRequest(
+                                                        gameSeq,
+                                                        gameJoinTeamSeq,
+                                                        reqBody.getGameJoinPlayers()
+                                                      );
 
-        gameJoinManagerService.registerGameJoinPlayers(playerRegistrationDTO);
+        gameJoinManagerService.registerGameJoinPlayers(reqBody);
         return RESPONSE_CREATED;
     }
 

@@ -46,4 +46,12 @@ GET http://127.0.0.1:8080/api/myTeams/7/games
 # ]
 
     
+### API036 : 소속팀 전체 팀원 검색
 
+### APIauthUserService : 소속팀 농구게임 목록조회
+## 쿼리스트링 : 
+##      pageNo={pageNo}
+##      playerName={plyaerName}
+
+GET http://127.0.0.1:8080/api/myTeams/7/allTeamMembers?playerName=성ㅈ
+Cookie: basketballDiary=5B0257C060FCFFA13827DBC70BD03B12; Path=/; Secure; HttpOnly; SameSite=None

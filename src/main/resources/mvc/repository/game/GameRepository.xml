@@ -69,9 +69,8 @@
         , SIGUNGU_CODE
         FROM GAME
         WHERE 1=1
-        AND GAME_SEQ = #{gameSeq}
+          AND GAME_SEQ = #{gameSeq}
     </select>
-
 
     <update id="updateGameRecordState" parameterType="com.threeNerds.basketballDiary.mvc.game.domain.Game">
         UPDATE GAME

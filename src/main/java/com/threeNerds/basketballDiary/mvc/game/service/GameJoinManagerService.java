@@ -6,6 +6,7 @@ import com.threeNerds.basketballDiary.constant.code.HomeAwayCode;
 import com.threeNerds.basketballDiary.constant.code.PlayerTypeCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
+import com.threeNerds.basketballDiary.mvc.game.controller.request.RegisterGameJoinPlayersRequest;
 import com.threeNerds.basketballDiary.mvc.game.domain.Game;
 import com.threeNerds.basketballDiary.mvc.team.domain.Team;
 import com.threeNerds.basketballDiary.mvc.user.domain.User;
@@ -26,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -162,7 +164,7 @@ public class GameJoinManagerService {
     /**
      * 게임참가선수 등록
      **/
-    public void registerGameJoinPlayers(GameJoinPlayerRegistrationDTO playerRegistrationDTO)
+    public void registerGameJoinPlayers(RegisterGameJoinPlayersRequest playerRegistrationDTO)
     {
         /** 해당 게임의 쿼터선수기록 존재여부 확인 - 쿼터기록이 존재할 경우 수정 불가 */
         // TODO 에러메세지 수정
@@ -182,7 +184,7 @@ public class GameJoinManagerService {
         }
 
         /** 중복된 등번호가 있는지 체크하기 */
-        List<GameJoinPlayerDTO> gameJoinPlayerDTOList = playerRegistrationDTO.getGameJoinPlayerDTOList();
+        List<GameJoinPlayerDTO> gameJoinPlayerDTOList = playerRegistrationDTO.getGameJoinPlayers();
         Set<String> backNumberSet = new HashSet<>();
         for (GameJoinPlayerDTO player : gameJoinPlayerDTOList)
         {
@@ -230,7 +232,7 @@ public class GameJoinManagerService {
 
         /** 한개팀 선수 조회일 경우 */
         String homeAwayCode = searchDTO.getHomeAwayCode();
-        boolean isSearchOneTeamPlayers = homeAwayCode != null;
+        boolean isSearchOneTeamPlayers = StringUtils.hasText(homeAwayCode);
         if (isSearchOneTeamPlayers)
         {
             Map<HomeAwayCode, GameJoinTeamDTO> teamMap = new HashMap<>();
