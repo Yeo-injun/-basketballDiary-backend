@@ -7,6 +7,7 @@ import com.threeNerds.basketballDiary.constant.code.PlayerTypeCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.mvc.game.controller.request.RegisterGameJoinPlayersRequest;
+import com.threeNerds.basketballDiary.mvc.game.controller.response.GetGameJoinPlayersResponse;
 import com.threeNerds.basketballDiary.mvc.game.domain.Game;
 import com.threeNerds.basketballDiary.mvc.team.domain.Team;
 import com.threeNerds.basketballDiary.mvc.user.domain.User;
@@ -226,9 +227,11 @@ public class GameJoinManagerService {
      * - homeAwayCode가 있을때는 해당하는 팀의 팀원 조회
      * @return enum을 key값으로 사용하여 홈/어웨이팀 구분
      */
-    public Map<HomeAwayCode, GameJoinTeamDTO> getGameJoinPlayers(SearchPlayersDTO searchDTO)
+    public GetGameJoinPlayersResponse getGameJoinPlayers(SearchPlayersDTO searchDTO)
     {
-        List<PlayerInfoDTO> players = gameJoinManagerRepo.findGameJoinPlayers(searchDTO);
+        final Long gameSeq = searchDTO.getGameSeq();
+        List<GameJoinTeam> allGameJoinTeams = gameJoinTeamRepository.findAllGameJoinTeam(gameSeq);
+        List<PlayerInfoDTO> allGameJoinPlayers = gameJoinManagerRepo.findGameJoinPlayers(searchDTO);
 
         /** 한개팀 선수 조회일 경우 */
         String homeAwayCode = searchDTO.getHomeAwayCode();
@@ -237,27 +240,42 @@ public class GameJoinManagerService {
         {
             Map<HomeAwayCode, GameJoinTeamDTO> teamMap = new HashMap<>();
             if (HomeAwayCode.HOME_TEAM.getCode().equals(homeAwayCode)) {
-                teamMap.put(HomeAwayCode.HOME_TEAM, createTeamWithPlayers(HomeAwayCode.HOME_TEAM, players));
-                return teamMap;
+                return new GetGameJoinPlayersResponse(
+                            gameSeq,
+                            createTeamWithPlayers(HomeAwayCode.HOME_TEAM, allGameJoinTeams, allGameJoinPlayers),
+                            null
+                );
             }
-            teamMap.put(HomeAwayCode.AWAY_TEAM, createTeamWithPlayers(HomeAwayCode.AWAY_TEAM, players));
-            return teamMap;
+            return new GetGameJoinPlayersResponse(
+                        gameSeq,
+                        null,
+                        createTeamWithPlayers(HomeAwayCode.AWAY_TEAM, allGameJoinTeams, allGameJoinPlayers)
+            );
         }
 
         /** 양팀 선수 조회일 경우 */
-        Map<HomeAwayCode, GameJoinTeamDTO> teamsMap = new HashMap<>();
-        teamsMap.put(HomeAwayCode.HOME_TEAM, createTeamWithPlayers(HomeAwayCode.HOME_TEAM, players));
-        teamsMap.put(HomeAwayCode.AWAY_TEAM, createTeamWithPlayers(HomeAwayCode.AWAY_TEAM, players));
-        return teamsMap;
+        return new GetGameJoinPlayersResponse(
+                gameSeq,
+                createTeamWithPlayers(HomeAwayCode.HOME_TEAM, allGameJoinTeams, allGameJoinPlayers),
+                createTeamWithPlayers(HomeAwayCode.AWAY_TEAM, allGameJoinTeams, allGameJoinPlayers)
+        );
     }
 
-    private GameJoinTeamDTO createTeamWithPlayers(HomeAwayCode code, List<PlayerInfoDTO> players)
+    private GameJoinTeamDTO createTeamWithPlayers(HomeAwayCode code, List<GameJoinTeam> gameJoinTeams, List<PlayerInfoDTO> players)
     {
+        // TODO 에러메세지 채워넣기
+        GameJoinTeam filteredTeam = gameJoinTeams.stream()
+                                                .filter(p -> p.getHomeAwayCode().equals(code.getCode()))
+                                                .findAny()
+                                                .orElseThrow();
+        
         List<PlayerInfoDTO> filteredPlayers = players.stream()
-                                                .filter(v -> v.getHomeAwayCode().equals(code.getCode()))
+                                                .filter(p -> p.getHomeAwayCode().equals(code.getCode()))
                                                 .collect(Collectors.toList());
 
         GameJoinTeamDTO gameJoinTeam = new GameJoinTeamDTO()
+                .gameJoinTeamSeq(filteredTeam.getGameJoinTeamSeq())
+                .teamSeq(filteredTeam.getTeamSeq())
                 .homeAwayCode(code.getCode())
                 .homeAwayCodeName(code.getName())
                 .players(filteredPlayers);

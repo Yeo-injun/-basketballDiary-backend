@@ -453,12 +453,7 @@ public class GameController {
                                             .gameSeq(gameSeq)
                                             .homeAwayCode(homeAwayCode);
 
-        Map<HomeAwayCode, GameJoinTeamDTO> teams = gameJoinManagerService.getGameJoinPlayers(searchDTO);
-
-        GetGameJoinPlayersResponse resBody = new GetGameJoinPlayersResponse()
-                .gameSeq(gameSeq)
-                .homeTeam(teams.get(HomeAwayCode.HOME_TEAM))
-                .awayTeam(teams.get(HomeAwayCode.AWAY_TEAM));
+        GetGameJoinPlayersResponse resBody = gameJoinManagerService.getGameJoinPlayers(searchDTO);
 
         return ResponseEntity.ok(resBody);
     }
