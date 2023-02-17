@@ -8,12 +8,18 @@ import java.util.List;
 public class GameJoinTeamDTO {
 
     private Long gameJoinTeamSeq;
+    private Long teamSeq;
     private String homeAwayCode;
     private String homeAwayCodeName;
     private List<PlayerInfoDTO> players;
 
     public GameJoinTeamDTO gameJoinTeamSeq(Long gameJoinTeamSeq) {
         this.gameJoinTeamSeq = gameJoinTeamSeq;
+        return this;
+    }
+
+    public GameJoinTeamDTO teamSeq(Long teamSeq) {
+        this.teamSeq = teamSeq;
         return this;
     }
 

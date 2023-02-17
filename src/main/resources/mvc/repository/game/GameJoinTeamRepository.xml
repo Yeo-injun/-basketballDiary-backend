@@ -16,6 +16,17 @@
           AND HOME_AWAY_CODE = #{homeAwayCode}
     </select>
 
+    <select id="findAllGameJoinTeam" resultType="com.threeNerds.basketballDiary.mvc.game.domain.GameJoinTeam">
+        /* GameJoinTeamRepository.findAllGameJoinTeam */
+        SELECT GAME_JOIN_TEAM_SEQ
+             , GAME_SEQ
+             , TEAM_SEQ
+             , TEAM_NAME
+             , HOME_AWAY_CODE
+          FROM GAME_JOIN_TEAM
+         WHERE 1=1
+           AND GAME_SEQ = #{gameSeq}
+    </select>
 
     <insert id="saveGameJoinTeam" parameterType="com.threeNerds.basketballDiary.mvc.game.domain.GameJoinTeam" useGeneratedKeys="true" keyProperty="gameJoinTeamSeq">
         <selectKey keyProperty="gameJoinTeamSeq" order="AFTER" resultType="java.lang.Long">
