@@ -2,10 +2,12 @@ package com.threeNerds.basketballDiary.mvc.game.controller.request;
 
 import com.threeNerds.basketballDiary.mvc.game.dto.GameJoinPlayerDTO;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Getter
+@NoArgsConstructor
 public class RegisterGameJoinPlayersRequest {
 
     private Long gameSeq;

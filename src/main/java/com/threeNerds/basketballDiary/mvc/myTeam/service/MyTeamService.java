@@ -1,5 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.myTeam.service;
 
+import com.threeNerds.basketballDiary.constant.code.PlayerTypeCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getTeamMembers.request.GetMemeberGradeRequest;
@@ -122,6 +123,7 @@ public class MyTeamService {
 
         resultMembers.stream()
                 .map(MemberDTO::setAllCodeName)
+                .map( m -> m.setPlayerType(PlayerTypeCode.TEAM_MEMBER))
                 .collect(Collectors.toList());
 
         return new SearchAllTeamMembersResponse(pager, resultMembers);
