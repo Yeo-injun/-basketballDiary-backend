@@ -5,7 +5,6 @@ import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.interceptor.Auth;
 import com.threeNerds.basketballDiary.mvc.game.controller.dto.GameAuthDTO;
-import com.threeNerds.basketballDiary.mvc.game.controller.dto.GameJoinPlayerRegistrationDTO;
 import com.threeNerds.basketballDiary.mvc.game.controller.request.ConfirmGameJoinTeamRequest;
 import com.threeNerds.basketballDiary.mvc.game.controller.request.CreateGameRequest;
 import com.threeNerds.basketballDiary.mvc.game.controller.request.RegisterGameJoinPlayersRequest;
@@ -16,6 +15,8 @@ import com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords;
 import com.threeNerds.basketballDiary.mvc.game.domain.QuarterTeamRecords;
 import com.threeNerds.basketballDiary.mvc.game.dto.*;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameAllQuartersRecords.GetGameAllQuartersRecordsResponse;
+import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayers.request.GetGameJoinPlayersRequest;
+import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayers.response.GetGameJoinPlayersResponse;
 import com.threeNerds.basketballDiary.mvc.game.service.GameJoinManagerService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameRecordManagerService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameService;
@@ -448,12 +449,11 @@ public class GameController {
             @PathVariable(name = "gameSeq") Long gameSeq,
             @RequestParam(name = "homeAwayCode", required = false) String homeAwayCode
     ) {
-
-        SearchPlayersDTO searchDTO = new SearchPlayersDTO()
+        GetGameJoinPlayersRequest request = new GetGameJoinPlayersRequest()
                                             .gameSeq(gameSeq)
                                             .homeAwayCode(homeAwayCode);
 
-        GetGameJoinPlayersResponse resBody = gameJoinManagerService.getGameJoinPlayers(searchDTO);
+        GetGameJoinPlayersResponse resBody = gameJoinManagerService.getGameJoinPlayers(request);
 
         return ResponseEntity.ok(resBody);
     }
