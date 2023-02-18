@@ -7,11 +7,11 @@ import com.threeNerds.basketballDiary.constant.code.PlayerTypeCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.mvc.game.controller.request.RegisterGameJoinPlayersRequest;
-import com.threeNerds.basketballDiary.mvc.game.controller.response.GetGameJoinPlayersResponse;
+import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayers.response.GetGameJoinPlayersResponse;
 import com.threeNerds.basketballDiary.mvc.game.domain.Game;
+import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayers.request.GetGameJoinPlayersRequest;
 import com.threeNerds.basketballDiary.mvc.team.domain.Team;
 import com.threeNerds.basketballDiary.mvc.user.domain.User;
-import com.threeNerds.basketballDiary.mvc.game.controller.dto.GameJoinPlayerRegistrationDTO;
 import com.threeNerds.basketballDiary.mvc.game.domain.GameJoinPlayer;
 import com.threeNerds.basketballDiary.mvc.game.domain.GameJoinTeam;
 import com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords;
@@ -227,14 +227,18 @@ public class GameJoinManagerService {
      * - homeAwayCode가 있을때는 해당하는 팀의 팀원 조회
      * @return enum을 key값으로 사용하여 홈/어웨이팀 구분
      */
-    public GetGameJoinPlayersResponse getGameJoinPlayers(SearchPlayersDTO searchDTO)
+    public GetGameJoinPlayersResponse getGameJoinPlayers(GetGameJoinPlayersRequest request)
     {
-        final Long gameSeq = searchDTO.getGameSeq();
+        /** 게임에 참가한 팀 및 팀원을 모두 조회해서 필터링 */
+        final Long gameSeq = request.getGameSeq();
         List<GameJoinTeam> allGameJoinTeams = gameJoinTeamRepository.findAllGameJoinTeam(gameSeq);
-        List<PlayerInfoDTO> allGameJoinPlayers = gameJoinManagerRepo.findGameJoinPlayers(searchDTO);
+
+        SearchPlayersDTO searchCond = new SearchPlayersDTO()
+                                            .gameSeq(gameSeq);
+        List<PlayerInfoDTO> allGameJoinPlayers = gameJoinManagerRepo.findGameJoinPlayers(searchCond);
 
         /** 한개팀 선수 조회일 경우 */
-        String homeAwayCode = searchDTO.getHomeAwayCode();
+        String homeAwayCode = request.getHomeAwayCode();
         boolean isSearchOneTeamPlayers = StringUtils.hasText(homeAwayCode);
         if (isSearchOneTeamPlayers)
         {
