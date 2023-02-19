@@ -7,6 +7,8 @@ import com.threeNerds.basketballDiary.constant.code.PlayerTypeCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.mvc.game.controller.request.RegisterGameJoinPlayersRequest;
+import com.threeNerds.basketballDiary.mvc.game.dto.getGameEntry.response.GetGameEntryResponse;
+import com.threeNerds.basketballDiary.mvc.game.dto.getGameEntry.request.GetGameEntryRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayers.response.GetGameJoinPlayersResponse;
 import com.threeNerds.basketballDiary.mvc.game.domain.Game;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayers.request.GetGameJoinPlayersRequest;
@@ -369,12 +371,73 @@ public class GameJoinManagerService {
 
     /**
      * 게임엔트리 조회하기
-     * @param searchDTO
-     * @return List<PlayerRecordDTO>
+     * @param request
+     * @return GetGameEntryResponse
      */
-    public List<QuarterPlayerRecordDTO> getGameEntry(SearchEntryDTO searchDTO)
+    public GetGameEntryResponse getGameEntry(GetGameEntryRequest request)
     {
-        List<QuarterPlayerRecordDTO> playerList = gameJoinManagerRepo.findEntryList(searchDTO);
-        return playerList;
+        String homeTeamCode = HomeAwayCode.HOME_TEAM.getCode();
+        String awayTeamCode = HomeAwayCode.AWAY_TEAM.getCode();
+
+        /** TODO 테이블 구조 변경 검토
+         *  >> Game과 관련된 테이블은 GameSeq컬럼을 가지고 있는 것이 어떤지
+         *  >> Game과 관련된 테이블은 데이터조회시 기본적으로 한 게임을 기준으로 조회하는 경우가 많기 때문
+         */
+        // TODO 테이블 구조 변경전 임시 처리 >>
+        // 게임참가팀을 조회
+        // 홈어웨이 코드가 존재하면 해당되는 팀의 엔트리만 조회
+        // 존재하지 않으면 홈팀 어웨이팀 모두 조회하여 세팅
+        // TODO 리팩토링 필요
+        List<GameJoinTeam> gameJoinTeams = gameJoinTeamRepository.findAllGameJoinTeam( request.getGameSeq() );
+
+        String quarterCode = request.getQuarterCode();
+        String homeAwayCode = request.getHomeAwayCode();
+
+        boolean isOnlyOneTeamInquery = StringUtils.hasText(homeAwayCode);
+        if ( isOnlyOneTeamInquery ) {
+            GameJoinTeam gameJoinTeam = gameJoinTeams.stream()
+                        .filter( t -> homeAwayCode.equals( t.getHomeAwayCode() ))
+                        .findAny()
+                        .get();
+
+            SearchEntryDTO searchCond = new SearchEntryDTO()
+                    .gameJoinTeamSeq( gameJoinTeam.getGameJoinTeamSeq() )
+                    .quarterCode( quarterCode );
+            List<QuarterPlayerRecordDTO> entry = gameJoinManagerRepo.findEntryList( searchCond );
+
+            if ( homeTeamCode.equals( homeAwayCode ) ) {
+                return new GetGameEntryResponse()
+                                .homeTeamEntry( entry )
+                                .awayTeamEntry( Collections.emptyList() );
+            }
+
+            if ( awayTeamCode.equals( homeAwayCode ) ) {
+                return new GetGameEntryResponse()
+                        .homeTeamEntry( Collections.emptyList() )
+                        .awayTeamEntry( entry );
+            }
+        }
+
+        /** 홈/어웨이팀 전체 엔트리 조회 */
+        GetGameEntryResponse response = new GetGameEntryResponse();
+        for ( GameJoinTeam team : gameJoinTeams) {
+            if ( homeTeamCode.equals( team.getHomeAwayCode() )) {
+                SearchEntryDTO searchCond = new SearchEntryDTO()
+                        .gameJoinTeamSeq( team.getGameJoinTeamSeq() )
+                        .quarterCode( quarterCode );
+                List<QuarterPlayerRecordDTO> entry = gameJoinManagerRepo.findEntryList( searchCond );
+                response.homeTeamEntry( entry );
+                continue;
+            }
+
+            if ( awayTeamCode.equals( team.getHomeAwayCode() )) {
+                SearchEntryDTO searchCond = new SearchEntryDTO()
+                        .gameJoinTeamSeq( team.getGameJoinTeamSeq() )
+                        .quarterCode( quarterCode );
+                List<QuarterPlayerRecordDTO> entry = gameJoinManagerRepo.findEntryList( searchCond );
+                response.awayTeamEntry( entry );
+            }
+        }
+        return response;
     }
 }
