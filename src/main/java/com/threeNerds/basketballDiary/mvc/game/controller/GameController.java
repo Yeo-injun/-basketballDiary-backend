@@ -15,6 +15,8 @@ import com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords;
 import com.threeNerds.basketballDiary.mvc.game.domain.QuarterTeamRecords;
 import com.threeNerds.basketballDiary.mvc.game.dto.*;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameAllQuartersRecords.GetGameAllQuartersRecordsResponse;
+import com.threeNerds.basketballDiary.mvc.game.dto.getGameEntry.request.GetGameEntryRequest;
+import com.threeNerds.basketballDiary.mvc.game.dto.getGameEntry.response.GetGameEntryResponse;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayers.request.GetGameJoinPlayersRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayers.response.GetGameJoinPlayersResponse;
 import com.threeNerds.basketballDiary.mvc.game.service.GameJoinManagerService;
@@ -161,27 +163,26 @@ public class GameController {
     /**
      * API040 게임엔트리 조회하기
      * @param gameSeq
-     * @param gameJoinTeamSeq
      * @param quarterCode
      * @return GetGameEntryResponse
      * Spring RestTemplate에서는 GET 메소드의  RequestBody를 지원하지 않음..
      * 참고자료 : https://brunch.co.kr/@kd4/158
+     * 23.02.19(일) 인준 - API url 수정 (gameJoinTeamSeq를 화면에서 계속 가지고 있는 것이 번거롭기 때문)
      */
 //    @Auth(GRADE = USER)
-    @GetMapping("/{gameSeq}/gameJoinTeams/{gameJoinTeamSeq}/quarters/{quarterCode}/entry")
+//    @GetMapping("/{gameSeq}/gameJoinTeams/{gameJoinTeamSeq}/quarters/{quarterCode}/entry")
+    @GetMapping("/{gameSeq}/quarters/{quarterCode}/entry")
     public ResponseEntity<?> getGameEntry (
             @PathVariable("gameSeq") Long gameSeq,
-            @PathVariable("gameJoinTeamSeq") Long gameJoinTeamSeq,
-            @PathVariable("quarterCode") String quarterCode
+            @PathVariable("quarterCode") String quarterCode,
+            @RequestParam(name = "homeAwayCode", required = false) String homeAwayCode
     ) {
-        // TODO @Valid로 유효성 체크하기
-        SearchEntryDTO searchDTO = new SearchEntryDTO()
-                .gameJoinTeamSeq(gameJoinTeamSeq)
-                .quarterCode(quarterCode);
+        GetGameEntryRequest request = new GetGameEntryRequest()
+                .gameSeq(gameSeq)
+                .quarterCode(quarterCode)
+                .homeAwayCode(homeAwayCode);
 
-        List<QuarterPlayerRecordDTO> playerList = gameJoinManagerService.getGameEntry(searchDTO);
-        GetGameEntryResponse resBody = new GetGameEntryResponse().playerList(playerList);
-
+        GetGameEntryResponse resBody = gameJoinManagerService.getGameEntry(request);
         return ResponseEntity.ok(resBody);
     }
 

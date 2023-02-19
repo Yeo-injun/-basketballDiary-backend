@@ -7,21 +7,20 @@
         /* GameJoinManagerRepository.findEntryList */
         SELECT QPR.QUARTER_PLAYER_RECORDS_SEQ
              , QPR.GAME_SEQ
-             , QPR.QUARTER_CODE
+             , QPR.GAME_JOIN_TEAM_SEQ
              , QPR.GAME_JOIN_PLAYER_SEQ
+             , QPR.QUARTER_CODE
              , QPR.IN_GAME_YN
              , GJP.PLAYER_TYPE_CODE
              , GJP.NAME
              , GJP.BACK_NUMBER
              , GJP.POSITION_CODE
         /* 속성 계속 추가 예정 */
-          FROM GAME_JOIN_TEAM GJT
+          FROM GAME_JOIN_PLAYER GJP
          INNER JOIN QUARTER_PLAYER_RECORDS QPR
-            ON GJT.GAME_JOIN_TEAM_SEQ = QPR.GAME_JOIN_TEAM_SEQ
-         INNER JOIN GAME_JOIN_PLAYER GJP
-            ON QPR.GAME_JOIN_PLAYER_SEQ = GJP.GAME_JOIN_PLAYER_SEQ
+            ON GJP.GAME_JOIN_PLAYER_SEQ = QPR.GAME_JOIN_PLAYER_SEQ
          WHERE 1=1
-           AND GJT.GAME_JOIN_TEAM_SEQ = #{gameJoinTeamSeq}
+           AND GJP.GAME_JOIN_TEAM_SEQ = #{gameJoinTeamSeq}
            AND QPR.QUARTER_CODE       = #{quarterCode}
            AND QPR.IN_GAME_YN         = 'Y'
     </select>
