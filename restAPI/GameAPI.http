@@ -152,7 +152,9 @@ Content-Type : application/json
 
 ###
 ## API040 게임엔트리 조회하기
-GET http://127.0.0.1:8080/api/games/2/quarters/01/entry?homeAwayCode=02
+## queryString 
+##      - homeAwayCode (Nullable) : 전체(Null) / 홈팀(01) / 어웨이팀(02)
+GET http://127.0.0.1:8080/api/games/2/quarters/01/entry 
 Content-Type : application/json
 
 
