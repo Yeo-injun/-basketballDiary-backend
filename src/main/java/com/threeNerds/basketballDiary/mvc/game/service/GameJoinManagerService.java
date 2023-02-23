@@ -9,6 +9,7 @@ import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.mvc.game.controller.request.RegisterGameJoinPlayersRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameEntry.response.GetGameEntryResponse;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameEntry.request.GetGameEntryRequest;
+import com.threeNerds.basketballDiary.mvc.game.dto.getGameEntry.response.QuarterTeamEntryDTO;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayers.response.GetGameJoinPlayersResponse;
 import com.threeNerds.basketballDiary.mvc.game.domain.Game;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayers.request.GetGameJoinPlayersRequest;
@@ -376,8 +377,8 @@ public class GameJoinManagerService {
      */
     public GetGameEntryResponse getGameEntry(GetGameEntryRequest request)
     {
-        String homeTeamCode = HomeAwayCode.HOME_TEAM.getCode();
-        String awayTeamCode = HomeAwayCode.AWAY_TEAM.getCode();
+        String HOME_TEAM_CODE = HomeAwayCode.HOME_TEAM.getCode();
+        String AWAY_TEAM_CODE = HomeAwayCode.AWAY_TEAM.getCode();
 
         /** TODO 테이블 구조 변경 검토
          *  >> Game과 관련된 테이블은 GameSeq컬럼을 가지고 있는 것이 어떤지
@@ -387,7 +388,6 @@ public class GameJoinManagerService {
         // 게임참가팀을 조회
         // 홈어웨이 코드가 존재하면 해당되는 팀의 엔트리만 조회
         // 존재하지 않으면 홈팀 어웨이팀 모두 조회하여 세팅
-        // TODO 리팩토링 필요
         List<GameJoinTeam> gameJoinTeams = gameJoinTeamRepository.findAllGameJoinTeam( request.getGameSeq() );
 
         String quarterCode = request.getQuarterCode();
@@ -395,49 +395,44 @@ public class GameJoinManagerService {
 
         boolean isOnlyOneTeamInquery = StringUtils.hasText(homeAwayCode);
         if ( isOnlyOneTeamInquery ) {
-            GameJoinTeam gameJoinTeam = gameJoinTeams.stream()
-                        .filter( t -> homeAwayCode.equals( t.getHomeAwayCode() ))
-                        .findAny()
-                        .get();
-
-            SearchEntryDTO searchCond = new SearchEntryDTO()
-                    .gameJoinTeamSeq( gameJoinTeam.getGameJoinTeamSeq() )
-                    .quarterCode( quarterCode );
-            List<QuarterPlayerRecordDTO> entry = gameJoinManagerRepo.findEntryList( searchCond );
-
-            if ( homeTeamCode.equals( homeAwayCode ) ) {
+            if ( HOME_TEAM_CODE.equals( homeAwayCode ) ) {
                 return new GetGameEntryResponse()
-                                .homeTeamEntry( entry )
-                                .awayTeamEntry( Collections.emptyList() );
+                                .homeTeamEntry( getQuarterTeamEntryInfo( quarterCode, HOME_TEAM_CODE, gameJoinTeams ) );
             }
-
-            if ( awayTeamCode.equals( homeAwayCode ) ) {
-                return new GetGameEntryResponse()
-                        .homeTeamEntry( Collections.emptyList() )
-                        .awayTeamEntry( entry );
+            if ( AWAY_TEAM_CODE.equals( homeAwayCode ) ) {
+                 return new GetGameEntryResponse()
+                               .awayTeamEntry( getQuarterTeamEntryInfo( quarterCode, AWAY_TEAM_CODE, gameJoinTeams ) );
             }
+            // TODO 에러 던지기 - 부적절한 코드값이 존재합니다. 코드값을 확인해주시기 바랍니다.
         }
 
         /** 홈/어웨이팀 전체 엔트리 조회 */
-        GetGameEntryResponse response = new GetGameEntryResponse();
-        for ( GameJoinTeam team : gameJoinTeams) {
-            if ( homeTeamCode.equals( team.getHomeAwayCode() )) {
-                SearchEntryDTO searchCond = new SearchEntryDTO()
-                        .gameJoinTeamSeq( team.getGameJoinTeamSeq() )
-                        .quarterCode( quarterCode );
-                List<QuarterPlayerRecordDTO> entry = gameJoinManagerRepo.findEntryList( searchCond );
-                response.homeTeamEntry( entry );
-                continue;
-            }
+        QuarterTeamEntryDTO homeTeamEntryInfo = getQuarterTeamEntryInfo( quarterCode, HOME_TEAM_CODE, gameJoinTeams );
+        QuarterTeamEntryDTO awayTeamEntryInfo = getQuarterTeamEntryInfo( quarterCode, AWAY_TEAM_CODE, gameJoinTeams );
 
-            if ( awayTeamCode.equals( team.getHomeAwayCode() )) {
-                SearchEntryDTO searchCond = new SearchEntryDTO()
-                        .gameJoinTeamSeq( team.getGameJoinTeamSeq() )
-                        .quarterCode( quarterCode );
-                List<QuarterPlayerRecordDTO> entry = gameJoinManagerRepo.findEntryList( searchCond );
-                response.awayTeamEntry( entry );
-            }
-        }
-        return response;
+        return new GetGameEntryResponse()
+                .homeTeamEntry( homeTeamEntryInfo )
+                .awayTeamEntry( awayTeamEntryInfo );
+    }
+
+    private QuarterTeamEntryDTO getQuarterTeamEntryInfo(
+            String quarterCode,
+            String homeAwayCode,
+            List<GameJoinTeam> gameJoinTeams
+    ) {
+        GameJoinTeam gameJoinTeam = gameJoinTeams.stream()
+                .filter( t -> homeAwayCode.equals( t.getHomeAwayCode() ))
+                .findAny()
+                .get();
+
+        SearchEntryDTO searchCond = new SearchEntryDTO()
+                .gameJoinTeamSeq( gameJoinTeam.getGameJoinTeamSeq() )
+                .quarterCode( quarterCode );
+        List<QuarterPlayerRecordDTO> entry = gameJoinManagerRepo.findEntryList( searchCond );
+
+        return new QuarterTeamEntryDTO()
+                    .teamName( gameJoinTeam.getTeamName() )
+                    .homeAwayCode( homeAwayCode )
+                    .entry( entry );
     }
 }

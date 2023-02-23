@@ -8,15 +8,15 @@ import java.util.List;
 @Getter
 public class GetGameEntryResponse {
 
-    private List<QuarterPlayerRecordDTO> homeTeamEntry;
-    private List<QuarterPlayerRecordDTO> awayTeamEntry;
+    private QuarterTeamEntryDTO homeTeamEntry;
+    private QuarterTeamEntryDTO awayTeamEntry;
 
-    public GetGameEntryResponse homeTeamEntry(List<QuarterPlayerRecordDTO> homeTeamEntry) {
+    public GetGameEntryResponse homeTeamEntry( QuarterTeamEntryDTO homeTeamEntry ) {
         this.homeTeamEntry = homeTeamEntry;
         return this;
     }
 
-    public GetGameEntryResponse awayTeamEntry(List<QuarterPlayerRecordDTO> awayTeamEntry) {
+    public GetGameEntryResponse awayTeamEntry( QuarterTeamEntryDTO awayTeamEntry ) {
         this.awayTeamEntry = awayTeamEntry;
         return this;
     }

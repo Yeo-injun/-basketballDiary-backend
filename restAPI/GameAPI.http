@@ -1,0 +1,177 @@
+
+## API053 게임생성
+POST http://127.0.0.1:8080/api/games
+Content-Type : application/json
+
+{
+    "teamSeq" : 7,
+    "gameYmd" : "20221201",
+    "gameStartTime" : "1900",
+    "gameEndTime" : "2100",
+    "gamePlaceAddress" : "서울특별시 동대문구 성주동",
+    "gamePlaceName" : "성주네집",
+    "sidoCode" : "11",
+    "sigunguCode" : "320"
+}
+
+###
+## API062 게임참가팀확정
+## 파라미터 설명
+// gameTypeCode : 01 : 자체전, 02 : 교류전, 03 : 대회
+// opponentTeamSeq : 교류전일경우에만 필수값체크
+// homeTeamSeq : 대회일경우에만 필수값체크
+// awayTeamSeq : 대회일경우에만 필수값체크
+POST http://127.0.0.1:8080/api/games/2/gameJoinTeams
+Content-Type : application/json
+
+{
+    "gameTypeCode" : "02",     
+    "opponentTeamSeq" : 8,      
+    "homeTeamSeq" : 0,          
+    "awayTeamSeq" : 0       
+}
+
+
+###
+## API035 게임참가 선수등록하기
+POST http://127.0.0.1:8080/api/games/2/gameJoinTeam/4/players
+Content-Type : application/json
+Set-Cookie: basketballDiary=917BF03C473C5BEB4D116FDBF6AED81C; Path=/; Secure; HttpOnly; SameSite=None
+
+{
+    "gameJoinPlayers" : [
+        {
+            "playerTypeCode" : "01",   
+            "userSeq" : "1",
+            "name" : "팀원",
+            "backNumber" : "10",
+            "positionCode" : "11",
+            "email" : "test@naver.com"
+        },
+        {
+            "playerTypeCode" : "02",   
+            "userSeq" : "3",
+            "name" : "게스트(회원)",
+            "backNumber" : "30",
+            "positionCode" : "21",
+            "email" : "email.com"
+        },
+        {
+            "playerTypeCode" : "03",   
+            "userSeq" : "1234",
+            "name" : "게스트(비회원)",
+            "backNumber" : "33",
+            "positionCode" : "30",
+            "email" : "mustInput@kakao.com"
+        },
+            {
+            "playerTypeCode" : "03",   
+            "userSeq" : "",
+            "name" : "게스트(비회원)2",
+            "backNumber" : "31",
+            "positionCode" : "30",
+            "email" : "mustInput@kakao.com"
+        },
+            {
+            "playerTypeCode" : "03",   
+            "userSeq" : "",
+            "name" : "게스트(비회원)3",
+            "backNumber" : "32",
+            "positionCode" : "30",
+            "email" : "mustInput@kakao.com"
+        }
+    ]
+}
+###
+## API060 쿼터 엔트리 정보 저장
+POST http://127.0.0.1:8080/api/games/2/entry
+Content-Type : application/json
+
+{
+    "gameJoinTeamSeq" : 4,
+    "homeAwayCode" : "01",
+    "quarterCode" : "01",
+    "playerList" : [
+        {
+            "gameJoinPlayerSeq" : 18,
+            "userSeq" : 1,
+            "playerTypeCode" : "01",
+            "playerTypeCodeName" : "팀원",
+            "teamName" : "소속팀명",
+            "playerName" : "선수1",
+            "backNumber" : "10",
+            "positionCode" : "01",
+            "positionCodeName" : "가드"
+        },
+        {
+            "gameJoinPlayerSeq" : 19,
+            "userSeq" : 3,
+            "playerTypeCode" : "01",
+            "playerTypeCodeName" : "팀원",
+            "teamName" : "소속팀명",
+            "playerName" : "선수1",
+            "backNumber" : "10",
+            "positionCode" : "01",
+            "positionCodeName" : "가드"
+        },
+                {
+            "gameJoinPlayerSeq" : 20,
+            "userSeq" : 1,
+            "playerTypeCode" : "01",
+            "playerTypeCodeName" : "팀원",
+            "teamName" : "소속팀명",
+            "playerName" : "선수1",
+            "backNumber" : "10",
+            "positionCode" : "01",
+            "positionCodeName" : "가드"
+        },
+                {
+            "gameJoinPlayerSeq" : 21,
+            "userSeq" : 1,
+            "playerTypeCode" : "01",
+            "playerTypeCodeName" : "팀원",
+            "teamName" : "소속팀명",
+            "playerName" : "선수1",
+            "backNumber" : "10",
+            "positionCode" : "01",
+            "positionCodeName" : "가드"
+        },
+                {
+            "gameJoinPlayerSeq" : 22,
+            "userSeq" : 1,
+            "playerTypeCode" : "01",
+            "playerTypeCodeName" : "팀원",
+            "teamName" : "소속팀명",
+            "playerName" : "선수1",
+            "backNumber" : "10",
+            "positionCode" : "01",
+            "positionCodeName" : "가드"
+        }
+    ]
+}
+
+###
+## API040 게임엔트리 조회하기
+## queryString 
+##      - homeAwayCode (Nullable) : 전체(Null) / 홈팀(01) / 어웨이팀(02)
+GET http://127.0.0.1:8080/api/games/2/quarters/01/entry 
+Content-Type : application/json
+
+
+###
+## API061 게임참가선수 조회하기
+GET http://127.0.0.1:8080/api/games/2/players?homeAwayCode=02
+Content-Type : application/json
+
+
+###
+## API047 게임참가팀 조회하기
+## queryString 
+##      - homeAwayCode (Nullable) : 전체(Null) / 홈팀(01) / 어웨이팀(02)
+GET http://127.0.0.1:8080/api/games/2/teams?homeAwayCode=02
+Content-Type : application/json
+
+###
+## API063 게임전체쿼터 조회
+GET http://127.0.0.1:8080/api/games/2/quarters
+Content-Type : application/json
