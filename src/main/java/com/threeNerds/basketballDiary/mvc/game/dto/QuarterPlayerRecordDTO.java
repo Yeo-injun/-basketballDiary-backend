@@ -29,16 +29,19 @@ public class QuarterPlayerRecordDTO {
     private String positionCode;
     private String positionCodeName;
 
-    private Integer tryFreeThrow;
-    private Integer freeThrow;
+    // TODO Integer를 int형으로 모두 바꾸기... 왜냐면 Integer는 연산하기가 불편함.... Optional을 생각보다 많이 않쓴다
+    private int totalScore;
+    private int tryFreeThrow;
+    private int freeThrow;
 
-    private Integer tryTwoPoint;
-    private Integer twoPoint;
+    private int tryTwoPoint;
+    private int twoPoint;
 
-    private Integer tryThreePoint;
-    private Integer threePoint;
+    private int tryThreePoint;
+    private int threePoint;
 
     private Integer rebound;
+    private Integer assist;
     private Integer steal;
     private Integer block;
     private Integer turnover;
@@ -64,5 +67,18 @@ public class QuarterPlayerRecordDTO {
     private void setPositionCode(String positionCode) {
         this.positionCode = positionCode;
         this.positionCodeName = PositionCode.nameOf(positionCode);
+    }
+
+    private void setFreeThrow(int freeThrow) {
+        this.freeThrow = freeThrow;
+        this.totalScore += freeThrow;
+    }
+    private void setTwoPoint(int twoPoint) {
+        this.twoPoint = twoPoint;
+        this.totalScore += ( twoPoint * 2 );
+    }
+    private void setThreePoint(int threePoint) {
+        this.threePoint = threePoint;
+        this.totalScore += ( threePoint * 3 );
     }
 }

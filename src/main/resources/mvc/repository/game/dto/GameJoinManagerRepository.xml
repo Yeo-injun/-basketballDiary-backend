@@ -11,11 +11,22 @@
              , QPR.GAME_JOIN_PLAYER_SEQ
              , QPR.QUARTER_CODE
              , QPR.IN_GAME_YN
+             , QPR.TRY_FREE_THROW
+             , QPR.FREE_THROW
+             , QPR.TRY_TWO_POINT
+             , QPR.TWO_POINT
+             , QPR.TRY_THREE_POINT
+             , QPR.THREE_POINT
+             , QPR.ASSIST
+             , QPR.REBOUND
+             , QPR.STEAL
+             , QPR.BLOCK
+             , QPR.TURNOVER
+             , QPR.FOUL
              , GJP.PLAYER_TYPE_CODE
              , GJP.NAME
              , GJP.BACK_NUMBER
              , GJP.POSITION_CODE
-        /* 속성 계속 추가 예정 */
           FROM GAME_JOIN_PLAYER GJP
          INNER JOIN QUARTER_PLAYER_RECORDS QPR
             ON GJP.GAME_JOIN_PLAYER_SEQ = QPR.GAME_JOIN_PLAYER_SEQ
