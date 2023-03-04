@@ -253,7 +253,7 @@ public class GameController {
      */
     //@Auth(GRADE = USER) TODO
     @GetMapping("/{gameSeq}/quarters/{quarterCode}")
-    public ResponseEntity<?> searchGameRecordByQuarter(
+    public ResponseEntity<?> getGameQuarterRecords(
             @PathVariable(name = "gameSeq") Long gameSeq,
             @PathVariable(name = "quarterCode") String quarterCode
     ){

@@ -190,13 +190,6 @@ public class GameRecordManagerService {
      * @author 강창기
      */
     public HomeAwayTeamRecordDTO getHomeAwayTeamRecordByQuarter(SearchGameDTO searchGameDTO) {
-        if(ObjectUtils.isEmpty(searchGameDTO))
-            throw new CustomException(Error.NO_PARAMETER);
-
-        if(ObjectUtils.isEmpty(searchGameDTO.getGameSeq())
-                || ObjectUtils.isEmpty(searchGameDTO.getQuarterCode()))
-            throw new CustomException(Error.NO_PARAMETER);
-
         //쿼터코드; 01~04(1~4쿼터), 11(전반), 12(후반)
         if(ObjectUtils.isEmpty(gameRepository.findGameBasicInfo(searchGameDTO.getGameSeq())))
             throw new CustomException(Error.NOT_FOUND_GAME);  // 게임 정보가 존재하지 않습니다.
