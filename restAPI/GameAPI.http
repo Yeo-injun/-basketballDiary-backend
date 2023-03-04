@@ -157,6 +157,12 @@ Content-Type : application/json
 GET http://127.0.0.1:8080/api/games/2/quarters/01/entry 
 Content-Type : application/json
 
+###
+## API048 게임쿼터기록 조회
+GET http://127.0.0.1:8080/api/games/1/quarters/01 
+Content-Type : application/json
+
+
 
 ###
 ## API061 게임참가선수 조회하기

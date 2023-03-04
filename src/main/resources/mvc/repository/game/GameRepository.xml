@@ -44,6 +44,7 @@
     </delete>
 
     <select id="findGameBasicInfo" resultType="com.threeNerds.basketballDiary.mvc.game.dto.GameInfoDTO">
+        /* TODO 삭제 예정 findGame으로 대체 혹은 GameRepo외에 다른 곳으로 이전 */
         SELECT T1.GAME_YMD
              , T1.GAME_START_TIME
              , T1.GAME_END_TIME

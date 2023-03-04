@@ -19,6 +19,8 @@ import com.threeNerds.basketballDiary.mvc.game.dto.getGameEntry.request.GetGameE
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameEntry.response.GetGameEntryResponse;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayers.request.GetGameJoinPlayersRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayers.response.GetGameJoinPlayersResponse;
+import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.request.GetGameQuarterRecordsRequest;
+import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.response.GetGameQuarterRecordsResponse;
 import com.threeNerds.basketballDiary.mvc.game.service.GameJoinManagerService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameRecordManagerService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameService;
@@ -253,7 +255,7 @@ public class GameController {
      */
     //@Auth(GRADE = USER) TODO
     @GetMapping("/{gameSeq}/quarters/{quarterCode}")
-    public ResponseEntity<?> searchGameRecordByQuarter(
+    public ResponseEntity<?> getGameQuarterRecords(
             @PathVariable(name = "gameSeq") Long gameSeq,
             @PathVariable(name = "quarterCode") String quarterCode
     ){
@@ -263,13 +265,13 @@ public class GameController {
         if(ObjectUtils.isEmpty(quarterCode) || !StringUtils.hasText(quarterCode))
             throw new CustomException(Error.NO_PARAMETER);
 
-        SearchGameDTO searchGameDTO = new SearchGameDTO()
+        GetGameQuarterRecordsRequest reqBody = new GetGameQuarterRecordsRequest()
                 .gameSeq(gameSeq)
                 .quarterCode(quarterCode);
 
-        HomeAwayTeamRecordDTO homeAwayTeamRecordByQuarter = gameRecordManagerService.getHomeAwayTeamRecordByQuarter(searchGameDTO);
+        GetGameQuarterRecordsResponse resBody = gameRecordManagerService.getGameQuarterRecords(reqBody);
 
-        return ResponseEntity.ok(homeAwayTeamRecordByQuarter);
+        return ResponseEntity.ok(resBody);
     }
 
     /**

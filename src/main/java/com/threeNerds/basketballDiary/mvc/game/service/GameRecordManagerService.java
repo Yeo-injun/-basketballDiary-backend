@@ -7,10 +7,7 @@ import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.mvc.game.controller.dto.GameAuthDTO;
 import com.threeNerds.basketballDiary.mvc.game.controller.response.GameAuthRecordersResponse;
-import com.threeNerds.basketballDiary.mvc.game.domain.Game;
-import com.threeNerds.basketballDiary.mvc.game.domain.GameRecordAuth;
-import com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords;
-import com.threeNerds.basketballDiary.mvc.game.domain.QuarterTeamRecords;
+import com.threeNerds.basketballDiary.mvc.game.domain.*;
 
 import com.threeNerds.basketballDiary.mvc.game.dto.*;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameAllQuartersRecords.GetGameAllQuartersRecordsResponse;
@@ -18,10 +15,10 @@ import com.threeNerds.basketballDiary.mvc.game.dto.getGameAllQuartersRecords.Qua
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameAllQuartersRecords.QuarterTeamRecordsDTO;
 
 
-import com.threeNerds.basketballDiary.mvc.game.repository.GameRecordAuthRepository;
-import com.threeNerds.basketballDiary.mvc.game.repository.GameRepository;
-import com.threeNerds.basketballDiary.mvc.game.repository.QuarterPlayerRecordsRepository;
-import com.threeNerds.basketballDiary.mvc.game.repository.QuarterTeamRecordsRepository;
+import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.request.GetGameQuarterRecordsRequest;
+import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.response.GetGameQuarterRecordsResponse;
+import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.response.TeamQuarterRecordsDTO;
+import com.threeNerds.basketballDiary.mvc.game.repository.*;
 import com.threeNerds.basketballDiary.mvc.game.repository.dto.GameRecordManagerRepository;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameCondDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameJoinTeamRecordDTO;
@@ -35,6 +32,7 @@ import org.springframework.util.ObjectUtils;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -43,6 +41,7 @@ import java.util.Map;
 public class GameRecordManagerService {
 
     private final GameRepository gameRepository;
+    private final GameJoinTeamRepository gameJoinTeamRepo;
     private final QuarterTeamRecordsRepository quarterTeamRecordsRepository;
     private final QuarterPlayerRecordsRepository quarterPlayerRecordsRepository;
 
@@ -186,24 +185,59 @@ public class GameRecordManagerService {
      * 22.11.22
      * 특정쿼터의 홈·어웨이 팀기록조회
      * 홈 & 어웨이의 쿼터별 팀 합산기록을 조회한다.
-     * @param searchGameDTO 게임조회용 DTO
      * @author 강창기
+     * - 23.03.05 여인준 : API수정에 따른 파라미터 및 return 클래스 변경
      */
-    public HomeAwayTeamRecordDTO getHomeAwayTeamRecordByQuarter(SearchGameDTO searchGameDTO) {
-        if(ObjectUtils.isEmpty(searchGameDTO))
-            throw new CustomException(Error.NO_PARAMETER);
+    public GetGameQuarterRecordsResponse getGameQuarterRecords(GetGameQuarterRecordsRequest reqBody)
+    {
+        Long gameSeq = reqBody.getGameSeq();
+        Game gameInfo = Optional
+                            .ofNullable( gameRepository.findGame( gameSeq ) )
+                            .orElseThrow( () -> new CustomException(Error.NOT_FOUND_GAME) );
 
-        if(ObjectUtils.isEmpty(searchGameDTO.getGameSeq())
-                || ObjectUtils.isEmpty(searchGameDTO.getQuarterCode()))
-            throw new CustomException(Error.NO_PARAMETER);
+        String quarterCode = reqBody.getQuarterCode();
+        GetGameQuarterRecordsResponse resBody = new GetGameQuarterRecordsResponse()
+                .gameSeq( gameInfo.getGameSeq() )
+                .quarterCode( quarterCode )
+                .quarterCodeName( QuarterCode.nameOf( quarterCode ) )
+                .gameYmd( gameInfo.getGameYmd() )
+                .gameStartTime( gameInfo.getGameStartTime() )
+                .gameEndTime( gameInfo.getGameEndTime() );
 
-        //쿼터코드; 01~04(1~4쿼터), 11(전반), 12(후반)
-        if(ObjectUtils.isEmpty(gameRepository.findGameBasicInfo(searchGameDTO.getGameSeq())))
-            throw new CustomException(Error.NOT_FOUND_GAME);  // 게임 정보가 존재하지 않습니다.
+        SearchGameDTO gameSearchCond = new SearchGameDTO()
+                .gameSeq( gameSeq )
+                .quarterCode( quarterCode );
+        List<TeamQuarterRecordsDTO> allTeamsQuarterRecords = gameRecordManagerRepository.findAllTeamsQuarterRecords(gameSearchCond);
 
-        HomeAwayTeamRecordDTO resultDVO = gameRecordManagerRepository.findHomeAwayTeamRecordsByQuarter(searchGameDTO);
+        /** 쿼터기록이 입력되지 않은 경우 - 초기값 return */
+        if ( allTeamsQuarterRecords.isEmpty() )
+        {
+            List<GameJoinTeam> gameJoinTeams = gameJoinTeamRepo.findAllGameJoinTeam( gameSeq );
+            for ( GameJoinTeam teamInfo : gameJoinTeams )
+            {
+                TeamQuarterRecordsDTO teamRecordInfo = new TeamQuarterRecordsDTO()
+                                                            .gameJoinTeamSeq( teamInfo.getGameJoinTeamSeq() )
+                                                            .teamName( teamInfo.getTeamName() );
+                if ( HomeAwayCode.HOME_TEAM.getCode().equals( teamInfo.getHomeAwayCode() ) ) {
+                    resBody.homeTeamRecords( teamRecordInfo.homeAwayCode( HomeAwayCode.HOME_TEAM.getCode() ) );
+                } else {
+                    resBody.awayTeamRecords( teamRecordInfo.homeAwayCode( HomeAwayCode.AWAY_TEAM.getCode() ) );
+                }
+            }
+            return resBody;
+        }
 
-        return resultDVO;
+        for ( TeamQuarterRecordsDTO teamRecords : allTeamsQuarterRecords )
+        {
+            resBody.quarterTime( teamRecords.getQuarterTime() );
+            if ( HomeAwayCode.HOME_TEAM.getCode().equals( teamRecords.getHomeAwayCode() ) ) {
+                resBody.homeTeamRecords( teamRecords );
+            } else {
+                resBody.awayTeamRecords( teamRecords );
+            }
+        }
+
+        return resBody;
     }
 
     /**
