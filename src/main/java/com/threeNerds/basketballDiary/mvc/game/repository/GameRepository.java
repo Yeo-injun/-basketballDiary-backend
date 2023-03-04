@@ -14,6 +14,10 @@ import java.util.List;
 @Mapper
 public interface GameRepository {
 
+    Game findGame(Long gameSeq);
+    // TODO findGame으로 대체 예정... Game레포지토리에서는 select 구문의 return은 무조건 해당 도메인클래스
+    GameInfoDTO findGameBasicInfo(Long gameSeq);
+
     Long deleteGame(Long gameSeq);
 
     /** 게임생성
@@ -22,9 +26,6 @@ public interface GameRepository {
      */
     Long saveGame(Game newGame);
 
-    GameInfoDTO findGameBasicInfo(Long gameSeq);
-
-    Game findGame(Long gameSeq);
 
     /** 게임기록상태 Update
      * @parma Game (gameSeq, gameRecordStateCode)

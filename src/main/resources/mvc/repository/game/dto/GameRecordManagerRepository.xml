@@ -193,8 +193,26 @@
         GROUP BY GAME_SEQ, GAME_YMD, QUARTER_CODE, GAME_START_TIME, GAME_END_TIME
     </sql>
 
+    <select id="findAllTeamsQuarterRecords" resultType="com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.response.TeamQuarterRecordsDTO">
+        /* GameRecordManagerRepository.findAllTeamsQuarterRecords */
+        SELECT GJT.GAME_JOIN_TEAM_SEQ
+             , GJT.TEAM_NAME
+             , GJT.HOME_AWAY_CODE
+             , QTR.QUARTER_TIME   /* TODO 삭제 검토... */
+             , QTR.SCORE
+             , QTR.FOUL
+          FROM GAME_JOIN_TEAM GJT
+         INNER JOIN QUARTER_TEAM_RECORDS QTR
+            ON GJT.GAME_JOIN_TEAM_SEQ = QTR.GAME_JOIN_TEAM_SEQ
+         WHERE 1=1
+           AND GJT.GAME_SEQ = #{gameSeq}
+           AND QTR.QUARTER_CODE = #{quarterCode}
+    </select>
+
+
     <select id="findHomeAwayTeamRecordsByQuarter" resultType="com.threeNerds.basketballDiary.mvc.game.dto.HomeAwayTeamRecordDTO">
-       SELECT TMP.*
+       /** TODO 삭제 예정 - findAllTeamsQuarterRecords()로 대체될 예정 */
+        SELECT TMP.*
          FROM (
          <include refid="homeAwayTeamRecordsByQuarter"/>
               ) TMP
