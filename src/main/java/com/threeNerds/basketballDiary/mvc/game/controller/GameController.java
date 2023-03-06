@@ -14,6 +14,7 @@ import com.threeNerds.basketballDiary.mvc.game.domain.GameRecordAuth;
 import com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords;
 import com.threeNerds.basketballDiary.mvc.game.domain.QuarterTeamRecords;
 import com.threeNerds.basketballDiary.mvc.game.dto.*;
+import com.threeNerds.basketballDiary.mvc.game.dto.deleteGameQuarter.request.DeleteGameQuarterRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameAllQuartersRecords.GetGameAllQuartersRecordsResponse;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameEntry.request.GetGameEntryRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameEntry.response.GetGameEntryResponse;
@@ -192,18 +193,18 @@ public class GameController {
     /**
      * API041 게임쿼터 삭제
      * @param gameSeq
-     * @param quaterCode
+     * @param quarterCode
      * @return
      */
-    @DeleteMapping("/{gameSeq}/quaters/{quaterCode}")
-    public ResponseEntity<?> deleteQuarter(
+    @DeleteMapping("/{gameSeq}/quarters/{quarterCode}")
+    public ResponseEntity<?> deleteGameQuarter(
             @PathVariable("gameSeq") Long gameSeq,
-            @PathVariable("quaterCode") String quaterCode
+            @PathVariable("quarterCode") String quarterCode
     ){
-        QuarterCodeDTO quarterCodeDTO = new QuarterCodeDTO()
+        DeleteGameQuarterRequest reqBody = new DeleteGameQuarterRequest()
                         .gameSeq(gameSeq)
-                        .quaterCodeDTO(quaterCode);
-        gameRecordManagerService.deleteQuater(quarterCodeDTO);
+                        .quarterCode(quarterCode);
+        gameRecordManagerService.deleteGameQuarter(reqBody);
         return RESPONSE_OK;
     }
 

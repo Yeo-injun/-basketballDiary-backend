@@ -151,4 +151,11 @@
         , IFNULL(#{foul}, 0)
         )
     </insert>
+
+    <delete id="deleteGameQuarter">
+        DELETE FROM QUARTER_PLAYER_RECORDS
+         WHERE 1=1
+           AND GAME_SEQ = #{gameSeq}
+           AND QUARTER_CODE = #{quarterCode}
+    </delete>
 </mapper>

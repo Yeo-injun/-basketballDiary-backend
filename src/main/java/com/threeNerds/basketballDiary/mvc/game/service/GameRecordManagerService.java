@@ -10,6 +10,7 @@ import com.threeNerds.basketballDiary.mvc.game.controller.response.GameAuthRecor
 import com.threeNerds.basketballDiary.mvc.game.domain.*;
 
 import com.threeNerds.basketballDiary.mvc.game.dto.*;
+import com.threeNerds.basketballDiary.mvc.game.dto.deleteGameQuarter.request.DeleteGameQuarterRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameAllQuartersRecords.GetGameAllQuartersRecordsResponse;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameAllQuartersRecords.QuarterAllTeamsRecordsDTO;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameAllQuartersRecords.QuarterTeamRecordsDTO;
@@ -394,10 +395,17 @@ public class GameRecordManagerService {
      * 쿼터 삭제
      * @author 이성주
      */
-    public void deleteQuater(QuarterCodeDTO quarterCodeDTO){
-        //TODO 어떤 처리를 할 필요가 없는건지?
-        gameRecordManagerRepository.deleteQuarterPlayerRecords(quarterCodeDTO);
-        gameRecordManagerRepository.deleteQuarterTeamRecords(quarterCodeDTO);
+    public void deleteGameQuarter(DeleteGameQuarterRequest request) {
+        Long gameSeq = request.getGameSeq();
+        String quarterCode = request.getQuarterCode();
+        quarterTeamRecordsRepository.deleteGameQuarter( QuarterTeamRecords.builder()
+                                                            .gameSeq(gameSeq)
+                                                            .quarterCode(quarterCode)
+                                                            .build() );
+        quarterPlayerRecordsRepository.deleteGameQuarter( QuarterPlayerRecords.builder()
+                                                            .gameSeq( gameSeq )
+                                                            .quarterCode( quarterCode )
+                                                            .build() );
     }
 
     /**
