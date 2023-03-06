@@ -52,18 +52,6 @@ public interface GameRecordManagerRepository {
 //    List<HomeAwayTeamRecordDTO> findAllHomeAwayTeamRecordsByQuarter(SearchGameDTO searchGameDTO);
     List<QuarterTeamRecordsDTO> findAllQuarterRecords(SearchGameDTO searchGameDTO);
 
-    /**
-     * 쿼터 삭제(QUARTER_PLAYER_RECORDS TABLE)
-     * @param quarterCodeDTO
-     */
-    void deleteQuarterPlayerRecords(QuarterCodeDTO quarterCodeDTO);
-
-    /**
-     * 쿼터 삭제(QUARTER_TEAM_RECORDS TABLE)
-     * @param quarterCodeDTO
-     */
-    void deleteQuarterTeamRecords(QuarterCodeDTO quarterCodeDTO);
-
     /** 게임참가팀의 팀원조회 (이미 입력권한을 부여받은 선수는 제외한다)
      * @param searchGameDTO 게임조회용 DTO
      */

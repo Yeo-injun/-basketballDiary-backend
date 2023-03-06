@@ -16,5 +16,6 @@ public interface QuarterPlayerRecordsRepository {
     int modifyInGameYn(QuarterPlayerRecords modParamForInGameYn);
 
     Long create(QuarterPlayerRecords quarterPlayerRecords);
+    Long deleteGameQuarter(QuarterPlayerRecords quarterPlayerRecords);
 
 }

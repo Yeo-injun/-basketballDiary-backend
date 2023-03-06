@@ -17,4 +17,7 @@ public interface QuarterTeamRecordsRepository {
     void modify(QuarterTeamRecords quarterTeamRecords);
 
     Long create(QuarterTeamRecords quarterTeamRecords);
+
+    Long deleteGameQuarter(QuarterTeamRecords quarterTeamRecords);
+
 }
