@@ -21,7 +21,7 @@
                          , POSITION_CODE
                          , ROADADDRESS)
         VALUES ( #{userId}
-               , #{userName}
+               , #{name}
                , #{password}
                , #{birthYmd}
                , #{email}
@@ -40,7 +40,7 @@
     <select id="findUser" resultType="com.threeNerds.basketballDiary.mvc.user.domain.User">
         SELECT DISTINCT USER_SEQ
                       , USER_ID
-                      , NAME AS USERNAME
+                      , NAME
                       , PWD AS PASSWORD
                       , EMAIL
                       , REG_DATE

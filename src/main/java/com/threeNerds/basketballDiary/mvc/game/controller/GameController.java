@@ -430,10 +430,7 @@ public class GameController {
             @PathVariable(name = "gameSeq") Long gameSeq,
             @RequestBody SaveQuarterEntryInfoRequest reqBody
     ) {
-        // TODO @Valid 어노테이션을 활용하여 제약사항 걸기
-        Object[] pathVariables = { gameSeq };
-        ValidateUtil.check(pathVariables);
-
+        // TODO SaveQuarterEntryInfoRequset로 변경하기
         QuarterEntryInfoDTO qeiDTO = new QuarterEntryInfoDTO()
                                         .gameSeq(gameSeq)
                                         .gameJoinTeamSeq(reqBody.getGameJoinTeamSeq())

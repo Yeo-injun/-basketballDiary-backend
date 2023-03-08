@@ -41,7 +41,7 @@ public class GameJoinPlayer {
         return create(gameJoinTeamSeq,
                 playerTypeCode,
                 user.getUserSeq(),
-                user.getUserName(),
+                user.getName(),
                 backNumber,
                 user.getPositionCode(),
                 user.getEmail());

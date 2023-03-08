@@ -298,11 +298,8 @@ public class GameJoinManagerService {
     {
         /** TODO 게임생성자 권한 체크 - 게임기록권한T 조회해서 권한체크 */
 
-        /** 파라미터 유효성 검증 */
-        List<PlayerInfoDTO> entry = quarterEntryInfoDTO.getPlayerList();
-        ValidateUtil.check(entry);
-
         /** 쿼터 엔트리 길이 체크 5명이 되는지 */
+        List<PlayerInfoDTO> entry = quarterEntryInfoDTO.getPlayerList();
         boolean hasNotValidEntry = entry.size() != 5;
         if (hasNotValidEntry) {
             throw new CustomException(Error.INSUFFICIENT_PLAYERS_ON_ENTRY);
@@ -310,15 +307,16 @@ public class GameJoinManagerService {
 
         /** 기존에 엔트리가 등록되어 있는지 조회 */
         Long gameSeq         = quarterEntryInfoDTO.getGameSeq();
-        Long gameJoinTeamSeq = quarterEntryInfoDTO.getGameJoinTeamSeq();
+        Long gameJoinTeamSeq = quarterEntryInfoDTO.getGameJoinTeamSeq(); // TODO 제거할 속성 
         String homeAwayCode  = quarterEntryInfoDTO.getHomeAwayCode();
         String quarterCode   = quarterEntryInfoDTO.getQuarterCode();
 
         SearchEntryDTO params = new SearchEntryDTO()
-                .gameJoinTeamSeq(gameJoinTeamSeq)
+                .gameJoinTeamSeq(gameJoinTeamSeq)   // 제거 예정
                 .homeAwayCode(homeAwayCode)
                 .quarterCode(quarterCode);
 
+        // TODO gameSeq와 homeAwayCode, quarterCode로 엔트리 길이 체크하는 로직으로 변경
         List<QuarterPlayerRecordDTO> findExistedEntry = gameJoinManagerRepo.findEntryList(params);
         boolean hasNoEntry = findExistedEntry.size() != 5;
         if (hasNoEntry)
@@ -326,19 +324,18 @@ public class GameJoinManagerService {
             /** 엔트리가 등록되어 있지 않으면 새로 등록 - insert */
             for (PlayerInfoDTO playerInfoDTO : entry)
             {
-                /** 게임참가선수 테이블에 존재하는 선수인지 확인 */
+                /** 게임참가선수 테이블에 존재하는 선수인지 확인 - 게임참가선수Seq로만 조회 */
                 Long gameJoinPlayerSeq = playerInfoDTO.getGameJoinPlayerSeq();
                 GameJoinPlayer gameJoinPlayerParam = GameJoinPlayer.builder()
-                                .gameJoinTeamSeq(gameJoinTeamSeq)
-                                .gameJoinPlayerSeq(gameJoinPlayerSeq)
+                                .gameJoinPlayerSeq( gameJoinPlayerSeq )
                                 .build();
                 Optional.ofNullable(gameJoinPlayerRepository.findPlayer(gameJoinPlayerParam))
                         .orElseThrow(() -> new CustomException(Error.INVALID_PARAMETER));
 
                 QuarterPlayerRecords paramForCreation = QuarterPlayerRecords.builder()
                         .gameSeq(gameSeq)
-                        .gameJoinTeamSeq(gameJoinTeamSeq)
-                        .gameJoinPlayerSeq(gameJoinPlayerSeq)
+                        .gameJoinTeamSeq( playerInfoDTO.getGameJoinTeamSeq() )
+                        .gameJoinPlayerSeq( gameJoinPlayerSeq )
                         .quarterCode(quarterCode)
                         .inGameYn("Y")
                         .build();
