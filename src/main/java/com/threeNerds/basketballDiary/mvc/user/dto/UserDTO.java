@@ -109,7 +109,7 @@ public class UserDTO {
     public static UserDTO getInstance(User user) {
         return new UserDTO().userId(user.getUserId())
                 .password(user.getPassword())
-                .userName(user.getUserName())
+                .userName(user.getName())
                 .positionCode(user.getPositionCode())
                 .email(user.getEmail())
                 .gender(user.getGender())

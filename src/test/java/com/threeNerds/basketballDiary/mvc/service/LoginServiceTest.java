@@ -7,6 +7,7 @@ import com.threeNerds.basketballDiary.mvc.auth.dto.LoginUserDTO;
 import com.threeNerds.basketballDiary.mvc.user.dto.UserDTO;
 import com.threeNerds.basketballDiary.mvc.user.repository.UserRepository;
 import com.threeNerds.basketballDiary.session.SessionUser;
+import com.threeNerds.basketballDiary.utils.EncryptUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -103,5 +104,14 @@ class LoginServiceTest {
         session.removeAttribute("loginUser");
         UserDTO user = (UserDTO) session.getAttribute("loginUser");
         assertThat(user).isNull();
+    }
+
+    @Test
+    void 비밀번호_생성() {
+        String[] userIdArr = {"test02", "test03", "test04", "test05", "master",};
+        for (String userId : userIdArr ) {
+            String encryptPwd = EncryptUtil.getEncrypt("1234", userId);
+            System.out.println( "UserId : " + userId + " / 비밀번호 : " + encryptPwd );
+        }
     }
 }

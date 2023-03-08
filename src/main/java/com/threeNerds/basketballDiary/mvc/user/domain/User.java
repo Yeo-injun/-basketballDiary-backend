@@ -2,7 +2,7 @@ package com.threeNerds.basketballDiary.mvc.user.domain;
 
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
-import com.threeNerds.basketballDiary.mvc.auth.dto.CreateUserDTO;
+import com.threeNerds.basketballDiary.mvc.auth.controller.request.CreateUserRequest;
 import com.threeNerds.basketballDiary.utils.EncryptUtil;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,7 +25,6 @@ public class User {
     /* 패스워드 */
     private String password;
     /* 이름 */
-    private String userName; // TODO name으로 통일 - DB컬럼명과 일치해야 함.
     private String name;
     /* 포지션 코드 */
     private String positionCode;
@@ -52,29 +51,29 @@ public class User {
     /* 도로명주소 */
     private String roadAddress;
 
-    public static User createForRegistration(CreateUserDTO userDTO)
+    public static User createForRegistration( CreateUserRequest userInfo )
     {
-        LocalDate today = LocalDate.now();
+        LocalDate TODAY_DATE = LocalDate.now();
         /** 비밀번호 암호화 */
-        String plainPassword = userDTO.getPassword();
-        String userId        = userDTO.getUserId();
+        String plainPassword = userInfo.getPassword();
+        String userId        = userInfo.getUserId();
         String cryptPassword = EncryptUtil.getEncrypt(plainPassword, userId);
         return User.builder()
                 .userId(userId)
                 .password(cryptPassword)
-                .name(userDTO.getName())
-                .email(userDTO.getEmail())
-                .gender(userDTO.getGender())
-                .birthYmd(userDTO.getBirthYmd())
-                .height(userDTO.getHeight())
-                .weight(userDTO.getWeight())
-                .regDate(today)
-                .updateDate(today)
+                .name(userInfo.getName())
+                .email(userInfo.getEmail())
+                .gender(userInfo.getGender())
+                .birthYmd(userInfo.getBirthYmd())
+                .height(userInfo.getHeight())
+                .weight(userInfo.getWeight())
+                .regDate( TODAY_DATE )
+                .updateDate( TODAY_DATE )
                 .userRegYn("Y")
-                .sidoCode(userDTO.getSidoCode())
-                .sigunguCode(userDTO.getSigunguCode())
-                .positionCode(userDTO.getPositionCode())
-                .roadAddress(userDTO.getRoadAddress())
+                .sidoCode(userInfo.getSidoCode())
+                .sigunguCode(userInfo.getSigunguCode())
+                .positionCode(userInfo.getPositionCode())
+                .roadAddress(userInfo.getRoadAddress())
                 .build();
     }
 

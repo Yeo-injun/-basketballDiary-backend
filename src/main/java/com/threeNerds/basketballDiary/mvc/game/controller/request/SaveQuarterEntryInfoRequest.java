@@ -28,8 +28,14 @@ import java.util.List;
 @Getter
 public class SaveQuarterEntryInfoRequest {
 
+    private Long gameSeq;
     private Long gameJoinTeamSeq;
     private String homeAwayCode;
     private String quarterCode;
     private List<PlayerInfoDTO> playerList;
+
+    public SaveQuarterEntryInfoRequest gameSeq(Long gameSeq) {
+        this.gameSeq = gameSeq;
+        return this;
+    }
 }

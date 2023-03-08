@@ -2,6 +2,7 @@ package com.threeNerds.basketballDiary.mvc.auth.service;
 
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
+import com.threeNerds.basketballDiary.mvc.auth.controller.request.CreateUserRequest;
 import com.threeNerds.basketballDiary.mvc.auth.dto.CheckDuplicateUserIdDTO;
 import com.threeNerds.basketballDiary.mvc.auth.dto.CreateUserDTO;
 import com.threeNerds.basketballDiary.mvc.user.domain.User;
@@ -46,9 +47,9 @@ public class AuthService {
         }
     }
 
-    public Long createMember(CreateUserDTO userDTO)
+    public Long createMember( CreateUserRequest request )
     {
-        User user = User.createForRegistration(userDTO);
+        User user = User.createForRegistration( request );
         userRepository.saveUser(user);
         return user.getUserSeq();
     }

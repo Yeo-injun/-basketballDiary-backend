@@ -57,12 +57,9 @@ public class AuthController {
      */
     @PostMapping("/registration")
     public ResponseEntity<?> createUser (
-            @RequestBody @Valid CreateUserRequest reqBody
+            @RequestBody @Valid CreateUserRequest request
     ) {
-        CreateUserDTO createUserDTO = new CreateUserDTO();
-        BeanUtils.copyProperties(reqBody, createUserDTO);
-
-        authService.createMember(createUserDTO);
+        authService.createMember( request );
         return RESPONSE_OK;
     }
 

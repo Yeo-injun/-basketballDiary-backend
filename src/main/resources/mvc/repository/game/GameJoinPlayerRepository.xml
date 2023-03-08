@@ -39,7 +39,6 @@
              , EMAIL
           FROM GAME_JOIN_PLAYER
          WHERE 1=1
-           AND GAME_JOIN_TEAM_SEQ   = #{gameJoinTeamSeq}
            AND GAME_JOIN_PLAYER_SEQ = #{gameJoinPlayerSeq}
     </select>
 
