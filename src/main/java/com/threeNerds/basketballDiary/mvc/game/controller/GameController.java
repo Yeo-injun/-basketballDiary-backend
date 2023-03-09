@@ -14,6 +14,7 @@ import com.threeNerds.basketballDiary.mvc.game.domain.GameRecordAuth;
 import com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords;
 import com.threeNerds.basketballDiary.mvc.game.domain.QuarterTeamRecords;
 import com.threeNerds.basketballDiary.mvc.game.dto.*;
+import com.threeNerds.basketballDiary.mvc.game.dto.createGameQuarterBasicInfo.request.CreateGameQuarterBasicInfoRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.deleteGameQuarter.request.DeleteGameQuarterRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameAllQuartersRecords.GetGameAllQuartersRecordsResponse;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameEntry.request.GetGameEntryRequest;
@@ -498,5 +499,23 @@ public class GameController {
 
         GetGameAllQuartersRecordsResponse resBody = gameRecordManagerService.getGameAllQuartersRecords(searchGameDTO);
         return ResponseEntity.ok(resBody);
+    }
+
+    /**
+     * API064 게임쿼터 기초정보생성
+     * @since 23.03.10(금)
+     * @author 여인준
+     */
+    @PostMapping("/{gameSeq}/quarters/{quarterCode}")
+    public ResponseEntity<?> createGameQuarterBasicInfo (
+            @PathVariable(name = "gameSeq") Long gameSeq,
+            @PathVariable(name = "quarterCode") String quarterCode,
+            @RequestBody CreateGameQuarterBasicInfoRequest request
+    ) {
+        request = new CreateGameQuarterBasicInfoRequest()
+                                    .gameSeq( gameSeq )
+                                    .quarterCode( quarterCode );
+        gameRecordManagerService.createGameQuarterBasicInfo( request );
+        return RESPONSE_OK;
     }
 }

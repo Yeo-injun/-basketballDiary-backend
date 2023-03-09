@@ -10,6 +10,7 @@ import com.threeNerds.basketballDiary.mvc.game.controller.response.GameAuthRecor
 import com.threeNerds.basketballDiary.mvc.game.domain.*;
 
 import com.threeNerds.basketballDiary.mvc.game.dto.*;
+import com.threeNerds.basketballDiary.mvc.game.dto.createGameQuarterBasicInfo.request.CreateGameQuarterBasicInfoRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.deleteGameQuarter.request.DeleteGameQuarterRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameAllQuartersRecords.GetGameAllQuartersRecordsResponse;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameAllQuartersRecords.QuarterAllTeamsRecordsDTO;
@@ -341,10 +342,10 @@ public class GameRecordManagerService {
     {
         /** 참가팀 구분 - 홈/어웨이팀 */
         GameJoinTeamRecordDTO joinTeam = joinTeams.stream()
-                                .filter(t -> homeAwayCode.getCode().equals(t.getHomeAwayCode()))
-                                .findFirst()
-                                // TODO 에러메세지 동적으로 처리하기 homeAwayCode.getName();
-                                .orElseThrow(() -> new CustomException(Error.NOT_FOUND_HOME_TEAM));
+                                            .filter(t -> homeAwayCode.getCode().equals(t.getHomeAwayCode()))
+                                            .findFirst()
+                                            // TODO 에러메세지 동적으로 처리하기 homeAwayCode.getName();
+                                            .orElseThrow(() -> new CustomException(Error.NOT_FOUND_HOME_TEAM));
         joinTeam.homeAwayCodeName(joinTeam.getHomeAwayCode());
 
         /** 참가팀의 기록 조회 */
@@ -352,7 +353,7 @@ public class GameRecordManagerService {
         List<QuarterTeamRecords> quarterRecords = quarterTeamRecordsRepository.findQuarterRecordsByJoinTeamSeq(gameJoinTeamSeq);
 
         /** 조회한 기록으로 게임총점수 계산 */
-        Integer gameTotalScore = 0;
+        int gameTotalScore = 0;
         if (quarterRecords.isEmpty()) {
             joinTeam.gameTotalScore(gameTotalScore);
             joinTeam.quarterScore1st(0);
@@ -364,29 +365,23 @@ public class GameRecordManagerService {
 
         for (QuarterTeamRecords qtr : quarterRecords)
         {
-            int quarterScore = qtr.getQuarterTotalScore();
+            qtr.calculateQuarterTotalScore();
+            int quarterScore = qtr.getScore();
             gameTotalScore += quarterScore;
 
             String quarterCode = qtr.getQuarterCode();
-            if (QUARTER_1ST_CODE.equals(quarterCode)) {
-                joinTeam.quarterScore1st(quarterScore);
-                continue;
-            }
-            if (QUARTER_2ND_CODE.equals(quarterCode)) {
-                joinTeam.quarterScore2nd(quarterScore);
-                continue;
-            }
-            if (QUARTER_3RD_CODE.equals(quarterCode)) {
-                joinTeam.quarterScore3rd(quarterScore);
-                continue;
-            }
-            if (QUARTER_4TH_CODE.equals(quarterCode)) {
-                joinTeam.quarterScore4th(quarterScore);
-                continue;
+            if ( QUARTER_1ST_CODE.equals( quarterCode ) ) {
+                joinTeam.quarterScore1st( quarterScore );
+            } else if ( QUARTER_2ND_CODE.equals( quarterCode ) ) {
+                joinTeam.quarterScore2nd( quarterScore );
+            } else if ( QUARTER_3RD_CODE.equals( quarterCode ) ) {
+                joinTeam.quarterScore3rd( quarterScore );
+            } else if ( QUARTER_4TH_CODE.equals( quarterCode ) ) {
+                joinTeam.quarterScore4th( quarterScore );
             }
         }
 
-        joinTeam.gameTotalScore(gameTotalScore);
+        joinTeam.gameTotalScore( gameTotalScore );
         return joinTeam;
     }
 
@@ -445,5 +440,29 @@ public class GameRecordManagerService {
         List<PlayerInfoDTO> resultDVOList = gameRecordManagerRepository.findTeamMembersByGameSeq(searchGameDTO);
 
         return resultDVOList;
+    }
+
+    /**
+     * 23.03.10
+     * 게임쿼터 기초정보 생성
+     *      - gameSeq로 게임참가팀을 조회해서
+     *      - quarterCode로 팀의 쿼터 기록 테이블을 insert친다
+     * @author 여인준
+     */
+    public void createGameQuarterBasicInfo(CreateGameQuarterBasicInfoRequest request) {
+
+        Long gameSeq        = request.getGameSeq();
+        String quarterCode  = request.getQuarterCode();
+
+        List<GameJoinTeam> gameJoinTeams = gameJoinTeamRepo.findAllGameJoinTeam( gameSeq );
+        if ( gameJoinTeams.isEmpty() ) {
+            log.debug("Exception구현하기=================================");
+            return;
+        }
+
+        for ( GameJoinTeam joinTeam : gameJoinTeams ) {
+            QuarterTeamRecords quarterTeamBasicInfo = new QuarterTeamRecords( gameSeq, joinTeam.getGameJoinTeamSeq(), quarterCode );
+            quarterTeamRecordsRepository.create( quarterTeamBasicInfo );
+        }
     }
 }
