@@ -11,6 +11,10 @@ import lombok.Getter;
 public class SearchGameDTO {
     /** 경기 SEQ */
     private Long gameSeq;
+
+    /** 팀 SEQ */
+    private Long teamSeq;
+
     /** 쿼터별 선수기록 SEQ */
     private Long quarterPlayerRecordsSeq;
     /** 선수별 경기 SEQ */
@@ -25,6 +29,10 @@ public class SearchGameDTO {
 
     public SearchGameDTO gameSeq(Long gameSeq) {
         this.gameSeq = gameSeq;
+        return this;
+    }
+    public SearchGameDTO teamSeq(Long teamSeq) {
+        this.teamSeq = teamSeq;
         return this;
     }
     public SearchGameDTO quarterPlayerRecordsSeq(Long quarterPlayerRecordsSeq) {

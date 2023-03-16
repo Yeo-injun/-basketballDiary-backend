@@ -1,11 +1,14 @@
 package com.threeNerds.basketballDiary.mvc.myTeam.controller;
 
 import com.threeNerds.basketballDiary.interceptor.Auth;
-import com.threeNerds.basketballDiary.mvc.dto.PlayerDTO;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.getTeamMembers.request.GetMemeberGradeRequest;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.getTeamMembers.response.GetMemeberGradeResponse;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.searchAllTeamMembers.request.SearchAllTeamMembersRequest;
+import com.threeNerds.basketballDiary.mvc.team.dto.PlayerDTO;
 import com.threeNerds.basketballDiary.mvc.game.service.GameRecordManagerService;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.*;
-import com.threeNerds.basketballDiary.mvc.dto.pagination.PaginatedMyTeamDTO;
-import com.threeNerds.basketballDiary.mvc.dto.pagination.PaginatedTeamMemeberDTO;
+import com.threeNerds.basketballDiary.pagination.PaginatedMyTeamDTO;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.searchAllTeamMembers.response.SearchAllTeamMembersResponse;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.MyTeamService;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.TeamMemberManagerService;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.TeamMemberService;
@@ -64,7 +67,7 @@ public class MyTeamController {
      */
     @Auth(GRADE = TEAM_MEMBER)
     @GetMapping("/{teamSeq}/managers")
-    public ResponseEntity<List<MemberDTO>> searchManagers(
+    public ResponseEntity<List<MemberDTO>> getManagerGrade(
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,
             @PathVariable(value = "teamSeq") Long teamSeq
     ) {
@@ -75,19 +78,37 @@ public class MyTeamController {
     }
 
     /**
-     * API002 : 소속팀 팀원목록 조회
+     * API002 : 소속팀 팀원등급인 팀원 목록 조회
      */
     @Auth(GRADE = TEAM_MEMBER)
     @GetMapping("/{teamSeq}/members")
-    public ResponseEntity<PaginatedTeamMemeberDTO> searchMembers(
+    public ResponseEntity<GetMemeberGradeResponse> getMemberGrade(
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,
             @PathVariable(value = "teamSeq") Long teamSeq,
             @RequestParam(name = "pageNo", defaultValue = "0") Integer pageNo
     ) {
-        log.info("▒▒▒▒▒ API002: MyTeamController.searchMembers");
-        PaginatedTeamMemeberDTO teamMembers = myTeamService.findMembers(teamSeq, pageNo);
+        GetMemeberGradeRequest reqBody = new GetMemeberGradeRequest(teamSeq, pageNo);
+        GetMemeberGradeResponse resBody = myTeamService.getMemberGrade(reqBody);
 
-        return ResponseEntity.ok().body(teamMembers);
+        return ResponseEntity.ok().body(resBody);
+    }
+
+    /**
+     * API036 : 소속팀 전체 팀원목록 검색
+     */
+    @Auth(GRADE = TEAM_MEMBER)
+    @GetMapping("/{teamSeq}/allTeamMembers")
+    public ResponseEntity<SearchAllTeamMembersResponse> searchAllTeamMembers(
+            @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,
+            @PathVariable(value = "teamSeq") Long teamSeq,
+            @RequestParam(name = "pageNo", defaultValue = "0") Integer pageNo,
+            @RequestParam(name = "playerName", required = false) String playerName
+    ) {
+        log.info("▒▒▒▒▒ API002: MyTeamController.searchMembers");
+        SearchAllTeamMembersRequest reqBody = new SearchAllTeamMembersRequest(teamSeq, pageNo, playerName);
+        SearchAllTeamMembersResponse resBody = myTeamService.searchAllTeamMembers(reqBody);
+
+        return ResponseEntity.ok().body(resBody);
     }
 
     /**
@@ -419,6 +440,7 @@ public class MyTeamController {
     ) {
         log.info("▒▒▒▒▒ API052: MyTeamController.searchMyTeamGames");
         GameCondDTO condDTO = new GameCondDTO()
+                                    .userSeq(sessionUser.getUserSeq())
                                     .teamSeq(teamSeq)
                                     .gameBgngYmd(gameBgngYmd)
                                     .gameEndYmd(gameEndYmd)

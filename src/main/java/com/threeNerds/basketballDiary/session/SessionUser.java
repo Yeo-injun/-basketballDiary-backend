@@ -1,12 +1,9 @@
 package com.threeNerds.basketballDiary.session;
 
-import com.threeNerds.basketballDiary.mvc.domain.User;
-import com.threeNerds.basketballDiary.mvc.dto.TeamAuthDTO;
-import com.threeNerds.basketballDiary.mvc.repository.UserRepository;
+import com.threeNerds.basketballDiary.mvc.user.domain.User;
+import com.threeNerds.basketballDiary.mvc.team.dto.TeamAuthDTO;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.List;

@@ -30,4 +30,10 @@ public interface MyTeamRepository {
      */
     List<MyTeamDTO> findPagingMyTeams(SearchMyTeamDTO searchMyTeamDTO);
 
+    /**
+     * 소속팀원 전체 조회 - 페이징 처리
+     * @param 
+     * @return
+     */
+    List<MemberDTO> findAllTeamMemberPaging(MemberDTO searchMemebrCond);
 }

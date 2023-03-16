@@ -117,4 +117,11 @@
             , #{foul}
             )
     </insert>
+
+    <delete id="deleteGameQuarter">
+        DELETE FROM QUARTER_TEAM_RECORDS
+         WHERE 1=1
+           AND GAME_SEQ = #{gameSeq}
+           AND QUARTER_CODE = #{quarterCode}
+    </delete>
 </mapper>

@@ -182,7 +182,8 @@
 
     <select id="findPagingMemberByTeamSeq" parameterType="com.threeNerds.basketballDiary.mvc.myTeam.dto.MemberDTO" resultType="com.threeNerds.basketballDiary.mvc.myTeam.dto.MemberDTO">
         SELECT *
-          FROM (SELECT COUNT(*) OVER() TOTAL_COUNT
+          FROM (
+                SELECT COUNT(*) OVER() TOTAL_COUNT
                      , A.USER_SEQ
                      , B.TEAM_MEMBER_SEQ
                      , B.TEAM_SEQ
@@ -209,8 +210,49 @@
                    AND B.WITHDRAWAL_YN != 'Y'
                    AND B.TEAM_SEQ = #{teamSeq}
                  ORDER BY B.TEAM_AUTH_CODE DESC, A.NAME
-               ) ORDERS LIMIT #{pagerDTO.rowCount} OFFSET #{pagerDTO.offset}
+               )
+        ORDERS LIMIT #{pagerDTO.rowCount} OFFSET #{pagerDTO.offset}
     </select>
 
+
+    <select id="findAllTeamMemberPaging" parameterType="com.threeNerds.basketballDiary.mvc.myTeam.dto.MemberDTO" resultType="com.threeNerds.basketballDiary.mvc.myTeam.dto.MemberDTO">
+        /* MyTeamRepository.findAllTeamMemberPaging */
+        SELECT *
+          FROM (
+                SELECT COUNT(*) OVER() TOTAL_COUNT
+                     , U.USER_SEQ
+                     , TM.TEAM_MEMBER_SEQ
+                     , TM.TEAM_SEQ
+                     , TM.TEAM_AUTH_CODE
+                     , U.NAME  AS USER_NAME
+                     , U.BIRTH_YMD
+                     , U.HEIGHT
+                     , U.WEIGHT
+                     , U.POSITION_CODE
+                     , TM.BACK_NUMBER
+                     , TM.JOIN_YMD
+                     , IFNULL(GJP.TOT_MATCH, 0) TOT_GAME
+                  FROM TEAM_MEMBER TM
+                 INNER JOIN USER U
+                    ON TM.USER_SEQ = U.USER_SEQ
+                  LEFT JOIN (
+                             SELECT USER_SEQ
+                                  , COUNT(*) AS "TOT_MATCH"
+                               FROM GAME_JOIN_PLAYER
+                              WHERE 1=1
+                                AND GAME_JOIN_TEAM_SEQ = #{teamSeq}
+                              GROUP BY GAME_JOIN_TEAM_SEQ, USER_SEQ
+                             ) GJP
+                    ON TM.USER_SEQ = GJP.USER_SEQ
+                 WHERE 1=1
+                   AND TM.WITHDRAWAL_YN != 'Y'
+                   AND TM.TEAM_SEQ = #{teamSeq}
+            <if test='userName != null and !"".equals(userName)'>
+                AND U.NAME LIKE CONCAT( '%', #{userName}, '%' )
+            </if>
+                 ORDER BY TM.TEAM_AUTH_CODE DESC, U.NAME
+              )
+        ORDERS LIMIT #{pagerDTO.rowCount} OFFSET #{pagerDTO.offset}
+    </select>
 
 </mapper>

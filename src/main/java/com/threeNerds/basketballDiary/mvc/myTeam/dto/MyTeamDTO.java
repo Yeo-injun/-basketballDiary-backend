@@ -1,7 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.myTeam.dto;
 
-import com.threeNerds.basketballDiary.mvc.domain.TeamRegularExercise;
-import com.threeNerds.basketballDiary.mvc.dto.team.team.TeamRegularExerciseDTO;
+import com.threeNerds.basketballDiary.mvc.team.domain.TeamRegularExercise;
+import com.threeNerds.basketballDiary.mvc.team.dto.TeamRegularExerciseDTO;
 import lombok.Getter;
 import org.springframework.web.multipart.MultipartFile;
 

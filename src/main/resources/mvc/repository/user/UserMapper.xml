@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.threeNerds.basketballDiary.mvc.user.repository.UserRepository">
+
+    <insert id="saveUser" parameterType="com.threeNerds.basketballDiary.mvc.user.domain.User"
+        useGeneratedKeys="true" keyProperty="userId">
+        INSERT INTO USER ( USER_ID
+                         , NAME
+                         , PWD
+                         , BIRTH_YMD
+                         , EMAIL
+                         , REG_DATE
+                         , UPDATE_DATE
+                         , USER_REG_YN
+                         , GENDER
+                         , HEIGHT
+                         , WEIGHT
+                         , SIDO_CODE
+                         , SIGUNGU_CODE
+                         , POSITION_CODE
+                         , ROADADDRESS)
+        VALUES ( #{userId}
+               , #{name}
+               , #{password}
+               , #{birthYmd}
+               , #{email}
+               , #{regDate}
+               , #{updateDate}
+               , #{userRegYn}
+               , #{gender}
+               , #{height}
+               , #{weight}
+               , #{sidoCode}
+               , #{sigunguCode}
+               , #{positionCode}
+               , #{roadAddress})
+    </insert>
+
+    <select id="findUser" resultType="com.threeNerds.basketballDiary.mvc.user.domain.User">
+        SELECT DISTINCT USER_SEQ
+                      , USER_ID
+                      , NAME
+                      , PWD AS PASSWORD
+                      , EMAIL
+                      , REG_DATE
+                      , UPDATE_DATE
+                      , USER_REG_YN
+                      , GENDER
+                      , BIRTH_YMD
+                      , HEIGHT
+                      , WEIGHT
+                      , SIDO_CODE
+                      , SIGUNGU_CODE
+                      , POSITION_CODE
+                      , ROADADDRESS
+        FROM USER
+        WHERE USER_SEQ=#{id}
+    </select>
+
+    <select id="findUserByUserNameOrEmail" resultType="com.threeNerds.basketballDiary.mvc.user.dto.UserDTO">
+        SELECT USER_SEQ
+             , USER_ID
+             , NAME AS USERNAME
+             , PWD AS PASSWORD
+             , EMAIL
+             , REG_DATE
+             , UPDATE_DATE
+             , USER_REG_YN
+             , GENDER
+             , HEIGHT
+             , WEIGHT
+             , SIDO_CODE
+             , SIGUNGU_CODE
+             , POSITION_CODE
+          FROM USER
+         WHERE 1=1
+        <choose>
+            <when test='userName != "" and userName != null'>
+          AND NAME LIKE '%${userName}%'
+            </when>
+            <when test='email != "" and email != null'>
+          AND EMAIL LIKE '%${email}%'
+            </when>
+            <otherwise></otherwise>
+        </choose>
+    </select>
+
+    <select id="findAuthList" resultType="com.threeNerds.basketballDiary.mvc.team.dto.TeamAuthDTO">
+        SELECT B.TEAM_SEQ
+             , B.TEAM_AUTH_CODE
+          FROM USER A
+         INNER JOIN TEAM_MEMBER B
+            ON A.USER_SEQ = B.USER_SEQ
+         WHERE A.USER_SEQ = #{userSeq}
+    </select>
+
+    <update id="updateUser" parameterType="com.threeNerds.basketballDiary.mvc.authUser.dto.UpdateUserDTO">
+        UPDATE USER
+        SET NAME=#{userName}
+          , EMAIL=#{email}
+          , GENDER=#{gender}
+          , HEIGHT=#{height}
+          , WEIGHT=#{weight}
+          , SIDO_CODE=#{sidoCode}
+          , SIGUNGU_CODE=#{sigunguCode}
+          , POSITION_CODE=#{positionCode}
+          , ROADADDRESS=#{roadAddress}
+        WHERE USER_SEQ=#{userSeq}
+    </update>
+
+    <delete id="deleteUser">
+        DELETE FROM USER WHERE USER_ID = #{id}
+    </delete>
+
+    <select id="findUserByUserId" resultType="com.threeNerds.basketballDiary.mvc.user.domain.User">
+        SELECT USER_ID
+             , USER_SEQ
+             , PWD   AS PASSWORD
+          FROM USER
+         WHERE USER_ID = #{userId}
+    </select>
+
+    <update id="updatePassword" parameterType="com.threeNerds.basketballDiary.mvc.authUser.dto.PasswordUpdateDTO">
+        UPDATE USER
+           SET PWD      = #{newPassword}
+         WHERE USER_SEQ = #{userSeq}
+    </update>
+</mapper>
