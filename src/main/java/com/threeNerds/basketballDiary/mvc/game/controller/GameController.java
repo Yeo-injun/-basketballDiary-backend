@@ -23,12 +23,12 @@ import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayers.request.Ge
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayers.response.GetGameJoinPlayersResponse;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.request.GetGameQuarterRecordsRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.response.GetGameQuarterRecordsResponse;
+import com.threeNerds.basketballDiary.mvc.game.dto.saveQuarterRecords.request.SaveQuarterRecordsRequest;
 import com.threeNerds.basketballDiary.mvc.game.service.GameJoinManagerService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameRecordManagerService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameService;
 import com.threeNerds.basketballDiary.session.SessionUser;
 import com.threeNerds.basketballDiary.utils.CommonUtil;
-import com.threeNerds.basketballDiary.utils.ValidateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -104,26 +104,13 @@ public class GameController {
     // TODO 하나의 서비스로 통일하고(트랜잭션 이슈때문에), 
     // TODO 컨트롤러에서 호출하는 메소드를 서비스에서 구현하고 private메소드로 구현
     @PutMapping("/{gameSeq}/quarters/{quarterCode}")
-    public ResponseEntity<?> processQuarterRecords(
+    public ResponseEntity<?> saveQuarterRecords(
             @PathVariable(name = "gameSeq") Long gameSeq,
             @PathVariable(name = "quarterCode") String quarterCode,
-            @RequestBody QuarterCreationDTO quarterCreationDTO
+            @RequestBody SaveQuarterRecordsRequest requestMessage
     ) {
-        log.debug("call test");
-        if (ObjectUtils.isEmpty(gameSeq))
-            throw new CustomException(Error.NO_PARAMETER);
-        // TODO QuarterCode enum parameter값에 해당하는지 체크 필요 ...
-        if (ObjectUtils.isEmpty(quarterCode))
-            throw new CustomException(Error.NO_PARAMETER);
-        if (ObjectUtils.isEmpty(quarterCreationDTO))
-            throw new CustomException(Error.NO_PARAMETER);
-        if (ObjectUtils.isEmpty(quarterCreationDTO.getHomeAwayTeamRecordDTO()))
-            throw new CustomException(Error.NO_PARAMETER);
-        if (CollectionUtils.isEmpty(quarterCreationDTO.getPlayerRecordDTOList()))
-            throw new CustomException(Error.NO_PARAMETER);
-
-        HomeAwayTeamRecordDTO homeAwayTeamRecordDTO = quarterCreationDTO.getHomeAwayTeamRecordDTO();
-        List<PlayerRecordDTO> playerRecordDTOList = quarterCreationDTO.getPlayerRecordDTOList();
+        HomeAwayTeamRecordDTO homeAwayTeamRecordDTO = requestMessage.getHomeAwayTeamRecordDTO();
+        List<PlayerRecordDTO> playerRecordDTOList = requestMessage.getPlayerRecordDTOList();
 
         // 쿼터별 선수기록 업데이트
         for (PlayerRecordDTO playerRecordDTO : playerRecordDTOList) {
@@ -161,7 +148,7 @@ public class GameController {
             Long quarterTeamRecordsSeq = gameRecordManagerService.createQuarterTeamRecords(quarterTeamRecords);
         }
 
-        return ResponseEntity.ok(null);
+        return RESPONSE_OK;
     }
 
     /**
@@ -285,7 +272,7 @@ public class GameController {
             @PathVariable("gameSeq") Long gameSeq
     ){
         gameService.confirmGame(gameSeq);
-        return ResponseEntity.ok(null);
+        return RESPONSE_OK;
     }
 
     /**
@@ -367,7 +354,7 @@ public class GameController {
     @DeleteMapping("/{gameSeq}")
     public ResponseEntity<?> deleteGame(
             @PathVariable(name = "gameSeq") Long gameSeq
-    ){
+    ) {
         gameService.deleteGame(gameSeq);
         return RESPONSE_OK;
     }
