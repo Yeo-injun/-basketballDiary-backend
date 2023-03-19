@@ -4,10 +4,8 @@ package com.threeNerds.basketballDiary.mvc.game.dto;
 import com.threeNerds.basketballDiary.constant.code.PlayerTypeCode;
 import com.threeNerds.basketballDiary.constant.code.PositionCode;
 import com.threeNerds.basketballDiary.constant.code.QuarterCode;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
 public class QuarterPlayerRecordDTO {

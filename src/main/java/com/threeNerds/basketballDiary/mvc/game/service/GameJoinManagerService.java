@@ -339,7 +339,7 @@ public class GameJoinManagerService {
                         .quarterCode(quarterCode)
                         .inGameYn("Y")
                         .build();
-                quarterPlayerRecordsRepo.create(paramForCreation);
+                quarterPlayerRecordsRepo.save(paramForCreation);
             }
             return;
         }
@@ -351,7 +351,7 @@ public class GameJoinManagerService {
                 .inGameYn("N")
                 .build();
 
-        quarterPlayerRecordsRepo.modifyInGameYn(paramForInitEntry);
+        quarterPlayerRecordsRepo.updateInGameYn(paramForInitEntry);
 
         for (PlayerInfoDTO playerInfoDTO : entry)
         {
@@ -362,7 +362,7 @@ public class GameJoinManagerService {
                     .inGameYn("Y")
                     .build();
 
-            quarterPlayerRecordsRepo.modifyInGameYn(paramForEntry);
+            quarterPlayerRecordsRepo.updateInGameYn(paramForEntry);
         }
         return;
     }

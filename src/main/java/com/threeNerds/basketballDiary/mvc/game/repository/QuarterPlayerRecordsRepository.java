@@ -8,14 +8,13 @@ import java.util.List;
 @Mapper
 public interface QuarterPlayerRecordsRepository {
 
-    QuarterPlayerRecords find(QuarterPlayerRecords quarterPlayerRecords);
     List<QuarterPlayerRecords> findAllInGame(Long gameSeq);
 
+    int save(QuarterPlayerRecords quarterPlayerRecords);
 
-    int modify(QuarterPlayerRecords quarterPlayerRecords);
-    int modifyInGameYn(QuarterPlayerRecords modParamForInGameYn);
+    int updateInGameYn(QuarterPlayerRecords modParamForInGameYn);
+    int updateQuarterRecords(QuarterPlayerRecords quarterPlayerRecords);
 
-    Long create(QuarterPlayerRecords quarterPlayerRecords);
     Long deleteGameQuarter(QuarterPlayerRecords quarterPlayerRecords);
 
 }

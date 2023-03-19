@@ -1,7 +1,5 @@
 package com.threeNerds.basketballDiary.mvc.game.dto.saveQuarterRecords.request;
 
-import com.threeNerds.basketballDiary.mvc.game.dto.HomeAwayTeamRecordDTO;
-import com.threeNerds.basketballDiary.mvc.game.dto.PlayerRecordDTO;
 import lombok.Getter;
 
 import java.util.List;
@@ -9,8 +7,19 @@ import java.util.List;
 
 @Getter
 public class SaveQuarterRecordsRequest {
-    // 경기기록 DTO (단건)
-    HomeAwayTeamRecordDTO homeAwayTeamRecordDTO;
-    // 선수기록 DTO (목록)
-    List<PlayerRecordDTO> playerRecordDTOList;
+
+    private Long gameSeq;
+    private String quarterCode;
+    private List<SavePlayerRecordDTO> homeTeamPlayerRecords;
+    private List<SavePlayerRecordDTO> awayTeamPlayerRecords;
+
+    public SaveQuarterRecordsRequest gameSeq( Long gameSeq ) {
+        this.gameSeq = gameSeq;
+        return this;
+    }
+
+    public SaveQuarterRecordsRequest quarterCode( String quarterCode ) {
+        this.quarterCode = quarterCode;
+        return this;
+    }
 }

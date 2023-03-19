@@ -101,53 +101,17 @@ public class GameController {
      * @author 강창기
      */
     //@Auth(GRADE = USER) TODO
-    // TODO 하나의 서비스로 통일하고(트랜잭션 이슈때문에), 
-    // TODO 컨트롤러에서 호출하는 메소드를 서비스에서 구현하고 private메소드로 구현
     @PutMapping("/{gameSeq}/quarters/{quarterCode}")
     public ResponseEntity<?> saveQuarterRecords(
             @PathVariable(name = "gameSeq") Long gameSeq,
             @PathVariable(name = "quarterCode") String quarterCode,
             @RequestBody SaveQuarterRecordsRequest requestMessage
     ) {
-        HomeAwayTeamRecordDTO homeAwayTeamRecordDTO = requestMessage.getHomeAwayTeamRecordDTO();
-        List<PlayerRecordDTO> playerRecordDTOList = requestMessage.getPlayerRecordDTOList();
+        requestMessage
+                .gameSeq( gameSeq )
+                .quarterCode( quarterCode );
 
-        // 쿼터별 선수기록 업데이트
-        for (PlayerRecordDTO playerRecordDTO : playerRecordDTOList) {
-            // QUARTER_PLAYER_RECORDS 업데이트
-            QuarterPlayerRecords quarterPlayerRecords = QuarterPlayerRecords.builder()
-                    .quarterPlayerRecordsSeq(playerRecordDTO.getQuarterPlayerRecordsSeq())
-                    .build();
-
-            // 기존 쿼터기록 조회
-            quarterPlayerRecords = gameRecordManagerService.findQuarterPlayerRecords(quarterPlayerRecords);
-
-            if (!ObjectUtils.isEmpty(quarterPlayerRecords)) {
-                BeanUtils.copyProperties(playerRecordDTO, quarterPlayerRecords, CommonUtil.getNullPropertyNames(playerRecordDTO));
-                gameRecordManagerService.modifyQuarterPlayerRecords(quarterPlayerRecords);
-            } else {
-                // 신규생성 필요
-                quarterPlayerRecords = new QuarterPlayerRecords();
-                BeanUtils.copyProperties(playerRecordDTO, quarterPlayerRecords);
-                Long quarterPlayerRecordsSeq = gameRecordManagerService.createQuarterPlayerRecords(quarterPlayerRecords);
-            }
-        }
-
-        // 쿼터별 팀기록 업데이트
-        QuarterTeamRecords quarterTeamRecords = QuarterTeamRecords.builder()
-                .quarterTeamRecordsSeq(homeAwayTeamRecordDTO.getQuarterTeamRecordsSeq())
-                .build();
-
-        quarterTeamRecords = gameRecordManagerService.findQuarterTeamRecords(quarterTeamRecords);
-        if (!ObjectUtils.isEmpty(quarterTeamRecords)) {
-            BeanUtils.copyProperties(homeAwayTeamRecordDTO, quarterTeamRecords, CommonUtil.getNullPropertyNames(homeAwayTeamRecordDTO));
-            gameRecordManagerService.modifyQuarterTeamRecords(quarterTeamRecords);
-        } else {
-            quarterTeamRecords = new QuarterTeamRecords();
-            BeanUtils.copyProperties(homeAwayTeamRecordDTO, quarterTeamRecords);
-            Long quarterTeamRecordsSeq = gameRecordManagerService.createQuarterTeamRecords(quarterTeamRecords);
-        }
-
+        gameRecordManagerService.saveQuarterRecord( requestMessage );
         return RESPONSE_OK;
     }
 
