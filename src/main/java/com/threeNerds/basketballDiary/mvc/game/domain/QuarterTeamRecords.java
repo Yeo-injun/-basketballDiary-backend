@@ -35,8 +35,9 @@ public class QuarterTeamRecords {
     private int foul;
 
     /** 쿼터팀레코드 초기화 */
-    public QuarterTeamRecords( Long gameSeq, Long gameJoinTeamSeq, String quarterCode ) {
+    public QuarterTeamRecords( Long gameSeq, String homeAwayCode, Long gameJoinTeamSeq, String quarterCode ) {
         this.gameSeq = gameSeq;
+        this.homeAwayCode = homeAwayCode;
         this.gameJoinTeamSeq = gameJoinTeamSeq;
         this.quarterCode = quarterCode;
         this.quarterTime = "0000";

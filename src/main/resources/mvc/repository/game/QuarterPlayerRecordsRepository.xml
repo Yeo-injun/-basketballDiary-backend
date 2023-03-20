@@ -34,7 +34,7 @@
          WHERE 1=1
            AND QUARTER_CODE         = #{quarterCode}
         <choose>
-            <when test='gameJoinPlayerSeq != null and !"".equals(gameJoinPlayerSeq)'>
+            <when test='gameJoinPlayerSeq != null'>
            AND GAME_JOIN_PLAYER_SEQ = #{gameJoinPlayerSeq}
             </when>
             <otherwise>
@@ -63,6 +63,7 @@
 
 
     <insert id="save" parameterType="com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords">
+        /* QuarterPlayerRecordsRepository.save */
         <selectKey keyProperty="quarterPlayerRecordsSeq" order="AFTER" resultType="java.lang.Long">
         SELECT LAST_INSERT_ID()
         </selectKey>

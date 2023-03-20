@@ -169,14 +169,9 @@ public class GameRecordManagerService {
      */
     public GetGameAllQuartersRecordsResponse getGameAllQuartersRecords(SearchGameDTO searchGameDTO)
     {
-//        if(ObjectUtils.isEmpty(searchGameDTO.getGameSeq()))
-//            throw new CustomException(Error.NO_PARAMETER);
-        Game game = gameRepository.findGame(searchGameDTO.getGameSeq());
-
-        boolean hasNoGameInfo = ObjectUtils.isEmpty(game);
-        if(hasNoGameInfo) {
-            throw new CustomException(Error.NOT_FOUND_GAME);
-        }
+        Game game = Optional
+                        .ofNullable( gameRepository.findGame( searchGameDTO.getGameSeq() ) )
+                        .orElseThrow( () -> new CustomException(Error.NOT_FOUND_GAME) );
 
         List<QuarterTeamRecordsDTO> allQuarterRecords = gameRecordManagerRepository.findAllQuarterRecords(searchGameDTO);
         if (allQuarterRecords.isEmpty()) {
@@ -380,7 +375,12 @@ public class GameRecordManagerService {
         }
 
         for ( GameJoinTeam joinTeam : gameJoinTeams ) {
-            QuarterTeamRecords quarterTeamBasicInfo = new QuarterTeamRecords( gameSeq, joinTeam.getGameJoinTeamSeq(), quarterCode );
+            QuarterTeamRecords quarterTeamBasicInfo = new QuarterTeamRecords(
+                    gameSeq ,
+                    joinTeam.getHomeAwayCode() ,
+                    joinTeam.getGameJoinTeamSeq() ,
+                    quarterCode
+            );
             quarterTeamRecordsRepository.save( quarterTeamBasicInfo );
         }
     }
@@ -407,12 +407,14 @@ public class GameRecordManagerService {
         /** 홈팀 경기기록 입력 */
         recordQuarterStat(
                 filterGameJoinTeamByHomeAwayCode( allTeamRecords, HomeAwayCode.HOME_TEAM),
-                requestMessage.getHomeTeamPlayerRecords() );
+                requestMessage.getHomeTeamPlayerRecords()
+        );
 
         /** 어웨이팀 경기기록 입력 */
         recordQuarterStat(
                 filterGameJoinTeamByHomeAwayCode( allTeamRecords, HomeAwayCode.AWAY_TEAM),
-                requestMessage.getAwayTeamPlayerRecords() );
+                requestMessage.getAwayTeamPlayerRecords()
+        );
 
     }
 

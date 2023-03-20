@@ -54,18 +54,19 @@
         UPDATE QUARTER_TEAM_RECORDS
            SET QUARTER_CODE = #{quarterCode}
              , QUARTER_TIME = #{quarterTime}
-             , FREE_THROW = #{freeThrow}
-             , TWO_POINT = #{twoPoint}
-             , THREE_POINT = #{threePoint}
-             , ASSIST = #{assist}
-             , REBOUND = #{rebound}
-             , STEAL = #{steal}
-             ,  BLOCK = #{block}
-             , TURNOVER = #{turnover}
-             , FOUL = #{foul}
+             , SCORE        = #{score}
+             , FREE_THROW   = #{freeThrow}
+             , TWO_POINT    = #{twoPoint}
+             , THREE_POINT  = #{threePoint}
+             , ASSIST       = #{assist}
+             , REBOUND      = #{rebound}
+             , STEAL        = #{steal}
+             , BLOCK        = #{block}
+             , TURNOVER     = #{turnover}
+             , FOUL         = #{foul}
          WHERE 1=1
         <choose>
-            <when test='quarterTeamRecordsSeq != null and !"".equals(quarterTeamRecordsSeq)'>
+            <when test='quarterTeamRecordsSeq != null'>
            AND QUARTER_TEAM_RECORDS_SEQ = #{quarterTeamRecordsSeq}
             </when>
             <otherwise>
@@ -77,6 +78,7 @@
     </update>
 
     <insert id="save" parameterType="com.threeNerds.basketballDiary.mvc.game.domain.QuarterTeamRecords">
+        /* QuarterTeamRecordsRepository.save */
         <selectKey keyProperty="quarterTeamRecordsSeq" order="AFTER" resultType="java.lang.Long">
             SELECT LAST_INSERT_ID()
         </selectKey>
