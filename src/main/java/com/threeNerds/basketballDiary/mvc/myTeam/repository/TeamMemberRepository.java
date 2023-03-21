@@ -9,58 +9,43 @@ import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface TeamMemberRepository {
-    /**
-     * 팀원 등록
-     * @param teamMember
-     * @return
-     */
-    int saveTeamMemeber(TeamMember teamMember);
+    /**********
+     * SELECT
+     **********/
+    /** 팀원 중복여부 확인 TODO 삭제검토  */
+    int checkDuplicatedTeamMember(CmnMyTeamDTO joinRequest);
 
-    /**
-     * 팀원 조회
-     * @param joinRequest
-     * @return
-     */
-     TeamMember findTeamMember(TeamJoinRequest joinRequest);
+    /** 팀원 조회 */
+    TeamMember findTeamMember(TeamJoinRequest joinRequest);
 
-    /** TODO 삭제검토
-     * 팀원 중복여부 확인
-     * @param joinRequest
-     * @return JoinRequestDTO
-     */
-     int checkDuplicatedTeamMember(CmnMyTeamDTO joinRequest);
-
-    /**
-     * 팀원 단건조회(팀원SEQ로)
-     * @param teamMemberSeq
-     * @return
-     */
+    /** 팀원 단건조회(팀원SEQ로) */
     TeamMember findByTeamMemberSeq(Long teamMemberSeq);
-
-    /**
-     * 팀원 강퇴상태로 수정
-     * @param teamMember
-     * @return
-     */
-    int updateWithdrawalState(TeamMember teamMember);
-
-    /**
-     * 팀원 권한정보 수정
-     * @param teamMember
-     * @return int
-     */
-    int updateTeamAuth(TeamMember teamMember);
-
-    int updateMyTeamProfile(ModifyMyTeamProfileDTO userDto);
-
-    void deleteMyTeamProfile(FindMyTeamProfileDTO userDto);
 
     Long findMyTeamCount(Long userSeq);
 
-    /**
-     * 사용자 및 팀Seq로 팀원정보 조회
-     * @param tmParam
-     * @return TeamMember
-     **/
+    /** 사용자 및 팀Seq로 팀원정보 조회 */
     TeamMember findTeamMemberByUserAndTeamSeq(TeamMember tmParam);
+
+    /**********
+     * INSERT
+     **********/
+    /** 팀원 등록  */
+    int saveTeamMemeber(TeamMember teamMember);
+
+    /**********
+     * UPDATE
+     **********/
+    /** 팀원 강퇴상태로 수정 */
+    int updateWithdrawalState(TeamMember teamMember);
+
+    int updateMyTeamProfile(ModifyMyTeamProfileDTO userDto);
+
+    /** 팀원 권한정보 수정 */
+    int updateTeamAuth(TeamMember teamMember);
+
+    /**********
+     * DELETE
+     **********/
+    int deleteMyTeamProfile(FindMyTeamProfileDTO userDto);
+
 }

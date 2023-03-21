@@ -60,32 +60,6 @@
          WHERE TEAM_SEQ = #{teamSeq}
     </select>
 
-    <select id="findAll" resultType="com.threeNerds.basketballDiary.mvc.team.dto.TeamDTO">
-        SELECT A.TEAM_SEQ
-             , A.LEADER_USER_SEQ
-             , A.TEAM_NAME
-             , A.TEAM_IMAGE_PATH
-             , A.HOMETOWN
-             , A.INTRODUCTION
-             , A.FOUNDATION_YMD
-             , A.REG_DATE
-             , A.UPDATE_DATE
-             , A.SIDO_CODE
-             , A.SIGUNGU_CODE
-             , COUNT(B.USER_SEQ) OVER(PARTITION BY B.TEAM_SEQ) AS TOT_MEMBER
-          FROM TEAM A
-     LEFT JOIN (SELECT * FROM TEAM_MEMBER WHERE WITHDRAWAL_YN != 'Y') B
-            ON A.TEAM_SEQ = B.TEAM_SEQ
-         WHERE 1=1
-        <if test="teamName != null and !''.equals(teamName)">
-           AND A.TEAM_NAME LIKE '%' || #{teamName} ||'%'
-        </if>
-        <if test="sigungu != null and !''.equals(sigungu)">
-           AND A.SIGUNGU_CODE = #{sigungu}
-        </if>
-      ORDER BY A.TEAM_NAME
-    </select>
-
     <select id="findPagingTeam" resultType="com.threeNerds.basketballDiary.mvc.team.dto.TeamDTO">
         SELECT *
           FROM ( SELECT COUNT(*) OVER() TOTAL_COUNT

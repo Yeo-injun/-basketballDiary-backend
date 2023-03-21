@@ -9,10 +9,25 @@ import java.util.List;
 
 @Mapper
 public interface TeamRepository {
-    Long saveTeam(Team team);
-    void updateTeam(Team team);
+
+    /**********
+     * SELECT
+     **********/
     Team findByTeamSeq(Long teamSeq);
-    List<TeamDTO> findAll(SearchTeamDTO searchTeamDTO);
     List<TeamDTO> findPagingTeam(SearchTeamDTO searchTeamDTO);
-    void deleteById(Long teamSeq);
+
+    /**********
+     * INSERT
+     **********/
+    int saveTeam(Team team);
+
+    /**********
+     * UPDATE
+     **********/
+    int updateTeam(Team team);
+
+    /**********
+     * DELETE
+     **********/
+    int deleteById(Long teamSeq);
 }
