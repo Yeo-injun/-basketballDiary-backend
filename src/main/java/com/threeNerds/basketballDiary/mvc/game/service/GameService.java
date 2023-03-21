@@ -32,8 +32,8 @@ public class GameService {
     private final GameRecordAuthRepository gameRecordAuthRepo;
 
     public void deleteGame(Long gameSeq){
-        boolean isDeleteGame = gameRepository.deleteGame(gameSeq).compareTo(0L) > 0;
-        if (!isDeleteGame) {
+        boolean isDeleteGame = gameRepository.deleteGame(gameSeq) > 0;
+        if ( !isDeleteGame ) {
             // TODO 임시 에러 던지기 - 삭제할 게임이 없습니다.
             throw new CustomException(Error.INVALID_PARAMETER);
         }
