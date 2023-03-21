@@ -20,9 +20,9 @@
         /* GameJoinTeamRepository.findAllGameJoinTeam */
         SELECT GAME_JOIN_TEAM_SEQ
              , GAME_SEQ
+             , HOME_AWAY_CODE
              , TEAM_SEQ
              , TEAM_NAME
-             , HOME_AWAY_CODE
           FROM GAME_JOIN_TEAM
          WHERE 1=1
            AND GAME_SEQ = #{gameSeq}
