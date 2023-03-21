@@ -12,14 +12,29 @@ import java.util.List;
 
 @Mapper
 public interface UserRepository {
+    /**********
+     * SELECT
+     **********/
     User findUser(Long userSeq);
     User findUserByUserId(String userId);
 
     List<UserDTO> findUserByUserNameOrEmail(CmnUserDTO findUserCond);
     List<TeamAuthDTO> findAuthList(User user);
 
-    Long saveUser(User user);
-    void updateUser(UpdateUserDTO user);
-    void deleteUser(String id);
-    void updatePassword(PasswordUpdateDTO passwordUpdateDTO);
+    /**********
+     * INSERT
+     **********/
+    int saveUser(User user);
+
+    /**********
+     * UPDATE
+     **********/
+    int updateUser(UpdateUserDTO user);
+    int updatePassword(PasswordUpdateDTO passwordUpdateDTO);
+
+    /**********
+     * DELETE
+     **********/
+    int deleteUser(String id);
+
 }

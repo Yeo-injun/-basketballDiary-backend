@@ -8,8 +8,25 @@ import java.util.List;
 
 @Mapper
 public interface TeamRegularExerciseRepository {
+
+    /**********
+     * SELECT
+     **********/
     List<TeamRegularExerciseDTO> findByTeamSeq(Long teamSeq);
-    void saveTeamRegularExercise(TeamRegularExercise teamRegularExercise);
-    void updateTeamRegularExercise(TeamRegularExercise teamRegularExercise);
-    void deleteTeamRegularExercise(Long teamRegularExerciseSeq);
+
+    /**********
+     * INSERT
+     **********/
+    int saveTeamRegularExercise(TeamRegularExercise teamRegularExercise);
+
+
+    /**********
+     * UPDATE
+     **********/
+    int updateTeamRegularExercise(TeamRegularExercise teamRegularExercise);
+
+    /**********
+     * DELETE
+     **********/
+    int deleteTeamRegularExercise(Long teamRegularExerciseSeq);
 }
