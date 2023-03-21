@@ -7,14 +7,25 @@ import java.util.List;
 
 @Mapper
 public interface QuarterPlayerRecordsRepository {
-
+    /**********
+     * SELECT
+     **********/
     List<QuarterPlayerRecords> findAllInGame(Long gameSeq);
 
+    /**********
+     * INSERT
+     **********/
     int save(QuarterPlayerRecords quarterPlayerRecords);
 
+    /**********
+     * UPDATE
+     **********/
     int updateInGameYn(QuarterPlayerRecords modParamForInGameYn);
     int updateQuarterRecords(QuarterPlayerRecords quarterPlayerRecords);
 
+    /**********
+     * DELETE
+     **********/
     Long deleteGameQuarter(QuarterPlayerRecords quarterPlayerRecords);
 
 }

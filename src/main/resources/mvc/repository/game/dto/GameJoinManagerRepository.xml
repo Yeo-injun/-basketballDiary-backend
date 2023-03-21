@@ -3,40 +3,6 @@
 
 <mapper namespace="com.threeNerds.basketballDiary.mvc.game.repository.dto.GameJoinManagerRepository">
 
-    <select id="findEntryList" resultType="com.threeNerds.basketballDiary.mvc.game.dto.QuarterPlayerRecordDTO">
-        /* GameJoinManagerRepository.findEntryList */
-        SELECT QPR.QUARTER_PLAYER_RECORDS_SEQ
-             , QPR.GAME_SEQ
-             , QPR.HOME_AWAY_CODE
-             , QPR.GAME_JOIN_TEAM_SEQ
-             , QPR.GAME_JOIN_PLAYER_SEQ
-             , QPR.QUARTER_CODE
-             , QPR.IN_GAME_YN
-             , QPR.TRY_FREE_THROW
-             , QPR.FREE_THROW
-             , QPR.TRY_TWO_POINT
-             , QPR.TWO_POINT
-             , QPR.TRY_THREE_POINT
-             , QPR.THREE_POINT
-             , QPR.ASSIST
-             , QPR.REBOUND
-             , QPR.STEAL
-             , QPR.BLOCK
-             , QPR.TURNOVER
-             , QPR.FOUL
-             , GJP.PLAYER_TYPE_CODE
-             , GJP.NAME
-             , GJP.BACK_NUMBER
-             , GJP.POSITION_CODE
-          FROM GAME_JOIN_PLAYER GJP
-         INNER JOIN QUARTER_PLAYER_RECORDS QPR
-            ON GJP.GAME_JOIN_PLAYER_SEQ = QPR.GAME_JOIN_PLAYER_SEQ
-         WHERE 1=1
-           AND GJP.GAME_JOIN_TEAM_SEQ = #{gameJoinTeamSeq}
-           AND QPR.QUARTER_CODE       = #{quarterCode}
-           AND QPR.IN_GAME_YN         = 'Y'
-    </select>
-
     <select id="findOneTeamEntry" resultType="com.threeNerds.basketballDiary.mvc.game.dto.QuarterPlayerRecordDTO">
         /* GameJoinManagerRepository.findOneTeamEntry */
         SELECT QPR.QUARTER_PLAYER_RECORDS_SEQ
