@@ -34,7 +34,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ErrorResponse.toResponseEntity(ex.getError());
     }
 
-    @ExceptionHandler(value = { NullPointerException.class })
+    @ExceptionHandler(value = { NullPointerException.class  })
     protected ResponseEntity<ErrorResponse> handleNullPointerException (NullPointerException ex)
     {
         log.error("handleCustomException throw CustomException : {}", ex.getMessage(),ex);

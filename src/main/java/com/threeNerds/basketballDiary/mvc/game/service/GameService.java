@@ -63,7 +63,7 @@ public class GameService {
         Long newGameSeq = newGame.getGameSeq();
 
         /** 게임기록권한 정보 생성 */
-        GameRecordAuth gameCreatorAuth = GameRecordAuth.getCreatorAuth(newGameSeq, teamMemeberSeq);
+        GameRecordAuth gameCreatorAuth = GameRecordAuth.createCreator(newGameSeq, teamMemeberSeq);
         gameRecordAuthRepo.saveGameRecordAuth(gameCreatorAuth);
 
         /** 생성된 게임Seq 반환 */
