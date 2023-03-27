@@ -2,6 +2,9 @@ package com.threeNerds.basketballDiary.mvc.team.dto;
 
 import lombok.Getter;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
@@ -16,7 +19,7 @@ public class TeamDTO {
 
     /* 팀 정보 */
     private Long teamSeq;
-    private Long leaderUserSeq;
+    @NotBlank(message = "리더 seq 값이 없습니다") private Long leaderUserSeq;
     private String teamName;
     private String teamImagePath;
     private String hometown;
