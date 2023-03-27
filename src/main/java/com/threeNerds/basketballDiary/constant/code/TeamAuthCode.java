@@ -26,14 +26,11 @@ public enum TeamAuthCode {
     // enum의 열거된 항목들의 code값을 통해 이름을 가져오기
     public static String nameOf(String code)
     {
-//        if (code == null) return "";
-
         String codeName = Arrays.stream(values())
                 .filter(item -> item.getCode().equals(code))
                 .map(TeamAuthCode::getName)
                 .findAny()
                 .orElse("");
-//                .get();
         return codeName;
     }
 

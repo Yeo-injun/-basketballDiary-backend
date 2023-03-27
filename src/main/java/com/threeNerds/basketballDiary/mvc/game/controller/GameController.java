@@ -23,12 +23,14 @@ import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayers.request.Ge
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayers.response.GetGameJoinPlayersResponse;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.request.GetGameQuarterRecordsRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.response.GetGameQuarterRecordsResponse;
+import com.threeNerds.basketballDiary.mvc.game.dto.saveGameRecorder.request.SaveGameRecorderRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.saveQuarterRecords.request.SaveQuarterRecordsRequest;
 import com.threeNerds.basketballDiary.mvc.game.service.GameJoinManagerService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameRecordManagerService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameService;
 import com.threeNerds.basketballDiary.session.SessionUser;
 import com.threeNerds.basketballDiary.utils.CommonUtil;
+import com.threeNerds.basketballDiary.utils.SessionUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -40,11 +42,14 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static com.threeNerds.basketballDiary.constant.HttpResponseConst.RESPONSE_CREATED;
 import static com.threeNerds.basketballDiary.constant.HttpResponseConst.RESPONSE_OK;
+import static com.threeNerds.basketballDiary.constant.UserAuthConst.TEAM_MEMBER;
 import static com.threeNerds.basketballDiary.constant.UserAuthConst.USER;
 import static com.threeNerds.basketballDiary.utils.SessionUtil.LOGIN_USER;
 
@@ -338,19 +343,26 @@ public class GameController {
     }
 
     /**
-     * API056 게임기록자 저장
+     * API056 게임기록자 저장 TODO 권한체크 작동 확인
      */
+    @Auth(GRADE = TEAM_MEMBER)
     @PostMapping("/{gameSeq}/gameRecorder")
     public ResponseEntity<?> saveGameRecorder(
             @PathVariable("gameSeq") Long gameSeq,
-            @RequestBody GameRecordAuth gameRecordAuth
+            @RequestBody SaveGameRecorderRequest request
     ){
-        GameRecordAuth gameAuthRecorderDTO = GameRecordAuth
-                                                    .getOnlyWriterAuth(gameSeq,gameRecordAuth.getTeamMemberSeq());
+        SessionUser userSession = SessionUtil.getSessionUser();
+        Map<Long, Long> tempAuth = new HashMap<Long, Long>();
+        tempAuth.put( 8L, 3L );
 
-        gameRecordManagerService.saveAuthRecorder(gameAuthRecorderDTO);
+        request.gameSeq( gameSeq )
+//               .userSeq( userSession.getUserSeq() )
+//               .userTeamAuth( userSession.getUserAuth() );
+                .userTeamAuth( tempAuth );
 
-        return ResponseEntity.status(HttpStatus.OK).body(null);
+        gameRecordManagerService.saveGameRecorder( request );
+
+        return RESPONSE_OK;
     }
 
     /**
@@ -419,7 +431,7 @@ public class GameController {
     @PostMapping("/{gameSeq}/gameJoinTeams")
     public ResponseEntity<?> confirmJoinTeam (
             @PathVariable(name = "gameSeq") Long gameSeq,
-            @RequestBody ConfirmGameJoinTeamRequest reqBody
+            @Valid @RequestBody ConfirmGameJoinTeamRequest reqBody
     ) {
         GameJoinTeamCreationDTO joinTeamCreation = new GameJoinTeamCreationDTO()
                                         .gameSeq(gameSeq)

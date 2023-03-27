@@ -20,13 +20,16 @@ import com.threeNerds.basketballDiary.mvc.game.dto.getGameAllQuartersRecords.Qua
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.request.GetGameQuarterRecordsRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.response.GetGameQuarterRecordsResponse;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.response.TeamQuarterRecordsDTO;
+import com.threeNerds.basketballDiary.mvc.game.dto.saveGameRecorder.request.SaveGameRecorderRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.saveQuarterRecords.request.SavePlayerRecordDTO;
 import com.threeNerds.basketballDiary.mvc.game.dto.saveQuarterRecords.request.SaveQuarterRecordsRequest;
 import com.threeNerds.basketballDiary.mvc.game.repository.*;
 import com.threeNerds.basketballDiary.mvc.game.repository.dto.GameRecordManagerRepository;
+import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameCondDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameJoinTeamRecordDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameRecordDTO;
+import com.threeNerds.basketballDiary.mvc.myTeam.repository.TeamMemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -48,6 +51,8 @@ public class GameRecordManagerService {
 
     private final GameRecordManagerRepository gameRecordManagerRepository;
     private final GameRecordAuthRepository gameRecordAuthRepository;
+
+    private final TeamMemberRepository teamMemberRepo;
 
     private final String QUARTER_1ST_CODE = QuarterCode.FIRST.getCode();
     private final String QUARTER_2ND_CODE = QuarterCode.SECOND.getCode();
@@ -332,8 +337,45 @@ public class GameRecordManagerService {
      * 게임기록자 저장
      * @author 이성주
      */
-    public void saveAuthRecorder(GameRecordAuth gameRecordAuth){
-        gameRecordAuthRepository.saveGameRecordAuth(gameRecordAuth);
+    public void saveGameRecorder( SaveGameRecorderRequest request ) {
+        Long gameSeq = request.getGameSeq();
+        Long userSeq = request.getUserSeq();
+        Map<Long, Long> userTeamAuth = request.getUserTeamAuth();
+
+        /** 게임참가팀의 팀원인지 확인 - 게임기록자가 되려면 게임에 참가한 팀의 팀원이어야 한다. */
+        List<GameJoinTeam> joinTeams = gameJoinTeamRepo.findAllGameJoinTeam( gameSeq );
+        if ( joinTeams.isEmpty() ) {
+            throw new CustomException(Error.TEAM_NOT_FOUND);
+        }
+
+        Long userJoinTeamSeq = getTeamSeqForUserJoined( joinTeams, userTeamAuth );
+        boolean isTeamMember = userJoinTeamSeq > 0L;
+        if ( !isTeamMember ) {
+            throw new CustomException(Error.ONLY_TEAM_MEMBER_HANDLE);
+        }
+
+        /** 게임참가팀의 팀원일 경우 게임기록자로 추가한다. */
+        TeamMember teamMemberParam = TeamMember.builder()
+                                        .userSeq(userSeq)
+                                        .teamSeq(userJoinTeamSeq)
+                                        .build();
+        TeamMember teamMember = Optional
+                                    .ofNullable( teamMemberRepo.findTeamMemberByUserAndTeamSeq( teamMemberParam ) )
+                                    .orElseThrow( () -> new CustomException(Error.MY_TEAM_NOT_FOUND));
+
+        GameRecordAuth newRecorder = GameRecordAuth.createOnlyWriter( gameSeq, teamMember.getTeamMemberSeq() );
+        /** TODO 기록자 중복 체크 - GameSeq와 TeamMemberSeq로 조회시 기존 데이터 존재하는지 체크 */
+        gameRecordAuthRepository.saveGameRecordAuth( newRecorder );
+    }
+
+    private Long getTeamSeqForUserJoined( List<GameJoinTeam> joinTeams, Map<Long, Long> userTeamAuth ) {
+        Optional<GameJoinTeam> joinTeam = joinTeams.stream()
+                .filter( t -> userTeamAuth.containsKey( t.getTeamSeq() ) )
+                .findFirst();
+        if ( joinTeam.isPresent() ) {
+            return joinTeam.get().getTeamSeq();
+        }
+        return 0L;
     }
 
     /**

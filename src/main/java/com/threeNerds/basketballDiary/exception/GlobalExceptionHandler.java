@@ -5,6 +5,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
@@ -28,7 +29,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ErrorResponse.toResponseEntity(ex.getError());
     }
 
-    @ExceptionHandler(value = { NullPointerException.class })
+    @ExceptionHandler(value = { NullPointerException.class  })
     protected ResponseEntity<ErrorResponse> handleNullPointerException (NullPointerException ex)
     {
         log.error("handleCustomException throw CustomException : {}", ex.getMessage(),ex);
