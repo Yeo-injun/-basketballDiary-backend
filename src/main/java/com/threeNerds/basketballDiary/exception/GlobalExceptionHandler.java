@@ -1,15 +1,14 @@
 package com.threeNerds.basketballDiary.exception;
 
-import com.threeNerds.basketballDiary.exception.custom.TeamNotFound;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
-import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.HashMap;
@@ -41,9 +40,21 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ErrorResponse.toResponseEntity(Error.INTERNAL_ERROR);
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    protected ResponseEntity<ErrorResponseV1> MethodArgumentNotValidException(MethodArgumentNotValidException ex){
-
+    /**
+     * 다음 오류 해결 : Ambiguous @ExceptionHandler method mapped for [class org.springframework.web.bind.MethodArgumentNotValidException]
+     * https://velog.io/@litsynp/Getting-Ambiguous-ExceptionHandler-method-mapped-for-XXXException
+     * 부모 클래스인 ResponseEntityExceptionHandler 내부에서 MethodArgumentNotValidException을 처리하는 메소드가 존재함
+     * 이때문에 @ExceptionHandler로 MethodArgumentNotValidException를 처리하려고 하는 메소드를 따로 만들면 Spring은 MethodArgumentNotValidExcpetion을 처리하는 Bean을 무엇을 기준으로 만들어야 할지 특정할 수 없음
+     * 따라서 ResponseEntityExceptionHandler에서 구현한 handleMethodArgumentNotValid() 메소드를 override해서 구현해야 함.
+     */
+//    @ExceptionHandler(value = { MethodArgumentNotValidException.class })
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid (
+            MethodArgumentNotValidException ex,
+            HttpHeaders headers,
+            HttpStatus status,
+            WebRequest request
+    ) {
         int statusCode = HttpStatus.BAD_REQUEST.value();
         String message = HttpStatus.BAD_REQUEST.getReasonPhrase();
 
