@@ -14,10 +14,18 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 부모 클래스인 ResponseEntityExceptionHandler 내부에서 기본적으로 처리해주는 Exception이 존재 ( MethodArgumentNotValidException 포함 )
+ * 다음 오류 해결 : Ambiguous @ExceptionHandler method mapped for [class org.springframework.web.bind.MethodArgumentNotValidException]
+ * https://velog.io/@litsynp/Getting-Ambiguous-ExceptionHandler-method-mapped-for-XXXException
+ * 이때문에 @ExceptionHandler로 MethodArgumentNotValidException를 처리하려고 하는 메소드를 따로 만들면 Spring은 MethodArgumentNotValidExcpetion을 처리하는 Bean을 무엇을 기준으로 만들어야 할지 특정할 수 없음
+ * 따라서 ResponseEntityExceptionHandler에서 구현한 handleMethodArgumentNotValid() 메소드를 override해서 구현해야 함.
+ */
+
 // TODO @RestControllerAdvice에 대한 학습 필요
 @Slf4j
 @RestControllerAdvice
-public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+public class GlobalExceptionHandler { //extends ResponseEntityExceptionHandler {
 
     /**
      * @ExceptionHandelr에 value로 할당해준 Exception 클래스가 예외로 던져지면 해당 메소드가 호출된다.
@@ -40,21 +48,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ErrorResponse.toResponseEntity(Error.INTERNAL_ERROR);
     }
 
-    /**
-     * 다음 오류 해결 : Ambiguous @ExceptionHandler method mapped for [class org.springframework.web.bind.MethodArgumentNotValidException]
-     * https://velog.io/@litsynp/Getting-Ambiguous-ExceptionHandler-method-mapped-for-XXXException
-     * 부모 클래스인 ResponseEntityExceptionHandler 내부에서 MethodArgumentNotValidException을 처리하는 메소드가 존재함
-     * 이때문에 @ExceptionHandler로 MethodArgumentNotValidException를 처리하려고 하는 메소드를 따로 만들면 Spring은 MethodArgumentNotValidExcpetion을 처리하는 Bean을 무엇을 기준으로 만들어야 할지 특정할 수 없음
-     * 따라서 ResponseEntityExceptionHandler에서 구현한 handleMethodArgumentNotValid() 메소드를 override해서 구현해야 함.
-     */
-//    @ExceptionHandler(value = { MethodArgumentNotValidException.class })
-    @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid (
-            MethodArgumentNotValidException ex,
-            HttpHeaders headers,
-            HttpStatus status,
-            WebRequest request
-    ) {
+
+    @ExceptionHandler(value = { MethodArgumentNotValidException.class })
+    protected ResponseEntity<Object> handleMethodArgumentNotValid ( MethodArgumentNotValidException ex ) {
         int statusCode = HttpStatus.BAD_REQUEST.value();
         String message = HttpStatus.BAD_REQUEST.getReasonPhrase();
 
