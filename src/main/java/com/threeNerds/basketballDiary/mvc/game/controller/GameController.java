@@ -19,6 +19,8 @@ import com.threeNerds.basketballDiary.mvc.game.dto.deleteGameQuarter.request.Del
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameAllQuartersRecords.GetGameAllQuartersRecordsResponse;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameEntry.request.GetGameEntryRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameEntry.response.GetGameEntryResponse;
+import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayerRecordsByQuarter.request.GetGameJoinPlayerRecordsByQuarterRequest;
+import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayerRecordsByQuarter.response.GetGameJoinPlayerRecordsByQuarterResponse;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayers.request.GetGameJoinPlayersRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayers.response.GetGameJoinPlayersResponse;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.request.GetGameQuarterRecordsRequest;
@@ -130,7 +132,6 @@ public class GameController {
      * 23.02.19(일) 인준 - API url 수정 (gameJoinTeamSeq를 화면에서 계속 가지고 있는 것이 번거롭기 때문)
      */
 //    @Auth(GRADE = USER)
-//    @GetMapping("/{gameSeq}/gameJoinTeams/{gameJoinTeamSeq}/quarters/{quarterCode}/entry")
     @GetMapping("/{gameSeq}/quarters/{quarterCode}/entry")
     public ResponseEntity<?> getGameEntry (
             @PathVariable("gameSeq") Long gameSeq,
@@ -176,7 +177,7 @@ public class GameController {
     //@Auth(GRADE = USER)
     /**
      *     TODO URL 수정 검토 : 기본 동작은 게임쿼터의 모든 팀 선수 조회
-     *     /api/games/{gameSeq}/quarters/{quarterCode}?homeAwayCode="01"
+     *     /api/games/{gameSeq}/quarters/{quarterCode}/players?homeAwayCode="01"
      *     >> homeAwayCode를 쿼리파라미터로 받아서 처리하기 >> API의 재사용성 증대
      *     response Message 구조 {
      *         homeTeamPlayers : [
@@ -193,34 +194,22 @@ public class GameController {
      *         ]
      *     }
      */
-    @GetMapping("/{gameSeq}/teams/{teamSeq}/quarters/{quarterCode}/players")
-    public ResponseEntity<?> searchPlayerRecordsByQuarter(
+    @GetMapping("/{gameSeq}/quarters/{quarterCode}/players")
+    public ResponseEntity<?> getGameJoinPlayerRecordsByQuarter(
         @PathVariable(name = "gameSeq") Long gameSeq,
-        @PathVariable(name = "teamSeq") Long teamSeq,
-        @PathVariable(name = "quarterCode") String quarterCode
+        @PathVariable(name = "quarterCode") String quarterCode,
+        @RequestParam(name = "homeAwayCode", required = false) String homeAwayCode
     ) {
         // TODO 설계구조상 pagination data를 받지 않음.
-        // TODO 파라미터 값 지정하여 throw처리...
-        if(ObjectUtils.isEmpty(gameSeq))
-            throw new CustomException(Error.NO_PARAMETER);
-        if(ObjectUtils.isEmpty(teamSeq))
-            throw new CustomException(Error.NO_PARAMETER);
-        if(ObjectUtils.isEmpty(quarterCode) || !StringUtils.hasText(quarterCode))
-            throw new CustomException(Error.NO_PARAMETER);
 
-        //if(quarterCode.contains()) TODO 쿼터코드에 해당하는 값인지 체크필요
+        GetGameJoinPlayerRecordsByQuarterRequest request = new GetGameJoinPlayerRecordsByQuarterRequest()
+                                                                    .gameSeq(gameSeq)
+                                                                    .quarterCode(quarterCode)
+                                                                    .homeAwayCode(homeAwayCode);
 
-        //if(!HomeAwayCode.HOME_TEAM.equals(homeAwayCode) && !HomeAwayCode.AWAY_TEAM.equals(homeAwayCode))
-        //throw new CustomException(); TODO 홈어웨이코드에 해당하는 값인지 체크필요
+        GetGameJoinPlayerRecordsByQuarterResponse response = gameRecordManagerService.getGameJoinPlayerRecordsByQuarter( request );
 
-        SearchGameDTO searchGameDTO = new SearchGameDTO()
-                .gameSeq(gameSeq)
-                .teamSeq(teamSeq)
-                .quarterCode(quarterCode);
-
-        List<PlayerRecordDTO> listPlayerRecordsByQuarter = gameRecordManagerService.getListPlayerRecordsByQuarter(searchGameDTO);
-
-        return ResponseEntity.ok(listPlayerRecordsByQuarter);
+        return ResponseEntity.ok( response );
     }
 
     /**

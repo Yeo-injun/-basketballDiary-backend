@@ -5,21 +5,12 @@ import lombok.Getter;
 @Getter
 public class PlayerRecordDTO {
 
-    /**
-     * GAME_JOIN_TEAM
-     */
-    /** 게임참여팀 SEQ */
-    private Long gameJoinTeamSeq;
+    /** GAME_JOIN_TEAM */
+    private String gameSeq;
     private String homeAwayCode;
     private String homeAwayCodeName;
 
-    private String gameSeq;
-    private String teamSeq;
-
-    /**
-     * GAME_JOIN_PLAYER
-     */
-    /** 유저 SEQ */
+    /** GAME_JOIN_PLAYER */
     private Long gameJoinPlayerSeq;
     private String playerTypeCode;
     private String playerTypeCodeName;
@@ -28,34 +19,25 @@ public class PlayerRecordDTO {
     private String backNumber;
     private String positionCode;
     private String positionCodeName;
-//    private String userImage; TODO 불필요 속성 제거 검토
 
-    /**
-     * QUARTER_PLAYER_RECORDS
-     */
+    /** QUARTER_PLAYER_RECORDS */
     /** 쿼터별선수기록 SEQ */
     private Long quarterPlayerRecordsSeq;
     /** 쿼터코드; 01~04(1~4쿼터), 11(전반), 12(후반) */
     private String quarterCode;
-    private Long freeThrow;
-    private Long tryFreeThrow;
-    private Long twoPoint;
-    private Long tryTwoPoint;
-    private Long threePoint;
-    private Long tryThreePoint;
-    private Long totalScore;
-    private Long assist;
-    private Long rebound;
-    private Long steal;
-    private Long block;
-    private Long turnover;
-    private Long foul;
-
-
-    public PlayerRecordDTO gameJoinTeamSeq(Long gameJoinTeamSeq) {
-        this.gameJoinTeamSeq = gameJoinTeamSeq;
-        return this;
-    }
+    private int freeThrow;
+    private int tryFreeThrow;
+    private int twoPoint;
+    private int tryTwoPoint;
+    private int threePoint;
+    private int tryThreePoint;
+    private int totalScore;
+    private int assist;
+    private int rebound;
+    private int steal;
+    private int block;
+    private int turnover;
+    private int foul;
 
     public PlayerRecordDTO homeAwayCode(String homeAwayCode) {
         this.homeAwayCode = homeAwayCode;
@@ -67,10 +49,6 @@ public class PlayerRecordDTO {
         return this;
     }
 
-    public PlayerRecordDTO teamSeq(String teamSeq) {
-        this.teamSeq = teamSeq;
-        return this;
-    }
 
     public PlayerRecordDTO playerTypeCode(String playerTypeCode) {
         this.playerTypeCode = playerTypeCode;
@@ -113,55 +91,57 @@ public class PlayerRecordDTO {
         return this;
     }
 
-    public PlayerRecordDTO freeThrow(Long freeThrow) {
+
+
+    public PlayerRecordDTO freeThrow(int freeThrow) {
         this.freeThrow = freeThrow;
         return this;
     }
-    public PlayerRecordDTO tryFreeThrow(Long tryFreeThrow) {
+    public PlayerRecordDTO tryFreeThrow(int tryFreeThrow) {
         this.tryFreeThrow = tryFreeThrow;
         return this;
     }
-    public PlayerRecordDTO twoPoint(Long twoPoint) {
+    public PlayerRecordDTO twoPoint(int twoPoint) {
         this.twoPoint = twoPoint;
         return this;
     }
-    public PlayerRecordDTO tryTwoPoint(Long tryTwoPoint) {
+    public PlayerRecordDTO tryTwoPoint(int tryTwoPoint) {
         this.tryTwoPoint = tryTwoPoint;
         return this;
     }
-    public PlayerRecordDTO threePoint(Long threePoint) {
+    public PlayerRecordDTO threePoint(int threePoint) {
         this.threePoint = threePoint;
         return this;
     }
-    public PlayerRecordDTO tryThreePoint(Long tryThreePoint) {
+    public PlayerRecordDTO tryThreePoint(int tryThreePoint) {
         this.tryThreePoint = tryThreePoint;
         return this;
     }
-    public PlayerRecordDTO totalScore(Long totalScore) {
+    public PlayerRecordDTO totalScore(int totalScore) {
         this.totalScore = totalScore;
         return this;
     }
-    public PlayerRecordDTO assist(Long assist) {
+    public PlayerRecordDTO assist(int assist) {
         this.assist = assist;
         return this;
     }
-    public PlayerRecordDTO rebound(Long rebound) {
+    public PlayerRecordDTO rebound(int rebound) {
         this.rebound = rebound;
         return this;
     }
-    public PlayerRecordDTO steal(Long steal) {
+    public PlayerRecordDTO steal(int steal) {
         this.steal = steal;
         return this;
     }
-    public PlayerRecordDTO block(Long block) {
+    public PlayerRecordDTO block(int block) {
         this.block = block;
         return this;
     }
-    public PlayerRecordDTO turnover(Long turnover) {
+    public PlayerRecordDTO turnover(int turnover) {
         this.turnover = turnover;
         return this;
     }
-    public PlayerRecordDTO foul(Long foul) {
+    public PlayerRecordDTO foul(int foul) {
         this.foul = foul;
         return this;
     }
