@@ -34,54 +34,6 @@
            AND g.GAME_SEQ = #{gameSeq}
     </select>
 
-    <select id="findPlayerRecordsByQuarter" resultType="com.threeNerds.basketballDiary.mvc.game.dto.PlayerRecordDTO">
-        /** GameRecordManagerRepository.findPlayerRecordsByQuarter */
-       SELECT A.GAME_JOIN_TEAM_SEQ
-            , A.HOME_AWAY_CODE
-            , A.GAME_SEQ
-            , A.TEAM_SEQ
-            , B.USER_SEQ
-            , B.NAME
-            , B.BACK_NUMBER
-            , B.POSITION_CODE
-            , C.QUARTER_PLAYER_RECORDS_SEQ
-            , C.QUARTER_CODE
-            , C.FREE_THROW
-            , C.TRY_FREE_THROW
-            , C.TWO_POINT
-            , C.TRY_TWO_POINT
-            , C.THREE_POINT
-            , C.TRY_THREE_POINT
-            , C.FREE_THROW + 2 * C.TWO_POINT + 3 * C.TRY_FREE_THROW TOTAL_SCORE
-            , C.ASSIST
-            , C.REBOUND
-            , C.STEAL
-            , C.BLOCK
-            , C.TURNOVER
-            , C.FOUL
-            , D.USER_IMAGE_PATH
-         FROM GAME_JOIN_TEAM A
-        INNER JOIN GAME_JOIN_PLAYER B
-           ON A.GAME_JOIN_TEAM_SEQ = B.GAME_JOIN_TEAM_SEQ
-        INNER JOIN QUARTER_PLAYER_RECORDS C
-           ON B.GAME_JOIN_PLAYER_SEQ = C.GAME_JOIN_PLAYER_SEQ
-         LEFT JOIN USER D
-           ON B.USER_SEQ = D.USER_SEQ
-        <where>
-        <choose>
-           <when test="quarterPlayerRecordsSeq != null and !''.equals(quarterPlayerRecordsSeq)">
-              C.QUARTER_PLAYER_RECORDS_SEQ = #{quarterPlayerRecordsSeq}
-           </when>
-           <otherwise>
-              C.GAME_SEQ = #{gameSeq}
-          AND C.GAME_JOIN_PLAYER_SEQ = #{gameJoinPlayerSeq}
-          AND C.GAME_JOIN_TEAM_SEQ = #{gameJoinTeamSeq}
-          AND C.QUARTER_CODE = #{quarterCode}
-            </otherwise>
-        </choose>
-        </where>
-    </select>
-
     <select id="findAllPlayerRecordsByQuarter" resultType="com.threeNerds.basketballDiary.mvc.game.dto.PlayerRecordDTO">
         /** GameRecordManagerRepository.findAllPlayerRecordsByQuarter */
         SELECT A.GAME_JOIN_TEAM_SEQ
@@ -115,13 +67,12 @@
           ON B.GAME_JOIN_PLAYER_SEQ = C.GAME_JOIN_PLAYER_SEQ
         LEFT JOIN USER D
           ON B.USER_SEQ = D.USER_SEQ
-       WHERE A.GAME_SEQ = #{gameSeq}
-         <if test="teamSeq != null and !''.equals(teamSeq)">
-         AND A.TEAM_SEQ = #{teamSeq}
-         </if>
-         <if test="quarterCode != null and !''.equals(quarterCode)">
+       WHERE 1=1
+         AND A.GAME_SEQ = #{gameSeq}
          AND C.QUARTER_CODE = #{quarterCode}
-         </if>
+       <if test="homeAwayCode != null and !''.equals(homeAwayCode)">
+         AND A.HOME_AWAY_CODE = #{homeAwayCode}
+       </if>
     </select>
 
     <select id="findAllTeamsQuarterRecords" resultType="com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.response.TeamQuarterRecordsDTO">

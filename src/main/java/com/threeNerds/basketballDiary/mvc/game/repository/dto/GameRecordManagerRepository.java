@@ -20,11 +20,10 @@ public interface GameRecordManagerRepository {
     /** 게임참가팀들 조회 - 홈/어웨이팀 모두 */
     List<GameJoinTeamRecordDTO> findGameJoinTeamRecordsByGameSeq(Long gameSeq);
 
-    /** 특정쿼터의 선수별 기록조회(목록) */
-    List<PlayerRecordDTO> findAllPlayerRecordsByQuarter(SearchGameDTO searchGameDTO);
+    /** 특정쿼터의 선수별 기록조회 (목록) */
+    List<PlayerRecordDTO> findAllPlayerRecordsByQuarter(SearchGameDTO searchCond);
 
-    /** 특정쿼터의 선수별 기록조회(단건) */
-    PlayerRecordDTO findPlayerRecordsByQuarter(SearchGameDTO searchGameDTO);
+    /** 특정쿼터의 팀별 기록조회 (목록) */
     List<TeamQuarterRecordsDTO> findAllTeamsQuarterRecords(SearchGameDTO searchCond);
 
     /** 모든쿼터의 홈·어웨이 기록조회(목록) */
