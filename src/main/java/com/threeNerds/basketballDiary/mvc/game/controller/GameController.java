@@ -173,7 +173,26 @@ public class GameController {
      * @result 특정쿼터의 선수별 기록조회
      * @author 강창기
      */
-    //@Auth(GRADE = USER) TODO
+    //@Auth(GRADE = USER)
+    /**
+     *     TODO URL 수정 검토 : 기본 동작은 게임쿼터의 모든 팀 선수 조회
+     *     /api/games/{gameSeq}/quarters/{quarterCode}?homeAwayCode="01"
+     *     >> homeAwayCode를 쿼리파라미터로 받아서 처리하기 >> API의 재사용성 증대
+     *     response Message 구조 {
+     *         homeTeamPlayers : [
+     *              {
+     *                  플레이어1의 스탯
+     *              },
+     *              {
+     *                  플레이어2의 스탯
+     *              },
+     *              ...
+     *         ],
+     *         awayTeamPlayers : [
+     *              ...
+     *         ]
+     *     }
+     */
     @GetMapping("/{gameSeq}/teams/{teamSeq}/quarters/{quarterCode}/players")
     public ResponseEntity<?> searchPlayerRecordsByQuarter(
         @PathVariable(name = "gameSeq") Long gameSeq,
