@@ -19,6 +19,7 @@ import com.threeNerds.basketballDiary.mvc.game.dto.getGameAllQuartersRecords.Qua
 
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayerRecordsByQuarter.request.GetGameJoinPlayerRecordsByQuarterRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayerRecordsByQuarter.response.GetGameJoinPlayerRecordsByQuarterResponse;
+import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayerRecordsByQuarter.response.PlayerQuarterRecordDTO;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.request.GetGameQuarterRecordsRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.response.GetGameQuarterRecordsResponse;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.response.TeamQuarterRecordsDTO;
@@ -40,6 +41,8 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @Slf4j
@@ -85,29 +88,38 @@ public class GameRecordManagerService {
                 .homeAwayCode( homeAwayCode )
                 .quarterCode( quarterCode );
 
-        // TODO 쿼리 수정 필요 
-        List<PlayerRecordDTO> players = gameRecordManagerRepository.findAllPlayerRecordsByQuarter( searchPlayerRecordsParam );
+        List<PlayerQuarterRecordDTO> players = gameRecordManagerRepository.findAllPlayerRecordsByQuarter( searchPlayerRecordsParam );
 
         GetGameJoinPlayerRecordsByQuarterResponse response = new GetGameJoinPlayerRecordsByQuarterResponse()
                 .gameSeq(gameSeq)
                 .quarterCode(quarterCode);
         boolean isAllTeamPlayers = !StringUtils.hasText( homeAwayCode );
         if ( isAllTeamPlayers ) {
-            // TODO 필터링 하는 코드 구현
             response
-                .homeTeamPlayers(players)
-                .awayTeamPlayers(players);
+                .homeTeamPlayers( filterByHomeAwayCode( players, HomeAwayCode.HOME_TEAM ) )
+                .awayTeamPlayers( filterByHomeAwayCode( players, HomeAwayCode.AWAY_TEAM ) );
             return response;
         }
 
         boolean isHomeTeamPlayers = HomeAwayCode.HOME_TEAM.getCode().equals( homeAwayCode );
         if ( isHomeTeamPlayers ) {
-            response.homeTeamPlayers( players );
+            response
+                .homeTeamPlayers( players )
+                .awayTeamPlayers( Collections.emptyList() );
         } else {
-            response.awayTeamPlayers( players);
+            response
+                .homeTeamPlayers( Collections.emptyList() )
+                .awayTeamPlayers( players );
         }
-
         return response;
+    }
+
+    private List<PlayerQuarterRecordDTO> filterByHomeAwayCode( List<PlayerQuarterRecordDTO> targetPlayers, HomeAwayCode filterCode )
+    {
+        /** 홈/어웨이팀 구분에 따른 처리 */
+        return targetPlayers.stream()
+                .filter( t -> filterCode.getCode().equals( t.getHomeAwayCode() ) )
+                .collect(Collectors.toList());
     }
 
     /**
@@ -352,7 +364,7 @@ public class GameRecordManagerService {
             throw new CustomException(Error.TEAM_NOT_FOUND);
         }
 
-        Long userJoinTeamSeq = getTeamSeqForUserJoined( joinTeams, userTeamAuth );
+        Long userJoinTeamSeq = getTeamSeqForJoinedUser( joinTeams, userTeamAuth );
         boolean isTeamMember = userJoinTeamSeq > 0L;
         if ( !isTeamMember ) {
             throw new CustomException(Error.ONLY_TEAM_MEMBER_HANDLE);
@@ -372,7 +384,7 @@ public class GameRecordManagerService {
         gameRecordAuthRepository.saveGameRecordAuth( newRecorder );
     }
 
-    private Long getTeamSeqForUserJoined( List<GameJoinTeam> joinTeams, Map<Long, Long> userTeamAuth ) {
+    private Long getTeamSeqForJoinedUser( List<GameJoinTeam> joinTeams, Map<Long, Long> userTeamAuth ) {
         Optional<GameJoinTeam> joinTeam = joinTeams.stream()
                 .filter( t -> userTeamAuth.containsKey( t.getTeamSeq() ) )
                 .findFirst();
@@ -473,6 +485,8 @@ public class GameRecordManagerService {
                 // TODO 에러메세지 동적으로 처리하기 homeAwayCode.getName();
                 .orElseThrow(() -> new CustomException(Error.NOT_FOUND_HOME_TEAM));
     }
+
+
 
     private void recordQuarterStat( QuarterTeamRecords teamRecords, List<SavePlayerRecordDTO> playerRecords )
     {
