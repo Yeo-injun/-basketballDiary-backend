@@ -52,7 +52,7 @@
              , QPR.TRY_TWO_POINT
              , QPR.THREE_POINT
              , QPR.TRY_THREE_POINT
-             , QPR.FREE_THROW + 2 * QPR.TWO_POINT + 3 * QPR.TRY_FREE_THROW TOTAL_SCORE
+             , QPR.FREE_THROW + 2 * QPR.TWO_POINT + 3 * QPR.THREE_POINT TOTAL_SCORE
              , QPR.ASSIST
              , QPR.REBOUND
              , QPR.STEAL
