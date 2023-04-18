@@ -3,6 +3,8 @@ package com.threeNerds.basketballDiary.mvc.game.controller;
 import com.threeNerds.basketballDiary.constant.code.HomeAwayCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
+import com.threeNerds.basketballDiary.http.RequestJsonBody;
+import com.threeNerds.basketballDiary.http.ResponseJsonBody;
 import com.threeNerds.basketballDiary.interceptor.Auth;
 import com.threeNerds.basketballDiary.mvc.game.controller.dto.GameAuthDTO;
 import com.threeNerds.basketballDiary.mvc.game.controller.request.ConfirmGameJoinTeamRequest;
@@ -10,9 +12,6 @@ import com.threeNerds.basketballDiary.mvc.game.controller.request.CreateGameRequ
 import com.threeNerds.basketballDiary.mvc.game.controller.request.RegisterGameJoinPlayersRequest;
 import com.threeNerds.basketballDiary.mvc.game.controller.request.SaveQuarterEntryInfoRequest;
 import com.threeNerds.basketballDiary.mvc.game.controller.response.*;
-import com.threeNerds.basketballDiary.mvc.game.domain.GameRecordAuth;
-import com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords;
-import com.threeNerds.basketballDiary.mvc.game.domain.QuarterTeamRecords;
 import com.threeNerds.basketballDiary.mvc.game.dto.*;
 import com.threeNerds.basketballDiary.mvc.game.dto.createGameQuarterBasicInfo.request.CreateGameQuarterBasicInfoRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.deleteGameQuarter.request.DeleteGameQuarterRequest;
@@ -20,7 +19,6 @@ import com.threeNerds.basketballDiary.mvc.game.dto.getGameAllQuartersRecords.Get
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameEntry.request.GetGameEntryRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameEntry.response.GetGameEntryResponse;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayerRecordsByQuarter.request.GetGameJoinPlayerRecordsByQuarterRequest;
-import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayerRecordsByQuarter.response.GetGameJoinPlayerRecordsByQuarterResponse;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayers.request.GetGameJoinPlayersRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayers.response.GetGameJoinPlayersResponse;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.request.GetGameQuarterRecordsRequest;
@@ -31,14 +29,10 @@ import com.threeNerds.basketballDiary.mvc.game.service.GameJoinManagerService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameRecordManagerService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameService;
 import com.threeNerds.basketballDiary.session.SessionUser;
-import com.threeNerds.basketballDiary.utils.CommonUtil;
 import com.threeNerds.basketballDiary.utils.SessionUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
@@ -183,11 +177,11 @@ public class GameController {
         // TODO 설계구조상 pagination data를 받지 않음.
 
         GetGameJoinPlayerRecordsByQuarterRequest request = new GetGameJoinPlayerRecordsByQuarterRequest()
-                                                                    .gameSeq(gameSeq)
-                                                                    .quarterCode(quarterCode)
-                                                                    .homeAwayCode(homeAwayCode);
+                                                        .gameSeq(gameSeq)
+                                                        .quarterCode(quarterCode)
+                                                        .homeAwayCode(homeAwayCode);
 
-        GetGameJoinPlayerRecordsByQuarterResponse response = gameRecordManagerService.getGameJoinPlayerRecordsByQuarter( request );
+        ResponseJsonBody response = gameRecordManagerService.getGameJoinPlayerRecordsByQuarter( request );
 
         return ResponseEntity.ok( response );
     }

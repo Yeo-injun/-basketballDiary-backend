@@ -1,34 +1,31 @@
 package com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayerRecordsByQuarter.response;
 
+import com.threeNerds.basketballDiary.constant.code.QuarterCode;
+import com.threeNerds.basketballDiary.http.ResponseJsonBody;
 import lombok.Getter;
 
 import java.util.List;
 
 @Getter
-public class GetGameJoinPlayerRecordsByQuarterResponse {
+public class GetGameJoinPlayerRecordsByQuarterResponse extends ResponseJsonBody {
+
     private Long gameSeq;
     private String quarterCode;
+    private String quarterCodeName;
 
     private List<PlayerQuarterRecordDTO> homeTeamPlayers;
     private List<PlayerQuarterRecordDTO> awayTeamPlayers;
 
-    public GetGameJoinPlayerRecordsByQuarterResponse gameSeq(Long gameSeq ) {
-        this.gameSeq = gameSeq;
-        return this;
-    }
-
-    public GetGameJoinPlayerRecordsByQuarterResponse quarterCode(String quarterCode ) {
-        this.quarterCode = quarterCode;
-        return this;
-    }
-
-    public GetGameJoinPlayerRecordsByQuarterResponse homeTeamPlayers( List<PlayerQuarterRecordDTO> homeTeamPlayers ) {
-        this.homeTeamPlayers = homeTeamPlayers;
-        return this;
-    }
-
-    public GetGameJoinPlayerRecordsByQuarterResponse awayTeamPlayers( List<PlayerQuarterRecordDTO> awayTeamPlayers ) {
-        this.awayTeamPlayers = awayTeamPlayers;
-        return this;
+    public GetGameJoinPlayerRecordsByQuarterResponse (
+            Long gameSeq,
+            String quarterCode,
+            List<PlayerQuarterRecordDTO> homeTeamPlayers,
+            List<PlayerQuarterRecordDTO> awayTeamPlayers
+    ) {
+        this.gameSeq            = gameSeq;
+        this.quarterCode        = quarterCode;
+        this.quarterCodeName    = QuarterCode.nameOf( quarterCode );
+        this.homeTeamPlayers    = homeTeamPlayers;
+        this.awayTeamPlayers    = awayTeamPlayers;
     }
 }

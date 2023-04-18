@@ -1,9 +1,10 @@
 package com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayerRecordsByQuarter.request;
 
+import com.threeNerds.basketballDiary.http.RequestJsonBody;
 import lombok.Getter;
 
 @Getter
-public class GetGameJoinPlayerRecordsByQuarterRequest {
+public class GetGameJoinPlayerRecordsByQuarterRequest extends RequestJsonBody {
     private Long gameSeq;
     private String quarterCode;
     private String homeAwayCode;
