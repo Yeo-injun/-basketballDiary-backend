@@ -1,9 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.game.repository;
 
-import com.threeNerds.basketballDiary.mvc.game.controller.dto.GameAuthDTO;
-import com.threeNerds.basketballDiary.mvc.game.controller.response.GameAuthRecordersResponse;
 import com.threeNerds.basketballDiary.mvc.game.domain.GameJoinTeam;
-import com.threeNerds.basketballDiary.mvc.game.domain.GameRecordAuth;
 import org.apache.ibatis.annotations.Mapper;
 
 

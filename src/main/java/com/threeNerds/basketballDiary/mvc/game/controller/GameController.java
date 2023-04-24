@@ -23,6 +23,8 @@ import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayers.request.Ge
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayers.response.GetGameJoinPlayersResponse;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.request.GetGameQuarterRecordsRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.response.GetGameQuarterRecordsResponse;
+import com.threeNerds.basketballDiary.mvc.game.dto.getGameRecorders.request.GetGameRecordersRequest;
+import com.threeNerds.basketballDiary.mvc.game.dto.getGameRecorders.response.GetGameRecordersResponse;
 import com.threeNerds.basketballDiary.mvc.game.dto.saveGameRecorder.request.SaveGameRecorderRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.saveQuarterRecords.request.SaveQuarterRecordsRequest;
 import com.threeNerds.basketballDiary.mvc.game.service.GameJoinManagerService;
@@ -314,14 +316,13 @@ public class GameController {
      * API055 게임기록자 조회
      */
     @GetMapping("/{gameSeq}/gameRecorders")
-    public ResponseEntity<?> searchRecorder(
+    public ResponseEntity<?> getGameRecorders(
             @PathVariable("gameSeq") Long gameSeq
-    ){
-        GameAuthDTO gameAuthDTO = new GameAuthDTO()
-                .gameSeq(gameSeq)
-                .auth("02");
-        List<GameAuthRecordersResponse> gameAuthRecordersResponses = gameRecordManagerService.searchGameRecorders(gameAuthDTO);
-        return ResponseEntity.ok(gameAuthRecordersResponses);
+    ) {
+        GetGameRecordersRequest reqBody = new GetGameRecordersRequest( gameSeq );
+
+        GetGameRecordersResponse resBody = gameRecordManagerService.getGameRecorders( reqBody );
+        return ResponseEntity.ok( resBody );
     }
 
     /**
