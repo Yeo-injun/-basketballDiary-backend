@@ -5,12 +5,7 @@ import com.threeNerds.basketballDiary.constant.code.HomeAwayCode;
 import com.threeNerds.basketballDiary.constant.code.QuarterCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
-import com.threeNerds.basketballDiary.http.IRequestBody;
-import com.threeNerds.basketballDiary.http.IResponseBody;
-import com.threeNerds.basketballDiary.http.RequestJsonBody;
 import com.threeNerds.basketballDiary.http.ResponseJsonBody;
-import com.threeNerds.basketballDiary.mvc.game.controller.dto.GameAuthDTO;
-import com.threeNerds.basketballDiary.mvc.game.controller.response.GameAuthRecordersResponse;
 import com.threeNerds.basketballDiary.mvc.game.domain.*;
 
 import com.threeNerds.basketballDiary.mvc.game.dto.*;
@@ -27,6 +22,9 @@ import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayerRecordsByQua
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.request.GetGameQuarterRecordsRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.response.GetGameQuarterRecordsResponse;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.response.TeamQuarterRecordsDTO;
+import com.threeNerds.basketballDiary.mvc.game.dto.getGameRecorders.request.GetGameRecordersRequest;
+import com.threeNerds.basketballDiary.mvc.game.dto.getGameRecorders.response.GameRecorderDTO;
+import com.threeNerds.basketballDiary.mvc.game.dto.getGameRecorders.response.GetGameRecordersResponse;
 import com.threeNerds.basketballDiary.mvc.game.dto.saveGameRecorder.request.SaveGameRecorderRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.saveQuarterRecords.request.SavePlayerRecordDTO;
 import com.threeNerds.basketballDiary.mvc.game.dto.saveQuarterRecords.request.SaveQuarterRecordsRequest;
@@ -42,11 +40,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @Slf4j
@@ -339,9 +335,16 @@ public class GameRecordManagerService {
      * 게임기록자 조회
      * @author 이성주
      */
-    public List<GameAuthRecordersResponse> searchGameRecorders(GameAuthDTO gameAuthDTO){
-        List<GameAuthRecordersResponse> gameAuthRecordersResponses = gameRecordAuthRepository.searchGameRecorders(gameAuthDTO);
-        return gameAuthRecordersResponses;
+    public GetGameRecordersResponse getGameRecorders( GetGameRecordersRequest request ) {
+        // TODO 경기기록 권한자의 요건 최종 검토
+        // 1. 게임에 참가하는 팀에 소속되어 있어야 한다.
+        // 2, 게임에 참가선수로 등록되지 않아도 된다.
+        // 이에따른 조회 쿼리 및 조회 내용 정립
+        Long gameSeq = request.getGameSeq();
+        SearchGameDTO gameCond = new SearchGameDTO().gameSeq( gameSeq);
+        List<GameRecorderDTO> gameRecorders = gameRecordManagerRepository.findAllGameRecorders( gameCond );
+
+        return new GetGameRecordersResponse( gameRecorders );
     }
 
     /**

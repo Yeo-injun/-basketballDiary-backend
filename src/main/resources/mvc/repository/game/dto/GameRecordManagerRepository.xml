@@ -129,7 +129,23 @@
                   AND TMP2.USER_SEQ = B.USER_SEQ
                   AND TMP1.GAME_RECORD_AUTH_CODE = '02' -- 입력권한자
             ) -- 권한을 이미 부여받은 선수는 제외
-
     </select>
 
+
+    <select id="findAllGameRecorders" resultType="com.threeNerds.basketballDiary.mvc.game.dto.getGameRecorders.response.GameRecorderDTO">
+        /* GameRecordManagerRepository.findAllGameRecorders */
+        SELECT GRA.GAME_RECORD_AUTH_SEQ
+             , GRA.GAME_RECORD_AUTH_CODE
+             , U.NAME
+             , U.POSITION_CODE
+             , TM.BACK_NUMBER
+             , U.EMAIL
+          FROM GAME_RECORD_AUTH  GRA
+         INNER JOIN TEAM_MEMBER  TM
+            ON GRA.TEAM_MEMBER_SEQ = TM.TEAM_MEMBER_SEQ
+         INNER JOIN USER  U
+            ON TM.USER_SEQ = U.USER_SEQ
+         WHERE 1=1
+           AND GRA.GAME_SEQ = #{gameSeq}
+    </select>
 </mapper>

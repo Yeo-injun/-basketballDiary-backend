@@ -1,6 +1,6 @@
 package com.threeNerds.basketballDiary.exception.custom;
 
-public class TeamNotFound extends BasketballException{
+public class TeamNotFound extends BasketballException {
 
     private int code = 404;
 
