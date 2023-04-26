@@ -3,7 +3,8 @@ package com.threeNerds.basketballDiary.mvc.game.dto;
 import lombok.Getter;
 
 @Getter
-public class SearchPlayersDTO {
+public class
+SearchPlayersDTO {
 
     private Long gameSeq;
     private String homeAwayCode;
