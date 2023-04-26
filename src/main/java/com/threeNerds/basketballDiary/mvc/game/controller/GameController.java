@@ -21,6 +21,7 @@ import com.threeNerds.basketballDiary.mvc.game.dto.getGameEntry.response.GetGame
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayerRecordsByQuarter.request.GetGameJoinPlayerRecordsByQuarterRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayers.request.GetGameJoinPlayersRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayers.response.GetGameJoinPlayersResponse;
+import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinTeamMembers.request.GetGameJoinTeamMembersRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.request.GetGameQuarterRecordsRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.response.GetGameQuarterRecordsResponse;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameRecorders.request.GetGameRecordersRequest;
@@ -354,18 +355,13 @@ public class GameController {
      * @author 강창기
      */
     @GetMapping("/{gameSeq}/teamMembers")
-    public ResponseEntity<?> searchTeamMembers(
-            @PathVariable(name = "gameSeq") Long gameSeq
+    public ResponseEntity<?> getGameJoinTeamMembers(
+            @PathVariable(name = "gameSeq") Long gameSeq,
+            @RequestParam(name = "homeAwayCode", required = false) String homeAwayCode
     ) {
-        if(ObjectUtils.isEmpty(gameSeq))
-            throw new CustomException(Error.NO_PARAMETER);
-
-        SearchGameDTO searchGameDTO = new SearchGameDTO()
-                .gameSeq(gameSeq);
-
-        List<PlayerInfoDTO> resultList = gameRecordManagerService.getListTeamMembers(searchGameDTO);
-
-        return ResponseEntity.ok(resultList);
+        GetGameJoinTeamMembersRequest reqBody = new GetGameJoinTeamMembersRequest( gameSeq, homeAwayCode );
+        ResponseJsonBody resBody = gameJoinManagerService.getGameJoinTeamMembers( reqBody );
+        return ResponseEntity.ok( resBody );
     }
 
     /**

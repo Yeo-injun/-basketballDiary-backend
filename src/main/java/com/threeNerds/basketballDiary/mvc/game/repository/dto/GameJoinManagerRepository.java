@@ -12,12 +12,14 @@ public interface GameJoinManagerRepository {
     Team findGameCreatorTeam(Long gameSeq);
 
     /** 엔트리 조회 - 한팀의 엔트리 조회 */
-    List<QuarterPlayerRecordDTO> findOneTeamEntry(SearchEntryDTO searchCond);
+    List<QuarterPlayerRecordDTO> findOneTeamEntry( SearchEntryDTO searchCond );
 
-    List<GameOpponentDTO> findOpponents(SearchOppenentsDTO searchOppenentsDTO);
+    List<GameOpponentDTO> findOpponents( SearchOppenentsDTO searchOppenentsDTO );
 
-    List<GameJoinTeamInfoDTO> findGameJoinTeams(SearchGameJoinTeamDTO searchGameJoinTeamDTO);
+    List<GameJoinTeamInfoDTO> findGameJoinTeams( SearchGameJoinTeamDTO searchGameJoinTeamDTO );
 
-    List<PlayerInfoDTO> findGameJoinPlayers(SearchPlayersDTO searchDTO);
+    List<PlayerInfoDTO> findAllGameJoinPlayers( SearchPlayersDTO searchDTO );
 
+    /** 경기에 참여한 팀원 조회 */
+    List<GameJoinTeamMemberDTO> findAllGameJoinTeamMembers( SearchGameJoinTeamMemberDTO searchCond );
 }

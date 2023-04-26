@@ -144,7 +144,8 @@
         </if>
     </select>
 
-    <select id="findGameJoinPlayers" resultType="com.threeNerds.basketballDiary.mvc.game.dto.PlayerInfoDTO">
+    <select id="findAllGameJoinPlayers" resultType="com.threeNerds.basketballDiary.mvc.game.dto.PlayerInfoDTO">
+        /* GameJoinManagerRepository.findAllGameJoinPlayers */
         SELECT GJP.GAME_JOIN_PLAYER_SEQ
              , GJP.PLAYER_TYPE_CODE
              , GJP.USER_SEQ
@@ -154,11 +155,37 @@
              , GJP.BACK_NUMBER
              , GJT.GAME_JOIN_TEAM_SEQ
              , GJT.TEAM_SEQ
+             , GJT.TEAM_NAME
              , GJT.HOME_AWAY_CODE
         FROM GAME_JOIN_TEAM GJT
-         INNER JOIN GAME_JOIN_PLAYER GJP
-            ON GJT.GAME_JOIN_TEAM_SEQ = GJP.GAME_JOIN_TEAM_SEQ
-         WHERE 1=1
+       INNER JOIN GAME_JOIN_PLAYER GJP
+          ON GJT.GAME_JOIN_TEAM_SEQ = GJP.GAME_JOIN_TEAM_SEQ
+       WHERE 1=1
+         AND GJT.GAME_SEQ = #{gameSeq}
+       <if test='homeAwayCode != null and homeAwayCode != ""'>
+         AND GJT.HOME_AWAY_CODE = #{homeAwayCode}
+       </if>
+    </select>
+
+    <select id="findAllGameJoinTeamMembers" resultType="com.threeNerds.basketballDiary.mvc.game.dto.GameJoinTeamMemberDTO">
+        /* GameJoinManagerRepository.findAllGameJoinTeamMembers */
+        SELECT GJP.GAME_JOIN_PLAYER_SEQ
+             , GJT.GAME_SEQ
+             , GJT.HOME_AWAY_CODE
+             , GJT.TEAM_SEQ
+             , GJP.USER_SEQ
+             , GJT.TEAM_NAME
+             , GJP.NAME
+             , GJP.EMAIL
+             , GJP.BACK_NUMBER
+          FROM GAME_JOIN_TEAM GJT           /* 경기참가팀 */
+         INNER JOIN GAME_JOIN_PLAYER GJP   /* 경기참가선수 */
+            ON GJT.GAME_SEQ = GJP.GAME_SEQ
+           AND GJT.HOME_AWAY_CODE = GJP.HOME_AWAY_CODE
+         INNER JOIN TEAM_MEMBER TM          /* 팀원 - 경기에 참가한 팀에 소속된 팀원 */
+            ON TM.TEAM_SEQ = GJT.TEAM_SEQ
+           AND TM.USER_SEQ = GJP.USER_SEQ
+     WHERE 1=1
            AND GJT.GAME_SEQ = #{gameSeq}
         <if test='homeAwayCode != null and homeAwayCode != ""'>
            AND GJT.HOME_AWAY_CODE = #{homeAwayCode}
