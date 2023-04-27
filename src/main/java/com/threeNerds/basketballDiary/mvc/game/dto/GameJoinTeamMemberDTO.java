@@ -21,7 +21,7 @@ public class GameJoinTeamMemberDTO {
     private String positionCodeName;
 
     private String teamName;
-    private String name;
+    private String userName;
     private String backNumber;
     private String email;
 
