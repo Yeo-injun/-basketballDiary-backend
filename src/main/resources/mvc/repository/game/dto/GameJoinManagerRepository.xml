@@ -175,7 +175,7 @@
              , GJT.TEAM_SEQ
              , GJP.USER_SEQ
              , GJT.TEAM_NAME
-             , GJP.NAME
+             , GJP.NAME AS USER_NAME
              , GJP.EMAIL
              , GJP.BACK_NUMBER
           FROM GAME_JOIN_TEAM GJT           /* 경기참가팀 */
