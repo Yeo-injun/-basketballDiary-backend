@@ -11,12 +11,12 @@ import java.util.List;
 public class RegisterGameJoinPlayersRequest {
 
     private Long gameSeq;
-    private Long gameJoinTeamSeq;
+    private String homeAwayCode;
     private List<GameJoinPlayerDTO> gameJoinPlayers;
 
-    public RegisterGameJoinPlayersRequest( Long gameSeq, Long gameJoinTeamSeq, List<GameJoinPlayerDTO> gameJoinPlayers ) {
+    public RegisterGameJoinPlayersRequest( Long gameSeq, String homeAwayCode, List<GameJoinPlayerDTO> gameJoinPlayers ) {
         this.gameSeq = gameSeq;
-        this.gameJoinTeamSeq = gameJoinTeamSeq;
+        this.homeAwayCode = homeAwayCode;
         this.gameJoinPlayers = gameJoinPlayers;
     }
 }

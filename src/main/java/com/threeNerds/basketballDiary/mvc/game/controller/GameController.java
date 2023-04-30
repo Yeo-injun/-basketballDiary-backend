@@ -80,15 +80,16 @@ public class GameController {
      * 22.12.15(목) @ReauestBody부분 Request클래스로 대체
      */
 //    @Auth(GRADE = USER)
-    @PostMapping("/{gameSeq}/gameJoinTeams/{gameJoinTeamSeq}/players")
+//    @PostMapping("/{gameSeq}/gameJoinTeams/{gameJoinTeamSeq}/players")
+    @PostMapping("/{gameSeq}/homeAwayCode/{homeAwayCode}/players")
     public ResponseEntity<?> registerGameJoinPlayers(
             @PathVariable(name = "gameSeq") Long gameSeq,
-            @PathVariable(name = "gameJoinTeamSeq") Long gameJoinTeamSeq,
+            @PathVariable(name = "homeAwayCode") String homeAwayCode,
             @RequestBody RegisterGameJoinPlayersRequest reqBody
     ) {
          reqBody = new RegisterGameJoinPlayersRequest(
                                                         gameSeq,
-                                                        gameJoinTeamSeq,
+                 homeAwayCode,
                                                         reqBody.getGameJoinPlayers()
                                                       );
 
