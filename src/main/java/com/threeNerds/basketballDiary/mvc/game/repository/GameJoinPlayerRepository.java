@@ -17,7 +17,7 @@ public interface GameJoinPlayerRepository {
     GameJoinPlayer findPlayer(GameJoinPlayer gameJoinPlayer);
 
     /** 게임참가선수 목록조회 */
-    List<GameJoinPlayer> findPlayers(Long gameJoinTeamSeq);
+    List<GameJoinPlayer> findPlayers(GameJoinPlayer gameJoinPlayer);
 
     /**********
      * INSERT
@@ -33,5 +33,5 @@ public interface GameJoinPlayerRepository {
      * DELETE
      **********/
     /** 게임참가선수 삭제(다건) - 게임참가팀Seq로 다건 삭제  */
-    int deletePlayers(Long gameJoinTeamSeq);
+    int deletePlayers( GameJoinPlayer gameJoinPlayer );
 }

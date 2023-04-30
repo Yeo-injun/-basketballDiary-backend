@@ -19,6 +19,13 @@ public class GameJoinTeam {
     private String teamName;        // 팀명
     private String homeAwayCode;    // 홈/어웨이 코드
 
+    public static GameJoinTeam createInqCond( Long gameSeq, String homeAwayCode ) {
+        return GameJoinTeam.builder()
+                .gameSeq( gameSeq )
+                .homeAwayCode( homeAwayCode )
+                .build();
+    }
+
     public static GameJoinTeam create(Long gameSeq, HomeAwayCode homeAwayCode, Team team) {
         return createJoinTeam(gameSeq, team.getTeamSeq(), team.getTeamName(), homeAwayCode.getCode());
     }

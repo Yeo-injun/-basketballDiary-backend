@@ -171,11 +171,18 @@ public class GameJoinManagerService {
     /**
      * 게임참가선수 등록
      **/
-    public void registerGameJoinPlayers(RegisterGameJoinPlayersRequest playerRegistrationDTO)
-    {
+    public void registerGameJoinPlayers( RegisterGameJoinPlayersRequest reqBody ) {
+
+        Long gameSeq                                    = reqBody.getGameSeq();
+        String homeAwayCode                             = reqBody.getHomeAwayCode();
+        List<GameJoinPlayerDTO> gameJoinPlayers   = reqBody.getGameJoinPlayers();
+
+        /** 게임참가팀이 존재하는지 확인 */
+        GameJoinTeam joinTeamParam = GameJoinTeam.createInqCond( gameSeq, homeAwayCode );
+        GameJoinTeam gameJoinTeam = gameJoinTeamRepository.findGameJoinTeam( joinTeamParam );
+
         /** 해당 게임의 쿼터선수기록 존재여부 확인 - 쿼터기록이 존재할 경우 수정 불가 */
         // TODO 에러메세지 수정
-        Long gameSeq = playerRegistrationDTO.getGameSeq();
         List<QuarterPlayerRecords> playersRecord = quarterPlayerRecordsRepo.findAllInGame(gameSeq);
         boolean hasPlayerRecord = !playersRecord.isEmpty();
         if (hasPlayerRecord) {
@@ -183,17 +190,16 @@ public class GameJoinManagerService {
         }
 
         /** 게임참가선수 데이터 존재여부 확인 - 기존 데이터 존재시 삭제 */
-        Long gameJoinTeamSeq = playerRegistrationDTO.getGameJoinTeamSeq();
-        List<GameJoinPlayer> registeredJoinPlayers = gameJoinPlayerRepository.findPlayers(gameJoinTeamSeq);
+        GameJoinPlayer joinPlayerParam = GameJoinPlayer.createInqParam( gameSeq, homeAwayCode );
+        List<GameJoinPlayer> registeredJoinPlayers = gameJoinPlayerRepository.findPlayers( joinPlayerParam );
         boolean hasJoinPlayers = !registeredJoinPlayers.isEmpty();
         if (hasJoinPlayers) {
-            gameJoinPlayerRepository.deletePlayers(gameJoinTeamSeq);
+            gameJoinPlayerRepository.deletePlayers( joinPlayerParam );
         }
 
         /** 중복된 등번호가 있는지 체크하기 */
-        List<GameJoinPlayerDTO> gameJoinPlayerDTOList = playerRegistrationDTO.getGameJoinPlayers();
         Set<String> backNumberSet = new HashSet<>();
-        for (GameJoinPlayerDTO player : gameJoinPlayerDTOList)
+        for (GameJoinPlayerDTO player : gameJoinPlayers)
         {
             String backNumber = player.getBackNumber();
             boolean isDuplicatedBackNumber = !backNumberSet.add(backNumber);
@@ -204,14 +210,14 @@ public class GameJoinManagerService {
         // TODO 중복된 회원이 있는지 체크하기 - userSeq의 중복이 있는지 stream으로 확인
 
         /** 게임참가선수 데이터 저장 - 선수유형에 따라서 처리하기 */
-        for (GameJoinPlayerDTO joinPlayerDTO : gameJoinPlayerDTOList)
+        for (GameJoinPlayerDTO joinPlayerDTO : gameJoinPlayers)
         {
             String playerTypeCode = joinPlayerDTO.getPlayerTypeCode();
             boolean isUnauthGuest = PlayerTypeCode.UNAUTH_GUEST.getCode().equals(playerTypeCode);
             /** 회원이 아닌 선수는 입력값을 직접 DB에 insert */
             if (isUnauthGuest)
             {
-                GameJoinPlayer unauthGuest = GameJoinPlayer.createUnauthPlayer(gameJoinTeamSeq, joinPlayerDTO);
+                GameJoinPlayer unauthGuest = GameJoinPlayer.createUnauthPlayer( gameJoinTeam, joinPlayerDTO );
                 gameJoinPlayerRepository.save(unauthGuest);
                 continue;
             }
@@ -219,7 +225,7 @@ public class GameJoinManagerService {
             /** 회원인 선수는 User테이블에서 데이터를 조회하여 insert */
             String backNumber = joinPlayerDTO.getBackNumber();
             User user = userRepository.findUser(joinPlayerDTO.getUserSeq());
-            GameJoinPlayer authJoinPlayer = GameJoinPlayer.createAuthPlayer(gameJoinTeamSeq, playerTypeCode, backNumber, user);
+            GameJoinPlayer authJoinPlayer = GameJoinPlayer.createAuthPlayer( gameJoinTeam, playerTypeCode, backNumber, user);
             gameJoinPlayerRepository.save(authJoinPlayer);
         }
     }
