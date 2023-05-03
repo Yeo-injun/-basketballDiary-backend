@@ -2,39 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.threeNerds.basketballDiary.mvc.game.repository.QuarterPlayerRecordsRepository">
-    <select id="find" resultType="com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords">
-        SELECT QUARTER_PLAYER_RECORDS_SEQ
-             , GAME_SEQ
-             , GAME_JOIN_PLAYER_SEQ
-             , GAME_JOIN_TEAM_SEQ
-             , QUARTER_CODE
-             , IN_GAME_YN
-             , TRY_FREE_THROW
-             , FREE_THROW
-             , TRY_TWO_POINT
-             , TWO_POINT
-             , TRY_THREE_POINT
-             , THREE_POINT
-             , REBOUND
-             , STEAL
-             , BLOCK
-             , TURNOVER
-             , FOUL
-          FROM QUARTER_PLAYER_RECORDS
-        <where>
-        <choose>
-            <when test="quarterPlayerRecordsSeq != null and !''.equals(quarterPlayerRecordsSeq)">
-               QUARTER_PLAYER_RECORDS_SEQ = #{quarterPlayerRecordsSeq}
-            </when>
-            <otherwise>
-               GAME_SEQ = #{gameSeq}
-           AND GAME_JOIN_PLAYER_SEQ = #{gameJoinPlayerSeq}
-           AND GAME_JOIN_TEAM_SEQ = #{gameJoinTeamSeq}
-           AND QUARTER_CODE = #{quarterCode}
-            </otherwise>
-        </choose>
-        </where>
-    </select>
 
     <select id="findAllInGame" resultType="com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords">
         /* QuarterPlayerRecordsRepository.findAllInGame */
@@ -60,44 +27,14 @@
            AND GAME_SEQ = #{gameSeq}
     </select>
 
-    <update id="modify" parameterType="com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords">
-        UPDATE QUARTER_PLAYER_RECORDS
-           SET QUARTER_CODE = #{quarterCode}
-             , IN_GAME_YN = #{inGameYn}
-             , TRY_FREE_THROW = #{tryFreeThrow}
-             , FREE_THROW = #{freeThrow}
-             , TRY_TWO_POINT = #{tryTwoPoint}
-             , TWO_POINT = #{twoPoint}
-             , TRY_THREE_POINT = #{tryThreePoint}
-             , THREE_POINT = #{threePoint}
-             , REBOUND = #{rebound}
-             , STEAL = #{steal}
-             , BLOCK = #{block}
-             , TURNOVER = #{turnover}
-             , FOUL = #{foul}
-        <where>
-        <choose>
-            <when test='quarterPlayerRecordsSeq != null and !"".equals(quarterPlayerRecordsSeq)'>
-               QUARTER_PLAYER_RECORDS_SEQ = #{quarterPlayerRecordsSeq}
-            </when>
-            <otherwise>
-               GAME_SEQ = #{gameSeq}
-           AND GAME_JOIN_PLAYER_SEQ = #{gameJoinPlayerSeq}
-           AND GAME_JOIN_TEAM_SEQ = #{gameJoinTeamSeq}
-           AND QUARTER_CODE = #{quarterCode}
-            </otherwise>
-        </choose>
-        </where>
-    </update>
-
-    <update id="modifyInGameYn" parameterType="com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords">
-        /* QuarterPlayerRecordsRepository.modifyInGameYn */
+    <update id="updateInGameYn" parameterType="com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords">
+        /* QuarterPlayerRecordsRepository.updateInGameYn */
         UPDATE QUARTER_PLAYER_RECORDS
            SET IN_GAME_YN = #{inGameYn}
          WHERE 1=1
            AND QUARTER_CODE         = #{quarterCode}
         <choose>
-            <when test='gameJoinPlayerSeq != null and !"".equals(gameJoinPlayerSeq)'>
+            <when test='gameJoinPlayerSeq != null'>
            AND GAME_JOIN_PLAYER_SEQ = #{gameJoinPlayerSeq}
             </when>
             <otherwise>
@@ -106,7 +43,27 @@
         </choose>
     </update>
 
-    <insert id="create" parameterType="com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords">
+    <update id="updateQuarterRecords" parameterType="com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords">
+        /* QuarterPlayerRecordsRepository.updateQuarterRecords */
+        UPDATE QUARTER_PLAYER_RECORDS
+           SET TRY_FREE_THROW = #{tryFreeThrow}
+             , TRY_TWO_POINT = #{tryTwoPoint}
+             , TRY_THREE_POINT = #{tryThreePoint}
+             , FREE_THROW = #{freeThrow}
+             , TWO_POINT = #{twoPoint}
+             , THREE_POINT = #{threePoint}
+             , REBOUND = #{rebound}
+             , STEAL = #{steal}
+             , BLOCK = #{block}
+             , TURNOVER = #{turnover}
+             , FOUL = #{foul}
+         WHERE 1=1
+           AND QUARTER_PLAYER_RECORDS_SEQ = #{quarterPlayerRecordsSeq}
+    </update>
+
+
+    <insert id="save" parameterType="com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords">
+        /* QuarterPlayerRecordsRepository.save */
         <selectKey keyProperty="quarterPlayerRecordsSeq" order="AFTER" resultType="java.lang.Long">
         SELECT LAST_INSERT_ID()
         </selectKey>
@@ -114,6 +71,7 @@
                QUARTER_PLAYER_RECORDS
         (
           GAME_SEQ
+        , HOME_AWAY_CODE
         , GAME_JOIN_PLAYER_SEQ
         , GAME_JOIN_TEAM_SEQ
         , QUARTER_CODE
@@ -133,6 +91,7 @@
         ) VALUES
         (
           #{gameSeq}
+        , #{homeAwayCode}
         , #{gameJoinPlayerSeq}
         , #{gameJoinTeamSeq}
         , #{quarterCode}

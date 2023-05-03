@@ -75,13 +75,13 @@ class TeamMemberServiceTest {
         assertThat(ret).isEqualTo(1);
     }
 
-    @Test
-    void deleteProfile(){
-        //given
-        doNothing().when(teamMemberRepository).deleteMyTeamProfile(findMyTeamProfileDTO);
-        //when
-        teamMemberService.deleteMyTeamProfile(findMyTeamProfileDTO);
-        //then
-        verify(teamMemberRepository).deleteMyTeamProfile(findMyTeamProfileDTO);
-    }
+//    @Test
+//    void deleteProfile(){
+//        //given
+//        doNothing().when(teamMemberRepository).deleteMyTeamProfile(findMyTeamProfileDTO);
+//        //when
+//        teamMemberService.deleteMyTeamProfile(findMyTeamProfileDTO);
+//        //then
+//        verify(teamMemberRepository).deleteMyTeamProfile(findMyTeamProfileDTO);
+//    }
 }

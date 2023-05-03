@@ -6,6 +6,7 @@ import com.threeNerds.basketballDiary.constant.code.HomeAwayCode;
 import com.threeNerds.basketballDiary.constant.code.PlayerTypeCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
+import com.threeNerds.basketballDiary.http.ResponseJsonBody;
 import com.threeNerds.basketballDiary.mvc.game.controller.request.RegisterGameJoinPlayersRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameEntry.response.GetGameEntryResponse;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameEntry.request.GetGameEntryRequest;
@@ -13,6 +14,8 @@ import com.threeNerds.basketballDiary.mvc.game.dto.getGameEntry.response.Quarter
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayers.response.GetGameJoinPlayersResponse;
 import com.threeNerds.basketballDiary.mvc.game.domain.Game;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayers.request.GetGameJoinPlayersRequest;
+import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinTeamMembers.request.GetGameJoinTeamMembersRequest;
+import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinTeamMembers.response.GetGameJoinTeamMembersResponse;
 import com.threeNerds.basketballDiary.mvc.team.domain.Team;
 import com.threeNerds.basketballDiary.mvc.user.domain.User;
 import com.threeNerds.basketballDiary.mvc.game.domain.GameJoinPlayer;
@@ -26,7 +29,7 @@ import com.threeNerds.basketballDiary.mvc.game.repository.QuarterPlayerRecordsRe
 import com.threeNerds.basketballDiary.mvc.game.repository.dto.GameJoinManagerRepository;
 import com.threeNerds.basketballDiary.mvc.team.repository.TeamRepository;
 import com.threeNerds.basketballDiary.mvc.user.repository.UserRepository;
-import com.threeNerds.basketballDiary.utils.ValidateUtil;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -168,11 +171,18 @@ public class GameJoinManagerService {
     /**
      * 게임참가선수 등록
      **/
-    public void registerGameJoinPlayers(RegisterGameJoinPlayersRequest playerRegistrationDTO)
-    {
+    public void registerGameJoinPlayers( RegisterGameJoinPlayersRequest reqBody ) {
+
+        Long gameSeq                                    = reqBody.getGameSeq();
+        String homeAwayCode                             = reqBody.getHomeAwayCode();
+        List<GameJoinPlayerDTO> gameJoinPlayers   = reqBody.getGameJoinPlayers();
+
+        /** 게임참가팀이 존재하는지 확인 */
+        GameJoinTeam joinTeamParam = GameJoinTeam.createInqCond( gameSeq, homeAwayCode );
+        GameJoinTeam gameJoinTeam = gameJoinTeamRepository.findGameJoinTeam( joinTeamParam );
+
         /** 해당 게임의 쿼터선수기록 존재여부 확인 - 쿼터기록이 존재할 경우 수정 불가 */
         // TODO 에러메세지 수정
-        Long gameSeq = playerRegistrationDTO.getGameSeq();
         List<QuarterPlayerRecords> playersRecord = quarterPlayerRecordsRepo.findAllInGame(gameSeq);
         boolean hasPlayerRecord = !playersRecord.isEmpty();
         if (hasPlayerRecord) {
@@ -180,17 +190,16 @@ public class GameJoinManagerService {
         }
 
         /** 게임참가선수 데이터 존재여부 확인 - 기존 데이터 존재시 삭제 */
-        Long gameJoinTeamSeq = playerRegistrationDTO.getGameJoinTeamSeq();
-        List<GameJoinPlayer> registeredJoinPlayers = gameJoinPlayerRepository.findPlayers(gameJoinTeamSeq);
+        GameJoinPlayer joinPlayerParam = GameJoinPlayer.createInqParam( gameSeq, homeAwayCode );
+        List<GameJoinPlayer> registeredJoinPlayers = gameJoinPlayerRepository.findPlayers( joinPlayerParam );
         boolean hasJoinPlayers = !registeredJoinPlayers.isEmpty();
         if (hasJoinPlayers) {
-            gameJoinPlayerRepository.deletePlayers(gameJoinTeamSeq);
+            gameJoinPlayerRepository.deletePlayers( joinPlayerParam );
         }
 
         /** 중복된 등번호가 있는지 체크하기 */
-        List<GameJoinPlayerDTO> gameJoinPlayerDTOList = playerRegistrationDTO.getGameJoinPlayers();
         Set<String> backNumberSet = new HashSet<>();
-        for (GameJoinPlayerDTO player : gameJoinPlayerDTOList)
+        for (GameJoinPlayerDTO player : gameJoinPlayers)
         {
             String backNumber = player.getBackNumber();
             boolean isDuplicatedBackNumber = !backNumberSet.add(backNumber);
@@ -201,14 +210,14 @@ public class GameJoinManagerService {
         // TODO 중복된 회원이 있는지 체크하기 - userSeq의 중복이 있는지 stream으로 확인
 
         /** 게임참가선수 데이터 저장 - 선수유형에 따라서 처리하기 */
-        for (GameJoinPlayerDTO joinPlayerDTO : gameJoinPlayerDTOList)
+        for (GameJoinPlayerDTO joinPlayerDTO : gameJoinPlayers)
         {
             String playerTypeCode = joinPlayerDTO.getPlayerTypeCode();
             boolean isUnauthGuest = PlayerTypeCode.UNAUTH_GUEST.getCode().equals(playerTypeCode);
             /** 회원이 아닌 선수는 입력값을 직접 DB에 insert */
             if (isUnauthGuest)
             {
-                GameJoinPlayer unauthGuest = GameJoinPlayer.createUnauthPlayer(gameJoinTeamSeq, joinPlayerDTO);
+                GameJoinPlayer unauthGuest = GameJoinPlayer.createUnauthPlayer( gameJoinTeam, joinPlayerDTO );
                 gameJoinPlayerRepository.save(unauthGuest);
                 continue;
             }
@@ -216,7 +225,7 @@ public class GameJoinManagerService {
             /** 회원인 선수는 User테이블에서 데이터를 조회하여 insert */
             String backNumber = joinPlayerDTO.getBackNumber();
             User user = userRepository.findUser(joinPlayerDTO.getUserSeq());
-            GameJoinPlayer authJoinPlayer = GameJoinPlayer.createAuthPlayer(gameJoinTeamSeq, playerTypeCode, backNumber, user);
+            GameJoinPlayer authJoinPlayer = GameJoinPlayer.createAuthPlayer( gameJoinTeam, playerTypeCode, backNumber, user);
             gameJoinPlayerRepository.save(authJoinPlayer);
         }
     }
@@ -230,15 +239,14 @@ public class GameJoinManagerService {
      * - homeAwayCode가 있을때는 해당하는 팀의 팀원 조회
      * @return enum을 key값으로 사용하여 홈/어웨이팀 구분
      */
-    public GetGameJoinPlayersResponse getGameJoinPlayers(GetGameJoinPlayersRequest request)
-    {
+    public GetGameJoinPlayersResponse getGameJoinPlayers(GetGameJoinPlayersRequest request) {
         /** 게임에 참가한 팀 및 팀원을 모두 조회해서 필터링 */
         final Long gameSeq = request.getGameSeq();
         List<GameJoinTeam> allGameJoinTeams = gameJoinTeamRepository.findAllGameJoinTeam(gameSeq);
 
         SearchPlayersDTO searchCond = new SearchPlayersDTO()
                                             .gameSeq(gameSeq);
-        List<PlayerInfoDTO> allGameJoinPlayers = gameJoinManagerRepo.findGameJoinPlayers(searchCond);
+        List<PlayerInfoDTO> allGameJoinPlayers = gameJoinManagerRepo.findAllGameJoinPlayers(searchCond);
 
         /** 한개팀 선수 조회일 경우 */
         String homeAwayCode = request.getHomeAwayCode();
@@ -307,20 +315,20 @@ public class GameJoinManagerService {
 
         /** 기존에 엔트리가 등록되어 있는지 조회 */
         Long gameSeq         = quarterEntryInfoDTO.getGameSeq();
-        Long gameJoinTeamSeq = quarterEntryInfoDTO.getGameJoinTeamSeq(); // TODO 제거할 속성 
         String homeAwayCode  = quarterEntryInfoDTO.getHomeAwayCode();
+        Long gameJoinTeamSeq = quarterEntryInfoDTO.getGameJoinTeamSeq();
         String quarterCode   = quarterEntryInfoDTO.getQuarterCode();
 
         SearchEntryDTO params = new SearchEntryDTO()
-                .gameJoinTeamSeq(gameJoinTeamSeq)   // 제거 예정
-                .homeAwayCode(homeAwayCode)
-                .quarterCode(quarterCode);
+                .gameSeq( gameSeq )
+                .homeAwayCode( homeAwayCode )
+                .quarterCode( quarterCode );
 
-        // TODO gameSeq와 homeAwayCode, quarterCode로 엔트리 길이 체크하는 로직으로 변경
-        List<QuarterPlayerRecordDTO> findExistedEntry = gameJoinManagerRepo.findEntryList(params);
-        boolean hasNoEntry = findExistedEntry.size() != 5;
-        if (hasNoEntry)
+        List<QuarterPlayerRecordDTO> findExistedEntry = gameJoinManagerRepo.findOneTeamEntry(params);
+        boolean hasNoFullEntry = findExistedEntry.size() != 5;
+        if ( hasNoFullEntry )
         {
+            // TODO 기존 엔트리 지우기
             /** 엔트리가 등록되어 있지 않으면 새로 등록 - insert */
             for (PlayerInfoDTO playerInfoDTO : entry)
             {
@@ -333,36 +341,37 @@ public class GameJoinManagerService {
                         .orElseThrow(() -> new CustomException(Error.INVALID_PARAMETER));
 
                 QuarterPlayerRecords paramForCreation = QuarterPlayerRecords.builder()
-                        .gameSeq(gameSeq)
+                        .gameSeq( gameSeq )
+                        .homeAwayCode( homeAwayCode )
                         .gameJoinTeamSeq( playerInfoDTO.getGameJoinTeamSeq() )
                         .gameJoinPlayerSeq( gameJoinPlayerSeq )
                         .quarterCode(quarterCode)
                         .inGameYn("Y")
                         .build();
-                quarterPlayerRecordsRepo.create(paramForCreation);
+                quarterPlayerRecordsRepo.save(paramForCreation);
             }
             return;
         }
 
         /** 엔트리가 등록되어 있다면 InGameYn "N"으로 초기화 후 대상들만 "Y"으로 변경 */
         QuarterPlayerRecords paramForInitEntry = QuarterPlayerRecords.builder()
-                .gameJoinTeamSeq(gameJoinTeamSeq)
+                .gameJoinTeamSeq( gameJoinTeamSeq )
                 .quarterCode(quarterCode)
                 .inGameYn("N")
                 .build();
 
-        quarterPlayerRecordsRepo.modifyInGameYn(paramForInitEntry);
+        quarterPlayerRecordsRepo.updateInGameYn( paramForInitEntry );
 
         for (PlayerInfoDTO playerInfoDTO : entry)
         {
             Long gameJoinPlayerSeq = playerInfoDTO.getGameJoinPlayerSeq();
             QuarterPlayerRecords paramForEntry = QuarterPlayerRecords.builder()
-                    .gameJoinPlayerSeq(gameJoinPlayerSeq)
+                    .gameJoinPlayerSeq( gameJoinPlayerSeq )
                     .quarterCode(quarterCode)
                     .inGameYn("Y")
                     .build();
 
-            quarterPlayerRecordsRepo.modifyInGameYn(paramForEntry);
+            quarterPlayerRecordsRepo.updateInGameYn(paramForEntry);
         }
         return;
     }
@@ -377,19 +386,13 @@ public class GameJoinManagerService {
         String HOME_TEAM_CODE = HomeAwayCode.HOME_TEAM.getCode();
         String AWAY_TEAM_CODE = HomeAwayCode.AWAY_TEAM.getCode();
 
-        /** TODO 테이블 구조 변경 검토
-         *  >> Game과 관련된 테이블은 GameSeq컬럼을 가지고 있는 것이 어떤지
-         *  >> Game과 관련된 테이블은 데이터조회시 기본적으로 한 게임을 기준으로 조회하는 경우가 많기 때문
-         */
-        // TODO 테이블 구조 변경전 임시 처리 >>
-        // 게임참가팀을 조회
-        // 홈어웨이 코드가 존재하면 해당되는 팀의 엔트리만 조회
-        // 존재하지 않으면 홈팀 어웨이팀 모두 조회하여 세팅
+        /** 한 게임의 모든 게임참가팀 조회 */
         List<GameJoinTeam> gameJoinTeams = gameJoinTeamRepository.findAllGameJoinTeam( request.getGameSeq() );
 
         String quarterCode = request.getQuarterCode();
         String homeAwayCode = request.getHomeAwayCode();
 
+        /** 홈어웨이코드 존재 여부확인 - 코드값이 존재하면 팀의 엔트리만 조회 */
         boolean isOnlyOneTeamInquery = StringUtils.hasText(homeAwayCode);
         if ( isOnlyOneTeamInquery ) {
             if ( HOME_TEAM_CODE.equals( homeAwayCode ) ) {
@@ -425,11 +428,30 @@ public class GameJoinManagerService {
         SearchEntryDTO searchCond = new SearchEntryDTO()
                 .gameJoinTeamSeq( gameJoinTeam.getGameJoinTeamSeq() )
                 .quarterCode( quarterCode );
-        List<QuarterPlayerRecordDTO> entry = gameJoinManagerRepo.findEntryList( searchCond );
+        List<QuarterPlayerRecordDTO> entry = gameJoinManagerRepo.findOneTeamEntry( searchCond );
 
         return new QuarterTeamEntryDTO()
                     .teamName( gameJoinTeam.getTeamName() )
                     .homeAwayCode( homeAwayCode )
                     .entry( entry );
+    }
+
+    /**
+     * 23.01.28
+     * 게임참가팀 팀원조회
+     * 게임 입력권한을 부여하기 위해 경기에 참여한 팀원을 조회한다.
+     * (이미 권한을 부여받은 선수는 제외한다.) TODO 기능 추가 예정
+     * @author 강창기
+     * @update 여인준 / 소스코드 이전 ( 기존 GameRecordManagerService에서 )
+     */
+    public ResponseJsonBody getGameJoinTeamMembers( GetGameJoinTeamMembersRequest reqBody ) {
+
+        SearchGameJoinTeamMemberDTO searchCond = new SearchGameJoinTeamMemberDTO()
+                                        .gameSeq( reqBody.getGameSeq() )
+                                        .homeAwayCode( reqBody.getHomeAwayCode() );
+
+        List<GameJoinTeamMemberDTO> gameJoinPlayers = gameJoinManagerRepo.findAllGameJoinTeamMembers( searchCond );
+
+        return new GetGameJoinTeamMembersResponse( gameJoinPlayers );
     }
 }

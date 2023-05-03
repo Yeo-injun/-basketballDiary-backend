@@ -2,15 +2,20 @@ package com.threeNerds.basketballDiary.mvc.authUser.dto;
 
 import lombok.Getter;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
+
 @Getter
 public class UpdateUserDTO {
 
     private Long userSeq;
 
+    @NotEmpty
     private String userName;
 
     private String gender;
 
+    @Email
     private String email;
 
     private Double height;

@@ -1,12 +1,12 @@
 package com.threeNerds.basketballDiary.mvc.game.service;
 
+import com.threeNerds.basketballDiary.constant.code.GameRecordAuthCode;
 import com.threeNerds.basketballDiary.constant.code.GameRecordStateCode;
 import com.threeNerds.basketballDiary.constant.code.HomeAwayCode;
 import com.threeNerds.basketballDiary.constant.code.QuarterCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
-import com.threeNerds.basketballDiary.mvc.game.controller.dto.GameAuthDTO;
-import com.threeNerds.basketballDiary.mvc.game.controller.response.GameAuthRecordersResponse;
+import com.threeNerds.basketballDiary.http.ResponseJsonBody;
 import com.threeNerds.basketballDiary.mvc.game.domain.*;
 
 import com.threeNerds.basketballDiary.mvc.game.dto.*;
@@ -17,24 +17,33 @@ import com.threeNerds.basketballDiary.mvc.game.dto.getGameAllQuartersRecords.Qua
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameAllQuartersRecords.QuarterTeamRecordsDTO;
 
 
+import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayerRecordsByQuarter.request.GetGameJoinPlayerRecordsByQuarterRequest;
+import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayerRecordsByQuarter.response.GetGameJoinPlayerRecordsByQuarterResponse;
+import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayerRecordsByQuarter.response.PlayerQuarterRecordDTO;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.request.GetGameQuarterRecordsRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.response.GetGameQuarterRecordsResponse;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.response.TeamQuarterRecordsDTO;
+import com.threeNerds.basketballDiary.mvc.game.dto.getGameRecorders.request.GetGameRecordersRequest;
+import com.threeNerds.basketballDiary.mvc.game.dto.getGameRecorders.response.GameRecorderDTO;
+import com.threeNerds.basketballDiary.mvc.game.dto.getGameRecorders.response.GetGameRecordersResponse;
+import com.threeNerds.basketballDiary.mvc.game.dto.saveGameRecorder.request.SaveGameRecordersRequest;
+import com.threeNerds.basketballDiary.mvc.game.dto.saveQuarterRecords.request.SavePlayerRecordDTO;
+import com.threeNerds.basketballDiary.mvc.game.dto.saveQuarterRecords.request.SaveQuarterRecordsRequest;
 import com.threeNerds.basketballDiary.mvc.game.repository.*;
 import com.threeNerds.basketballDiary.mvc.game.repository.dto.GameRecordManagerRepository;
+import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameCondDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameJoinTeamRecordDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameRecordDTO;
+import com.threeNerds.basketballDiary.mvc.myTeam.repository.TeamMemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -50,137 +59,53 @@ public class GameRecordManagerService {
     private final GameRecordManagerRepository gameRecordManagerRepository;
     private final GameRecordAuthRepository gameRecordAuthRepository;
 
+    private final TeamMemberRepository teamMemberRepo;
+
     private final String QUARTER_1ST_CODE = QuarterCode.FIRST.getCode();
     private final String QUARTER_2ND_CODE = QuarterCode.SECOND.getCode();
     private final String QUARTER_3RD_CODE = QuarterCode.THIRD.getCode();
     private final String QUARTER_4TH_CODE = QuarterCode.FOURTH.getCode();
 
-
-    /**
-     * 22.12.04
-     * 쿼터별 팀기록 조회(단건)
-     * @param quarterTeamRecords 쿼터별팀기록 DTO
-     * @return 쿼터별팀기록 DTO
-     * @author 강창기
-     */
-    public QuarterTeamRecords findQuarterTeamRecords(QuarterTeamRecords quarterTeamRecords) {
-        if(ObjectUtils.isEmpty(quarterTeamRecords))
-            throw new CustomException(Error.NO_PARAMETER);
-
-        return quarterTeamRecordsRepository.find(quarterTeamRecords);
-    }
-
-    /**
-     * 22.12.04
-     * 쿼터별 선수기록 생성
-     * @param quarterTeamRecords 쿼터별팀기록 DTO
-     * @return QuarterPlayerRecordsSeq
-     * @author 강창기
-     */
-    public Long createQuarterTeamRecords(QuarterTeamRecords quarterTeamRecords) {
-        if(ObjectUtils.isEmpty(quarterTeamRecords))
-            throw new CustomException(Error.NO_PARAMETER);
-
-        return quarterTeamRecordsRepository.create(quarterTeamRecords);
-    }
-
-    /**
-     * 22.12.04
-     * 쿼터별 선수기록 수정
-     * @param quarterTeamRecords 쿼터별팀기록 DTO
-     * @author 강창기
-     */
-    public void modifyQuarterTeamRecords(QuarterTeamRecords quarterTeamRecords) {
-        if(ObjectUtils.isEmpty(quarterTeamRecords))
-            throw new CustomException(Error.NO_PARAMETER);
-
-        quarterTeamRecordsRepository.modify(quarterTeamRecords);
-    }
-
-    /**
-     * 22.11.25
-     * 쿼터별 선수기록 조회(단건)
-     * @param quarterPlayerRecords 쿼터별선수기록 DTO
-     * @author 강창기
-     */
-    public QuarterPlayerRecords findQuarterPlayerRecords(QuarterPlayerRecords quarterPlayerRecords) {
-        if(ObjectUtils.isEmpty(quarterPlayerRecords))
-            throw new CustomException(Error.NO_PARAMETER);
-
-        return quarterPlayerRecordsRepository.find(quarterPlayerRecords);
-    }
-
-    /**
-     * 22.12.03
-     * 쿼터별 선수기록 생성
-     * @param quarterPlayerRecords 쿼터별선수기록 DTO
-     * @return QuarterPlayerRecordsSeq
-     * @author 강창기
-     */
-    public Long createQuarterPlayerRecords(QuarterPlayerRecords quarterPlayerRecords) {
-        if(ObjectUtils.isEmpty(quarterPlayerRecords))
-            throw new CustomException(Error.NO_PARAMETER);
-
-        return quarterPlayerRecordsRepository.create(quarterPlayerRecords);
-    }
-
-    /**
-     * 22.11.25
-     * 쿼터별 선수기록 수정
-     * @param quarterPlayerRecords 쿼터별선수기록 DTO
-     * @author 강창기
-     */
-    public void modifyQuarterPlayerRecords(QuarterPlayerRecords quarterPlayerRecords) {
-        if(ObjectUtils.isEmpty(quarterPlayerRecords))
-            throw new CustomException(Error.NO_PARAMETER);
-
-        quarterPlayerRecordsRepository.modify(quarterPlayerRecords);
-    }
-
-    /**
-     * 22.11.22
-     * 특정쿼터의 선수별 기록조회(단건)
-     * homeAwayCode에 따라 특정쿼터의 선수별 기록 단건을 조회한다.
-     * @param searchGameDTO 게임조회용 DTO
-     * @author 강창기
-     */
-    public PlayerRecordDTO getPlayerRecordsByQuarter(SearchGameDTO searchGameDTO) {
-        if(ObjectUtils.isEmpty(searchGameDTO))
-            throw new CustomException(Error.NO_PARAMETER);
-
-        if(ObjectUtils.isEmpty(searchGameDTO.getQuarterPlayerRecordsSeq())) {
-            if(ObjectUtils.isEmpty(searchGameDTO.getGameSeq())
-                    || ObjectUtils.isEmpty(searchGameDTO.getGameJoinPlayerSeq())
-                    || ObjectUtils.isEmpty(searchGameDTO.getGameJoinTeamSeq())
-                    || ObjectUtils.isEmpty(searchGameDTO.getQuarterCode()))
-                throw new CustomException(Error.NO_PARAMETER);
-
-            if(ObjectUtils.isEmpty(gameRepository.findGameBasicInfo(searchGameDTO.getGameSeq())))
-                throw new CustomException(Error.NOT_FOUND_GAME);  // 게임 정보가 존재하지 않습니다.
-        }
-
-        PlayerRecordDTO resultDVO = gameRecordManagerRepository.findPlayerRecordsByQuarter(searchGameDTO);
-        return resultDVO;
-    }
-
-    /**
+    /** TODO 23.04.09 테스트 필요
      * 22.11.06
      * 특정쿼터의 선수별 기록조회(목록)
      * homeAwayCode에 따라 특정쿼터의 선수별 기록 목록을 조회한다.
-     * @param searchGameDTO 게임조회용 DTO
      * @author 강창기
+     * @update 여인준 23.04.08 : 파라미터 및 조회 데이터 변경
      */
-    public List<PlayerRecordDTO> getListPlayerRecordsByQuarter(SearchGameDTO searchGameDTO) {
-        if(ObjectUtils.isEmpty(searchGameDTO))
-            throw new CustomException(Error.NO_PARAMETER);
+    public ResponseJsonBody getGameJoinPlayerRecordsByQuarter(GetGameJoinPlayerRecordsByQuarterRequest reqBody)
+    {
+        Long gameSeq = reqBody.getGameSeq();
+        String homeAwayCode = reqBody.getHomeAwayCode();
+        String quarterCode = reqBody.getQuarterCode();
 
         // gameSeq에 해당하는 게임내역이 존재하는지 확인.
-        Long gameSeq = searchGameDTO.getGameSeq();
-        if(ObjectUtils.isEmpty(gameRepository.findGameBasicInfo(gameSeq)))
+        boolean isExistGame = !ObjectUtils.isEmpty( gameRepository.findGameBasicInfo( gameSeq ) );
+        if( !isExistGame ) {
             throw new CustomException(Error.NOT_FOUND_GAME);  // 게임 정보가 존재하지 않습니다.
+        }
 
-        List<PlayerRecordDTO> resultList = gameRecordManagerRepository.findAllPlayerRecordsByQuarter(searchGameDTO);
-        return resultList;
+        SearchGameDTO searchPlayerRecordsParam = new SearchGameDTO()
+                .gameSeq( gameSeq )
+                .homeAwayCode( homeAwayCode )
+                .quarterCode( quarterCode );
+
+        List<PlayerQuarterRecordDTO> players = gameRecordManagerRepository.findAllPlayerRecordsByQuarter( searchPlayerRecordsParam );
+
+        return new GetGameJoinPlayerRecordsByQuarterResponse(
+                gameSeq,
+                quarterCode,
+                filterPlayersByHomeAwayCode( players, HomeAwayCode.HOME_TEAM ),
+                filterPlayersByHomeAwayCode( players, HomeAwayCode.AWAY_TEAM )
+        );
+    }
+
+    private List<PlayerQuarterRecordDTO> filterPlayersByHomeAwayCode( List<PlayerQuarterRecordDTO> targetPlayers, HomeAwayCode filterCode )
+    {
+        /** 홈/어웨이팀 구분에 따른 처리 */
+        return targetPlayers.stream()
+                .filter( t -> filterCode.getCode().equals( t.getHomeAwayCode() ) )
+                .collect(Collectors.toList());
     }
 
     /**
@@ -198,49 +123,56 @@ public class GameRecordManagerService {
                             .orElseThrow( () -> new CustomException(Error.NOT_FOUND_GAME) );
 
         String quarterCode = reqBody.getQuarterCode();
-        GetGameQuarterRecordsResponse resBody = new GetGameQuarterRecordsResponse()
-                .gameSeq( gameInfo.getGameSeq() )
-                .quarterCode( quarterCode )
-                .quarterCodeName( QuarterCode.nameOf( quarterCode ) )
-                .gameYmd( gameInfo.getGameYmd() )
-                .gameStartTime( gameInfo.getGameStartTime() )
-                .gameEndTime( gameInfo.getGameEndTime() );
-
         SearchGameDTO gameSearchCond = new SearchGameDTO()
                 .gameSeq( gameSeq )
                 .quarterCode( quarterCode );
         List<TeamQuarterRecordsDTO> allTeamsQuarterRecords = gameRecordManagerRepository.findAllTeamsQuarterRecords(gameSearchCond);
 
+        // TODO 메세지 생성 로직 리팩토링 >> 테스트
+
         /** 쿼터기록이 입력되지 않은 경우 - 초기값 return */
-        if ( allTeamsQuarterRecords.isEmpty() )
-        {
+        if ( allTeamsQuarterRecords.isEmpty() ) {
             List<GameJoinTeam> gameJoinTeams = gameJoinTeamRepo.findAllGameJoinTeam( gameSeq );
-            for ( GameJoinTeam teamInfo : gameJoinTeams )
-            {
-                TeamQuarterRecordsDTO teamRecordInfo = new TeamQuarterRecordsDTO()
-                                                            .gameJoinTeamSeq( teamInfo.getGameJoinTeamSeq() )
-                                                            .teamName( teamInfo.getTeamName() );
-                if ( HomeAwayCode.HOME_TEAM.getCode().equals( teamInfo.getHomeAwayCode() ) ) {
-                    resBody.homeTeamRecords( teamRecordInfo.homeAwayCode( HomeAwayCode.HOME_TEAM.getCode() ) );
-                } else {
-                    resBody.awayTeamRecords( teamRecordInfo.homeAwayCode( HomeAwayCode.AWAY_TEAM.getCode() ) );
-                }
-            }
-            return resBody;
+            return new GetGameQuarterRecordsResponse(
+                    gameInfo,
+                    quarterCode,
+                    initGameJoinTeamByHomeAwayCode( gameJoinTeams, HomeAwayCode.HOME_TEAM ),
+                    initGameJoinTeamByHomeAwayCode( gameJoinTeams, HomeAwayCode.AWAY_TEAM )
+            );
         }
 
-        for ( TeamQuarterRecordsDTO teamRecords : allTeamsQuarterRecords )
-        {
-            resBody.quarterTime( teamRecords.getQuarterTime() );
-            if ( HomeAwayCode.HOME_TEAM.getCode().equals( teamRecords.getHomeAwayCode() ) ) {
-                resBody.homeTeamRecords( teamRecords );
-            } else {
-                resBody.awayTeamRecords( teamRecords );
-            }
-        }
-
-        return resBody;
+        return new GetGameQuarterRecordsResponse(
+                gameInfo,
+                quarterCode,
+                filterByHomeAwayCode( allTeamsQuarterRecords, HomeAwayCode.HOME_TEAM ),
+                filterByHomeAwayCode( allTeamsQuarterRecords, HomeAwayCode.AWAY_TEAM )
+        );
     }
+
+    private TeamQuarterRecordsDTO initGameJoinTeamByHomeAwayCode( List<GameJoinTeam> gameJoinTeams, HomeAwayCode homeAwayCode )
+    {
+        /** 홈/어웨이팀 구분에 따른 처리 */
+        GameJoinTeam gameJoinTeam = gameJoinTeams.stream()
+                                        .filter( gjt -> gjt.getHomeAwayCode().equals( homeAwayCode.getCode() ))
+                                        .findFirst()
+                                        .get();
+
+        return new TeamQuarterRecordsDTO()
+                .gameJoinTeamSeq( gameJoinTeam.getGameJoinTeamSeq() )
+                .teamName( gameJoinTeam.getTeamName() )
+                .homeAwayCode( homeAwayCode.getCode() );
+    }
+
+    private TeamQuarterRecordsDTO filterByHomeAwayCode( List<TeamQuarterRecordsDTO> gameJoinTeams, HomeAwayCode homeAwayCode )
+    {
+        /** 홈/어웨이팀 구분에 따른 처리 */
+        return gameJoinTeams.stream()
+                .filter( gjt -> gjt.getHomeAwayCode().equals( homeAwayCode.getCode() ))
+                .findFirst()
+                .get();
+    }
+
+
 
     /**
      * 22.12.25
@@ -251,14 +183,9 @@ public class GameRecordManagerService {
      */
     public GetGameAllQuartersRecordsResponse getGameAllQuartersRecords(SearchGameDTO searchGameDTO)
     {
-//        if(ObjectUtils.isEmpty(searchGameDTO.getGameSeq()))
-//            throw new CustomException(Error.NO_PARAMETER);
-        Game game = gameRepository.findGame(searchGameDTO.getGameSeq());
-
-        boolean hasNoGameInfo = ObjectUtils.isEmpty(game);
-        if(hasNoGameInfo) {
-            throw new CustomException(Error.NOT_FOUND_GAME);
-        }
+        Game game = Optional
+                        .ofNullable( gameRepository.findGame( searchGameDTO.getGameSeq() ) )
+                        .orElseThrow( () -> new CustomException(Error.NOT_FOUND_GAME) );
 
         List<QuarterTeamRecordsDTO> allQuarterRecords = gameRecordManagerRepository.findAllQuarterRecords(searchGameDTO);
         if (allQuarterRecords.isEmpty()) {
@@ -328,8 +255,8 @@ public class GameRecordManagerService {
             Long gameSeq = gr.getGameSeq();
             List<GameJoinTeamRecordDTO> joinTeams = gameRecordManagerRepository.findGameJoinTeamRecordsByGameSeq(gameSeq);
 
-            GameJoinTeamRecordDTO homeTeam = filterGameJoinTeamByHomeAwayCode(joinTeams, HomeAwayCode.HOME_TEAM);
-            GameJoinTeamRecordDTO awayTeam = filterGameJoinTeamByHomeAwayCode(joinTeams, HomeAwayCode.AWAY_TEAM);
+            GameJoinTeamRecordDTO homeTeam = filterGameJoinTeamByHomeAwayCodeTODO(joinTeams, HomeAwayCode.HOME_TEAM);
+            GameJoinTeamRecordDTO awayTeam = filterGameJoinTeamByHomeAwayCodeTODO(joinTeams, HomeAwayCode.AWAY_TEAM);
 
             gr.homeTeam(homeTeam)
                     .awayTeam(awayTeam);
@@ -338,7 +265,8 @@ public class GameRecordManagerService {
         return games;
     }
 
-    private GameJoinTeamRecordDTO filterGameJoinTeamByHomeAwayCode(List<GameJoinTeamRecordDTO> joinTeams, HomeAwayCode homeAwayCode)
+    // TODO 메소드 쪼개기... 함수명과 다른 처리를 하는 동작이 존재...
+    private GameJoinTeamRecordDTO filterGameJoinTeamByHomeAwayCodeTODO(List<GameJoinTeamRecordDTO> joinTeams, HomeAwayCode homeAwayCode)
     {
         /** 참가팀 구분 - 홈/어웨이팀 */
         GameJoinTeamRecordDTO joinTeam = joinTeams.stream()
@@ -408,9 +336,16 @@ public class GameRecordManagerService {
      * 게임기록자 조회
      * @author 이성주
      */
-    public List<GameAuthRecordersResponse> searchGameRecorders(GameAuthDTO gameAuthDTO){
-        List<GameAuthRecordersResponse> gameAuthRecordersResponses = gameRecordAuthRepository.searchGameRecorders(gameAuthDTO);
-        return gameAuthRecordersResponses;
+    public GetGameRecordersResponse getGameRecorders( GetGameRecordersRequest request ) {
+        // TODO 경기기록 권한자의 요건 최종 검토
+        // 1. 게임에 참가하는 팀에 소속되어 있어야 한다.
+        // 2, 게임에 참가선수로 등록되지 않아도 된다.
+        // 이에따른 조회 쿼리 및 조회 내용 정립
+        Long gameSeq = request.getGameSeq();
+        SearchGameDTO gameCond = new SearchGameDTO().gameSeq( gameSeq);
+        List<GameRecorderDTO> gameRecorders = gameRecordManagerRepository.findAllGameRecorders( gameCond );
+
+        return new GetGameRecordersResponse( gameRecorders );
     }
 
     /**
@@ -418,8 +353,54 @@ public class GameRecordManagerService {
      * 게임기록자 저장
      * @author 이성주
      */
-    public void saveAuthRecorder(GameRecordAuth gameRecordAuth){
-        gameRecordAuthRepository.saveGameRecordAuth(gameRecordAuth);
+    public void saveGameRecorders( SaveGameRecordersRequest request ) {
+        Long gameSeq                        = request.getGameSeq();
+        List<GameRecorderDTO> gameRecorders = request.getGameRecorders();
+
+        /** 게임참가팀의 팀원인지 확인 - 게임기록자가 되려면 게임에 참가한 팀의 팀원이어야 한다. */
+        List<GameJoinTeam> joinTeams = gameJoinTeamRepo.findAllGameJoinTeam( gameSeq );
+        if ( joinTeams.isEmpty() ) {
+            throw new CustomException(Error.TEAM_NOT_FOUND);
+        }
+        Set<Long> teamSeqSet = joinTeams.stream()
+                                        .map( GameJoinTeam::getTeamSeq )
+                                        .collect( Collectors.toSet() );
+        if ( !isJoinedGameJoinTeamMember( teamSeqSet, gameRecorders ) ) {
+            throw new CustomException(Error.MY_TEAM_NOT_FOUND); // TODO 에러메세지 정보 수정
+        }
+
+        /** 기존 게임 기록권한 목록을 제거한다. - 게임생성자는 삭제대상에서 제외 */
+        gameRecordAuthRepository.deleteWriterAuth( gameSeq );
+
+        /** 게임참가팀의 팀원일 경우 게임기록자로 추가한다. */
+        for ( GameRecorderDTO gameRecorder : gameRecorders ) {
+            // 게임생성자를 제외하고 insert문을 실행한다.
+            if ( GameRecordAuthCode.CREATOR.getCode().equals( gameRecorder.getGameRecordAuthCode() ) ) {
+                continue;
+            }
+            TeamMember teamMemberParam = TeamMember.builder()
+                    .userSeq( gameRecorder.getUserSeq() )
+                    .teamSeq( gameRecorder.getTeamSeq() )
+                    .build();
+            TeamMember teamMember = Optional
+                    .ofNullable( teamMemberRepo.findTeamMemberByUserAndTeamSeq( teamMemberParam ) )
+                    .orElseThrow( () -> new CustomException(Error.MY_TEAM_NOT_FOUND));
+
+            GameRecordAuth newRecorder = GameRecordAuth.createOnlyWriter( gameSeq, teamMember.getTeamMemberSeq() );
+            /** TODO 기록자 중복 체크 - GameSeq와 TeamMemberSeq로 조회시 기존 데이터 존재하는지 체크 */
+            gameRecordAuthRepository.saveGameRecordAuth( newRecorder );
+        }
+    }
+
+    private boolean isJoinedGameJoinTeamMember( Set<Long> teamSeqSet, List<GameRecorderDTO> gameRecorders ) {
+        for ( GameRecorderDTO gameRecorder : gameRecorders ) {
+            boolean isJoinedTeamMember = teamSeqSet.contains( gameRecorder.getTeamSeq() );
+            if ( isJoinedTeamMember ) {
+                continue;
+            }
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -461,8 +442,92 @@ public class GameRecordManagerService {
         }
 
         for ( GameJoinTeam joinTeam : gameJoinTeams ) {
-            QuarterTeamRecords quarterTeamBasicInfo = new QuarterTeamRecords( gameSeq, joinTeam.getGameJoinTeamSeq(), quarterCode );
-            quarterTeamRecordsRepository.create( quarterTeamBasicInfo );
+            QuarterTeamRecords quarterTeamBasicInfo = new QuarterTeamRecords(
+                    gameSeq ,
+                    joinTeam.getHomeAwayCode() ,
+                    joinTeam.getGameJoinTeamSeq() ,
+                    quarterCode
+            );
+            quarterTeamRecordsRepository.save( quarterTeamBasicInfo );
         }
     }
+
+    /**
+     * 23.03.19
+     * 게임쿼터 기록 저장 및 수정
+     *      - 화면에서 게임쿼터기록을 홈팀과 어웨이팀의 선수기록으로 받아서
+     *      - QuarterTeamRecords와 QuarterPlayerRecords테이블을 업데이트 친다.
+     *      - 해당 서비스의 전제 조건 : QuarterTeamRecords와 QuarterPlayerRecords에 데이터가 이미 존재해야 한다.
+     * @author 여인준
+     */
+    public void saveQuarterRecord(SaveQuarterRecordsRequest requestMessage)
+    {
+        Long gameSeq = requestMessage.getGameSeq();
+        String quarterCode = requestMessage.getQuarterCode();
+        QuarterTeamRecords inqCondQuarterTeamRecords = QuarterTeamRecords.builder()
+                .gameSeq( gameSeq )
+                .quarterCode( quarterCode )
+                .build();
+        /** 경기에 참가한 팀의 쿼터기록 조회 */
+        List<QuarterTeamRecords> allTeamRecords = quarterTeamRecordsRepository.findAllGameJoinTeam( inqCondQuarterTeamRecords );
+
+        /** 홈팀 경기기록 입력 */
+        recordQuarterStat(
+                filterGameJoinTeamByHomeAwayCode( allTeamRecords, HomeAwayCode.HOME_TEAM),
+                requestMessage.getHomeTeamPlayerRecords()
+        );
+
+        /** 어웨이팀 경기기록 입력 */
+        recordQuarterStat(
+                filterGameJoinTeamByHomeAwayCode( allTeamRecords, HomeAwayCode.AWAY_TEAM),
+                requestMessage.getAwayTeamPlayerRecords()
+        );
+
+    }
+
+    private QuarterTeamRecords filterGameJoinTeamByHomeAwayCode(List<QuarterTeamRecords> joinTeams, HomeAwayCode homeAwayCode)
+    {
+        /** 참가팀 구분 - 홈/어웨이팀 */
+        return joinTeams.stream()
+                .filter(t -> homeAwayCode.getCode().equals(t.getHomeAwayCode()))
+                .findFirst()
+                // TODO 에러메세지 동적으로 처리하기 homeAwayCode.getName();
+                .orElseThrow(() -> new CustomException(Error.NOT_FOUND_HOME_TEAM));
+    }
+
+
+
+    private void recordQuarterStat( QuarterTeamRecords teamRecords, List<SavePlayerRecordDTO> playerRecords )
+    {
+        /** 팀기록 초기화 - 선수들의 기록 합으로 반영 */
+        teamRecords.initRecords();
+        for ( SavePlayerRecordDTO playerRecord : playerRecords )
+        {
+            QuarterPlayerRecords quarterPlayerRecords = QuarterPlayerRecords.builder()
+                    .quarterPlayerRecordsSeq( playerRecord.getQuarterPlayerRecordsSeq() )
+                    .gameSeq( playerRecord.getGameSeq() )
+                    .homeAwayCode( playerRecord.getHomeAwayCode() )
+                    .quarterCode( playerRecord.getQuarterCode() )
+                    .tryFreeThrow( playerRecord.getTryFreeThrow() )
+                    .tryTwoPoint( playerRecord.getTryTwoPoint() )
+                    .tryThreePoint( playerRecord.getTryThreePoint() )
+                    .freeThrow( playerRecord.getFreeThrow() )
+                    .twoPoint( playerRecord.getTwoPoint() )
+                    .threePoint( playerRecord.getThreePoint() )
+                    .rebound( playerRecord.getRebound() )
+                    .assist( playerRecord.getAssist() )
+                    .steal( playerRecord.getSteal() )
+                    .block( playerRecord.getBlock() )
+                    .turnover( playerRecord.getTurnover() )
+                    .foul( playerRecord.getFoul() )
+                    .build();
+
+            quarterPlayerRecordsRepository.updateQuarterRecords( quarterPlayerRecords );
+            teamRecords.addPlayerRecordsStat( quarterPlayerRecords );
+        }
+        quarterTeamRecordsRepository.updateQuarterRecords( teamRecords );
+    }
+
+
+
 }

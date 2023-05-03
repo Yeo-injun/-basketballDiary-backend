@@ -25,8 +25,7 @@ public class GameRecordAuth {
     private String gameRecordAuthCode;  /* 게임기록권한코드 */
     private String regDate;             /* 등록일자 */
 
-    public static GameRecordAuth getCreatorAuth(Long gameSeq, Long teamMemberSeq)
-    {
+    public static GameRecordAuth createCreator(Long gameSeq, Long teamMemberSeq) {
         return GameRecordAuth.builder()
                 .gameSeq(gameSeq)
                 .teamMemberSeq(teamMemberSeq)
@@ -34,7 +33,7 @@ public class GameRecordAuth {
                 .build();
     }
 
-    public static GameRecordAuth getOnlyWriterAuth(Long gameSeq,Long teamMemberSeq){
+    public static GameRecordAuth createOnlyWriter(Long gameSeq, Long teamMemberSeq) {
         return GameRecordAuth.builder()
                 .gameSeq(gameSeq)
                 .teamMemberSeq(teamMemberSeq)

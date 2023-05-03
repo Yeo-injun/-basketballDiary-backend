@@ -8,16 +8,25 @@ import java.util.List;
 
 @Mapper
 public interface QuarterTeamRecordsRepository {
-
-    /** 쿼터목록 조회 - 게임참가팀Seq로 조회 */
+    /**********
+     * SELECT
+     **********/
+    List<QuarterTeamRecords> findAllGameJoinTeam(QuarterTeamRecords inqCond);
+    /** 쿼터목록 조회 - 게임참가팀Seq로 조회 TODO 메소드명 고치기 - findByGameJoinTeamSeq */
     List<QuarterTeamRecords> findQuarterRecordsByJoinTeamSeq(Long gameJoinTeamSeq);
 
-    QuarterTeamRecords find(QuarterTeamRecords quarterTeamRecords);
+    /**********
+     * INSERT
+     **********/
+    int save(QuarterTeamRecords quarterTeamRecords);
 
-    void modify(QuarterTeamRecords quarterTeamRecords);
+    /**********
+     * UPDATE
+     **********/
+    int updateQuarterRecords(QuarterTeamRecords teamRecords);
 
-    Long create(QuarterTeamRecords quarterTeamRecords);
-
-    Long deleteGameQuarter(QuarterTeamRecords quarterTeamRecords);
-
+    /**********
+     * DELETE
+     **********/
+    int deleteGameQuarter(QuarterTeamRecords quarterTeamRecords);
 }

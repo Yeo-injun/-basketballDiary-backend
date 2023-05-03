@@ -10,17 +10,28 @@ import java.util.List;
 @Mapper
 public interface GameJoinPlayerRepository {
 
-     /** 게임참가선수 저장 */
-    int save(GameJoinPlayer gameJoinPlayer);
-
+    /**********
+     * SELECT
+     **********/
     /** 게임참가선수의 참가팀Seq 조회 */
     GameJoinPlayer findPlayer(GameJoinPlayer gameJoinPlayer);
 
     /** 게임참가선수 목록조회 */
-    List<GameJoinPlayer> findPlayers(Long gameJoinTeamSeq);
+    List<GameJoinPlayer> findPlayers(GameJoinPlayer gameJoinPlayer);
 
+    /**********
+     * INSERT
+     **********/
+    /** 게임참가선수 저장 */
+    int save(GameJoinPlayer gameJoinPlayer);
+
+    /**********
+     * UPDATE
+     **********/
+
+    /**********
+     * DELETE
+     **********/
     /** 게임참가선수 삭제(다건) - 게임참가팀Seq로 다건 삭제  */
-    int deletePlayers(Long gameJoinTeamSeq);
-
-
+    int deletePlayers( GameJoinPlayer gameJoinPlayer );
 }

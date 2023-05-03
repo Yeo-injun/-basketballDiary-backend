@@ -2,11 +2,12 @@ package com.threeNerds.basketballDiary.mvc.game.repository.dto;
 
 import com.threeNerds.basketballDiary.mvc.game.dto.*;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameAllQuartersRecords.QuarterTeamRecordsDTO;
+import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayerRecordsByQuarter.response.PlayerQuarterRecordDTO;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.response.TeamQuarterRecordsDTO;
+import com.threeNerds.basketballDiary.mvc.game.dto.getGameRecorders.response.GameRecorderDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameCondDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameJoinTeamRecordDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameRecordDTO;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.QuarterRecordDTO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -14,46 +15,24 @@ import java.util.List;
 @Mapper
 public interface GameRecordManagerRepository {
 
-    /** 게임기록조회
-     * @param gc
-     * @return
-     */
+    /** 게임기록조회 */
     List<GameRecordDTO> findGamesByTeamSeq(GameCondDTO gc);
 
     /** 게임참가팀들 조회 - 홈/어웨이팀 모두 */
     List<GameJoinTeamRecordDTO> findGameJoinTeamRecordsByGameSeq(Long gameSeq);
 
-    /** 게임참가팀의 쿼터기록 조회 - 쿼터기록 */
-    List<QuarterRecordDTO> findJoinTeamQuarterRecords(Long gameJoinTeamSeq);
+    /** 특정쿼터의 선수별 기록조회 (목록) */
+    List<PlayerQuarterRecordDTO> findAllPlayerRecordsByQuarter(SearchGameDTO searchCond);
 
-
-    /** 특정쿼터의 선수별 기록조회(단건)
-     * @param searchGameDTO 게임조회용 DTO
-     */
-    PlayerRecordDTO findPlayerRecordsByQuarter(SearchGameDTO searchGameDTO);
-
-    /** 특정쿼터의 선수별 기록조회(목록)
-     * @param searchGameDTO 게임조회용 DTO
-     */
-    List<PlayerRecordDTO> findAllPlayerRecordsByQuarter(SearchGameDTO searchGameDTO);
-
-    /**
-     * 특정쿼터의 홈·어웨이 기록조회(단건)
-     * @param searchGameDTO 게임조회용 DTO
-     */
-    HomeAwayTeamRecordDTO findHomeAwayTeamRecordsByQuarter(SearchGameDTO searchGameDTO); // TODO 삭제 예정 - findAllTeamsQuarterRecords로 대체 예정
+    /** 특정쿼터의 팀별 기록조회 (목록) */
     List<TeamQuarterRecordsDTO> findAllTeamsQuarterRecords(SearchGameDTO searchCond);
 
-    /**
-     * 모든쿼터의 홈·어웨이 기록조회(목록)
-     * @param searchGameDTO 게임조회용 DTO
-     * @return
-     */
-//    List<HomeAwayTeamRecordDTO> findAllHomeAwayTeamRecordsByQuarter(SearchGameDTO searchGameDTO);
+    /** 모든쿼터의 홈·어웨이 기록조회(목록) */
     List<QuarterTeamRecordsDTO> findAllQuarterRecords(SearchGameDTO searchGameDTO);
 
-    /** 게임참가팀의 팀원조회 (이미 입력권한을 부여받은 선수는 제외한다)
-     * @param searchGameDTO 게임조회용 DTO
-     */
+    /** 게임참가팀의 팀원조회 (이미 입력권한을 부여받은 선수는 제외한다) */
     List<PlayerInfoDTO> findTeamMembersByGameSeq(SearchGameDTO searchGameDTO);
+
+    /** 경기기록 권한자 목록 조회 */
+    List<GameRecorderDTO> findAllGameRecorders( SearchGameDTO  searchGameDTO );
 }

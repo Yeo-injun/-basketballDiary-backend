@@ -1,5 +1,6 @@
 package com.threeNerds.basketballDiary.session;
 
+import com.threeNerds.basketballDiary.constant.code.TeamAuthCode;
 import com.threeNerds.basketballDiary.mvc.user.domain.User;
 import com.threeNerds.basketballDiary.mvc.team.dto.TeamAuthDTO;
 import lombok.Getter;
@@ -13,15 +14,11 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 public class SessionUser {
+
     private Long userSeq;
-
     private String userId;
-
     private Map<Long,Long> userAuth = new HashMap<>();
-
-    public SessionUser(Map<Long, Long> userAuth) {
-        this.userAuth = userAuth;
-    }
+    private Map<Long, TeamAuthCode> teamAuth;
 
     public SessionUser() {
     }
@@ -49,6 +46,10 @@ public class SessionUser {
                                           )
                          );
         this.userAuth = userAuth;
+        // TODO 권한 정보 변경 Enum 활용해서
+//        Map<Long, TeamAuthCode> teamAuth = authList.stream()
+//                .collect( Collectors.toMap( auth -> Long.parseLong( auth.getTeamSeq() ),
+//                                            auth ->  )
         return this;
     }
 }

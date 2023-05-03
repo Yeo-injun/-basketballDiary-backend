@@ -7,4 +7,5 @@ import lombok.Getter;
 public class CreateGameRequest {
 
     private GameCreationDTO gameCreationInfo;
+
 }

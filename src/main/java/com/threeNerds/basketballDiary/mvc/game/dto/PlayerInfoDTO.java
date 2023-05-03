@@ -29,10 +29,10 @@ public class PlayerInfoDTO {
 
     private String email;
 
-    public PlayerInfoDTO gameJoinTeamSeq(Long gameJoinTeamSeq) {
-        this.gameJoinTeamSeq = gameJoinTeamSeq;
-        return this;
-    }
+//    public PlayerInfoDTO gameJoinTeamSeq(Long gameJoinTeamSeq) {
+//        this.gameJoinTeamSeq = gameJoinTeamSeq;
+//        return this;
+//    }
 
     private void setPlayerTypeCode(String playerTypeCode) {
         this.playerTypeCode = playerTypeCode;

@@ -16,6 +16,7 @@ import java.util.Map;
 
 @Slf4j
 public class AuthInterceptor implements HandlerInterceptor {
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         log.info("============= 인증 체크 인터셉터 실행 =============");

@@ -36,6 +36,7 @@ public class QuarterPlayerRecords {
 
     private Long quarterPlayerRecordsSeq;
     private Long gameSeq;
+    private String homeAwayCode;
     private Long gameJoinPlayerSeq;
     private Long gameJoinTeamSeq;
     private String quarterCode;

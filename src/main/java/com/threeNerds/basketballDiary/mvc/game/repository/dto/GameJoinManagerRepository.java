@@ -10,11 +10,16 @@ import java.util.List;
 public interface GameJoinManagerRepository {
 
     Team findGameCreatorTeam(Long gameSeq);
-    List<QuarterPlayerRecordDTO> findEntryList(SearchEntryDTO searchEntryDTO);
 
-    List<GameOpponentDTO> findOpponents(SearchOppenentsDTO searchOppenentsDTO);
+    /** 엔트리 조회 - 한팀의 엔트리 조회 */
+    List<QuarterPlayerRecordDTO> findOneTeamEntry( SearchEntryDTO searchCond );
 
-    List<GameJoinTeamInfoDTO> findGameJoinTeams(SearchGameJoinTeamDTO searchGameJoinTeamDTO);
+    List<GameOpponentDTO> findOpponents( SearchOppenentsDTO searchOppenentsDTO );
 
-    List<PlayerInfoDTO> findGameJoinPlayers(SearchPlayersDTO searchDTO);
+    List<GameJoinTeamInfoDTO> findGameJoinTeams( SearchGameJoinTeamDTO searchGameJoinTeamDTO );
+
+    List<PlayerInfoDTO> findAllGameJoinPlayers( SearchPlayersDTO searchDTO );
+
+    /** 경기에 참여한 팀원 조회 */
+    List<GameJoinTeamMemberDTO> findAllGameJoinTeamMembers( SearchGameJoinTeamMemberDTO searchCond );
 }

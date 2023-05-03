@@ -15,6 +15,8 @@ import lombok.NoArgsConstructor;
 public class GameJoinPlayer {
 
     private Long gameJoinPlayerSeq;     // 게임참가선수Seq
+    private Long gameSeq;               // 게임Seq
+    private String homeAwayCode;        // 홈어웨이코드
     private Long gameJoinTeamSeq;       // 게임참가팀Seq
     private String playerTypeCode;      // 선수유형코드
     private Long userSeq;               // 사용자Seq
@@ -23,9 +25,19 @@ public class GameJoinPlayer {
     private String positionCode;        // 포지션코드
     private String email;               // 이메일
 
-    public static GameJoinPlayer createUnauthPlayer(Long gameJoinTeamSeq, GameJoinPlayerDTO joinPlayerDTO)
-    {
-        return create(gameJoinTeamSeq,
+    public static GameJoinPlayer createInqParam( Long gameSeq, String homeAwayCode ) {
+        return GameJoinPlayer.builder()
+                .gameSeq( gameSeq )
+                .homeAwayCode( homeAwayCode )
+                .build();
+    }
+    public static GameJoinPlayer createUnauthPlayer(
+            GameJoinTeam gameJoinTeam,
+            GameJoinPlayerDTO joinPlayerDTO
+    ) {
+        return create( gameJoinTeam.getGameJoinTeamSeq(),
+                        gameJoinTeam.getGameSeq(),
+                        gameJoinTeam.getHomeAwayCode(),
                         PlayerTypeCode.UNAUTH_GUEST.getCode(),
                         null,
                         joinPlayerDTO.getName(),
@@ -35,10 +47,12 @@ public class GameJoinPlayer {
     }
 
     public static GameJoinPlayer createAuthPlayer(
-            Long gameJoinTeamSeq, String playerTypeCode,
-            String backNumber, User user
+            GameJoinTeam gameJoinTeam,
+            String playerTypeCode, String backNumber, User user
     ) {
-        return create(gameJoinTeamSeq,
+        return create(gameJoinTeam.getGameJoinTeamSeq(),
+                gameJoinTeam.getGameSeq(),
+                gameJoinTeam.getHomeAwayCode(),
                 playerTypeCode,
                 user.getUserSeq(),
                 user.getName(),
@@ -48,17 +62,20 @@ public class GameJoinPlayer {
     }
 
     private static GameJoinPlayer create(
-            Long gameJoinTeamSeq, String playerTypeCode, Long userSeq, String name,
+            Long gameJoinTeamSeq, Long gameSeq, String homeAwayCode,
+            String playerTypeCode, Long userSeq, String name,
             String backNumber, String positionCode, String email
     ) {
         return GameJoinPlayer.builder()
-                .gameJoinTeamSeq(gameJoinTeamSeq)
-                .playerTypeCode(playerTypeCode)
-                .userSeq(userSeq)
-                .name(name)
-                .backNumber(backNumber)
-                .positionCode(positionCode)
-                .email(email)
+                .gameJoinTeamSeq( gameJoinTeamSeq )
+                .gameSeq( gameSeq )
+                .homeAwayCode( homeAwayCode )
+                .playerTypeCode( playerTypeCode )
+                .userSeq( userSeq )
+                .name( name )
+                .backNumber( backNumber )
+                .positionCode( positionCode )
+                .email( email )
                 .build();
     }
 }
