@@ -89,7 +89,7 @@ public class GameController {
     ) {
          reqBody = new RegisterGameJoinPlayersRequest(
                                                         gameSeq,
-                 homeAwayCode,
+                                                        homeAwayCode,
                                                         reqBody.getGameJoinPlayers()
                                                       );
 
