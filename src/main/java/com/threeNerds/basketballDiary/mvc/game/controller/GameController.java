@@ -85,7 +85,7 @@ public class GameController {
     public ResponseEntity<?> registerGameJoinPlayers(
             @PathVariable(name = "gameSeq") Long gameSeq,
             @PathVariable(name = "homeAwayCode") String homeAwayCode,
-            @RequestBody RegisterGameJoinPlayersRequest reqBody
+            @RequestBody @Valid RegisterGameJoinPlayersRequest reqBody
     ) {
          reqBody = new RegisterGameJoinPlayersRequest(
                                                         gameSeq,
@@ -110,7 +110,7 @@ public class GameController {
     public ResponseEntity<?> saveQuarterRecords(
             @PathVariable(name = "gameSeq") Long gameSeq,
             @PathVariable(name = "quarterCode") String quarterCode,
-            @RequestBody SaveQuarterRecordsRequest requestMessage
+            @RequestBody @Valid SaveQuarterRecordsRequest requestMessage
     ) {
         requestMessage
                 .gameSeq( gameSeq )
@@ -334,7 +334,7 @@ public class GameController {
     @PostMapping("/{gameSeq}/gameRecorder")
     public ResponseEntity<?> saveGameRecorder(
             @PathVariable("gameSeq") Long gameSeq,
-            @RequestBody SaveGameRecorderRequest request
+            @RequestBody @Valid SaveGameRecorderRequest request
     ){
         SessionUser userSession = SessionUtil.getSessionUser();
         Map<Long, Long> tempAuth = new HashMap<Long, Long>();
@@ -372,7 +372,7 @@ public class GameController {
     @PostMapping("/{gameSeq}/entry")
     public ResponseEntity<?> saveQuarterEntryInfo(
             @PathVariable(name = "gameSeq") Long gameSeq,
-            @RequestBody SaveQuarterEntryInfoRequest reqBody
+            @RequestBody @Valid SaveQuarterEntryInfoRequest reqBody
     ) {
         // TODO SaveQuarterEntryInfoRequset로 변경하기
         QuarterEntryInfoDTO qeiDTO = new QuarterEntryInfoDTO()
@@ -411,7 +411,7 @@ public class GameController {
     @PostMapping("/{gameSeq}/gameJoinTeams")
     public ResponseEntity<?> confirmJoinTeam (
             @PathVariable(name = "gameSeq") Long gameSeq,
-            @Valid @RequestBody ConfirmGameJoinTeamRequest reqBody
+            @RequestBody @Valid ConfirmGameJoinTeamRequest reqBody
     ) {
         GameJoinTeamCreationDTO joinTeamCreation = new GameJoinTeamCreationDTO()
                                         .gameSeq(gameSeq)
@@ -453,7 +453,7 @@ public class GameController {
     public ResponseEntity<?> createGameQuarterBasicInfo (
             @PathVariable(name = "gameSeq") Long gameSeq,
             @PathVariable(name = "quarterCode") String quarterCode,
-            @RequestBody CreateGameQuarterBasicInfoRequest request
+            @RequestBody @Valid CreateGameQuarterBasicInfoRequest request
     ) {
         request = new CreateGameQuarterBasicInfoRequest()
                                     .gameSeq( gameSeq )
