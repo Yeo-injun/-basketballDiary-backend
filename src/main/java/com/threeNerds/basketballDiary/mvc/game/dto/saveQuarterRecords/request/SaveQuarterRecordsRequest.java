@@ -2,6 +2,8 @@ package com.threeNerds.basketballDiary.mvc.game.dto.saveQuarterRecords.request;
 
 import lombok.Getter;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 
@@ -9,8 +11,11 @@ import java.util.List;
 public class SaveQuarterRecordsRequest {
 
     private Long gameSeq;
+    @NotEmpty
     private String quarterCode;
+    @NotNull
     private List<SavePlayerRecordDTO> homeTeamPlayerRecords;
+    @NotNull
     private List<SavePlayerRecordDTO> awayTeamPlayerRecords;
 
     public SaveQuarterRecordsRequest gameSeq( Long gameSeq ) {

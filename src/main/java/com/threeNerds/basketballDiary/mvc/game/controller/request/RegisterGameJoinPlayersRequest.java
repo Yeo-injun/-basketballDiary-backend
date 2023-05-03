@@ -4,6 +4,8 @@ import com.threeNerds.basketballDiary.mvc.game.dto.GameJoinPlayerDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Getter
@@ -11,7 +13,9 @@ import java.util.List;
 public class RegisterGameJoinPlayersRequest {
 
     private Long gameSeq;
+    @NotEmpty
     private String homeAwayCode;
+    @NotNull
     private List<GameJoinPlayerDTO> gameJoinPlayers;
 
     public RegisterGameJoinPlayersRequest( Long gameSeq, String homeAwayCode, List<GameJoinPlayerDTO> gameJoinPlayers ) {

@@ -205,7 +205,7 @@ public class AuthUserController {
     @PostMapping("/profile/password")
     public ResponseEntity<?> updatePassword (
             @SessionAttribute(value = LOGIN_USER,required = false) SessionUser sessionDTO,
-            @RequestBody PasswordUpdateDTO passwordUpdateDTO
+            @RequestBody @Valid PasswordUpdateDTO passwordUpdateDTO
     ){
         passwordUpdateDTO.userSeq(sessionDTO.getUserSeq());
         authUserService.updatePassword(passwordUpdateDTO);

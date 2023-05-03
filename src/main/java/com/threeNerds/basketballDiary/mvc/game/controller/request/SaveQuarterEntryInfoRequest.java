@@ -3,6 +3,8 @@ package com.threeNerds.basketballDiary.mvc.game.controller.request;
 import com.threeNerds.basketballDiary.mvc.game.dto.PlayerInfoDTO;
 import lombok.Getter;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -28,10 +30,15 @@ import java.util.List;
 @Getter
 public class SaveQuarterEntryInfoRequest {
 
+    @NotEmpty
     private Long gameSeq;
+    @NotEmpty
     private Long gameJoinTeamSeq;
+    @NotEmpty
     private String homeAwayCode;
+    @NotEmpty
     private String quarterCode;
+    @NotNull
     private List<PlayerInfoDTO> playerList;
 
     public SaveQuarterEntryInfoRequest gameSeq(Long gameSeq) {

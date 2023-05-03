@@ -68,7 +68,7 @@ public class AuthController {
      */
     @PostMapping("/login")
     public ResponseEntity<SessionUser> login (
-            @RequestBody LoginRequest reqBody
+            @RequestBody @Valid LoginRequest reqBody
     ) {
         log.info("======= Try login =======");
         LoginUserDTO loginUserDTO = new LoginUserDTO()

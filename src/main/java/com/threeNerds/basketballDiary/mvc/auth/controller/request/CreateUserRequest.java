@@ -2,16 +2,24 @@ package com.threeNerds.basketballDiary.mvc.auth.controller.request;
 
 import lombok.Getter;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
+
 @Getter
 public class CreateUserRequest {
     /** 아이디 **/
+    @NotEmpty
     private String userId;
     /** 패스워드 **/
+    @NotEmpty
     private String password;
     /** 이름 **/
+    @NotEmpty
     private String userName;    // TODO userName 필드명 name으로 바꾸기...! (프론트에서도 name으로 넘겨주기)
     private String name;
     /** 이메일 **/
+    @Email
     private String email;
     /** 성별 **/
     private String gender;
