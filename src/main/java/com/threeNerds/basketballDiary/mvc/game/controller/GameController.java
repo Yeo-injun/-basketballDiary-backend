@@ -26,7 +26,7 @@ import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.request
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.response.GetGameQuarterRecordsResponse;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameRecorders.request.GetGameRecordersRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameRecorders.response.GetGameRecordersResponse;
-import com.threeNerds.basketballDiary.mvc.game.dto.saveGameRecorder.request.SaveGameRecorderRequest;
+import com.threeNerds.basketballDiary.mvc.game.dto.saveGameRecorder.request.SaveGameRecordersRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.saveQuarterRecords.request.SaveQuarterRecordsRequest;
 import com.threeNerds.basketballDiary.mvc.game.service.GameJoinManagerService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameRecordManagerService;
@@ -328,24 +328,16 @@ public class GameController {
     }
 
     /**
-     * API056 게임기록자 저장 TODO 권한체크 작동 확인
+     * API056 게임기록자 목록 저장
      */
     @Auth(GRADE = TEAM_MEMBER)
-    @PostMapping("/{gameSeq}/gameRecorder")
-    public ResponseEntity<?> saveGameRecorder(
+    @PostMapping("/{gameSeq}/gameRecorders")
+    public ResponseEntity<?> saveGameRecorders(
             @PathVariable("gameSeq") Long gameSeq,
-            @RequestBody @Valid SaveGameRecorderRequest request
+            @RequestBody @Valid SaveGameRecordersRequest request
     ){
-        SessionUser userSession = SessionUtil.getSessionUser();
-        Map<Long, Long> tempAuth = new HashMap<Long, Long>();
-        tempAuth.put( 8L, 3L );
-
-        request.gameSeq( gameSeq )
-//               .userSeq( userSession.getUserSeq() )
-//               .userTeamAuth( userSession.getUserAuth() );
-                .userTeamAuth( tempAuth );
-
-        gameRecordManagerService.saveGameRecorder( request );
+        request.gameSeq( gameSeq );
+        gameRecordManagerService.saveGameRecorders( request );
 
         return RESPONSE_OK;
     }

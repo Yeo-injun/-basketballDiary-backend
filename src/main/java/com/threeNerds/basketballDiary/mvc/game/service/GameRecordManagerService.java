@@ -1,5 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.game.service;
 
+import com.threeNerds.basketballDiary.constant.code.GameRecordAuthCode;
 import com.threeNerds.basketballDiary.constant.code.GameRecordStateCode;
 import com.threeNerds.basketballDiary.constant.code.HomeAwayCode;
 import com.threeNerds.basketballDiary.constant.code.QuarterCode;
@@ -25,7 +26,7 @@ import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.respons
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameRecorders.request.GetGameRecordersRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameRecorders.response.GameRecorderDTO;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameRecorders.response.GetGameRecordersResponse;
-import com.threeNerds.basketballDiary.mvc.game.dto.saveGameRecorder.request.SaveGameRecorderRequest;
+import com.threeNerds.basketballDiary.mvc.game.dto.saveGameRecorder.request.SaveGameRecordersRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.saveQuarterRecords.request.SavePlayerRecordDTO;
 import com.threeNerds.basketballDiary.mvc.game.dto.saveQuarterRecords.request.SaveQuarterRecordsRequest;
 import com.threeNerds.basketballDiary.mvc.game.repository.*;
@@ -352,45 +353,54 @@ public class GameRecordManagerService {
      * 게임기록자 저장
      * @author 이성주
      */
-    public void saveGameRecorder( SaveGameRecorderRequest request ) {
-        Long gameSeq = request.getGameSeq();
-        Long userSeq = request.getUserSeq();
-        Map<Long, Long> userTeamAuth = request.getUserTeamAuth();
+    public void saveGameRecorders( SaveGameRecordersRequest request ) {
+        Long gameSeq                        = request.getGameSeq();
+        List<GameRecorderDTO> gameRecorders = request.getGameRecorders();
 
         /** 게임참가팀의 팀원인지 확인 - 게임기록자가 되려면 게임에 참가한 팀의 팀원이어야 한다. */
         List<GameJoinTeam> joinTeams = gameJoinTeamRepo.findAllGameJoinTeam( gameSeq );
         if ( joinTeams.isEmpty() ) {
             throw new CustomException(Error.TEAM_NOT_FOUND);
         }
-
-        Long userJoinTeamSeq = getTeamSeqForJoinedUser( joinTeams, userTeamAuth );
-        boolean isTeamMember = userJoinTeamSeq > 0L;
-        if ( !isTeamMember ) {
-            throw new CustomException(Error.ONLY_TEAM_MEMBER_HANDLE);
+        Set<Long> teamSeqSet = joinTeams.stream()
+                                        .map( GameJoinTeam::getTeamSeq )
+                                        .collect( Collectors.toSet() );
+        if ( !isJoinedGameJoinTeamMember( teamSeqSet, gameRecorders ) ) {
+            throw new CustomException(Error.MY_TEAM_NOT_FOUND); // TODO 에러메세지 정보 수정
         }
+
+        /** 기존 게임 기록권한 목록을 제거한다. - 게임생성자는 삭제대상에서 제외 */
+        gameRecordAuthRepository.deleteWriterAuth( gameSeq );
 
         /** 게임참가팀의 팀원일 경우 게임기록자로 추가한다. */
-        TeamMember teamMemberParam = TeamMember.builder()
-                                        .userSeq(userSeq)
-                                        .teamSeq(userJoinTeamSeq)
-                                        .build();
-        TeamMember teamMember = Optional
-                                    .ofNullable( teamMemberRepo.findTeamMemberByUserAndTeamSeq( teamMemberParam ) )
-                                    .orElseThrow( () -> new CustomException(Error.MY_TEAM_NOT_FOUND));
+        for ( GameRecorderDTO gameRecorder : gameRecorders ) {
+            // 게임생성자를 제외하고 insert문을 실행한다.
+            if ( GameRecordAuthCode.CREATOR.getCode().equals( gameRecorder.getGameRecordAuthCode() ) ) {
+                continue;
+            }
+            TeamMember teamMemberParam = TeamMember.builder()
+                    .userSeq( gameRecorder.getUserSeq() )
+                    .teamSeq( gameRecorder.getTeamSeq() )
+                    .build();
+            TeamMember teamMember = Optional
+                    .ofNullable( teamMemberRepo.findTeamMemberByUserAndTeamSeq( teamMemberParam ) )
+                    .orElseThrow( () -> new CustomException(Error.MY_TEAM_NOT_FOUND));
 
-        GameRecordAuth newRecorder = GameRecordAuth.createOnlyWriter( gameSeq, teamMember.getTeamMemberSeq() );
-        /** TODO 기록자 중복 체크 - GameSeq와 TeamMemberSeq로 조회시 기존 데이터 존재하는지 체크 */
-        gameRecordAuthRepository.saveGameRecordAuth( newRecorder );
+            GameRecordAuth newRecorder = GameRecordAuth.createOnlyWriter( gameSeq, teamMember.getTeamMemberSeq() );
+            /** TODO 기록자 중복 체크 - GameSeq와 TeamMemberSeq로 조회시 기존 데이터 존재하는지 체크 */
+            gameRecordAuthRepository.saveGameRecordAuth( newRecorder );
+        }
     }
 
-    private Long getTeamSeqForJoinedUser( List<GameJoinTeam> joinTeams, Map<Long, Long> userTeamAuth ) {
-        Optional<GameJoinTeam> joinTeam = joinTeams.stream()
-                .filter( t -> userTeamAuth.containsKey( t.getTeamSeq() ) )
-                .findFirst();
-        if ( joinTeam.isPresent() ) {
-            return joinTeam.get().getTeamSeq();
+    private boolean isJoinedGameJoinTeamMember( Set<Long> teamSeqSet, List<GameRecorderDTO> gameRecorders ) {
+        for ( GameRecorderDTO gameRecorder : gameRecorders ) {
+            boolean isJoinedTeamMember = teamSeqSet.contains( gameRecorder.getTeamSeq() );
+            if ( isJoinedTeamMember ) {
+                continue;
+            }
+            return false;
         }
-        return 0L;
+        return true;
     }
 
     /**

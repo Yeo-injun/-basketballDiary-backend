@@ -28,6 +28,9 @@ public interface GameRecordAuthRepository {
     /**********
      * DELETE
      **********/
-
+    /**
+     * 게임 기록자 권한목록만 삭제
+     */
+    int deleteWriterAuth( Long gameSeq );
 }
 

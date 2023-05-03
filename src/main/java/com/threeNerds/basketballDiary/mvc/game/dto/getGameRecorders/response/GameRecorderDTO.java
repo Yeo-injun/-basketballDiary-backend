@@ -9,6 +9,7 @@ import lombok.Getter;
 public class GameRecorderDTO {
 
     private Long gameRecordAuthSeq;
+    private Long teamSeq;
     private Long userSeq;
     private String playerTypeCode;
     private String playerTypeCodeName;

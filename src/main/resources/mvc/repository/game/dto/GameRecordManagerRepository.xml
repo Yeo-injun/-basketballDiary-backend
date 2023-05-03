@@ -135,6 +135,7 @@
     <select id="findAllGameRecorders" resultType="com.threeNerds.basketballDiary.mvc.game.dto.getGameRecorders.response.GameRecorderDTO">
         /* GameRecordManagerRepository.findAllGameRecorders */
         SELECT GRA.GAME_RECORD_AUTH_SEQ
+             , TM.TEAM_SEQ
              , U.USER_SEQ
              , GRA.GAME_RECORD_AUTH_CODE
              , U.NAME AS USER_NAME

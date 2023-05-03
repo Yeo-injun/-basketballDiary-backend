@@ -175,9 +175,11 @@
              , GJT.TEAM_SEQ
              , GJP.USER_SEQ
              , GJT.TEAM_NAME
+             , GJP.PLAYER_TYPE_CODE
              , GJP.NAME AS USER_NAME
              , GJP.EMAIL
              , GJP.BACK_NUMBER
+             , GJP.POSITION_CODE
           FROM GAME_JOIN_TEAM GJT           /* 경기참가팀 */
          INNER JOIN GAME_JOIN_PLAYER GJP   /* 경기참가선수 */
             ON GJT.GAME_SEQ = GJP.GAME_SEQ
