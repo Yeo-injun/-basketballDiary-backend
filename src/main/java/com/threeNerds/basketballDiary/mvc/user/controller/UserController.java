@@ -1,6 +1,8 @@
 package com.threeNerds.basketballDiary.mvc.user.controller;
 
+import com.threeNerds.basketballDiary.http.ResponseJsonBody;
 import com.threeNerds.basketballDiary.mvc.user.dto.CmnUserDTO;
+import com.threeNerds.basketballDiary.mvc.user.dto.SearchUsersExcludingTeamMember.request.SearchUsersExcludingTeamMemberRequest;
 import com.threeNerds.basketballDiary.mvc.user.dto.UserDTO;
 import com.threeNerds.basketballDiary.mvc.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -24,26 +26,24 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/user")
+@RequestMapping("/api/users")
 public class UserController {
 
     private final UserService userService;
 
     /**
      * API006 사용자 검색
+     * 23.05.07 여인준 : 팀원 제외하고 조회되게끔 변경
      */
-    @GetMapping
-    public ResponseEntity<?> searchUsers (
-            // @RequestParam에 required=false가 없으면  get요청시 쿼리스트링이 반드시 있어야 함.
-            @RequestParam(required = false) String userName,
-            @RequestParam(required = false) String email
+    @GetMapping("/exclusion/team/{teamSeq}")
+    public ResponseEntity<?> searchUsersExcludingTeamMember (
+            @PathVariable Long teamSeq,
+            @RequestParam( required = false ) String userName,
+            @RequestParam( required = false ) String email
     ){
-        CmnUserDTO findUserCond = new CmnUserDTO()
-                                        .userName(userName)
-                                        .email(email);
-        // TODO Response객체 만들어서 리턴해주기
-        List<UserDTO> findUserList = userService.searchUsers(findUserCond);
-        return ResponseEntity.ok().body(findUserList);
+        SearchUsersExcludingTeamMemberRequest reqBody = new SearchUsersExcludingTeamMemberRequest( teamSeq, userName, email );
+        ResponseJsonBody resBody = userService.searchUsersExcludingTeamMember( reqBody );
+        return ResponseEntity.ok().body(resBody);
     }
 
 }
