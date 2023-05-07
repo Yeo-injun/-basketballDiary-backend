@@ -6,6 +6,7 @@ import com.threeNerds.basketballDiary.mvc.authUser.dto.PasswordUpdateDTO;
 import com.threeNerds.basketballDiary.mvc.user.dto.CmnUserDTO;
 import com.threeNerds.basketballDiary.mvc.authUser.dto.UpdateUserDTO;
 import com.threeNerds.basketballDiary.mvc.user.dto.UserDTO;
+import com.threeNerds.basketballDiary.mvc.user.dto.UserInqCondDTO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -19,6 +20,8 @@ public interface UserRepository {
     User findUserByUserId(String userId);
 
     List<UserDTO> findUserByUserNameOrEmail(CmnUserDTO findUserCond);
+    List<UserDTO> findAllUsersExcludingTeamMemberByUserNameOrEmail(UserInqCondDTO inqCond);
+
     List<TeamAuthDTO> findAuthList(User user);
 
     /**********
