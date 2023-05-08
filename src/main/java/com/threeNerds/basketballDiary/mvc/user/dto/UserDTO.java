@@ -1,8 +1,10 @@
 package com.threeNerds.basketballDiary.mvc.user.dto;
 
+import com.threeNerds.basketballDiary.constant.code.PositionCode;
 import com.threeNerds.basketballDiary.mvc.user.domain.User;
 import lombok.Getter;
 
+import javax.swing.text.Position;
 import java.time.LocalDate;
 
 @Getter
@@ -18,10 +20,12 @@ public class UserDTO {
     private String userName;
     /* 포지션 코드 */
     private String positionCode;
+    private String positionCodeName;
     /* 이메일 */
     private String email;
     /* 성별 */
     private String gender;
+    private String genderName;
     /* 생년월일 */
     private String birthYmd;
     /* 키 */
@@ -40,6 +44,20 @@ public class UserDTO {
     private String sigunguCode;
     /* 도로명 주소*/
     private String roadAddress;
+
+    public void setPositionCode( String positionCode ) {
+        this.positionCode = positionCode;
+        this.positionCodeName = PositionCode.nameOf( positionCode );
+    }
+
+    public void setGender( String gender ) {
+        this.gender = gender;
+        switch ( gender ) {
+            case "01" : this.genderName = "남자"; break;
+            case "02" : this.genderName = "여자"; break;
+            default : this.genderName = "";
+        }
+    }
 
     public UserDTO userSeq(Long userSeq){
         this.userSeq = userSeq;
