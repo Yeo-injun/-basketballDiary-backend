@@ -13,7 +13,6 @@ import java.util.List;
 public class RegisterGameJoinPlayersRequest {
 
     private Long gameSeq;
-    @NotEmpty
     private String homeAwayCode;
     @NotNull
     private List<GameJoinPlayerDTO> gameJoinPlayers;
