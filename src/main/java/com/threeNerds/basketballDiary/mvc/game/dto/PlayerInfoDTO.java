@@ -21,7 +21,7 @@ public class PlayerInfoDTO {
     private String homeAwayCodeName;
 
     private String teamName;
-    private String name;
+    private String userName;
 
     private String backNumber;
     private String positionCode;
@@ -29,10 +29,6 @@ public class PlayerInfoDTO {
 
     private String email;
 
-//    public PlayerInfoDTO gameJoinTeamSeq(Long gameJoinTeamSeq) {
-//        this.gameJoinTeamSeq = gameJoinTeamSeq;
-//        return this;
-//    }
 
     private void setPlayerTypeCode(String playerTypeCode) {
         this.playerTypeCode = playerTypeCode;

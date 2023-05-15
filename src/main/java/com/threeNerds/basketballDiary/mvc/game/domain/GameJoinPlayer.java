@@ -40,7 +40,7 @@ public class GameJoinPlayer {
                         gameJoinTeam.getHomeAwayCode(),
                         PlayerTypeCode.UNAUTH_GUEST.getCode(),
                         null,
-                        joinPlayerDTO.getName(),
+                        joinPlayerDTO.getUserName(),
                         joinPlayerDTO.getBackNumber(),
                         joinPlayerDTO.getPositionCode(),
                         joinPlayerDTO.getEmail());
