@@ -44,7 +44,7 @@ public class AuthController {
      */
     @PostMapping("/duplicationCheck")
     public ResponseEntity<?> checkDuplicateUserId (
-            @RequestBody CheckDuplicateUserIdRequest reqBody
+            @RequestBody @Valid CheckDuplicateUserIdRequest reqBody
     ) {
         CheckDuplicateUserIdDTO checkForDuplication = new CheckDuplicateUserIdDTO()
                 .userId(reqBody.getUserId());

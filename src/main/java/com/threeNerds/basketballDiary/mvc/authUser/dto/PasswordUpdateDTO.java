@@ -3,10 +3,12 @@ package com.threeNerds.basketballDiary.mvc.authUser.dto;
 import lombok.Getter;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 @Getter
 public class PasswordUpdateDTO {
 
+    @NotNull
     private Long userSeq;
     @NotEmpty
     private String prevPassword;

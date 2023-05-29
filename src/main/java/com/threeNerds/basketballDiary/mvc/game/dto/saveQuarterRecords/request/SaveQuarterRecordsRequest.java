@@ -10,6 +10,7 @@ import java.util.List;
 @Getter
 public class SaveQuarterRecordsRequest {
 
+    @NotNull
     private Long gameSeq;
     @NotEmpty
     private String quarterCode;

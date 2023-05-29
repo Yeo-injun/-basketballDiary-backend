@@ -4,6 +4,7 @@ import lombok.Getter;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.Collections;
@@ -19,16 +20,16 @@ public class TeamDTO {
 
     /* 팀 정보 */
     private Long teamSeq;
-    @NotBlank(message = "리더 seq 값이 없습니다") private Long leaderUserSeq;
-    private String teamName;
+    @NotNull(message = "리더 seq 값이 없습니다") private Long leaderUserSeq;
+    @NotEmpty private String teamName;
     private String teamImagePath;
-    private String hometown;
+    @NotEmpty private String hometown;
     private String introduction;
     private String foundationYmd;
     private LocalDate regDate;
     private LocalDate updateDate;
-    private String sidoCode;
-    private String sigunguCode;
+    @NotNull private String sidoCode;
+    @NotEmpty private String sigunguCode;
     private Integer totMember;
 
 
