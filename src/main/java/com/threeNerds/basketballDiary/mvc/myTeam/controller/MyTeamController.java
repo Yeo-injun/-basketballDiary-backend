@@ -70,7 +70,7 @@ public class MyTeamController {
      * API001 : 소속팀 운영진 조회
      * 23.05.14. Request & Response 형 변경
      */
-    //@Auth(GRADE = TEAM_MEMBER)
+    @Auth(GRADE = TEAM_MEMBER)
     @GetMapping("/{teamSeq}/managers")
     public ResponseEntity<GetManagerGradeResponse> getManagerGrade(
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,
@@ -86,7 +86,7 @@ public class MyTeamController {
     /**
      * API002 : 소속팀 팀원등급인 팀원 목록 조회
      */
-    //@Auth(GRADE = TEAM_MEMBER)
+    @Auth(GRADE = TEAM_MEMBER)
     @GetMapping("/{teamSeq}/members")
     public ResponseEntity<GetMemeberGradeResponse> getMemberGrade(
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,

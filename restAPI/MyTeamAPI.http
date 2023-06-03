@@ -1,4 +1,10 @@
 ### API001 : 소속팀 운영진 조회
+GET http://localhost:8080/api/myTeams/9/managers HTTP/1.1
+content-type: application/json
+
+### API002 : 소속팀 팀원등급인 팀원 목록 조회
+GET http://localhost:8080/api/myTeams/9/members?pageNo=1 HTTP/1.1
+content-type: application/json
 
 
 ### APIauthUserService : 소속팀 농구게임 목록조회
