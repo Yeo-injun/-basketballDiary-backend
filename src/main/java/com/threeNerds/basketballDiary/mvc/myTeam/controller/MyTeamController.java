@@ -1,6 +1,10 @@
 package com.threeNerds.basketballDiary.mvc.myTeam.controller;
 
 import com.threeNerds.basketballDiary.interceptor.Auth;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.getManagerGrade.request.GetManagerGradeRequest;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.getManagerGrade.response.GetManagerGradeResponse;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.getMemberGrade.request.GetMemberGradeRequest;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.getMemberGrade.response.GetMemberGradeResponse;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getTeamMembers.request.GetMemeberGradeRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getTeamMembers.response.GetMemeberGradeResponse;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.searchAllTeamMembers.request.SearchAllTeamMembersRequest;
@@ -64,23 +68,25 @@ public class MyTeamController {
 
     /**
      * API001 : 소속팀 운영진 조회
+     * 23.05.14. Request & Response 형 변경
      */
-    @Auth(GRADE = TEAM_MEMBER)
+    //@Auth(GRADE = TEAM_MEMBER)
     @GetMapping("/{teamSeq}/managers")
-    public ResponseEntity<List<MemberDTO>> getManagerGrade(
+    public ResponseEntity<GetManagerGradeResponse> getManagerGrade(
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,
             @PathVariable(value = "teamSeq") Long teamSeq
     ) {
         log.info("▒▒▒▒▒ API001: MyTeamController.searchManagers");
-        List<MemberDTO> managerList = myTeamService.findManagers(teamSeq);
+        GetManagerGradeRequest reqBody = new GetManagerGradeRequest(teamSeq);
+        GetManagerGradeResponse resBody = myTeamService.findManagers(reqBody);
 
-        return ResponseEntity.ok().body(managerList);
+        return ResponseEntity.ok().body(resBody);
     }
 
     /**
      * API002 : 소속팀 팀원등급인 팀원 목록 조회
      */
-    @Auth(GRADE = TEAM_MEMBER)
+    //@Auth(GRADE = TEAM_MEMBER)
     @GetMapping("/{teamSeq}/members")
     public ResponseEntity<GetMemeberGradeResponse> getMemberGrade(
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,

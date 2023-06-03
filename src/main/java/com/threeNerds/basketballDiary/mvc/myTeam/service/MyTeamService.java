@@ -3,6 +3,10 @@ package com.threeNerds.basketballDiary.mvc.myTeam.service;
 import com.threeNerds.basketballDiary.constant.code.PlayerTypeCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.getManagerGrade.request.GetManagerGradeRequest;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.getManagerGrade.response.GetManagerGradeResponse;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.getMemberGrade.request.GetMemberGradeRequest;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.getMemberGrade.response.GetMemberGradeResponse;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getTeamMembers.request.GetMemeberGradeRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getTeamMembers.response.GetMemeberGradeResponse;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.searchAllTeamMembers.request.SearchAllTeamMembersRequest;
@@ -57,21 +61,22 @@ public class MyTeamService {
 
     /**
      * 소속팀 운영진 목록 조회
-     * @param teamSeq
+     * @param reqBody
      * @return List<MemberDTO>
      */
-    public List<MemberDTO> findManagers(Long teamSeq) {
+    public GetManagerGradeResponse findManagers(GetManagerGradeRequest reqBody) {
         // 소속팀 운영진 정보는 반드시 1건 이상(최소한 팀장이 존재해야함)이어야 하므로,
         // 조회내역이 존재하지 않으면 200 처리후 메시지를 전달한다.
+
+        Long teamSeq = reqBody.getTeamSeq();
         List<MemberDTO> resultManagerList
                 = myTeamRepository.findAllManagerByTeamSeq(teamSeq);
 
-        resultManagerList.stream()
+        resultManagerList = resultManagerList.stream()
                 .map(MemberDTO::setAllCodeName)
                 .collect(Collectors.toList());
 
-        return resultManagerList.isEmpty() ?
-                Collections.emptyList() : resultManagerList;
+        return new GetManagerGradeResponse(resultManagerList);
     }
 
     /**
@@ -81,7 +86,7 @@ public class MyTeamService {
      */
 
     public GetMemeberGradeResponse getMemberGrade(GetMemeberGradeRequest reqBody) {
-        PagerDTO pager = new PagerDTO(reqBody.getPageNo());
+        PagerDTO pager = reqBody.getPagerDTO();
 
         MemberDTO searchMemebrCond = new MemberDTO()
                 .teamSeq(reqBody.getTeamSeq())
