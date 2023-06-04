@@ -3,12 +3,10 @@ package com.threeNerds.basketballDiary.mvc.myTeam.service;
 import com.threeNerds.basketballDiary.constant.code.PlayerTypeCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.getManagerGrade.request.GetManagerGradeRequest;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.getManagerGrade.response.GetManagerGradeResponse;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.getMemberGrade.request.GetMemberGradeRequest;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.getMemberGrade.response.GetMemberGradeResponse;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.getTeamMembers.request.GetMemeberGradeRequest;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.getTeamMembers.response.GetMemeberGradeResponse;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.getManagers.request.GetManagersRequest;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.getManagers.response.GetManagersResponse;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.getTeamMembers.request.GetTeamMembersRequest;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.getTeamMembers.response.GetTeamMembersResponse;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.searchAllTeamMembers.request.SearchAllTeamMembersRequest;
 import com.threeNerds.basketballDiary.mvc.team.domain.Team;
 import com.threeNerds.basketballDiary.mvc.team.domain.TeamRegularExercise;
@@ -64,7 +62,7 @@ public class MyTeamService {
      * @param reqBody
      * @return List<MemberDTO>
      */
-    public GetManagerGradeResponse findManagers(GetManagerGradeRequest reqBody) {
+    public GetManagersResponse getManagers(GetManagersRequest reqBody) {
         // 소속팀 운영진 정보는 반드시 1건 이상(최소한 팀장이 존재해야함)이어야 하므로,
         // 조회내역이 존재하지 않으면 200 처리후 메시지를 전달한다.
 
@@ -76,7 +74,7 @@ public class MyTeamService {
                 .map(MemberDTO::setAllCodeName)
                 .collect(Collectors.toList());
 
-        return new GetManagerGradeResponse(resultManagerList);
+        return new GetManagersResponse(resultManagerList);
     }
 
     /**
@@ -85,7 +83,7 @@ public class MyTeamService {
      * @return List<MemberDTO>
      */
 
-    public GetMemeberGradeResponse getMemberGrade(GetMemeberGradeRequest reqBody) {
+    public GetTeamMembersResponse getTeamMembers(GetTeamMembersRequest reqBody ) {
         PagerDTO pager = reqBody.getPagerDTO();
 
         MemberDTO searchMemebrCond = new MemberDTO()
@@ -98,7 +96,7 @@ public class MyTeamService {
         /** 페이징DTO에 조회 결과 세팅 */
         if(resultMembers.isEmpty()) {
             pager.setPagingData(0);
-            return new GetMemeberGradeResponse(pager, Collections.emptyList());
+            return new GetTeamMembersResponse(pager, Collections.emptyList());
         }
         pager.setPagingData(resultMembers.get(0).getTotalCount());
 
@@ -106,7 +104,7 @@ public class MyTeamService {
                 .map(MemberDTO::setAllCodeName)
                 .collect(Collectors.toList());
 
-        return new GetMemeberGradeResponse(pager, resultMembers);
+        return new GetTeamMembersResponse(pager, resultMembers);
     }
 
     public SearchAllTeamMembersResponse searchAllTeamMembers(SearchAllTeamMembersRequest reqBody)
