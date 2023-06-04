@@ -149,7 +149,7 @@
         SELECT GJP.GAME_JOIN_PLAYER_SEQ
              , GJP.PLAYER_TYPE_CODE
              , GJP.USER_SEQ
-             , GJP.NAME
+             , GJP.NAME AS USER_NAME
              , GJP.EMAIL
              , GJP.POSITION_CODE
              , GJP.BACK_NUMBER

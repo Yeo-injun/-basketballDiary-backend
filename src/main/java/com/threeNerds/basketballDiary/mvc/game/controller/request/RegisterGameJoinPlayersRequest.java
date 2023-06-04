@@ -12,11 +12,9 @@ import java.util.List;
 @NoArgsConstructor
 public class RegisterGameJoinPlayersRequest {
 
-    private Long gameSeq;
-    @NotEmpty
+    @NotNull private Long gameSeq;
     private String homeAwayCode;
-    @NotNull
-    private List<GameJoinPlayerDTO> gameJoinPlayers;
+    @NotNull private List<GameJoinPlayerDTO> gameJoinPlayers;
 
     public RegisterGameJoinPlayersRequest( Long gameSeq, String homeAwayCode, List<GameJoinPlayerDTO> gameJoinPlayers ) {
         this.gameSeq = gameSeq;

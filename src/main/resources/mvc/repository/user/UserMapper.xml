@@ -86,6 +86,38 @@
         </choose>
     </select>
 
+    <select id="findAllUsersExcludingTeamMemberByUserNameOrEmail" resultType="com.threeNerds.basketballDiary.mvc.user.dto.UserDTO">
+        SELECT USER_SEQ
+        , USER_ID
+        , NAME AS USERNAME
+        , EMAIL
+        , USER_REG_YN
+        , GENDER
+        , HEIGHT
+        , WEIGHT
+        , SIDO_CODE
+        , SIGUNGU_CODE
+        , POSITION_CODE
+        FROM USER
+        WHERE 1=1
+        AND USER_SEQ NOT IN (
+        SELECT USER_SEQ
+        FROM TEAM_MEMBER
+        WHERE 1=1
+        AND TEAM_SEQ = #{teamSeq}
+        )
+        <choose>
+            <when test='userName != "" and userName != null'>
+                AND NAME LIKE '%${userName}%'
+            </when>
+            <when test='email != "" and email != null'>
+                AND EMAIL LIKE '%${email}%'
+            </when>
+            <otherwise></otherwise>
+        </choose>
+    </select>
+
+
     <select id="findAuthList" resultType="com.threeNerds.basketballDiary.mvc.team.dto.TeamAuthDTO">
         SELECT B.TEAM_SEQ
              , B.TEAM_AUTH_CODE

@@ -42,6 +42,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -425,9 +426,9 @@ public class GameController {
     public ResponseEntity<?> getGameAllQuartersRecords (
             @PathVariable(name = "gameSeq") Long gameSeq
     ) {
-        if(ObjectUtils.isEmpty(gameSeq)) {
-            throw new CustomException(Error.NO_PARAMETER);
-        }
+//        if(ObjectUtils.isEmpty(gameSeq)) {
+//            throw new CustomException(Error.NO_PARAMETER);
+//        }
 
         SearchGameDTO searchGameDTO = new SearchGameDTO()
                                              .gameSeq(gameSeq);

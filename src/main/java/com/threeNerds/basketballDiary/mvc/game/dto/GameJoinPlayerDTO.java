@@ -14,7 +14,7 @@ public class GameJoinPlayerDTO {
     private String playerTypeCodeName;  // 선수유형코드명
 
     private Long userSeq;               // 사용자Seq
-    private String name;                // 이름
+    private String userName;            // 사용자이름
     private String backNumber;          // 등번호
     private String positionCode;        // 포지션코드
     private String positionCodeName;    // 포지션코드명

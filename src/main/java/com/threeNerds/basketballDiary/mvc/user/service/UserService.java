@@ -1,7 +1,11 @@
 package com.threeNerds.basketballDiary.mvc.user.service;
 
+import com.threeNerds.basketballDiary.http.ResponseJsonBody;
 import com.threeNerds.basketballDiary.mvc.user.dto.CmnUserDTO;
+import com.threeNerds.basketballDiary.mvc.user.dto.SearchUsersExcludingTeamMember.request.SearchUsersExcludingTeamMemberRequest;
+import com.threeNerds.basketballDiary.mvc.user.dto.SearchUsersExcludingTeamMember.response.SearchUsersExcludingTeamMemberResponse;
 import com.threeNerds.basketballDiary.mvc.user.dto.UserDTO;
+import com.threeNerds.basketballDiary.mvc.user.dto.UserInqCondDTO;
 import com.threeNerds.basketballDiary.mvc.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,9 +32,17 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    public List<UserDTO> searchUsers(CmnUserDTO findUserCond)
-    {
+    public ResponseJsonBody searchUsersExcludingTeamMember( SearchUsersExcludingTeamMemberRequest reqBody ) {
+
+        UserInqCondDTO inqCond = new UserInqCondDTO()
+                                    .teamSeq( reqBody.getTeamSeq() )
+                                    .userName( reqBody.getUserName() )
+                                    .email( reqBody.getEmail() );
+
         // TODO 페이징 처리 추가
-        return userRepository.findUserByUserNameOrEmail(findUserCond);
+
+        List<UserDTO> users = userRepository.findAllUsersExcludingTeamMemberByUserNameOrEmail( inqCond );
+
+        return new SearchUsersExcludingTeamMemberResponse( users );
     }
 }

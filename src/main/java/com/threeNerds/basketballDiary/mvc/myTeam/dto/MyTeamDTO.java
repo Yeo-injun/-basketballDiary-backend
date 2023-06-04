@@ -5,6 +5,7 @@ import com.threeNerds.basketballDiary.mvc.team.dto.TeamRegularExerciseDTO;
 import lombok.Getter;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.constraints.NotNull;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,7 +21,7 @@ public class MyTeamDTO {
      */
     // TEAM
     /* 팀 pk */
-    private Long teamSeq;
+    @NotNull private Long teamSeq;
     /* 팀명 */
     private String teamName;
     /* 팀 이미지 경로 */
