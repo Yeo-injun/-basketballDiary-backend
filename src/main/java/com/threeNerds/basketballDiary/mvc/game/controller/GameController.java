@@ -130,18 +130,14 @@ public class GameController {
      * 참고자료 : https://brunch.co.kr/@kd4/158
      * 23.02.19(일) 인준 - API url 수정 (gameJoinTeamSeq를 화면에서 계속 가지고 있는 것이 번거롭기 때문)
      */
-//    @Auth(GRADE = USER)
+    @Auth(GRADE = USER)
     @GetMapping("/{gameSeq}/quarters/{quarterCode}/entry")
     public ResponseEntity<?> getGameEntry (
             @PathVariable("gameSeq") Long gameSeq,
             @PathVariable("quarterCode") String quarterCode,
             @RequestParam(name = "homeAwayCode", required = false) String homeAwayCode
     ) {
-        GetGameEntryRequest request = new GetGameEntryRequest()
-                .gameSeq(gameSeq)
-                .quarterCode(quarterCode)
-                .homeAwayCode(homeAwayCode);
-
+        GetGameEntryRequest request = new GetGameEntryRequest( gameSeq, quarterCode, homeAwayCode );
         GetGameEntryResponse resBody = gameJoinManagerService.getGameEntry(request);
         return ResponseEntity.ok(resBody);
     }

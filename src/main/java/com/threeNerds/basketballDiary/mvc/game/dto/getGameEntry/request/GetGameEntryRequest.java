@@ -6,21 +6,12 @@ import lombok.Getter;
 public class GetGameEntryRequest {
 
     private Long gameSeq;
-    private String homeAwayCode;
     private String quarterCode;
+    private String homeAwayCode;
 
-    public GetGameEntryRequest gameSeq(Long gameSeq) {
+    public GetGameEntryRequest ( Long gameSeq, String quarterCode, String homeAwayCode ) {
         this.gameSeq = gameSeq;
-        return this;
-    }
-
-    public GetGameEntryRequest homeAwayCode(String homeAwayCode) {
-        this.homeAwayCode = homeAwayCode;
-        return this;
-    }
-
-    public GetGameEntryRequest quarterCode(String quarterCode) {
         this.quarterCode = quarterCode;
-        return this;
+        this.homeAwayCode = homeAwayCode;
     }
 }
