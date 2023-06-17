@@ -1,8 +1,10 @@
 package com.threeNerds.basketballDiary.mvc.myTeam.controller;
 
 import com.threeNerds.basketballDiary.interceptor.Auth;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.getTeamMembers.request.GetMemeberGradeRequest;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.getTeamMembers.response.GetMemeberGradeResponse;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.getManagers.request.GetManagersRequest;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.getManagers.response.GetManagersResponse;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.getTeamMembers.request.GetTeamMembersRequest;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.getTeamMembers.response.GetTeamMembersResponse;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.searchAllTeamMembers.request.SearchAllTeamMembersRequest;
 import com.threeNerds.basketballDiary.mvc.team.dto.PlayerDTO;
 import com.threeNerds.basketballDiary.mvc.game.service.GameRecordManagerService;
@@ -64,17 +66,16 @@ public class MyTeamController {
 
     /**
      * API001 : 소속팀 운영진 조회
+     * 23.05.14. Request & Response 형 변경
      */
     @Auth(GRADE = TEAM_MEMBER)
     @GetMapping("/{teamSeq}/managers")
-    public ResponseEntity<List<MemberDTO>> getManagerGrade(
-            @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,
+    public ResponseEntity<GetManagersResponse> getManagers(
             @PathVariable(value = "teamSeq") Long teamSeq
     ) {
-        log.info("▒▒▒▒▒ API001: MyTeamController.searchManagers");
-        List<MemberDTO> managerList = myTeamService.findManagers(teamSeq);
-
-        return ResponseEntity.ok().body(managerList);
+        GetManagersRequest reqBody = new GetManagersRequest( teamSeq );
+        GetManagersResponse resBody = myTeamService.getManagers( reqBody );
+        return ResponseEntity.ok().body(resBody);
     }
 
     /**
@@ -82,14 +83,13 @@ public class MyTeamController {
      */
     @Auth(GRADE = TEAM_MEMBER)
     @GetMapping("/{teamSeq}/members")
-    public ResponseEntity<GetMemeberGradeResponse> getMemberGrade(
+    public ResponseEntity<GetTeamMembersResponse> getTeamMembers(
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,
             @PathVariable(value = "teamSeq") Long teamSeq,
             @RequestParam(name = "pageNo", defaultValue = "0") Integer pageNo
     ) {
-        GetMemeberGradeRequest reqBody = new GetMemeberGradeRequest(teamSeq, pageNo);
-        GetMemeberGradeResponse resBody = myTeamService.getMemberGrade(reqBody);
-
+        GetTeamMembersRequest reqBody = new GetTeamMembersRequest(teamSeq, pageNo);
+        GetTeamMembersResponse resBody = myTeamService.getTeamMembers(reqBody);
         return ResponseEntity.ok().body(resBody);
     }
 
