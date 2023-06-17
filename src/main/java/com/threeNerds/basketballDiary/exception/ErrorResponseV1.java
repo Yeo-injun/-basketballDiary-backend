@@ -9,16 +9,20 @@ import java.util.Map;
 @Getter
 public class ErrorResponseV1 {
 
-    private int code;
+    private int status;
 
     private String message;
 
-    private Map<String,String> validation = new HashMap<>();
+    private Map<String,String> validation;
 
     @Builder
-    public ErrorResponseV1(int code, String message, Map<String, String> validation) {
-        this.code = code;
+    public ErrorResponseV1(int status, String message, Map<String, String> validation) {
+        this.status = status;
         this.message = message;
-        this.validation = validation;
+        this.validation = validation != null ? validation : new HashMap<>();
+    }
+
+    void addValidation(String field,String errorMessage){
+        validation.put(field,errorMessage);
     }
 }

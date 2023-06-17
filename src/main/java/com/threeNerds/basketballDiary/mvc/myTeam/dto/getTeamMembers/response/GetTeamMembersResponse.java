@@ -7,12 +7,12 @@ import lombok.Getter;
 import java.util.List;
 
 @Getter
-public class GetMemeberGradeResponse {
+public class GetTeamMembersResponse {
 
     private PagerDTO pager;
     private List<MemberDTO> teamMembers;
 
-    public GetMemeberGradeResponse(PagerDTO pager, List<MemberDTO> teamMembers) {
+    public GetTeamMembersResponse(PagerDTO pager, List<MemberDTO> teamMembers) {
         this.pager = pager;
         this.teamMembers = teamMembers;
     }

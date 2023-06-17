@@ -4,17 +4,17 @@ import com.threeNerds.basketballDiary.pagination.PagerDTO;
 import lombok.Getter;
 
 @Getter
-public class GetMemeberGradeRequest {
+public class GetTeamMembersRequest {
 
     private Long teamSeq;
     private PagerDTO pagerDTO;
 
-    public GetMemeberGradeRequest(Long teamSeq, PagerDTO pagerDTO) {
+    public GetTeamMembersRequest(Long teamSeq, PagerDTO pagerDTO) {
         this.teamSeq = teamSeq;
         this.pagerDTO = pagerDTO;
     }
 
-    public GetMemeberGradeRequest(Long teamSeq, Integer pageNo) {
+    public GetTeamMembersRequest(Long teamSeq, Integer pageNo) {
         this.teamSeq = teamSeq;
         pagerDTO = new PagerDTO(pageNo);
     }
