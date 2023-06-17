@@ -50,8 +50,8 @@ public class GlobalExceptionHandler { //extends ResponseEntityExceptionHandler {
 
 
     @ExceptionHandler(value = { MethodArgumentNotValidException.class })
-    protected ResponseEntity<Object> handleMethodArgumentNotValid ( MethodArgumentNotValidException ex ) {
-        int statusCode = HttpStatus.BAD_REQUEST.value();
+    protected ResponseEntity<ErrorResponseV1> handleMethodArgumentNotValid ( MethodArgumentNotValidException ex ) {
+        int status = HttpStatus.BAD_REQUEST.value();
         String message = HttpStatus.BAD_REQUEST.getReasonPhrase();
 
         Map<String,String> validation = new HashMap<>();
@@ -60,10 +60,23 @@ public class GlobalExceptionHandler { //extends ResponseEntityExceptionHandler {
         }
 
         ErrorResponseV1 responseError = ErrorResponseV1.builder()
-                .code(statusCode)
+                .status(status)
                 .message(message)
                 .validation(validation)
                 .build();
-        return ResponseEntity.status(statusCode).body(responseError);
+        return ResponseEntity.status(status).body(responseError);
+    }
+
+    @ExceptionHandler(value = BasketballException.class)
+    public ErrorResponseV1 handlerBasketballException(BasketballException ex){
+        ErrorType exception = ex.getException();
+        int status  = ex.getStatus().value();
+        String message = exception.getMessage();
+
+        ErrorResponseV1 responseError = ErrorResponseV1.builder()
+                .status(status)
+                .message(message)
+                .build();
+        return responseError;
     }
 }
