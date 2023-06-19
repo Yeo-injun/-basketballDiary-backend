@@ -30,15 +30,15 @@ import java.util.List;
 @Getter
 public class SaveQuarterEntryInfoRequest {
 
-    @NotEmpty
-    private Long gameSeq;
-    @NotEmpty
-    private Long gameJoinTeamSeq;
-    @NotEmpty
-    private String homeAwayCode;
-    @NotEmpty
-    private String quarterCode;
     @NotNull
+    private Long gameSeq;
+
+    private Long gameJoinTeamSeq;
+    @NotNull
+    private String homeAwayCode;
+    @NotNull
+    private String quarterCode;
+    @NotEmpty
     private List<PlayerInfoDTO> playerList;
 
     public SaveQuarterEntryInfoRequest gameSeq(Long gameSeq) {
