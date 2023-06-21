@@ -9,7 +9,6 @@ import javax.validation.constraints.NotNull;
 @Getter
 public class ConfirmGameJoinTeamRequest {
 
-    @NotNull
     private Long gameSeq;               /* 게임Seq */
     @NotNull
     private String gameTypeCode;        /* 게임유형코드 */
@@ -19,8 +18,8 @@ public class ConfirmGameJoinTeamRequest {
     @NotNull
     private Long opponentTeamSeq;       /* 상태팀Seq */
 
-    @NotNull
-    private Long homeTeamSeq;           /* 홈팀Seq */
-    @NotNull
-    private Long awayteamSeq;           /* 어웨이팀Seq */
+//    @NotNull
+//    private Long homeTeamSeq;           /* 홈팀Seq */
+//    @NotNull
+//    private Long awayteamSeq;           /* 어웨이팀Seq */
 }
