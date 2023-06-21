@@ -3,11 +3,9 @@ package com.threeNerds.basketballDiary.mvc.game.controller;
 import com.threeNerds.basketballDiary.constant.code.HomeAwayCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
-import com.threeNerds.basketballDiary.http.RequestJsonBody;
 import com.threeNerds.basketballDiary.http.ResponseJsonBody;
 import com.threeNerds.basketballDiary.interceptor.Auth;
-import com.threeNerds.basketballDiary.mvc.game.controller.dto.GameAuthDTO;
-import com.threeNerds.basketballDiary.mvc.game.controller.request.ConfirmGameJoinTeamRequest;
+import com.threeNerds.basketballDiary.mvc.game.dto.confirmGameJoinTeam.request.ConfirmGameJoinTeamRequest;
 import com.threeNerds.basketballDiary.mvc.game.controller.request.CreateGameRequest;
 import com.threeNerds.basketballDiary.mvc.game.controller.request.RegisterGameJoinPlayersRequest;
 import com.threeNerds.basketballDiary.mvc.game.controller.request.SaveQuarterEntryInfoRequest;
@@ -32,7 +30,6 @@ import com.threeNerds.basketballDiary.mvc.game.service.GameJoinManagerService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameRecordManagerService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameService;
 import com.threeNerds.basketballDiary.session.SessionUser;
-import com.threeNerds.basketballDiary.utils.SessionUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -398,14 +395,13 @@ public class GameController {
      * 23.01.11(수) 누락된 로직 추가 - 게임기록상태코드 업데이트
      */
     @PostMapping("/{gameSeq}/gameJoinTeams")
-    public ResponseEntity<?> confirmJoinTeam (
+    public ResponseEntity<?> confirmGameJoinTeam (
             @PathVariable(name = "gameSeq") Long gameSeq,
             @RequestBody @Valid ConfirmGameJoinTeamRequest reqBody
     ) {
         GameJoinTeamCreationDTO joinTeamCreation = new GameJoinTeamCreationDTO()
                                         .gameSeq(gameSeq)
                                         .gameTypeCode(reqBody.getGameTypeCode())
-                                        .gameJoinTeamSeq(reqBody.getGameJoinTeamSeq())
                                         .opponentTeamSeq(reqBody.getOpponentTeamSeq());
 
         gameJoinManagerService.confirmJoinTeam(joinTeamCreation);

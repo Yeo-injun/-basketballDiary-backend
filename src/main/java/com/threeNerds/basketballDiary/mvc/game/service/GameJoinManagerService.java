@@ -56,79 +56,32 @@ public class GameJoinManagerService {
 
 
     /** 게임참가팀 확정  */
-    // TODO 리팩토링하기...
-    public void confirmJoinTeam(GameJoinTeamCreationDTO joinTeamCreationDTO)
-    {
+    public void confirmJoinTeam(GameJoinTeamCreationDTO joinTeamCreationDTO) {
+        final Long gameSeq          = joinTeamCreationDTO.getGameSeq();
+        final String gameTypeCode   = joinTeamCreationDTO.getGameTypeCode();
+        final Long opponentTeamSeq  = joinTeamCreationDTO.getOpponentTeamSeq();
+
+        /** 어웨이팀 등록 여부 확인 - HOME팀은 Game create단계에서 이미 생성됨 */
+        boolean hasAlreadyConfirmAwayTeam = hasGameJoinTeam(gameSeq, HomeAwayCode.AWAY_TEAM);
+        if ( hasAlreadyConfirmAwayTeam ) {
+            throw new CustomException(Error.ALREADY_EXIST_JOIN_TEAM);
+        }
+
         /** 게임기록상태코드 변경 - 게임생성(01) >> 게임참가팀확정(02) */
         Game joinTeamConfirm = Game.builder()
-                .gameSeq(joinTeamCreationDTO.getGameSeq())
-                .gameRecordStateCode(GameRecordStateCode.JOIN_TEAM_CONFIRMATION.getCode())
+                .gameSeq( gameSeq )
+                .gameRecordStateCode( GameRecordStateCode.JOIN_TEAM_CONFIRMATION.getCode() )
                 .build();
         gameRepository.updateGameRecordState(joinTeamConfirm);
 
-        /** 게임유형코드별 처리 */
-        String gameTypeCode = joinTeamCreationDTO.getGameTypeCode();
-        if (GameTypeCode.SELF_GAME.getCode().equals(gameTypeCode))
-        {
-            Long gameSeq = joinTeamCreationDTO.getGameSeq();
-            boolean hasJoinTeam = hasGameJoinTeam(gameSeq, HomeAwayCode.HOME_TEAM)
-                                  || hasGameJoinTeam(gameSeq, HomeAwayCode.AWAY_TEAM);
-            if (hasJoinTeam) {
-                throw new CustomException(Error.ALREADY_EXIST_JOIN_TEAM);
-            }
-            Team gameCreatorTeam = gameJoinManagerRepo.findGameCreatorTeam(gameSeq);
-
-            GameJoinTeam homeTeamInSelfGame = GameJoinTeam.createHomeTeamForSelfGame(gameSeq, gameCreatorTeam);
-            gameJoinTeamRepository.saveGameJoinTeam(homeTeamInSelfGame);
-
-            GameJoinTeam awayTeamInSelfGame = GameJoinTeam.createAwayTeamForSelfGame(gameSeq, gameCreatorTeam);
-            gameJoinTeamRepository.saveGameJoinTeam(awayTeamInSelfGame);
-            return;
-        }
-
-        if (GameTypeCode.MATCH_UP_GAME.getCode().equals(gameTypeCode))
-        {
-            Long gameSeq = joinTeamCreationDTO.getGameSeq();
-            // 해당 게임에 홈팀이 등록되어 있는지 확인
-            // 홈팀이 없으면 홈팀등록
-            if (!hasGameJoinTeam(gameSeq, HomeAwayCode.HOME_TEAM))
-            {
-                Team gameCreatorTeam = gameJoinManagerRepo.findGameCreatorTeam(gameSeq);
-                GameJoinTeam homeTeam = GameJoinTeam.create(gameSeq, HomeAwayCode.HOME_TEAM, gameCreatorTeam);
-                gameJoinTeamRepository.saveGameJoinTeam(homeTeam);
-            }
-
-            boolean hasOpponent = hasGameJoinTeam(gameSeq, HomeAwayCode.AWAY_TEAM);
-            if (hasOpponent) {
-                throw new CustomException(Error.ALREADY_EXIST_JOIN_TEAM);
-            }
-
-            Long opponentTeamSeq = Optional.ofNullable(joinTeamCreationDTO.getOpponentTeamSeq())
-                                            .orElseThrow(() -> new CustomException(Error.NO_PARAMETER));
-
-            Team opponentTeam = Optional.ofNullable(teamRepository.findByTeamSeq(opponentTeamSeq))
-                                        .orElseThrow(()-> new CustomException(Error.TEAM_NOT_FOUND));
-            GameJoinTeam awayTeam = GameJoinTeam.create(gameSeq, HomeAwayCode.AWAY_TEAM, opponentTeam);
-            gameJoinTeamRepository.saveGameJoinTeam(awayTeam);
-            return;
-        }
-
-        // TODO 구현예정
-//        if (GameTypeCode.COMPETITION.getCode().equals(gameTypeCode))
-//        {
-//            // 홈팀 등록
-//            GameJoinTeam newHomeTeam = GameJoinTeam.createHomeTeam(joinTeamCreationDTO);
-//            gameJoinTeamRepository.saveGameJoinTeam(newHomeTeam);
-//            // 어웨이팀 등록
-//            GameJoinTeam newAwayTeam = GameJoinTeam.createAwayTeam(joinTeamCreationDTO);
-//            gameJoinTeamRepository.saveGameJoinTeam(newAwayTeam);
-//            return;
-//        }
+        /** 게임 유형에 따라 HOME_TEAM 이름 update하기 */
+        // TODO 구현 예정 
+        
+        /** AWAY팀 정보 생성 - 게임 유형에 따라서 */
+        gameJoinTeamRepository.saveGameJoinTeam( generateAwayTeamByGameType( gameSeq, gameTypeCode, opponentTeamSeq ) );
     }
 
-    // TODO 해당게임의 참가팀으로 등록되어있는지 여부를 공통함수로 작성 false / true로 반환
-    private boolean hasGameJoinTeam(Long gameSeq, HomeAwayCode homeAwayCode)
-    {
+    private boolean hasGameJoinTeam(Long gameSeq, HomeAwayCode homeAwayCode) {
         GameJoinTeam paramGameJoinTeam = new GameJoinTeam().builder()
                 .gameSeq(gameSeq)
                 .homeAwayCode(homeAwayCode.getCode())
@@ -139,6 +92,22 @@ public class GameJoinManagerService {
             return false;
         }
         return true;
+    }
+
+    private GameJoinTeam generateAwayTeamByGameType( Long gameSeq, String gameTypeCode, Long opponentTeamSeq ) {
+        if (GameTypeCode.SELF_GAME.getCode().equals(gameTypeCode)) {
+            Team gameCreatorTeam = gameJoinManagerRepo.findGameCreatorTeam(gameSeq);
+            return GameJoinTeam.createAwayTeamForSelfGame(gameSeq, gameCreatorTeam);
+        }
+
+        if (GameTypeCode.MATCH_UP_GAME.getCode().equals(gameTypeCode)) {
+            Team opponentTeam = Optional
+                    .ofNullable(teamRepository.findByTeamSeq(opponentTeamSeq))
+                    .orElseThrow(()-> new CustomException(Error.TEAM_NOT_FOUND));
+            return GameJoinTeam.create(gameSeq, HomeAwayCode.AWAY_TEAM, opponentTeam);
+        }
+
+        return new GameJoinTeam(); // TODO SQL INSERT 오류나지 않도록 임시처리 ( null을 반환하거나 throw Error를 던지거나... )
     }
 
     public List<GameOpponentDTO> searchOpponents(SearchOppenentsDTO searchCond)
