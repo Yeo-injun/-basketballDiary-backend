@@ -57,20 +57,19 @@ public class GameJoinManagerService {
 
     /** 게임참가팀 확정  */
     // TODO 리팩토링하기...
-    public void confirmJoinTeam(GameJoinTeamCreationDTO joinTeamCreationDTO)
-    {
+    public void confirmJoinTeam(GameJoinTeamCreationDTO joinTeamCreationDTO) {
+        final Long gameSeq          = joinTeamCreationDTO.getGameSeq();
+        final String gameTypeCode   = joinTeamCreationDTO.getGameTypeCode();
+
         /** 게임기록상태코드 변경 - 게임생성(01) >> 게임참가팀확정(02) */
         Game joinTeamConfirm = Game.builder()
-                .gameSeq(joinTeamCreationDTO.getGameSeq())
+                .gameSeq( gameSeq )
                 .gameRecordStateCode(GameRecordStateCode.JOIN_TEAM_CONFIRMATION.getCode())
                 .build();
         gameRepository.updateGameRecordState(joinTeamConfirm);
 
         /** 게임유형코드별 처리 */
-        String gameTypeCode = joinTeamCreationDTO.getGameTypeCode();
-        if (GameTypeCode.SELF_GAME.getCode().equals(gameTypeCode))
-        {
-            Long gameSeq = joinTeamCreationDTO.getGameSeq();
+        if (GameTypeCode.SELF_GAME.getCode().equals(gameTypeCode)) {
             boolean hasJoinTeam = hasGameJoinTeam(gameSeq, HomeAwayCode.HOME_TEAM)
                                   || hasGameJoinTeam(gameSeq, HomeAwayCode.AWAY_TEAM);
             if (hasJoinTeam) {
@@ -86,13 +85,10 @@ public class GameJoinManagerService {
             return;
         }
 
-        if (GameTypeCode.MATCH_UP_GAME.getCode().equals(gameTypeCode))
-        {
-            Long gameSeq = joinTeamCreationDTO.getGameSeq();
+        if (GameTypeCode.MATCH_UP_GAME.getCode().equals(gameTypeCode)) {
             // 해당 게임에 홈팀이 등록되어 있는지 확인
             // 홈팀이 없으면 홈팀등록
-            if (!hasGameJoinTeam(gameSeq, HomeAwayCode.HOME_TEAM))
-            {
+            if (!hasGameJoinTeam(gameSeq, HomeAwayCode.HOME_TEAM)) {
                 Team gameCreatorTeam = gameJoinManagerRepo.findGameCreatorTeam(gameSeq);
                 GameJoinTeam homeTeam = GameJoinTeam.create(gameSeq, HomeAwayCode.HOME_TEAM, gameCreatorTeam);
                 gameJoinTeamRepository.saveGameJoinTeam(homeTeam);
