@@ -4,12 +4,16 @@ import com.threeNerds.basketballDiary.constant.code.GameRecordStateCode;
 import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.mvc.game.domain.Game;
+import com.threeNerds.basketballDiary.mvc.game.domain.GameJoinTeam;
 import com.threeNerds.basketballDiary.mvc.game.domain.GameRecordAuth;
 import com.threeNerds.basketballDiary.mvc.game.dto.*;
+import com.threeNerds.basketballDiary.mvc.game.repository.GameJoinTeamRepository;
 import com.threeNerds.basketballDiary.mvc.game.repository.GameRecordAuthRepository;
 import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember;
 import com.threeNerds.basketballDiary.mvc.game.repository.GameRepository;
 import com.threeNerds.basketballDiary.mvc.myTeam.repository.TeamMemberRepository;
+import com.threeNerds.basketballDiary.mvc.team.domain.Team;
+import com.threeNerds.basketballDiary.mvc.team.repository.TeamRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -27,8 +31,11 @@ import java.util.stream.Collectors;
 @Transactional
 public class GameService {
 
+    private final TeamRepository teamRepository;
     private final TeamMemberRepository teamMemberRepository;
+
     private final GameRepository gameRepository;
+    private final GameJoinTeamRepository gameJoinTeamRepository;
     private final GameRecordAuthRepository gameRecordAuthRepo;
 
     public void deleteGame(Long gameSeq){
@@ -44,12 +51,13 @@ public class GameService {
      * 게임 생성
      * @author 여인준
      **/
-    public GameCreationDTO createGame(GameCreationDTO gc)
-    {
+    public GameCreationDTO createGame(GameCreationDTO gc) {
+        final Long userSeq = gc.getUserSeq();
+        final Long teamSeq = gc.getTeamSeq();
         /** 게임생성 요청 사용자 검증 - 게임을 생성하는 팀에 소속되어 있는지 확인 */
         TeamMember tmParam = TeamMember.builder()
-                .userSeq(gc.getUserSeq())
-                .teamSeq(gc.getTeamSeq())
+                .userSeq( userSeq )
+                .teamSeq( teamSeq )
                 .build();
 
         TeamMember tm = Optional.ofNullable(teamMemberRepository.findTeamMemberByUserAndTeamSeq(tmParam))
@@ -61,6 +69,13 @@ public class GameService {
         Game newGame = Game.createDefault(gc);
         gameRepository.saveGame(newGame);
         Long newGameSeq = newGame.getGameSeq();
+
+        /** 게임참가팀 - HOME팀 생성 */
+        Team homeTeam = Optional
+                                .ofNullable( teamRepository.findByTeamSeq( teamSeq ) )
+                                .orElseThrow(()-> new CustomException(Error.TEAM_NOT_FOUND));
+        GameJoinTeam homeJoinTeam =  GameJoinTeam.createHomeTeamForSelfGame( newGameSeq, homeTeam );
+        gameJoinTeamRepository.saveGameJoinTeam( homeJoinTeam );
 
         /** 게임기록권한 정보 생성 */
         GameRecordAuth gameCreatorAuth = GameRecordAuth.createCreator(newGameSeq, teamMemeberSeq);
