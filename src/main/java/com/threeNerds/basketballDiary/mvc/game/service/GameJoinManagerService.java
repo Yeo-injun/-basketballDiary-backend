@@ -160,7 +160,7 @@ public class GameJoinManagerService {
 
         /** 게임참가선수 데이터 존재여부 확인 - 기존 데이터 존재시 삭제 */
         GameJoinPlayer joinPlayerParam = GameJoinPlayer.createInqParam( gameSeq, homeAwayCode );
-        List<GameJoinPlayer> registeredJoinPlayers = gameJoinPlayerRepository.findPlayers( joinPlayerParam );
+        List<GameJoinPlayer> registeredJoinPlayers = gameJoinPlayerRepository.findAllPlayersOnOneSideTeam( joinPlayerParam );
         boolean hasJoinPlayers = !registeredJoinPlayers.isEmpty();
         if (hasJoinPlayers) {
             gameJoinPlayerRepository.deletePlayers( joinPlayerParam );
