@@ -2,18 +2,46 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.threeNerds.basketballDiary.mvc.game.repository.GameJoinPlayerRepository">
-    <sql id="GameJoinPlayerDomain">
-          GAME_JOIN_PLAYER_SEQ
-        , GAME_SEQ
-        , HOME_AWAY_CODE
-        , GAME_JOIN_TEAM_SEQ
-        , PLAYER_TYPE_CODE
-        , USER_SEQ
-        , NAME
-        , BACK_NUMBER
-        , POSITION_CODE
-        , EMAIL
+    <sql id="GameJoinPlayerSelect">
+        SELECT GAME_JOIN_PLAYER_SEQ
+             , GAME_SEQ
+             , HOME_AWAY_CODE
+             , GAME_JOIN_TEAM_SEQ
+             , PLAYER_TYPE_CODE
+             , USER_SEQ
+             , NAME
+             , BACK_NUMBER
+             , POSITION_CODE
+             , EMAIL
+          FROM GAME_JOIN_PLAYER
+         WHERE 1=1
     </sql>
+
+    <select id="findPlayer" resultType="com.threeNerds.basketballDiary.mvc.game.domain.GameJoinPlayer" >
+        /* GameJoinPlayerRepository.findPlayer */
+        <include refid="GameJoinPlayerSelect"></include>
+           AND GAME_JOIN_PLAYER_SEQ = #{gameJoinPlayerSeq}
+    </select>
+
+    <select id="findAllPlayersOnGame" resultType="com.threeNerds.basketballDiary.mvc.game.domain.GameJoinPlayer" >
+        /* GameJoinPlayerRepository.findAllPlayersOnGame */
+        <include refid="GameJoinPlayerSelect"></include>
+           AND GAME_SEQ = #{gameSeq}
+    </select>
+
+    <select id="findAllPlayersOnOneSideTeam" resultType="com.threeNerds.basketballDiary.mvc.game.domain.GameJoinPlayer" >
+        /* GameJoinPlayerRepository.findAllPlayersOnOneSideTeam */
+        <include refid="GameJoinPlayerSelect"></include>
+        <choose>
+            <when test='gameJoinTeamSeq != null and "".equals(gameJoinTeamSeq)' >
+           AND GAME_JOIN_TEAM_SEQ = #{gameJoinTeamSeq}
+            </when>
+            <otherwise>
+           AND GAME_SEQ = #{gameSeq}
+           AND HOME_AWAY_CODE = #{homeAwayCode}
+            </otherwise>
+        </choose>
+    </select>
 
     <insert id="save" parameterType="com.threeNerds.basketballDiary.mvc.game.domain.GameJoinPlayer" useGeneratedKeys="true" keyProperty="gameJoinPlayerSeq">
         <selectKey keyProperty="gameJoinPlayerSeq" order="AFTER" resultType="java.lang.Long">
@@ -21,7 +49,7 @@
         </selectKey>
         /* GameJoinPlayerRepository.save */
         INSERT INTO GAME_JOIN_PLAYER (
-          GAME_JOIN_TEAM_SEQ
+        GAME_JOIN_TEAM_SEQ
         , GAME_SEQ
         , HOME_AWAY_CODE
         , PLAYER_TYPE_CODE
@@ -31,7 +59,7 @@
         , POSITION_CODE
         , EMAIL
         ) VALUES (
-          #{gameJoinTeamSeq}
+        #{gameJoinTeamSeq}
         , #{gameSeq}
         , #{homeAwayCode}
         , #{playerTypeCode}
@@ -43,39 +71,6 @@
         )
     </insert>
 
-    <select id="findPlayer" resultType="com.threeNerds.basketballDiary.mvc.game.domain.GameJoinPlayer" >
-        /* GameJoinPlayerRepository.findPlayer */
-        SELECT GAME_JOIN_PLAYER_SEQ
-             , GAME_JOIN_TEAM_SEQ
-             , PLAYER_TYPE_CODE
-             , USER_SEQ
-             , NAME
-             , BACK_NUMBER
-             , POSITION_CODE
-             , EMAIL
-          FROM GAME_JOIN_PLAYER
-         WHERE 1=1
-           AND GAME_JOIN_PLAYER_SEQ = #{gameJoinPlayerSeq}
-    </select>
-
-
-    <select id="findPlayers" resultType="com.threeNerds.basketballDiary.mvc.game.domain.GameJoinPlayer" >
-        /* GameJoinPlayerRepository.findPlayers */
-        SELECT
-        <include refid="GameJoinPlayerDomain"></include>
-          FROM GAME_JOIN_PLAYER
-         WHERE 1=1
-        <choose>
-            <when test='gameJoinTeamSeq != null and "".equeals(gameJoinTeamSeq)' >
-           AND GAME_JOIN_TEAM_SEQ = #{gameJoinTeamSeq}
-            </when>
-            <otherwise>
-           AND GAME_SEQ = #{gameSeq}
-           AND HOME_AWAY_CODE = #{homeAwayCode}
-            </otherwise>
-        </choose>
-
-    </select>
 
     <delete id="deletePlayers" parameterType="com.threeNerds.basketballDiary.mvc.game.domain.GameJoinPlayer">
         /* GameJoinPlayerRepository.deletePlayers */

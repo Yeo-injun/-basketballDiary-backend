@@ -53,6 +53,7 @@ public class GameRecordManagerService {
 
     private final GameRepository gameRepository;
     private final GameJoinTeamRepository gameJoinTeamRepo;
+    private final GameJoinPlayerRepository gameJoinPlayerRepo;
     private final QuarterTeamRecordsRepository quarterTeamRecordsRepository;
     private final QuarterPlayerRecordsRepository quarterPlayerRecordsRepository;
 
@@ -435,10 +436,17 @@ public class GameRecordManagerService {
         Long gameSeq        = request.getGameSeq();
         String quarterCode  = request.getQuarterCode();
 
+        /** 게임참가팀 지정유무 검증 */
         List<GameJoinTeam> gameJoinTeams = gameJoinTeamRepo.findAllGameJoinTeam( gameSeq );
         if ( gameJoinTeams.isEmpty() ) {
             log.debug("Exception구현하기=================================");
             return;
+        }
+
+        /** 게임참가선수 검증 - 홈팀과 어웨이팀 게임참가선수 각가 5명 이상이어야 한다. */
+        List<GameJoinPlayer> gameJoinPlayers = gameJoinPlayerRepo.findAllPlayersOnGame( gameSeq );
+        if ( !hasEnoughPlayersOnGame( gameJoinPlayers ) ) {
+            throw new CustomException( Error.INSUFFICIENT_PLAYERS_ON_GAME );
         }
 
         for ( GameJoinTeam joinTeam : gameJoinTeams ) {
@@ -450,6 +458,25 @@ public class GameRecordManagerService {
             );
             quarterTeamRecordsRepository.save( quarterTeamBasicInfo );
         }
+    }
+
+    private boolean hasEnoughPlayersOnGame( List<GameJoinPlayer> allPlayersOnGame ) {
+        int homeTeamPlayerCnt = 0;
+        int awayTeamPlayerCnt = 0;
+
+        for ( GameJoinPlayer player : allPlayersOnGame ) {
+            String homeAwayCode = player.getHomeAwayCode();
+            if ( HomeAwayCode.HOME_TEAM.getCode().equals( homeAwayCode ) ) {
+                homeTeamPlayerCnt++;
+            }
+            if ( HomeAwayCode.AWAY_TEAM.getCode().equals( homeAwayCode ) ) {
+                awayTeamPlayerCnt++;
+            }
+            if ( homeTeamPlayerCnt >= 5 && awayTeamPlayerCnt >= 5 ) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

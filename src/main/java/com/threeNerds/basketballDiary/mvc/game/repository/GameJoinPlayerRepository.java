@@ -16,8 +16,12 @@ public interface GameJoinPlayerRepository {
     /** 게임참가선수의 참가팀Seq 조회 */
     GameJoinPlayer findPlayer(GameJoinPlayer gameJoinPlayer);
 
-    /** 게임참가선수 목록조회 */
-    List<GameJoinPlayer> findPlayers(GameJoinPlayer gameJoinPlayer);
+    /** 게임참가선수 목록조회 - 게임에 참가한 모든 선수 조회 */
+    List<GameJoinPlayer> findAllPlayersOnGame( Long gameSeq );
+
+    /** 한쪽 팀 전체 게임참가선수 목록조회 */
+    List<GameJoinPlayer> findAllPlayersOnOneSideTeam( GameJoinPlayer gameJoinPlayer );
+
 
     /**********
      * INSERT
