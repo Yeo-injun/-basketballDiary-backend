@@ -10,22 +10,29 @@ import java.util.List;
 @Getter
 public class SaveQuarterRecordsRequest {
 
-    @NotNull
     private Long gameSeq;
-    @NotEmpty
     private String quarterCode;
+
+    @NotEmpty
+    private String quarterTime;
     @NotNull
     private List<SavePlayerRecordDTO> homeTeamPlayerRecords;
     @NotNull
     private List<SavePlayerRecordDTO> awayTeamPlayerRecords;
 
-    public SaveQuarterRecordsRequest gameSeq( Long gameSeq ) {
-        this.gameSeq = gameSeq;
-        return this;
+    public SaveQuarterRecordsRequest() {
+
     }
 
-    public SaveQuarterRecordsRequest quarterCode( String quarterCode ) {
+    public SaveQuarterRecordsRequest (
+        Long gameSeq,
+        String quarterCode,
+        SaveQuarterRecordsRequest request
+   ) {
+        this.gameSeq = gameSeq;
         this.quarterCode = quarterCode;
-        return this;
+        this.quarterTime = request.getQuarterTime();
+        this.homeTeamPlayerRecords = request.getHomeTeamPlayerRecords();
+        this.awayTeamPlayerRecords = request.getAwayTeamPlayerRecords();
     }
 }

@@ -77,7 +77,7 @@ public class GameController {
      * @result 특정쿼터의 선수별 기록조회
      * 22.12.15(목) @ReauestBody부분 Request클래스로 대체
      */
-//    @Auth(GRADE = USER)
+    @Auth(GRADE = TEAM_MEMBER)
 //    @PostMapping("/{gameSeq}/gameJoinTeams/{gameJoinTeamSeq}/players")
     @PostMapping("/{gameSeq}/homeAwayCode/{homeAwayCode}/players")
     public ResponseEntity<?> registerGameJoinPlayers(
@@ -110,11 +110,13 @@ public class GameController {
             @PathVariable(name = "quarterCode") String quarterCode,
             @RequestBody @Valid SaveQuarterRecordsRequest requestMessage
     ) {
-        requestMessage
-                .gameSeq( gameSeq )
-                .quarterCode( quarterCode );
+        SaveQuarterRecordsRequest message = new SaveQuarterRecordsRequest(
+            gameSeq,
+            quarterCode,
+            requestMessage
+        );
 
-        gameRecordManagerService.saveQuarterRecord( requestMessage );
+        gameRecordManagerService.saveQuarterRecord( message );
         return RESPONSE_OK;
     }
 
