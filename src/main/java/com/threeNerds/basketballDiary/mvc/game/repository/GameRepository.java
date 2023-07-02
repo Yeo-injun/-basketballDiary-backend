@@ -35,6 +35,10 @@ public interface GameRepository {
      * @parma Game (gameSeq, gameRecordStateCode)
      */
     int updateGameRecordState(Game game);
+    /** 게임의 쿼터시간 Update
+     * @parma Game (gameSeq, quarterTime1,2,3,4 중 하나)
+     */
+    int updateQuarterTime(Game game);
 
     /**********
      * DELETE
