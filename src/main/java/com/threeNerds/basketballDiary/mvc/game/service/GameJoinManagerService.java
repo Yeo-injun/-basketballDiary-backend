@@ -148,14 +148,16 @@ public class GameJoinManagerService {
 
         /** 게임참가팀이 존재하는지 확인 */
         GameJoinTeam joinTeamParam = GameJoinTeam.createInqCond( gameSeq, homeAwayCode );
-        GameJoinTeam gameJoinTeam = gameJoinTeamRepository.findGameJoinTeam( joinTeamParam );
+        GameJoinTeam gameJoinTeam = Optional
+                                        .ofNullable( gameJoinTeamRepository.findGameJoinTeam( joinTeamParam ) )
+                                        .orElseThrow( () -> new CustomException( Error.NOT_FOUND_GAME_JOIN_TEAM ) );
+
 
         /** 해당 게임의 쿼터선수기록 존재여부 확인 - 쿼터기록이 존재할 경우 수정 불가 */
-        // TODO 에러메세지 수정
         List<QuarterPlayerRecords> playersRecord = quarterPlayerRecordsRepo.findAllInGame(gameSeq);
         boolean hasPlayerRecord = !playersRecord.isEmpty();
         if (hasPlayerRecord) {
-            throw new CustomException(Error.INVALID_PARAMETER);
+            throw new CustomException( Error.INVALID_REGISTER_PLAYERS_FOR_ALREADY_HAS_RECORDS );
         }
 
         /** 게임참가선수 데이터 존재여부 확인 - 기존 데이터 존재시 삭제 */
@@ -168,8 +170,7 @@ public class GameJoinManagerService {
 
         /** 중복된 등번호가 있는지 체크하기 */
         Set<String> backNumberSet = new HashSet<>();
-        for (GameJoinPlayerDTO player : gameJoinPlayers)
-        {
+        for (GameJoinPlayerDTO player : gameJoinPlayers) {
             String backNumber = player.getBackNumber();
             boolean isDuplicatedBackNumber = !backNumberSet.add(backNumber);
             if (isDuplicatedBackNumber) {
@@ -179,13 +180,11 @@ public class GameJoinManagerService {
         // TODO 중복된 회원이 있는지 체크하기 - userSeq의 중복이 있는지 stream으로 확인
 
         /** 게임참가선수 데이터 저장 - 선수유형에 따라서 처리하기 */
-        for (GameJoinPlayerDTO joinPlayerDTO : gameJoinPlayers)
-        {
+        for (GameJoinPlayerDTO joinPlayerDTO : gameJoinPlayers) {
             String playerTypeCode = joinPlayerDTO.getPlayerTypeCode();
             boolean isUnauthGuest = PlayerTypeCode.UNAUTH_GUEST.getCode().equals(playerTypeCode);
             /** 회원이 아닌 선수는 입력값을 직접 DB에 insert */
-            if (isUnauthGuest)
-            {
+            if (isUnauthGuest) {
                 GameJoinPlayer unauthGuest = GameJoinPlayer.createUnauthPlayer( gameJoinTeam, joinPlayerDTO );
                 gameJoinPlayerRepository.save(unauthGuest);
                 continue;

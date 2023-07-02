@@ -487,14 +487,18 @@ public class GameRecordManagerService {
      *      - 해당 서비스의 전제 조건 : QuarterTeamRecords와 QuarterPlayerRecords에 데이터가 이미 존재해야 한다.
      * @author 여인준
      */
-    public void saveQuarterRecord(SaveQuarterRecordsRequest requestMessage)
-    {
+    public void saveQuarterRecord(SaveQuarterRecordsRequest requestMessage) {
         Long gameSeq = requestMessage.getGameSeq();
         String quarterCode = requestMessage.getQuarterCode();
+        String quarterTime = requestMessage.getQuarterTime();
         QuarterTeamRecords inqCondQuarterTeamRecords = QuarterTeamRecords.builder()
                 .gameSeq( gameSeq )
                 .quarterCode( quarterCode )
                 .build();
+
+        /** 경기의 쿼터 시간 update */
+        gameRepository.updateQuarterTime( new Game( gameSeq, QuarterCode.getType( quarterCode ), quarterTime ) );
+
         /** 경기에 참가한 팀의 쿼터기록 조회 */
         List<QuarterTeamRecords> allTeamRecords = quarterTeamRecordsRepository.findAllGameJoinTeam( inqCondQuarterTeamRecords );
 
