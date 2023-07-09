@@ -1,4 +1,4 @@
-name: basketdiary jib build
+name: -basketballDiary-backend build
 
 on:
   push:
