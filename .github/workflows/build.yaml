@@ -15,6 +15,12 @@ jobs:
         with:
           java-version: 1.11
 
+      - name: Login to Docker Hub
+        uses: elien940318/basketdiary
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
