@@ -7,7 +7,7 @@ on:
     build:
       runs-on: ubuntu-latest
       steps:
-        -uses: actions/checkout@v2
+        - uses: actions/checkout@v2
 
         - name: Setup JDK 1.11
           uses: actions/setup-java@v1
