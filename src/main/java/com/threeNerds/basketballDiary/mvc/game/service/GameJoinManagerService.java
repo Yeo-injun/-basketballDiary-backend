@@ -142,8 +142,8 @@ public class GameJoinManagerService {
      **/
     public void registerGameJoinPlayers( RegisterGameJoinPlayersRequest reqBody ) {
 
-        Long gameSeq                                    = reqBody.getGameSeq();
-        String homeAwayCode                             = reqBody.getHomeAwayCode();
+        Long gameSeq                              = reqBody.getGameSeq();
+        String homeAwayCode                       = reqBody.getHomeAwayCode();
         List<GameJoinPlayerDTO> gameJoinPlayers   = reqBody.getGameJoinPlayers();
 
         /** 게임참가팀이 존재하는지 확인 */
@@ -151,7 +151,11 @@ public class GameJoinManagerService {
         GameJoinTeam gameJoinTeam = Optional
                                         .ofNullable( gameJoinTeamRepository.findGameJoinTeam( joinTeamParam ) )
                                         .orElseThrow( () -> new CustomException( Error.NOT_FOUND_GAME_JOIN_TEAM ) );
-
+        /** 게임기록상태 확인 */
+        Game game = gameRepository.findGame( gameSeq );
+        if ( !game.isPossibleRecordUpdate() ) {
+            throw new CustomException( Error.CANT_ADD_GAME_JOIN_PLAYER );
+        }
 
         /** 해당 게임의 쿼터선수기록 존재여부 확인 - 쿼터기록이 존재할 경우 수정 불가 */
         List<QuarterPlayerRecords> playersRecord = quarterPlayerRecordsRepo.findAllInGame(gameSeq);

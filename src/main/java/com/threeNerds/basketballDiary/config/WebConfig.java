@@ -12,7 +12,8 @@ public class WebConfig implements WebMvcConfigurer {
         "http://127.0.0.1:5500",
         "http://localhost:5500",
         "http://192.168.0.3:5500",
-        "http://changkeeroom.iptime.org:80/" // 개발서버 (Front-end) >> 기본 포트가 80으로 설정되어 있음
+        "http://changkeeroom.iptime.org:80/", // 개발서버 (Front-end) >> 기본 포트가 80으로 설정되어 있음
+        "http://changkeeroom.iptime.org",
     };
 
     @Override
