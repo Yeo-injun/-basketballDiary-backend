@@ -15,7 +15,6 @@ public enum Error {
     INVALID_PARAMETER(BAD_REQUEST, "유효하지 않은 파라미터입니다."),
     INSUFFICIENT_PLAYERS_ON_ENTRY(BAD_REQUEST, "엔트리에 등록할 선수가 부족합니다."),
     INSUFFICIENT_PLAYERS_ON_GAME(BAD_REQUEST, "게임에 참가한 선수가 부족합니다."),
-    INVALID_REGISTER_PLAYERS_FOR_ALREADY_HAS_RECORDS(BAD_REQUEST, "이미 쿼터기록이 입력되고 있어 선수 추가가 불가합니다."),
 
     /** 401 UNAUTHORIZED : 인증되지 않은 사용자 */
     UNAUTHORIZED_ACCESS(UNAUTHORIZED, "접근 권한이 없습니다."),
@@ -48,6 +47,9 @@ public enum Error {
 
     CANT_DISMISSAL_MANAGER(FORBIDDEN, "관리자가 아닙니다. 팀장이나 팀원은 관리자에서 해임할 수 없습니다."),
     CANT_APPOINTMENT_MANAGER(FORBIDDEN, "팀원이 아닙니다. 팀원만 관리자로 임명할 수 있습니다."),
+
+    CANT_ADD_GAME_JOIN_PLAYER(FORBIDDEN, "경기기록이 확정된 상태입니다. 경기참가선수를 변경할 수 없습니다."),
+    INVALID_REGISTER_PLAYERS_FOR_ALREADY_HAS_RECORDS(FORBIDDEN, "이미 쿼터기록이 입력되고 있어 선수 추가가 불가합니다."),
 
 
     /** 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재 */

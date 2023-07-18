@@ -343,9 +343,10 @@ public class GameRecordManagerService {
         // 2, 게임에 참가선수로 등록되지 않아도 된다.
         // 이에따른 조회 쿼리 및 조회 내용 정립
         Long gameSeq = request.getGameSeq();
-        SearchGameDTO gameCond = new SearchGameDTO().gameSeq( gameSeq);
+        SearchGameDTO gameCond = new SearchGameDTO().gameSeq( gameSeq );
         List<GameRecorderDTO> gameRecorders = gameRecordManagerRepository.findAllGameRecorders( gameCond );
 
+        // TODO 자체전일 경우 TeamName에 prifix 붙여주기 ( HOME_ or AWAY_ )
         return new GetGameRecordersResponse( gameRecorders );
     }
 

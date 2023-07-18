@@ -74,6 +74,15 @@ public class Game {
         return competitionTypeCode.equals(this.getGameTypeCode());
     }
 
+    /** 게임기록상태 체크 - 게임기록수정가능한 상태인지 */
+    public boolean isPossibleRecordUpdate() {
+        // 게임 확정상태일때만 게임기록 수정 불가
+        if ( GameRecordStateCode.CONFIRMATION.getCode().equals( this.gameRecordStateCode ) ) {
+            return false;
+        }
+        return true;
+    }
+
     // TODO 에레메세지 재정의 필요
     public String getQuarterTime( QuarterCode quarterCode ) {
         switch ( quarterCode ) {
