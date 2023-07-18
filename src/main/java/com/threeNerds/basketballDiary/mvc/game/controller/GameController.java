@@ -331,7 +331,7 @@ public class GameController {
     public ResponseEntity<?> saveGameRecorders(
             @PathVariable("gameSeq") Long gameSeq,
             @RequestBody @Valid SaveGameRecordersRequest request
-    ){
+    ) {
         request.gameSeq( gameSeq );
         gameRecordManagerService.saveGameRecorders( request );
 

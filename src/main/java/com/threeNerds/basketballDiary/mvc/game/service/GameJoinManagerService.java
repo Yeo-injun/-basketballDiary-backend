@@ -412,7 +412,6 @@ public class GameJoinManagerService {
      * 23.01.28
      * 게임참가팀 팀원조회
      * 게임 입력권한을 부여하기 위해 경기에 참여한 팀원을 조회한다.
-     * (이미 권한을 부여받은 선수는 제외한다.) TODO 기능 추가 예정
      * @author 강창기
      * @update 여인준 / 소스코드 이전 ( 기존 GameRecordManagerService에서 )
      */
