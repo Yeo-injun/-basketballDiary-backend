@@ -346,6 +346,7 @@ public class GameRecordManagerService {
         SearchGameDTO gameCond = new SearchGameDTO().gameSeq( gameSeq );
         List<GameRecorderDTO> gameRecorders = gameRecordManagerRepository.findAllGameRecorders( gameCond );
 
+        // TODO 자체전일 경우 TeamName에 prifix 붙여주기 ( HOME_ or AWAY_ )
         return new GetGameRecordersResponse( gameRecorders );
     }
 
