@@ -41,8 +41,8 @@ server:
         # sameSite 설정을 위한 속성값 - sameSite의 기본값은 lax로 제한적으로만 cookie가 세팅됨.
         # sameSite = none으로 하고, secure속성값을 추가해야함!
         # 참고 : https://yousrain.tistory.com/23, https://velog.io/@kwakwoohyun/%EC%9D%B4%EC%8A%88%EC%B2%98%EB%A6%AC-spring-boot-local-cookie
-        same-site: none   # 22.10.25 인준 : SameSite오류 해결 - 개념정리 필요
-        secure: true      # 22.10.25 인준 : SameSite오류 해결 - 개념정리 필요
+#        same-site: none   # 22.10.25 인준 : SameSite오류 해결 - 개념정리 필요
+#        secure: true      # 22.10.25 인준 : SameSite오류 해결 - 개념정리 필요
         http-only: true
         path: /
 
