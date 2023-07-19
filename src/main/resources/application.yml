@@ -31,6 +31,7 @@ mybatis:
     - classpath:mvc/repository/**/*.xml
 
 server:
+  port: 18080
   servlet:
     session:
       timeout: 1800
