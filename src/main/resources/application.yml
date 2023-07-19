@@ -43,6 +43,7 @@ server:
         # 참고 : https://yousrain.tistory.com/23, https://velog.io/@kwakwoohyun/%EC%9D%B4%EC%8A%88%EC%B2%98%EB%A6%AC-spring-boot-local-cookie
 #        same-site: none   # 22.10.25 인준 : SameSite오류 해결 - 개념정리 필요
 #        secure: true      # 22.10.25 인준 : SameSite오류 해결 - 개념정리 필요
+        domain : changkeeroom.iptime.org
         http-only: true
         path: /
 
