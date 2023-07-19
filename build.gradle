@@ -49,18 +49,8 @@ jib {
 		tags = ["1.2"]
 	}
 	container {
-		entrypoint =['java', '-Dspring.profiles.active=test', '-jar', 'basketballDiary-0.0.1-SNAPSHOT.jar']
 		jvmFlags = ['-Xms128m', '-Xmx512m', '-Xdebug', '-XshowSettings:vm']
 		ports = ['18080']
-		labels = [version:project.version, name:project.name, group:project.group]
 		creationTime = 'USE_CURRENT_TIMESTAMP'
-		format = 'Docker'
-	}
-	extraDirectories {
-		paths {
-			path {
-				from = file('build/libs')
-			}
-		}
 	}
 }
