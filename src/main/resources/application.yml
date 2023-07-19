@@ -41,9 +41,11 @@ server:
         # sameSite 설정을 위한 속성값 - sameSite의 기본값은 lax로 제한적으로만 cookie가 세팅됨.
         # sameSite = none으로 하고, secure속성값을 추가해야함!
         # 참고 : https://yousrain.tistory.com/23, https://velog.io/@kwakwoohyun/%EC%9D%B4%EC%8A%88%EC%B2%98%EB%A6%AC-spring-boot-local-cookie
+# 23.07.20 개발서버는 WS에서 백엔드 API를 호출함.
+#           따라서 웹브라우저에서 개발서버를 호출하는 경우 origin이 다른 경우는 존재하지 않음.
+#           이를 처리하기 위한 same-site와 secure 속성을 주석처리 ( 기본값 same-site=Lax 반영 )
 #        same-site: none   # 22.10.25 인준 : SameSite오류 해결 - 개념정리 필요
 #        secure: true      # 22.10.25 인준 : SameSite오류 해결 - 개념정리 필요
-        domain : changkeeroom.iptime.org
         http-only: true
         path: /
 
