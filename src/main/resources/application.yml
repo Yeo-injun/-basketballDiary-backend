@@ -48,7 +48,6 @@ server:
 #        secure: true      # 22.10.25 인준 : SameSite오류 해결 - 개념정리 필요
         http-only: true
         path: /
-        domain : iptime.org
 
 logging.level:
   org.hibernate.SQL: debug
