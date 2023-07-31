@@ -46,8 +46,8 @@ server:
 #           이를 처리하기 위한 same-site와 secure 속성을 주석처리 ( 기본값 same-site=Lax 반영 )
 #        same-site: none   # 22.10.25 인준 : SameSite오류 해결 - 개념정리 필요
 #        secure: true      # 22.10.25 인준 : SameSite오류 해결 - 개념정리 필요
-        http-only: true
-        path: /
+#        http-only: true
+#        path: /
 
 logging.level:
   org.hibernate.SQL: debug
