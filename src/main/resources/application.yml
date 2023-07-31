@@ -37,7 +37,7 @@ server:
       timeout: 1800
       tracking-modes: cookie
       cookie:
-        name: basketballDiary
+        name: basketballD
         # sameSite 설정을 위한 속성값 - sameSite의 기본값은 lax로 제한적으로만 cookie가 세팅됨.
         # sameSite = none으로 하고, secure속성값을 추가해야함!
         # 참고 : https://yousrain.tistory.com/23, https://velog.io/@kwakwoohyun/%EC%9D%B4%EC%8A%88%EC%B2%98%EB%A6%AC-spring-boot-local-cookie
