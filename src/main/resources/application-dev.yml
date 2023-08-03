@@ -1,0 +1,10 @@
+server:
+  port: 18080
+  servlet:
+    session:
+      timeout: 1800
+      tracking-modes: cookie
+      cookie:
+        name: basketballDiary-DEV
+        http-only: true
+        path: /
