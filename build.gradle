@@ -49,7 +49,7 @@ jib {
 		tags = ["1.23"]
 	}
 	container {
-		jvmFlags = ['-Xms128m', '-Xmx512m', '-Xdebug', '-XshowSettings:vm']
+		jvmFlags = ['-Xms128m', '-Xmx512m', '-Xdebug', '-XshowSettings:vm', '--spring.profiles.active=dev']
 		ports = ['18080']
 		creationTime = 'USE_CURRENT_TIMESTAMP'
 	}
