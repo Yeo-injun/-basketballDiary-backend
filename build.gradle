@@ -46,15 +46,15 @@ jib {
 	}
 	to {
 		image = "elien940318/basketdiary"
-		tags = ["1.23"]
+		tags = ["1.24"]
 	}
 	container {
 		// jvmFlags는 jvm실행시 전달할 명령어들을 String List로 관리
 		jvmFlags = [
-				"-Xms128m",
-				"-Xmx512m",
-				"-Xdebug",
-				"-XshowSettings:vm",
+//				"-Xms128m",
+//				"-Xmx512m",
+//				"-Xdebug",
+//				"-XshowSettings:vm",
 				"-Dspring.profiles.active=dev"
 		]
 		ports = ["18080"]
