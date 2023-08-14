@@ -57,7 +57,7 @@ public class AuthController {
      */
     @PostMapping("/registration")
     public ResponseEntity<?> createUser (
-            @RequestBody @Valid CreateUserRequest request
+            @RequestBody CreateUserRequest request
     ) {
         authService.createMember( request );
         return RESPONSE_OK;
