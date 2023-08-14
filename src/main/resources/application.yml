@@ -1,6 +1,4 @@
 spring:
-  profiles:
-    active: "dev"
   datasource:
     ## log4jdbc를 위한 url 및 driver-class-name 변경 (2022.02.26)
     ## url: jdbc:log4jdbc:mysql://basketdiary.cefnc9yxtv6y.ap-northeast-2.rds.amazonaws.com/basketdiary
