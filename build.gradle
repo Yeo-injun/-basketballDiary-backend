@@ -39,6 +39,9 @@ dependencies {
 test {
 	useJUnitPlatform()
 }
+jar{
+	enabled = false
+}
 
 jib {
 	from {
