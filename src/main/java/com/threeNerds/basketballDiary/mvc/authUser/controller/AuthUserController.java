@@ -190,12 +190,9 @@ public class AuthUserController {
      */
     @DeleteMapping("/profile")
     public ResponseEntity<?> deleteUser(
-            @SessionAttribute(value = LOGIN_USER,required = false) SessionUser sessionDTO
-    ){
-
-        String id = sessionDTO.getUserId();
-
-        authUserService.deleteUser(id);
+            @SessionAttribute(value = LOGIN_USER,required = false) SessionUser userSession
+    ) {
+        authUserService.deleteUser( userSession.getUserId() );
         return RESPONSE_OK;
     }
 
@@ -204,9 +201,9 @@ public class AuthUserController {
      */
     @PostMapping("/profile/password")
     public ResponseEntity<?> updatePassword (
-            @SessionAttribute(value = LOGIN_USER,required = false) SessionUser sessionDTO,
+            @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionDTO,
             @RequestBody @Valid PasswordUpdateDTO passwordUpdateDTO
-    ){
+    ) {
         passwordUpdateDTO.userSeq(sessionDTO.getUserSeq());
         authUserService.updatePassword(passwordUpdateDTO);
         return RESPONSE_OK;
