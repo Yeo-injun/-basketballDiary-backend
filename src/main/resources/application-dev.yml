@@ -5,6 +5,6 @@ server:
       timeout: 1800
       tracking-modes: cookie
       cookie:
-        name: basketballDiary-DEV
+        name: basketballDiary-DEV230826
         http-only: true
         path: /
