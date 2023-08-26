@@ -19,6 +19,7 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import static com.threeNerds.basketballDiary.constant.HttpResponseConst.RESPONSE_OK;
+import static com.threeNerds.basketballDiary.utils.SessionUtil.LOGIN_USER;
 
 /**
  * ... 수행하는 Controller
@@ -34,10 +35,20 @@ import static com.threeNerds.basketballDiary.constant.HttpResponseConst.RESPONSE
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/user")
+@RequestMapping("/api/user") // TODO /auth로 변경 필요
 public class AuthController {
 
     private final AuthService authService;
+
+    /**
+     * API065 권한정보 조회
+     */
+    @GetMapping("/")
+    public ResponseEntity<?> getAuthInfo (
+            @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession
+    ) {
+        return ResponseEntity.ok().body( userSession );
+    }
 
     /**
      * API034 사용자ID 중복확인
