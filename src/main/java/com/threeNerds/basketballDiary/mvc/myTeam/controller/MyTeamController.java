@@ -1,5 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.myTeam.controller;
 
+import com.threeNerds.basketballDiary.file.ImageUploader;
 import com.threeNerds.basketballDiary.interceptor.Auth;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getManagers.request.GetManagersRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getManagers.response.GetManagersResponse;
@@ -57,12 +58,19 @@ import static com.threeNerds.basketballDiary.utils.SessionUtil.LOGIN_USER;
 @RequestMapping("/api/myTeams")
 public class MyTeamController {
 
+    /**--------------------------------------
+     * Repository
+     **--------------------------------------*/
     private final MyTeamService myTeamService;
     private final TeamMemberService teamMemberService;
     private final TeamMemberManagerService teamMemberManagerService;
 
     private final GameRecordManagerService gameRecordManagerService;
 
+    /**--------------------------------------
+     * Components
+     **--------------------------------------*/
+    private final ImageUploader imageUploader;
 
     /**
      * API001 : 소속팀 운영진 조회
@@ -270,18 +278,17 @@ public class MyTeamController {
      */
     @PostMapping("/{teamSeq}/profile")
     public ResponseEntity<?> modifyMyTeamsProfile(
-            @SessionAttribute(value = LOGIN_USER,required = false) SessionUser sessionDTO,
+            @SessionAttribute(value = LOGIN_USER,required = false) SessionUser userSession,
             @PathVariable Long teamSeq,
             @ModelAttribute MyTeamProfileDTO myTeamProfileDTO
     ) {
+        String imagePath = imageUploader.upload( imageUploader.makeUploadPath(), myTeamProfileDTO.getImageFile() );
 
-        uploadFile(myTeamProfileDTO.getImageFile());
-
-        Long id = sessionDTO.getUserSeq();
+        Long userSeq = userSession.getUserSeq();
 
         FindMyTeamProfileDTO findMyTeamProfileDTO = new FindMyTeamProfileDTO()
-                .userSeq(id)
-                .teamSeq(teamSeq);
+                .userSeq( userSeq )
+                .teamSeq( teamSeq );
 
         ModifyMyTeamProfileDTO teamProfileDTO = new ModifyMyTeamProfileDTO()
                 .findMyTeamProfileDTO(findMyTeamProfileDTO)
@@ -291,32 +298,6 @@ public class MyTeamController {
         return RESPONSE_OK;
     }
 
-    public void uploadFile(MultipartFile file){
-        /**
-         * 파일을 저장할 경로를 미리 생성
-         * ex) 오늘이 2022/06/18 이라면 D드라이브 upload 폴더에 2022->06->18 이라는 폴더들이 계층별로 생성됨
-        */
-        String uploadFolder = "D:\\upload";
-
-        String date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd")).replace("/", File.separator);
-
-        File uploadPath = new File(uploadFolder,date);
-
-        if(!uploadPath.exists()) {
-            uploadPath.mkdirs();
-        }
-
-        String uploadFileName = file.getOriginalFilename();
-        File saveFile = new File(uploadPath,uploadFileName);
-
-        try{
-            file.transferTo(saveFile);
-        }catch(IllegalStateException e){
-            throw new RuntimeException(e.getMessage(),e);
-        }catch(IOException e){
-            throw new RuntimeException(e.getMessage(),e);
-        }
-    }
 
     /**
      * API013 소속팀 탈퇴
