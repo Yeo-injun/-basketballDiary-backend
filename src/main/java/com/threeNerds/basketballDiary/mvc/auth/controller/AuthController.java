@@ -43,7 +43,7 @@ public class AuthController {
     /**
      * API065 권한정보 조회
      */
-    @GetMapping("/")
+    @GetMapping("")
     public ResponseEntity<?> getAuthInfo (
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession
     ) {
