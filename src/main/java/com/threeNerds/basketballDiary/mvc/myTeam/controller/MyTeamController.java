@@ -6,6 +6,7 @@ import com.threeNerds.basketballDiary.mvc.myTeam.dto.getManagers.request.GetMana
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getManagers.response.GetManagersResponse;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getTeamMembers.request.GetTeamMembersRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getTeamMembers.response.GetTeamMembersResponse;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.modifyMyTeamProfile.request.ModifyMyTeamProfileRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.searchAllTeamMembers.request.SearchAllTeamMembersRequest;
 import com.threeNerds.basketballDiary.mvc.team.dto.PlayerDTO;
 import com.threeNerds.basketballDiary.mvc.game.service.GameRecordManagerService;
@@ -280,21 +281,16 @@ public class MyTeamController {
     public ResponseEntity<?> modifyMyTeamsProfile(
             @SessionAttribute(value = LOGIN_USER,required = false) SessionUser userSession,
             @PathVariable Long teamSeq,
-            @ModelAttribute MyTeamProfileDTO myTeamProfileDTO
+            @ModelAttribute ModifyMyTeamProfileRequest reqBody
     ) {
-        String imagePath = imageUploader.upload( imageUploader.makeUploadPath(), myTeamProfileDTO.getImageFile() );
-
-        Long userSeq = userSession.getUserSeq();
-
-        FindMyTeamProfileDTO findMyTeamProfileDTO = new FindMyTeamProfileDTO()
-                .userSeq( userSeq )
-                .teamSeq( teamSeq );
-
-        ModifyMyTeamProfileDTO teamProfileDTO = new ModifyMyTeamProfileDTO()
-                .findMyTeamProfileDTO(findMyTeamProfileDTO)
-                .backNumber(myTeamProfileDTO.getBackNumber());
-
-        teamMemberService.updateMyTeamProfile(teamProfileDTO);
+        teamMemberService.modifyMyTeamProfile(
+            new ModifyMyTeamProfileRequest(
+                    userSession.getUserSeq()
+                  , teamSeq
+                  , reqBody.getBackNumber()
+                  , reqBody.getImageFile()
+            )
+        );
         return RESPONSE_OK;
     }
 

@@ -76,9 +76,20 @@
     </update>
 
     <update id="updateMyTeamProfile">
+        /* updateMyTeamProfile */
         UPDATE TEAM_MEMBER
-        SET BACK_NUMBER = #{backNumber}
-        WHERE USER_SEQ = #{findMyTeamProfileDTO.userSeq} AND TEAM_SEQ = #{findMyTeamProfileDTO.teamSeq}
+           SET BACK_NUMBER       = #{backNumber}
+             , MEMBER_IMAGE_PATH = #{memberImagePath}
+         WHERE 1=1
+        <choose>
+            <when test='null != teamMemberSeq'>
+           AND TEAM_MEMBER_SEQ = #{teamMemberSeq}
+            </when>
+            <otherwise>
+           AND USER_SEQ = #{userSeq}
+           AND TEAM_SEQ = #{teamSeq}
+            </otherwise>
+        </choose>
     </update>
 
     <delete id="deleteMyTeamProfild">
