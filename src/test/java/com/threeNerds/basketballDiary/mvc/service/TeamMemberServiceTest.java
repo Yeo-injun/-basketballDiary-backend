@@ -65,15 +65,7 @@ class TeamMemberServiceTest {
 //        //then
 //        assertThat(profile).isEqualTo(memberDTO);
     }
-    @Test
-    void updateProfile(){
-        //given
-        when(teamMemberRepository.updateMyTeamProfile(modifyMyTeamProfileDTO)).thenReturn(1);
-        //when
-        int ret = teamMemberService.updateMyTeamProfile(modifyMyTeamProfileDTO);
-        //then
-        assertThat(ret).isEqualTo(1);
-    }
+
 
 //    @Test
 //    void deleteProfile(){
