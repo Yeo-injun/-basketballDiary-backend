@@ -4,6 +4,9 @@ import com.threeNerds.basketballDiary.file.ImageUploader;
 import com.threeNerds.basketballDiary.interceptor.Auth;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getManagers.request.GetManagersRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getManagers.response.GetManagersResponse;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.getMyTeamProfile.request.GetMyTeamProfileRequest;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.getMyTeamProfile.response.GetMyTeamProfileResponse;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.getMyTeamProfile.response.MyTeamProfileDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getTeamMembers.request.GetTeamMembersRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getTeamMembers.response.GetTeamMembersResponse;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.modifyMyTeamProfile.request.ModifyMyTeamProfileRequest;
@@ -254,24 +257,20 @@ public class MyTeamController {
     }
 
     /**
-     * API011 소속팀 개인프로필 수정데이터 조회
+     * API011 소속팀 개인프로필 조회
      */
     @GetMapping("/{teamSeq}/profile")
-    public ResponseEntity<MemberDTO> findMyTeamsProfile(
-            @SessionAttribute(value = LOGIN_USER,required = false) SessionUser sessionDTO,
+    public ResponseEntity<GetMyTeamProfileResponse> getMyTeamProfile(
+            @SessionAttribute(value = LOGIN_USER,required = false) SessionUser userSession,
             @PathVariable Long teamSeq
     ) {
 
-        Long id = sessionDTO.getUserSeq();
-
-        FindMyTeamProfileDTO findMyTeamProfileDTO = new FindMyTeamProfileDTO()
-                .userSeq(id)
-                .teamSeq(teamSeq);
-
-        //ResponseMyTeamProfileDTO myTeamProfileDTO = teamMemberService.findProfile(findMyTeamProfileDTO);
-        MemberDTO myTeamProfileDTO = teamMemberService.findProfile(findMyTeamProfileDTO);
-
-        return ResponseEntity.ok(myTeamProfileDTO);
+        GetMyTeamProfileRequest reqBody = new GetMyTeamProfileRequest(
+                userSession.getUserSeq()
+              , teamSeq
+        );
+        MyTeamProfileDTO myTeamProfile = teamMemberService.getMyTeamProfile( reqBody );
+        return ResponseEntity.ok( new GetMyTeamProfileResponse().toResponse( myTeamProfile ) );
     }
 
     /**

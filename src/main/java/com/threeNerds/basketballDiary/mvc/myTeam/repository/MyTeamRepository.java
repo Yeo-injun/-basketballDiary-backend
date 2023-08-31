@@ -4,6 +4,7 @@ import com.threeNerds.basketballDiary.mvc.myTeam.dto.FindMyTeamProfileDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.MemberDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.MyTeamDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.SearchMyTeamDTO;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.getMyTeamProfile.response.MyTeamProfileDTO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -13,8 +14,6 @@ public interface MyTeamRepository {
 
     // 소속팀 단건 조회
     MyTeamDTO findByUserSeqAndTeamSeq(FindMyTeamProfileDTO paramDTO);
-    // 프로필 조회
-    MemberDTO findProfileByUserSeqAndTeamSeq(FindMyTeamProfileDTO userDto);
     // 운영진 목록 리스트 조회
     List<MemberDTO> findAllManagerByTeamSeq(Long teamSeq);
     // 팀원 목록 리스트 조회 TODO 삭제 검토
@@ -27,4 +26,11 @@ public interface MyTeamRepository {
 
     /** 소속팀원 전체 조회 - 페이징 처리 */
     List<MemberDTO> findAllTeamMemberPaging(MemberDTO searchMemebrCond);
+
+    /**
+     * 리팩토링 완료 메소드
+     */
+    /** 소속팀 프로필 조회 */
+    MyTeamProfileDTO findProfileByUserSeqAndTeamSeq( MyTeamProfileDTO dto );
+
 }
