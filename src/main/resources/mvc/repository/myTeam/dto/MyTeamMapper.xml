@@ -75,13 +75,14 @@
         AND B.TEAM_SEQ = #{teamSeq}
     </select>
 
-    <select id="findProfileByUserSeqAndTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.myTeam.dto.MemberDTO">
+    <select id="findProfileByUserSeqAndTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.myTeam.dto.getMyTeamProfile.response.MyTeamProfileDTO">
         SELECT TM.USER_SEQ
              , TM.TEAM_SEQ
              , TM.TEAM_MEMBER_SEQ
              , TM.TEAM_AUTH_CODE
              , TM.JOIN_YMD
              , TM.BACK_NUMBER
+             , MEMBER_IMAGE_PATH
              , T.TEAM_NAME
              , U.NAME
                AS  "USER_NAME"

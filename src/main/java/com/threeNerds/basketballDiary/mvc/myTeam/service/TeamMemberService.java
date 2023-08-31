@@ -5,6 +5,8 @@ import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.FindMyTeamProfileDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.ModifyMyTeamProfileDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.MemberDTO;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.getMyTeamProfile.request.GetMyTeamProfileRequest;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.getMyTeamProfile.response.MyTeamProfileDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.modifyMyTeamProfile.request.ModifyMyTeamProfileRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.repository.TeamMemberRepository;
 import com.threeNerds.basketballDiary.mvc.myTeam.repository.MyTeamRepository;
@@ -42,8 +44,15 @@ public class TeamMemberService {
     private final ImageUploader imageUploader;
 
     // 2022.05.08. 강창기   소속팀 프로필 api와 프로필 수정조회 api와 함께 사용하기 위해 수정반영
-    public MemberDTO findProfile(FindMyTeamProfileDTO userDto){
-        MemberDTO myProfile = myTeamRepository.findProfileByUserSeqAndTeamSeq(userDto);
+    /**
+     * 소속팀 프로필 조회
+     * @return
+     */
+    public MyTeamProfileDTO getMyTeamProfile( GetMyTeamProfileRequest reqBody ) {
+        MyTeamProfileDTO profileParam = new MyTeamProfileDTO()
+                                            .userSeq( reqBody.getUserSeq() )
+                                            .teamSeq( reqBody.getTeamSeq() );
+        MyTeamProfileDTO myProfile = myTeamRepository.findProfileByUserSeqAndTeamSeq( profileParam );
         myProfile.setAllCodeName();
         return myProfile;
     }
