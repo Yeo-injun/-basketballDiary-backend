@@ -7,7 +7,9 @@ import java.io.File;
 import java.io.IOException;
 
 @Component
-public class ImageUploader implements Uploader {
+public class ImageProvider implements Uploader {
+    // TODO yml설정에 따라 기본 경로가 바뀌게끔 처리하기 ( 서버에 따라 바뀜 )
+    final private String defaultPath = "/image/upload/";
 
     @Override
     public String upload( File destFolder, MultipartFile input ) {

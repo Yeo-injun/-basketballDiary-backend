@@ -1,3 +1,9 @@
+file:
+  upload:
+    root:
+      image: D://image
+
+
 spring:
   datasource:
     ## log4jdbc를 위한 url 및 driver-class-name 변경 (2022.02.26)

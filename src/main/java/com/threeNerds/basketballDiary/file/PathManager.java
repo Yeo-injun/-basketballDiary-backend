@@ -2,7 +2,7 @@ package com.threeNerds.basketballDiary.file;
 
 import java.io.File;
 
-public interface FilePathManager {
+public interface PathManager {
 
-    File makeUploadPath();
+    File makeDir( String dir );
 }
