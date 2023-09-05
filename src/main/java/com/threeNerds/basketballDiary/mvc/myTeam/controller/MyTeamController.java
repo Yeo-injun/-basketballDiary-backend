@@ -278,7 +278,7 @@ public class MyTeamController {
      */
     @PostMapping("/{teamSeq}/profile")
     public ResponseEntity<?> modifyMyTeamsProfile(
-            @SessionAttribute(value = LOGIN_USER,required = false) SessionUser userSession,
+            @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession,
             @PathVariable Long teamSeq,
             @ModelAttribute ModifyMyTeamProfileRequest reqBody
     ) {
