@@ -24,13 +24,16 @@ import com.threeNerds.basketballDiary.session.SessionUser;
 import com.threeNerds.basketballDiary.utils.SessionUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.util.List;
 
 import static com.threeNerds.basketballDiary.constant.HttpResponseConst.RESPONSE_OK;
@@ -52,7 +55,7 @@ import static com.threeNerds.basketballDiary.utils.SessionUtil.LOGIN_USER;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/image")
+@RequestMapping("/images")
 public class ImageController {
 
     /**--------------------------------------
@@ -63,15 +66,19 @@ public class ImageController {
     /**
      * 23.09.05 여인준
      * 파일로 저장된 이미지 조회
+     * >> /images 이하로 오는 모든 request는 해당 메소드에 매핑됨.
+     * >> /images 이하의 url이 이미지 저장경로를 의미
      */
-    @GetMapping("/{imageId}")
-    public MultipartFile getImage(
-        @PathVariable String imageId
-    ) {
-        // imageId로 경로 값을 가져온다.
-        // 해당 경로에 존재하는 이미지를 가져온다.
-        // 가져온 이미지를 MultipartFile 에 담아서 리턴한다.
-        return null;
+    @GetMapping("/**")
+    public ResponseEntity<Resource> getImage( HttpServletRequest request ) throws MalformedURLException {
+
+        String requestUrl = request.getRequestURI();
+        // TODO 아래 데이터 차이 확인 필요
+        log.debug( request.getPathInfo() );
+        log.debug( request.getRequestURI() );
+        log.debug( request.getRequestURL().toString() );
+        String imageSaveUrl = requestUrl.replace( "/images", "" );
+        return ResponseEntity.ok( provider.provide( imageSaveUrl ) );
     }
 
 }
