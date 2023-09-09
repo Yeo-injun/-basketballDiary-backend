@@ -6,8 +6,8 @@ public interface PathManager {
 
     File makeDir( String dir );
 
-    String getRootDir();
+    String toURL( File file );
 
-    String removeRootDir( String fullPath );
+    String toPath( String url );
 
 }
