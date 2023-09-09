@@ -55,7 +55,7 @@ import static com.threeNerds.basketballDiary.utils.SessionUtil.LOGIN_USER;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/images")
+@RequestMapping("/image")
 public class ImageController {
 
     /**--------------------------------------
@@ -66,18 +66,18 @@ public class ImageController {
     /**
      * 23.09.05 여인준
      * 파일로 저장된 이미지 조회
-     * >> /images 이하로 오는 모든 request는 해당 메소드에 매핑됨.
-     * >> /images 이하의 url이 이미지 저장경로를 의미
+     * >> /image 이하로 오는 모든 request는 해당 메소드에 매핑됨.
+     * >> /image 이하의 url이 이미지 저장경로를 의미
      */
     @GetMapping("/**")
     public ResponseEntity<Resource> getImage( HttpServletRequest request ) throws MalformedURLException {
 
         String requestUrl = request.getRequestURI();
         // TODO 아래 데이터 차이 확인 필요
-        log.debug( request.getPathInfo() );
-        log.debug( request.getRequestURI() );
-        log.debug( request.getRequestURL().toString() );
-        String imageSaveUrl = requestUrl.replace( "/images", "" );
+        log.info( request.getPathInfo() );
+        log.info( request.getRequestURI() );
+        log.info( request.getRequestURL().toString() );
+        String imageSaveUrl = requestUrl.replace( "/image", "" );
         return ResponseEntity.ok( provider.provide( imageSaveUrl ) );
     }
 
