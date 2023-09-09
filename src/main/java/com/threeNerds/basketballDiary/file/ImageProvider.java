@@ -32,7 +32,7 @@ public class ImageProvider implements Provider {
         // TODO 작동방식 확인하기
         // 로컬 테스트 결과 - 성공
         // 개발서버 테스트 결과 -
-        return new UrlResource("file:" + pathManager.getRootDir() + saveUrl );
+        return new UrlResource( pathManager.toPath( saveUrl ) );
     }
 
 }

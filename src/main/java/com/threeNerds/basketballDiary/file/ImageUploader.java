@@ -6,6 +6,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+
 
 @Component
 @RequiredArgsConstructor
@@ -20,14 +22,14 @@ public class ImageUploader implements Uploader {
         String uploadName = input.getOriginalFilename();
         File targetFile = new File( saveUrl, uploadName );
         try {
+            // 이미지 물리적 저장 완료
             input.transferTo( targetFile );
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        // 이미지 저장위치 리턴 TODO
-        String saveFullPath = targetFile.toURI().getPath();
-        return pathManager.removeRootDir( saveFullPath );
+        // 이미지 저장위치 리턴 : URL로
+        return pathManager.toURL( targetFile );
     }
 
 }

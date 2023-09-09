@@ -1,6 +1,5 @@
 package com.threeNerds.basketballDiary.file;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -26,22 +25,30 @@ public class ImagePathManager implements PathManager {
         return targetPath;
     }
 
+    /**
+     * url을 받아서 파일이 저장된 물리적 위치를 반환함
+     * @param url
+     * @return
+     */
     @Override
-    public String getRootDir() {
-        return this.root;
+    public String toPath( String url ) {
+        return "file:" + this.root + url;
     }
 
     /**
-     * 전체경로에서 root경로 제거
-     * @param fullPath
-     * @return root경로가 제거된 Path
+     * 파일이 저장된 물리적 위치를 URL로 반환
+     * - file의 root를 제거하고, URL패턴으로 제공
+     * - 운영체제별로 파일시스템의 dir구분자가 다르기 때문에 URL로 제공하기!!
+     * TODO Uniform Resource Location의 의미는 통합된 자원의 위치.
+     * 자원의 위치를 나타내는 기호가 각기 다른 운영체제마다 다르기 때문에 통일성있는 체계가 필요했다고 추측됨.
+     * @param file
+     * @return
      */
     @Override
-    public String removeRootDir( String fullPath ) {
-        File rootDir = new File( this.root );
-        String rootPath = rootDir.getPath();
-        // TODO 이미지 Root 경로 제거하는 로직 수정 필요
-        return fullPath.replace( "/D:/image", "" );
+    public String toURL( File file ) {
+        String fileURL = file.toURI().getPath();
+        String rootURL = new File( this.root ).toURI().getPath();
+        return fileURL.replace( rootURL , "/" );
     }
 
     public File makeDirWithYmdPattern( String path ) {
