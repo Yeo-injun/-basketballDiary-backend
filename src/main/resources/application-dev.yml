@@ -2,7 +2,7 @@ file:
   upload:
     root:
       ## 개발서버의 디렉토리 잡기... ~
-      image: /image
+      image: /app/image
 
 server:
   port: 18080
