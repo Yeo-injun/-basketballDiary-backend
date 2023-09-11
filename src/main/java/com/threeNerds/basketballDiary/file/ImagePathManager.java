@@ -32,7 +32,7 @@ public class ImagePathManager implements PathManager {
      */
     @Override
     public String toPath( String url ) {
-        return "file:" + this.root + url;
+        return this.root + url;
     }
 
     /**
