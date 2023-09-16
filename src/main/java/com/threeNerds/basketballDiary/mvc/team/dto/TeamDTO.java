@@ -20,18 +20,21 @@ public class TeamDTO {
 
     /* 팀 정보 */
     private Long teamSeq;
-    @NotNull(message = "리더 seq 값이 없습니다") private Long leaderUserSeq;
-    @NotEmpty private String teamName;
+    private Long leaderUserSeq;
+    @NotEmpty
+    private String teamName;
     private String teamImagePath;
-    @NotEmpty private String hometown;
+    @NotEmpty
+    private String hometown;
     private String introduction;
     private String foundationYmd;
     private LocalDate regDate;
     private LocalDate updateDate;
-    @NotNull private String sidoCode;
-    @NotEmpty private String sigunguCode;
+    @NotNull
+    private String sidoCode;
+    @NotEmpty
+    private String sigunguCode;
     private Integer totMember;
-
 
     public TeamDTO teamSeq (Long teamSeq) {
         this.teamSeq = teamSeq;
