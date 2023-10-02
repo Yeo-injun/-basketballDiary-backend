@@ -12,6 +12,7 @@ import com.threeNerds.basketballDiary.mvc.myTeam.repository.TeamMemberRepository
 import com.threeNerds.basketballDiary.mvc.myTeam.repository.MyTeamRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,6 +41,8 @@ public class TeamMemberService {
     /**--------------------------------------
      * Components
      **--------------------------------------*/
+
+    @Qualifier("imageUploder")
     private final Uploader imageUploader;
     private final ImagePathManager imagePathManager;
 
