@@ -1,12 +1,14 @@
 package com.threeNerds.basketballDiary.file;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+@Primary
 @Component
 public class ImagePathManager implements PathManager {
 
@@ -20,7 +22,7 @@ public class ImagePathManager implements PathManager {
 
         // 저장경로 물리적 생성
         targetPath.mkdirs();
-        
+
         // 저장경로를 가지고 있는 File객체 리턴
         return targetPath;
     }
