@@ -1,8 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.myTeam.service;
 
-import com.threeNerds.basketballDiary.file.PathManager;
 import com.threeNerds.basketballDiary.file.Uploader;
-import com.threeNerds.basketballDiary.file.ImagePathManager;
 import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.FindMyTeamProfileDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getMyTeamProfile.request.GetMyTeamProfileRequest;
@@ -12,7 +10,6 @@ import com.threeNerds.basketballDiary.mvc.myTeam.repository.TeamMemberRepository
 import com.threeNerds.basketballDiary.mvc.myTeam.repository.MyTeamRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,9 +39,18 @@ public class TeamMemberService {
      * Components
      **--------------------------------------*/
 
-    @Qualifier("imageUploder")
+    /**
+     * DI원리
+     * - 스프링 컨테이너 있는 스프링 Bean들을 Spring에서 자동으로 주입해줌.
+     * - @Autowired로 주입대상을 선언하면 해당되는 Bean을 자동으로 주입시켜줌
+     *      1. @Autowired는 기본적으로 Type을 기반으로 주입한다. ( Class or Interface )
+     *      2. Type기반 주입시 2개 이상의 Type이 존재할 경우 fieldName과 일치하는 Bean Name을 가진 Bean을 주입한다.
+     * - 그 이외에 Bean 주입의 우선순위 제어
+     *      1. @Primary 어노테이션을 통해 특정 Type의 Bean을 우선순위로 지정
+     *      2. @Qualifier로 주입하고자 하는 Bean을 명시적으로 선언할 수 있음
+     * - 명시적으로 제어하는 방식을 지향 ( @Primary는 사용지양 1순위 @Autowired 필드기반 주입 / 2순위 @Qualifier 한정자 사용 )
+     */
     private final Uploader imageUploader;
-    private final ImagePathManager imagePathManager;
 
     // 2022.05.08. 강창기   소속팀 프로필 api와 프로필 수정조회 api와 함께 사용하기 위해 수정반영
     /**
@@ -78,10 +84,7 @@ public class TeamMemberService {
             // TODO 업로드된 이미지 삭제
         }
 
-        String imagePath = imageUploader.upload(
-                imagePathManager.makeDirWithYmdPattern( "/myTeams/profile" )
-                , reqBody.getImageFile()
-        );
+        String imagePath = imageUploader.upload( "/myTeams/profile", reqBody.getImageFile() );
 
         TeamMember updatedTeamMember = TeamMember.builder()
                                             .teamMemberSeq( teamMember.getTeamMemberSeq() )

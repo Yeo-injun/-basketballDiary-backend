@@ -7,6 +7,6 @@ import java.net.URISyntaxException;
 
 public interface Uploader {
 
-    String upload( File destFolder, MultipartFile input );
+    String upload( String savePath, MultipartFile input );
 
 }

@@ -57,7 +57,6 @@ import static com.threeNerds.basketballDiary.utils.SessionUtil.LOGIN_USER;
 @RequiredArgsConstructor
 @RequestMapping("/image")
 public class ImageController {
-
     /**--------------------------------------
      * Components
      **--------------------------------------*/

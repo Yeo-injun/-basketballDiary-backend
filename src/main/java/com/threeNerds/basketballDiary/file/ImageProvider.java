@@ -26,14 +26,14 @@ import java.net.MalformedURLException;
 @RequiredArgsConstructor
 public class ImageProvider implements Provider {
 
-    private final PathManager pathManager;
+    private final PathManager imagePathManager;
 
     @Override
     public Resource provide( String saveUrl ) throws MalformedURLException {
         // TODO 작동방식 확인하기
         // 로컬 테스트 결과 - 성공
         // 개발서버 테스트 결과 -
-        return new FileSystemResource( pathManager.toPath( saveUrl ) );
+        return new FileSystemResource( imagePathManager.toPath( saveUrl, PathManager.Type.IMAGE ) );
     }
 
 }
