@@ -6,21 +6,23 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 
 
 @Component
 @RequiredArgsConstructor
 public class ImageUploader implements Uploader {
 
-    private final PathManager pathManager;
+    private final PathManager imagePathManager;
 
     @Override
-    public String upload( File saveUrl, MultipartFile input ) {
+    public String upload( String path, MultipartFile input ) {
         // TODO 이름 중복 체크
         // TODO 최대 사이즈 체크
         String uploadName = input.getOriginalFilename();
-        File targetFile = new File( saveUrl, uploadName );
+        File targetFile = new File( imagePathManager.makeDir( getUploadFullPath( path ), PathManager.Type.IMAGE ), uploadName );
         try {
             // 이미지 물리적 저장 완료
             input.transferTo( targetFile );
@@ -29,7 +31,20 @@ public class ImageUploader implements Uploader {
         }
 
         // 이미지 저장위치 리턴 : URL로
-        return pathManager.toURL( targetFile );
+        return imagePathManager.toURL( targetFile, PathManager.Type.IMAGE );
+    }
+
+    /**
+     * 이미지 저장 목적지 경로 생성
+     * - path/yyyyMMdd 형태의 경로 return
+     */
+    private String getUploadFullPath( String path ) {
+        return  Optional.ofNullable( path ).orElseGet( ()-> "" )
+                + "/"
+                + LocalDate
+                    .now()
+                    .format( DateTimeFormatter.ofPattern( "yyyy/MM/dd" ) )
+                    .replace( "/", "" );
     }
 
 }
