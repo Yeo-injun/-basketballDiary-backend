@@ -15,6 +15,7 @@ public enum Error {
     INVALID_PARAMETER(BAD_REQUEST, "유효하지 않은 파라미터입니다."),
     INSUFFICIENT_PLAYERS_ON_ENTRY(BAD_REQUEST, "엔트리에 등록할 선수가 부족합니다."),
     INSUFFICIENT_PLAYERS_ON_GAME(BAD_REQUEST, "게임에 참가한 선수가 부족합니다."),
+    VALIDATION_USER(BAD_REQUEST, "이미 등록된 회원이 존재합니다."),
 
     /** 401 UNAUTHORIZED : 인증되지 않은 사용자 */
     UNAUTHORIZED_ACCESS(UNAUTHORIZED, "접근 권한이 없습니다."),

@@ -4,21 +4,21 @@ import com.threeNerds.basketballDiary.mvc.auth.controller.request.CheckDuplicate
 import com.threeNerds.basketballDiary.mvc.auth.controller.request.CreateUserRequest;
 import com.threeNerds.basketballDiary.mvc.auth.controller.request.LoginRequest;
 import com.threeNerds.basketballDiary.mvc.auth.dto.CheckDuplicateUserIdDTO;
-import com.threeNerds.basketballDiary.mvc.auth.dto.CreateUserDTO;
-import com.threeNerds.basketballDiary.mvc.auth.service.AuthService;
 import com.threeNerds.basketballDiary.mvc.auth.dto.LoginUserDTO;
+import com.threeNerds.basketballDiary.mvc.auth.service.AuthService;
+import com.threeNerds.basketballDiary.mvc.common.BooleanResult;
 import com.threeNerds.basketballDiary.session.SessionUser;
 import com.threeNerds.basketballDiary.utils.SessionUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-
-import static com.threeNerds.basketballDiary.constant.HttpResponseConst.RESPONSE_OK;
 
 /**
  * ... 수행하는 Controller
@@ -43,24 +43,22 @@ public class AuthController {
      * API034 사용자ID 중복확인
      */
     @PostMapping("/duplicationCheck")
-    public ResponseEntity<?> checkDuplicateUserId (
+    public ResponseEntity<BooleanResult> checkDuplicateUserId (
             @RequestBody @Valid CheckDuplicateUserIdRequest reqBody
     ) {
         CheckDuplicateUserIdDTO checkForDuplication = new CheckDuplicateUserIdDTO()
                 .userId(reqBody.getUserId());
-
-        authService.checkDuplicationUserId(checkForDuplication);
-        return RESPONSE_OK;
+        return ResponseEntity.ok().body(new BooleanResult(authService.checkDuplicationUserId(checkForDuplication)));
     }
     /**
      * API029 회원가입
      */
     @PostMapping("/registration")
-    public ResponseEntity<?> createUser (
+    public ResponseEntity<Void> createUser (
             @RequestBody CreateUserRequest request
     ) {
-        authService.createMember( request );
-        return RESPONSE_OK;
+        authService.createMember(request);
+        return ResponseEntity.ok().build();
     }
 
     /**
@@ -90,6 +88,8 @@ public class AuthController {
     public ResponseEntity<?> logout (HttpSession session) {
         log.info("로그아웃");
         session.invalidate();
-        return RESPONSE_OK;
+        return ResponseEntity.ok().build();
     }
+
+    //TODO : 아이디 중복체크 api 추가
 }

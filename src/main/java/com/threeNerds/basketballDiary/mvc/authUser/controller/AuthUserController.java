@@ -40,7 +40,7 @@ public class AuthUserController {
      **/
     @Auth(GRADE = USER)
     @PostMapping("/joinRequestTo/{teamSeq}")
-    public ResponseEntity<?> sendJoinRequestToTeam (
+    public ResponseEntity<Void> sendJoinRequestToTeam (
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,
             @PathVariable Long teamSeq
     )
@@ -51,7 +51,7 @@ public class AuthUserController {
                 .userSeq(userSeq);
 
         userTeamManagerService.sendJoinRequestToTeam(loginUserDTO);
-        return RESPONSE_CREATED;
+        return ResponseEntity.ok().build();
     }
 
     /**
@@ -189,26 +189,26 @@ public class AuthUserController {
      *          만약 컬럼값 1개만 Y->N 으로 변경했더라면 객체간 비교를 해줄 수 있지만, 아에 테이블에서 삭제를 해버리는 이상 마땅한 방법이 없음
      */
     @DeleteMapping("/profile")
-    public ResponseEntity<?> deleteUser(
+    public ResponseEntity<Void> deleteUser(
             @SessionAttribute(value = LOGIN_USER,required = false) SessionUser sessionDTO
     ){
 
         String id = sessionDTO.getUserId();
 
         authUserService.deleteUser(id);
-        return RESPONSE_OK;
+        return ResponseEntity.ok().build();
     }
 
     /**
      * API027 비밀번호 변경
      */
     @PostMapping("/profile/password")
-    public ResponseEntity<?> updatePassword (
+    public ResponseEntity<Void> updatePassword (
             @SessionAttribute(value = LOGIN_USER,required = false) SessionUser sessionDTO,
             @RequestBody @Valid PasswordUpdateDTO passwordUpdateDTO
     ){
         passwordUpdateDTO.userSeq(sessionDTO.getUserSeq());
         authUserService.updatePassword(passwordUpdateDTO);
-        return RESPONSE_OK;
+        return ResponseEntity.ok().build();
     }
 }

@@ -51,15 +51,12 @@ public class User {
     /* 도로명주소 */
     private String roadAddress;
 
-    public static User createForRegistration( CreateUserRequest userInfo )
-    {
-        LocalDate TODAY_DATE = LocalDate.now();
+    public static User createForRegistration( CreateUserRequest userInfo ){
         /** 비밀번호 암호화 */
-        String plainPassword = userInfo.getPassword();
-        String userId        = userInfo.getUserId();
-        String cryptPassword = EncryptUtil.getEncrypt(plainPassword, userId);
+        String cryptPassword = EncryptUtil.getEncrypt(userInfo.getPassword(), userInfo.getUserId());
+
         return User.builder()
-                .userId(userId)
+                .userId(userInfo.getUserId())
                 .password(cryptPassword)
                 .name(userInfo.getName())
                 .email(userInfo.getEmail())
@@ -67,8 +64,8 @@ public class User {
                 .birthYmd(userInfo.getBirthYmd())
                 .height(userInfo.getHeight())
                 .weight(userInfo.getWeight())
-                .regDate( TODAY_DATE )
-                .updateDate( TODAY_DATE )
+                .regDate(LocalDate.now())
+                .updateDate(LocalDate.now())
                 .userRegYn("Y")
                 .sidoCode(userInfo.getSidoCode())
                 .sigunguCode(userInfo.getSigunguCode())
@@ -77,8 +74,7 @@ public class User {
                 .build();
     }
 
-    public boolean isAuthUser (String userId, String plainPassword)
-    {
+    public boolean isAuthUser (String userId, String plainPassword){
         /** 평문비밀번호 null체크 */
         if (plainPassword == null || plainPassword.isEmpty()) {
             throw new CustomException(Error.NO_EXIST_PASSWORD);

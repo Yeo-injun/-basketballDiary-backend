@@ -16,6 +16,8 @@ public interface UserRepository {
     /**********
      * SELECT
      **********/
+    int validationUserId(String userId);
+
     User findUser(Long userSeq);
     User findUserByUserId(String userId);
 

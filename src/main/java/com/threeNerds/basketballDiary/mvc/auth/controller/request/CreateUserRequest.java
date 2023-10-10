@@ -22,10 +22,12 @@ public class CreateUserRequest {
     @Email
     private String email;
     /** 성별 **/
+    @NotEmpty
     private String gender;
     /** 생년월일 **/
     private String birthYmd;
     /** 키 **/
+    @NotEmpty
     private Double height;
     /** 몸무게 **/
     private Double weight;
