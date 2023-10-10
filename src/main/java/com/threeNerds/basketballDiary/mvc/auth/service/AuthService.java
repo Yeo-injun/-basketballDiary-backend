@@ -39,7 +39,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final TeamMemberRepository teamMemberRepository;
 
-    public boolean checkDuplicationUserId(CheckDuplicateUserIdDTO checkUser){
+    public boolean checkDuplicationUserId(CheckDuplicateUserIdDTO checkUser) {
         User user = userRepository.findUserByUserId(checkUser.getUserId());
 //        if (user != null) {
 //            throw new CustomException(Error.DUPLICATE_USER_ID);
@@ -61,7 +61,8 @@ public class AuthService {
         }
     }
 
-    public SessionUser login(LoginUserDTO loginUserDTO){
+    // TODO 세션 정보 생성은 controller에서 책임을 가지고 있음. SessionUser는 Service에서 참조할 수 없음
+    public SessionUser login(LoginUserDTO loginUserDTO) {
         String userId        = loginUserDTO.getUserId();
         String plainPassword = loginUserDTO.getPassword();
 

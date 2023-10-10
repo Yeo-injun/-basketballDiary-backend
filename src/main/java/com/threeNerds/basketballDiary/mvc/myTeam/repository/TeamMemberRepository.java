@@ -16,7 +16,8 @@ public interface TeamMemberRepository {
     int checkDuplicatedTeamMember(CmnMyTeamDTO joinRequest);
 
     /** 팀원 조회 */
-    TeamMember findTeamMember(TeamJoinRequest joinRequest);
+    TeamMember findTeamMember( TeamJoinRequest joinRequest );
+    TeamMember findTeamMember( TeamMember teamMember );
 
     /** 팀원 단건조회(팀원SEQ로) */
     TeamMember findByTeamMemberSeq(Long teamMemberSeq);
@@ -36,12 +37,13 @@ public interface TeamMemberRepository {
      * UPDATE
      **********/
     /** 팀원 강퇴상태로 수정 */
-    int updateWithdrawalState(TeamMember teamMember);
+    int updateWithdrawalState( TeamMember teamMember );
 
-    int updateMyTeamProfile(ModifyMyTeamProfileDTO userDto);
+    /** 팀원의 소속팀 프로필 수정 */
+    int updateMyTeamProfile( TeamMember teamMember );
 
     /** 팀원 권한정보 수정 */
-    int updateTeamAuth(TeamMember teamMember);
+    int updateTeamAuth( TeamMember teamMember );
 
     /**********
      * DELETE

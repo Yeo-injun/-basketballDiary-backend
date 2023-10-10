@@ -1,3 +1,9 @@
+file:
+  upload:
+    root:
+      image: D://image
+
+
 spring:
   datasource:
     ## log4jdbc를 위한 url 및 driver-class-name 변경 (2022.02.26)
@@ -44,10 +50,10 @@ server:
 # 23.07.20 개발서버는 WS에서 백엔드 API를 호출함.
 #           따라서 웹브라우저에서 개발서버를 호출하는 경우 origin이 다른 경우는 존재하지 않음.
 #           이를 처리하기 위한 same-site와 secure 속성을 주석처리 ( 기본값 same-site=Lax 반영 )
-#        same-site: none   # 22.10.25 인준 : SameSite오류 해결 - 개념정리 필요
-#        secure: true      # 22.10.25 인준 : SameSite오류 해결 - 개념정리 필요
-#        http-only: true
-#        path: /
+        same-site: none   # 22.10.25 인준 : SameSite오류 해결 - 개념정리 필요
+        secure: true      # 22.10.25 인준 : SameSite오류 해결 - 개념정리 필요
+        http-only: true
+        path: /
 
 logging.level:
   org.hibernate.SQL: debug

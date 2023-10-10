@@ -1,10 +1,15 @@
 package com.threeNerds.basketballDiary.mvc.myTeam.controller;
 
+import com.threeNerds.basketballDiary.file.ImageUploader;
 import com.threeNerds.basketballDiary.interceptor.Auth;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getManagers.request.GetManagersRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getManagers.response.GetManagersResponse;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.getMyTeamProfile.request.GetMyTeamProfileRequest;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.getMyTeamProfile.response.GetMyTeamProfileResponse;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.getMyTeamProfile.response.MyTeamProfileDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getTeamMembers.request.GetTeamMembersRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getTeamMembers.response.GetTeamMembersResponse;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.modifyMyTeamProfile.request.ModifyMyTeamProfileRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.searchAllTeamMembers.request.SearchAllTeamMembersRequest;
 import com.threeNerds.basketballDiary.mvc.team.dto.PlayerDTO;
 import com.threeNerds.basketballDiary.mvc.game.service.GameRecordManagerService;
@@ -57,12 +62,19 @@ import static com.threeNerds.basketballDiary.utils.SessionUtil.LOGIN_USER;
 @RequestMapping("/api/myTeams")
 public class MyTeamController {
 
+    /**--------------------------------------
+     * Repository
+     **--------------------------------------*/
     private final MyTeamService myTeamService;
     private final TeamMemberService teamMemberService;
     private final TeamMemberManagerService teamMemberManagerService;
 
     private final GameRecordManagerService gameRecordManagerService;
 
+    /**--------------------------------------
+     * Components
+     **--------------------------------------*/
+    private final ImageUploader imageUploader;
 
     /**
      * API001 : 소속팀 운영진 조회
@@ -245,24 +257,20 @@ public class MyTeamController {
     }
 
     /**
-     * API011 소속팀 개인프로필 수정데이터 조회
+     * API011 소속팀 개인프로필 조회
      */
     @GetMapping("/{teamSeq}/profile")
-    public ResponseEntity<MemberDTO> findMyTeamsProfile(
-            @SessionAttribute(value = LOGIN_USER,required = false) SessionUser sessionDTO,
+    public ResponseEntity<GetMyTeamProfileResponse> getMyTeamProfile(
+            @SessionAttribute(value = LOGIN_USER,required = false) SessionUser userSession,
             @PathVariable Long teamSeq
     ) {
 
-        Long id = sessionDTO.getUserSeq();
-
-        FindMyTeamProfileDTO findMyTeamProfileDTO = new FindMyTeamProfileDTO()
-                .userSeq(id)
-                .teamSeq(teamSeq);
-
-        //ResponseMyTeamProfileDTO myTeamProfileDTO = teamMemberService.findProfile(findMyTeamProfileDTO);
-        MemberDTO myTeamProfileDTO = teamMemberService.findProfile(findMyTeamProfileDTO);
-
-        return ResponseEntity.ok(myTeamProfileDTO);
+        GetMyTeamProfileRequest reqBody = new GetMyTeamProfileRequest(
+                userSession.getUserSeq()
+              , teamSeq
+        );
+        MyTeamProfileDTO myTeamProfile = teamMemberService.getMyTeamProfile( reqBody );
+        return ResponseEntity.ok( new GetMyTeamProfileResponse().toResponse( myTeamProfile ) );
     }
 
     /**
@@ -270,53 +278,21 @@ public class MyTeamController {
      */
     @PostMapping("/{teamSeq}/profile")
     public ResponseEntity<?> modifyMyTeamsProfile(
-            @SessionAttribute(value = LOGIN_USER,required = false) SessionUser sessionDTO,
+            @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession,
             @PathVariable Long teamSeq,
-            @ModelAttribute MyTeamProfileDTO myTeamProfileDTO
+            @ModelAttribute ModifyMyTeamProfileRequest reqBody
     ) {
-
-        uploadFile(myTeamProfileDTO.getImageFile());
-
-        Long id = sessionDTO.getUserSeq();
-
-        FindMyTeamProfileDTO findMyTeamProfileDTO = new FindMyTeamProfileDTO()
-                .userSeq(id)
-                .teamSeq(teamSeq);
-
-        ModifyMyTeamProfileDTO teamProfileDTO = new ModifyMyTeamProfileDTO()
-                .findMyTeamProfileDTO(findMyTeamProfileDTO)
-                .backNumber(myTeamProfileDTO.getBackNumber());
-
-        teamMemberService.updateMyTeamProfile(teamProfileDTO);
+        teamMemberService.modifyMyTeamProfile(
+            new ModifyMyTeamProfileRequest(
+                    userSession.getUserSeq()
+                  , teamSeq
+                  , reqBody.getBackNumber()
+                  , reqBody.getImageFile()
+            )
+        );
         return RESPONSE_OK;
     }
 
-    public void uploadFile(MultipartFile file){
-        /**
-         * 파일을 저장할 경로를 미리 생성
-         * ex) 오늘이 2022/06/18 이라면 D드라이브 upload 폴더에 2022->06->18 이라는 폴더들이 계층별로 생성됨
-        */
-        String uploadFolder = "D:\\upload";
-
-        String date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd")).replace("/", File.separator);
-
-        File uploadPath = new File(uploadFolder,date);
-
-        if(!uploadPath.exists()) {
-            uploadPath.mkdirs();
-        }
-
-        String uploadFileName = file.getOriginalFilename();
-        File saveFile = new File(uploadPath,uploadFileName);
-
-        try{
-            file.transferTo(saveFile);
-        }catch(IllegalStateException e){
-            throw new RuntimeException(e.getMessage(),e);
-        }catch(IOException e){
-            throw new RuntimeException(e.getMessage(),e);
-        }
-    }
 
     /**
      * API013 소속팀 탈퇴

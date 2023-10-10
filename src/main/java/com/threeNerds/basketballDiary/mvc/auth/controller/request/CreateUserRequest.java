@@ -16,7 +16,6 @@ public class CreateUserRequest {
     private String password;
     /** 이름 **/
     @NotEmpty
-    private String userName;    // TODO userName 필드명 name으로 바꾸기...! (프론트에서도 name으로 넘겨주기)
     private String name;
     /** 이메일 **/
     @Email
@@ -46,10 +45,6 @@ public class CreateUserRequest {
     }
     public CreateUserRequest password(String password){
         this.password = password;
-        return this;
-    }
-    public CreateUserRequest userName(String userName){
-        this.userName=userName;
         return this;
     }
     public CreateUserRequest name(String name){

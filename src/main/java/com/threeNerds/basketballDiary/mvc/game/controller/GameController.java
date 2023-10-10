@@ -77,8 +77,7 @@ public class GameController {
      * @result 특정쿼터의 선수별 기록조회
      * 22.12.15(목) @ReauestBody부분 Request클래스로 대체
      */
-    @Auth(GRADE = TEAM_MEMBER)
-//    @PostMapping("/{gameSeq}/gameJoinTeams/{gameJoinTeamSeq}/players")
+    @Auth(GRADE = USER)
     @PostMapping("/{gameSeq}/homeAwayCode/{homeAwayCode}/players")
     public ResponseEntity<?> registerGameJoinPlayers(
             @PathVariable(name = "gameSeq") Long gameSeq,
@@ -98,12 +97,13 @@ public class GameController {
 
     /**
      * API038 쿼터 저장하기/수정하기
+     * @auth    게임기록권한자인 경우
      * @param gameSeq     게임Seq
      * @param quarterCode 쿼터코드; 01~04(1~4쿼터), 11(전반), 12(후반)
      * @result 특정 경기의 쿼터 기록을 저장·수정한다.
      * @author 강창기
      */
-    //@Auth(GRADE = USER) TODO
+    @Auth(GRADE = USER)
     @PutMapping("/{gameSeq}/quarters/{quarterCode}")
     public ResponseEntity<?> saveQuarterRecords(
             @PathVariable(name = "gameSeq") Long gameSeq,
@@ -144,10 +144,12 @@ public class GameController {
 
     /**
      * API041 게임쿼터 삭제
-     * @param gameSeq
-     * @param quarterCode
+     * @auth    게임기록권한자인 경우
+     * @param   gameSeq
+     * @param   quarterCode
      * @return
      */
+    @Auth(GRADE = USER)
     @DeleteMapping("/{gameSeq}/quarters/{quarterCode}")
     public ResponseEntity<?> deleteGameQuarter(
             @PathVariable("gameSeq") Long gameSeq,
@@ -167,7 +169,7 @@ public class GameController {
      * @result 특정쿼터의 선수별 기록조회
      * @author 강창기
      */
-    //@Auth(GRADE = USER)
+    @Auth(GRADE = USER)
     @GetMapping("/{gameSeq}/quarters/{quarterCode}/players")
     public ResponseEntity<?> getGameJoinPlayerRecordsByQuarter(
         @PathVariable(name = "gameSeq") Long gameSeq,
@@ -187,13 +189,69 @@ public class GameController {
     }
 
     /**
+     * API044 상대팀 목록 조회
+     */
+    @Auth(GRADE = USER)
+    @GetMapping("/opponents")
+    public ResponseEntity<?> searchOpponents(
+            @RequestParam(name = "sidoCode", required = false) String sidoCode,
+            @RequestParam(name = "teamName", required = false) String teamName,
+            @RequestParam(name = "leaderName", required = false) String leaderName
+    ){
+        SearchOppenentsDTO searchCond = new SearchOppenentsDTO()
+                .sidoCode(sidoCode)
+                .teamName(teamName)
+                .leaderName(leaderName);
+        List<GameOpponentDTO> opponents = gameJoinManagerService.searchOpponents(searchCond);
+        SearchOpponentsResponse resBody = new SearchOpponentsResponse()
+                .opponents(opponents);
+        return ResponseEntity.ok(resBody);
+    }
+
+    /**
+     * API046 경기 기초정보 조회
+     */
+    @Auth(GRADE = USER)
+    @GetMapping("{gameSeq}/info")
+    public ResponseEntity<?> getGameBasicInfo(
+            @PathVariable(name = "gameSeq")Long gameSeq
+    ){
+        GameInfoDTO gameInfo = gameService.getGameInfo(gameSeq);
+
+        GetGameBasicInfoResponse resBody = new GetGameBasicInfoResponse()
+                .gameInfo(gameInfo);
+        return ResponseEntity.ok(resBody);
+    }
+
+    /**
+     * API047 경기 참가팀 조회
+     */
+    @Auth(GRADE = USER)
+    @GetMapping("{gameSeq}/teams")
+    public ResponseEntity<?> getGameJoinTeamsInfo(
+            @PathVariable(name = "gameSeq") Long gameSeq,
+            @RequestParam(name = "homeAwayCode", required = false) String homeAwayCode
+    ){
+        SearchGameJoinTeamDTO searchGameHomeAwayDTO = new SearchGameJoinTeamDTO()
+                .gameSeq(gameSeq)
+                .homeAwayCode(homeAwayCode);
+
+        Map<HomeAwayCode, GameJoinTeamInfoDTO> joinTeamsInfo = gameJoinManagerService.getGameJoinTeams(searchGameHomeAwayDTO);
+
+        GetGameJoinTeamsResponse resBody = new GetGameJoinTeamsResponse()
+                .homeTeamInfo(joinTeamsInfo.get(HomeAwayCode.HOME_TEAM))
+                .awayTeamInfo(joinTeamsInfo.get(HomeAwayCode.AWAY_TEAM));
+        return ResponseEntity.ok(resBody);
+    }
+
+    /**
      * API048 경기 쿼터기록 조회
      * @param gameSeq 게임Seq
      * @param quarterCode 쿼터코드
      * @result 특정쿼터의 선수별 기록조회
      * @author 강창기
      */
-    //@Auth(GRADE = USER) TODO
+    @Auth(GRADE = USER)
     @GetMapping("/{gameSeq}/quarters/{quarterCode}")
     public ResponseEntity<?> getGameQuarterRecords(
             @PathVariable(name = "gameSeq") Long gameSeq,
@@ -218,6 +276,7 @@ public class GameController {
      * API050 경기 확정(경기 등록)
      * @author 이성주
      */
+    @Auth(GRADE = USER) // TODO 게임기록권한자
     @PostMapping("/{gameSeq}/confirmation")
     public ResponseEntity<?> confirmGame(
             @PathVariable("gameSeq") Long gameSeq
@@ -227,11 +286,23 @@ public class GameController {
     }
 
     /**
+     * API051 게임 삭제
+     */
+    @Auth(GRADE = USER) // TODO 게임기록권한자
+    @DeleteMapping("/{gameSeq}")
+    public ResponseEntity<?> deleteGame(
+            @PathVariable(name = "gameSeq") Long gameSeq
+    ) {
+        gameService.deleteGame(gameSeq);
+        return RESPONSE_OK;
+    }
+
+    /**
      * API053 게임 생성
      * - 생성한 게임 정보를 반환
      * 22.12.15(목) @ReauestBody부분 Request클래스로 대체
      */
-    @Auth(GRADE = USER)
+    @Auth(GRADE = USER) // TODO 게임기록권한자
     @PostMapping
     public ResponseEntity<?> createGame (
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,
@@ -246,73 +317,12 @@ public class GameController {
         return ResponseEntity.ok(result);
     }
 
-    /**
-     * API044 상대팀 목록 조회
-     */
-    @GetMapping("/opponents")
-    public ResponseEntity<?> searchOpponents(
-            @RequestParam(name = "sidoCode", required = false) String sidoCode,
-            @RequestParam(name = "teamName", required = false) String teamName,
-            @RequestParam(name = "leaderName", required = false) String leaderName
-    ){
-        SearchOppenentsDTO searchCond = new SearchOppenentsDTO()
-                .sidoCode(sidoCode)
-                .teamName(teamName)
-                .leaderName(leaderName);
-        List<GameOpponentDTO> opponents = gameJoinManagerService.searchOpponents(searchCond);
-        SearchOpponentsResponse resBody = new SearchOpponentsResponse()
-                                                .opponents(opponents);
-        return ResponseEntity.ok(resBody);
-    }
 
-    /**
-     * API046 경기 기초정보 조회
-     */
-    @GetMapping("{gameSeq}/info")
-    public ResponseEntity<?> getGameBasicInfo(
-            @PathVariable(name = "gameSeq")Long gameSeq
-    ){
-        GameInfoDTO gameInfo = gameService.getGameInfo(gameSeq);
-
-        GetGameBasicInfoResponse resBody = new GetGameBasicInfoResponse()
-                                                    .gameInfo(gameInfo);
-        return ResponseEntity.ok(resBody);
-    }
-
-    /**
-     * API047 경기 참가팀 조회
-     */
-    @GetMapping("{gameSeq}/teams")
-    public ResponseEntity<?> getGameJoinTeamsInfo(
-            @PathVariable(name = "gameSeq") Long gameSeq,
-            @RequestParam(name = "homeAwayCode", required = false) String homeAwayCode
-    ){
-        SearchGameJoinTeamDTO searchGameHomeAwayDTO = new SearchGameJoinTeamDTO()
-                                                            .gameSeq(gameSeq)
-                                                            .homeAwayCode(homeAwayCode);
-
-        Map<HomeAwayCode, GameJoinTeamInfoDTO> joinTeamsInfo = gameJoinManagerService.getGameJoinTeams(searchGameHomeAwayDTO);
-
-        GetGameJoinTeamsResponse resBody = new GetGameJoinTeamsResponse()
-                                                .homeTeamInfo(joinTeamsInfo.get(HomeAwayCode.HOME_TEAM))
-                                                .awayTeamInfo(joinTeamsInfo.get(HomeAwayCode.AWAY_TEAM));
-        return ResponseEntity.ok(resBody);
-    }
-
-    /**
-     * API051 게임 삭제
-     */
-    @DeleteMapping("/{gameSeq}")
-    public ResponseEntity<?> deleteGame(
-            @PathVariable(name = "gameSeq") Long gameSeq
-    ) {
-        gameService.deleteGame(gameSeq);
-        return RESPONSE_OK;
-    }
 
     /**
      * API055 게임기록자 조회
      */
+    @Auth(GRADE = USER)  // TODO 게임기록권한자
     @GetMapping("/{gameSeq}/gameRecorders")
     public ResponseEntity<?> getGameRecorders(
             @PathVariable("gameSeq") Long gameSeq
@@ -326,7 +336,7 @@ public class GameController {
     /**
      * API056 게임기록자 목록 저장
      */
-    @Auth(GRADE = TEAM_MEMBER)
+    @Auth(GRADE = USER)  // TODO 게임기록권한자
     @PostMapping("/{gameSeq}/gameRecorders")
     public ResponseEntity<?> saveGameRecorders(
             @PathVariable("gameSeq") Long gameSeq,
@@ -343,6 +353,7 @@ public class GameController {
      * 23.01.28(토)
      * @author 강창기
      */
+    @Auth(GRADE = USER)  // TODO 게임기록권한자
     @GetMapping("/{gameSeq}/teamMembers")
     public ResponseEntity<?> getGameJoinTeamMembers(
             @PathVariable(name = "gameSeq") Long gameSeq,
@@ -357,6 +368,7 @@ public class GameController {
      * API060 쿼터 엔트리 정보 저장
      * 22.12.15(목) @ReauestBody부분 Request클래스로 대체
      */
+    @Auth(GRADE = USER)  // TODO 게임기록권한자
     @PostMapping("/{gameSeq}/entry")
     public ResponseEntity<?> saveQuarterEntryInfo(
             @PathVariable(name = "gameSeq") Long gameSeq,
@@ -377,6 +389,7 @@ public class GameController {
     /**
      * API061 경기참가선수 조회
      */
+    @Auth(GRADE = USER)
     @GetMapping("/{gameSeq}/players")
     public ResponseEntity<?> getGameJoinPlayers(
             @PathVariable(name = "gameSeq") Long gameSeq,
@@ -396,6 +409,7 @@ public class GameController {
      * 22.12.15(목) @ReauestBody부분 Request클래스로 대체
      * 23.01.11(수) 누락된 로직 추가 - 게임기록상태코드 업데이트
      */
+    @Auth(GRADE = USER)  // TODO 게임기록권한자
     @PostMapping("/{gameSeq}/gameJoinTeams")
     public ResponseEntity<?> confirmGameJoinTeam (
             @PathVariable(name = "gameSeq") Long gameSeq,
@@ -416,6 +430,7 @@ public class GameController {
      * @author 강창기
      * 23.01.25(수) 여인준 - API Body 수정
      */
+    @Auth(GRADE = USER)
     @GetMapping("/{gameSeq}/quarters")
     public ResponseEntity<?> getGameAllQuartersRecords (
             @PathVariable(name = "gameSeq") Long gameSeq
@@ -436,6 +451,7 @@ public class GameController {
      * @since 23.03.10(금)
      * @author 여인준
      */
+    @Auth(GRADE = USER)  // TODO 게임기록권한자
     @PostMapping("/{gameSeq}/quarters/{quarterCode}")
     public ResponseEntity<?> createGameQuarterBasicInfo (
             @PathVariable(name = "gameSeq") Long gameSeq,

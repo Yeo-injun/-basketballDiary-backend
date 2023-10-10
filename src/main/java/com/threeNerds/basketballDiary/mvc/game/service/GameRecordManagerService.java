@@ -320,6 +320,7 @@ public class GameRecordManagerService {
      * @author 이성주
      */
     public void deleteGameQuarter(DeleteGameQuarterRequest request) {
+        // TODO 게임기록권한자인지 확인
         Long gameSeq = request.getGameSeq();
         String quarterCode = request.getQuarterCode();
         quarterTeamRecordsRepository.deleteGameQuarter( QuarterTeamRecords.builder()
