@@ -64,7 +64,7 @@ jib {
 //				"-Xmx512m",
 //				"-Xdebug",
 //				"-XshowSettings:vm",
-				'-Dspring.profiles.active=${profile}'
+				"-Dspring.profiles.active=" + profile
 		]
 		ports = ["18080"]
 		creationTime = 'USE_CURRENT_TIMESTAMP'
