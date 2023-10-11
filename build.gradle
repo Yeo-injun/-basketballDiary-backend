@@ -45,6 +45,10 @@ jar{
 	enabled = false
 }
 
+ext {
+	profile = (!project.hasProperty('profile') || !profile) ? 'dev' : profile
+}
+
 jib {
 	from {
 		image = 'adoptopenjdk/openjdk11:alpine-jre'
@@ -60,7 +64,7 @@ jib {
 //				"-Xmx512m",
 //				"-Xdebug",
 //				"-XshowSettings:vm",
-				"-Dspring.profiles.active=dev"
+				'-Dspring.profiles.active=${profile}'
 		]
 		ports = ["18080"]
 		creationTime = 'USE_CURRENT_TIMESTAMP'
