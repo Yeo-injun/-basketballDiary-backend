@@ -25,7 +25,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build with Gradle
-        run: ./gradlew jib -pProfile=dev
+        run: ./gradlew jib -Pprofile=dev=dev
 
       - name: Jenkins deploy
         uses: appleboy/jenkins-action@master
