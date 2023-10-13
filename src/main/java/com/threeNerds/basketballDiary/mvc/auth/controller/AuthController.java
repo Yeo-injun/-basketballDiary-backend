@@ -41,8 +41,8 @@ public class AuthController {
     /**
      * API065 권한정보 조회
      */
-    @GetMapping("")
-    public ResponseEntity<?> getAuthInfo (
+    @GetMapping
+    public ResponseEntity<SessionUser> getAuthInfo (
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession
     ) {
         return ResponseEntity.ok().body( userSession );
@@ -64,7 +64,7 @@ public class AuthController {
      */
     @PostMapping("/registration")
     public ResponseEntity<Void> createUser (
-            @RequestBody CreateUserRequest request
+            @RequestBody @Valid CreateUserRequest request
     ) {
         authService.createMember(request);
         return ResponseEntity.ok().build();
