@@ -1,12 +1,13 @@
 package com.threeNerds.basketballDiary.mvc.auth.controller;
 
+import com.threeNerds.basketballDiary.http.response.BooleanResponse;
 import com.threeNerds.basketballDiary.mvc.auth.controller.request.CheckDuplicateUserIdRequest;
 import com.threeNerds.basketballDiary.mvc.auth.controller.request.CreateUserRequest;
 import com.threeNerds.basketballDiary.mvc.auth.controller.request.LoginRequest;
 import com.threeNerds.basketballDiary.mvc.auth.dto.CheckDuplicateUserIdDTO;
 import com.threeNerds.basketballDiary.mvc.auth.dto.LoginUserDTO;
 import com.threeNerds.basketballDiary.mvc.auth.service.AuthService;
-import com.threeNerds.basketballDiary.mvc.common.BooleanResult;
+import com.threeNerds.basketballDiary.mvc.authUser.controller.response.CheckDuplicationUserIdResponse;
 import com.threeNerds.basketballDiary.session.SessionUser;
 import com.threeNerds.basketballDiary.utils.SessionUtil;
 import lombok.RequiredArgsConstructor;
@@ -50,15 +51,24 @@ public class AuthController {
 
     /**
      * API034 사용자ID 중복확인
+     * - 23.10.14 인준
+     *      : API마다 Request/Response 클래스를 만들어서 관리하는 패턴 유지.
+     *      : Service에서 Request/Response 클래스에 의존하지 않도록 변경. ( 파라미터 및 return 타입은 DTO 혹은 원시타입 )
+     *      : ResponseEntity 제네릭 안의 와일드카드를 없애고, Return되는 Response 타입을 명확하게 하기 위해 BooleanResponse타입의 인터페이스를 만들어서 적용
+     *      >> 기존 BooleanResult 클래스를 사용하지 않는 이유는 true or false 값을 return한다고 해도 API마다 속성명이 미묘하게 달라져야 의미가 더 명확하게 전달되기 때문
+     *          - success 속성은 중복여부 체크의 성공여부를 알려주는 뉘앙스로, 중복여부를 직접적으로 나타내는 의미를 전달하지 못함.
+     *          - 이에 따라 중복여부를 명확하게 드러내는 속성명을 적용하고, true/false를 return하는 API마다 맥락에 맞는 속성명을 정의해서 사용.
      */
     @PostMapping("/duplicationCheck")
-    public ResponseEntity<BooleanResult> checkDuplicateUserId (
+    public ResponseEntity<BooleanResponse> checkDuplicateUserId (
             @RequestBody @Valid CheckDuplicateUserIdRequest reqBody
     ) {
         CheckDuplicateUserIdDTO checkForDuplication = new CheckDuplicateUserIdDTO()
                 .userId(reqBody.getUserId());
-        return ResponseEntity.ok().body(new BooleanResult(authService.checkDuplicationUserId(checkForDuplication)));
+        return ResponseEntity.ok()
+                .body( new CheckDuplicationUserIdResponse( authService.checkDuplicationUserId( checkForDuplication ) ) );
     }
+
     /**
      * API029 회원가입
      */
