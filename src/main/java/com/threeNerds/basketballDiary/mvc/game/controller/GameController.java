@@ -256,7 +256,7 @@ public class GameController {
     public ResponseEntity<?> getGameQuarterRecords(
             @PathVariable(name = "gameSeq") Long gameSeq,
             @PathVariable(name = "quarterCode") String quarterCode
-    ){
+    ) {
         if(ObjectUtils.isEmpty(gameSeq))
             throw new CustomException(Error.NO_PARAMETER);
 
