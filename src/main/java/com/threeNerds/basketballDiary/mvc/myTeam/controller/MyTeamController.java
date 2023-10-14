@@ -405,14 +405,14 @@ public class MyTeamController {
      */
     @GetMapping("/{teamSeq}/games")
     public ResponseEntity<?> searchMyTeamGames (
-            @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,
-            @PathVariable(value = "teamSeq", required = false) Long teamSeq,
-            @RequestParam(name = "gameBgngYmd", required = false) String gameBgngYmd,
-            @RequestParam(name = "gameEndYmd", required = false) String gameEndYmd,
-            @RequestParam(name = "sidoCode", required = false) String sidoCode,
-            @RequestParam(name = "gamePlaceName", required = false) String gamePlaceName,
-            @RequestParam(name = "gameTypeCode", required = false) String gameTypeCode,
-            @RequestParam(name = "homeAwayCode", required = false) String homeAwayCode
+            @SessionAttribute( value = LOGIN_USER ) SessionUser sessionUser,
+            @PathVariable( value = "teamSeq" ) Long teamSeq,
+            @RequestParam( name = "gameBgngYmd"     , required = false ) String gameBgngYmd     ,
+            @RequestParam( name = "gameEndYmd"      , required = false ) String gameEndYmd      ,
+            @RequestParam( name = "sidoCode"        , required = false ) String sidoCode        ,
+            @RequestParam( name = "gamePlaceName"   , required = false ) String gamePlaceName   ,
+            @RequestParam( name = "gameTypeCode"    , required = false )  String gameTypeCode   ,
+            @RequestParam( name = "homeAwayCode"    , required = false ) String homeAwayCode
     ) {
         log.info("▒▒▒▒▒ API052: MyTeamController.searchMyTeamGames");
         GameCondDTO condDTO = new GameCondDTO()
