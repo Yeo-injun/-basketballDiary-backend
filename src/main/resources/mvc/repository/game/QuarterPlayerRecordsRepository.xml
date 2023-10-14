@@ -34,7 +34,7 @@
          WHERE 1=1
            AND QUARTER_CODE         = #{quarterCode}
         <choose>
-            <when test='gameJoinPlayerSeq != null'>
+            <when test='gameJoinPlayerSeq != null and !"".equals( gameJoinPlayerSeq )'>
            AND GAME_JOIN_PLAYER_SEQ = #{gameJoinPlayerSeq}
             </when>
             <otherwise>
@@ -43,20 +43,38 @@
         </choose>
     </update>
 
+    <update id="updateInGameYnForAllQuarterPlayer" parameterType="com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords">
+        /* QuarterPlayerRecordsRepository.updateInGameYnForAllQuarterPlayer */
+        UPDATE QUARTER_PLAYER_RECORDS
+           SET IN_GAME_YN = #{inGameYn}
+         WHERE 1=1
+           AND QUARTER_CODE         = #{quarterCode}
+        <choose>
+            <when test='gameJoinTeamSeq != null and !"".equals( gameJoinTeamSeq )'>
+           AND GAME_JOIN_TEAM_SEQ   = #{gameJoinTeamSeq}
+            </when>
+            <otherwise>
+           AND GAME_SEQ         = #{gameSeq}
+           AND HOME_AWAY_CODE   = #{homeAwayCode}
+            </otherwise>
+        </choose>
+    </update>
+
     <update id="updateQuarterRecords" parameterType="com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords">
         /* QuarterPlayerRecordsRepository.updateQuarterRecords */
         UPDATE QUARTER_PLAYER_RECORDS
-           SET TRY_FREE_THROW = #{tryFreeThrow}
-             , TRY_TWO_POINT = #{tryTwoPoint}
-             , TRY_THREE_POINT = #{tryThreePoint}
-             , FREE_THROW = #{freeThrow}
-             , TWO_POINT = #{twoPoint}
-             , THREE_POINT = #{threePoint}
-             , REBOUND = #{rebound}
-             , STEAL = #{steal}
-             , BLOCK = #{block}
-             , TURNOVER = #{turnover}
-             , FOUL = #{foul}
+           SET TRY_FREE_THROW   = #{tryFreeThrow}
+             , TRY_TWO_POINT    = #{tryTwoPoint}
+             , TRY_THREE_POINT  = #{tryThreePoint}
+             , FREE_THROW       = #{freeThrow}
+             , TWO_POINT        = #{twoPoint}
+             , THREE_POINT      = #{threePoint}
+             , ASSIST           = #{assist}
+             , REBOUND          = #{rebound}
+             , STEAL            = #{steal}
+             , BLOCK            = #{block}
+             , TURNOVER         = #{turnover}
+             , FOUL             = #{foul}
          WHERE 1=1
            AND QUARTER_PLAYER_RECORDS_SEQ = #{quarterPlayerRecordsSeq}
     </update>

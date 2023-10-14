@@ -20,7 +20,9 @@ public interface QuarterPlayerRecordsRepository {
     /**********
      * UPDATE
      **********/
-    int updateInGameYn(QuarterPlayerRecords modParamForInGameYn);
+    int updateInGameYn( QuarterPlayerRecords params );
+    int updateInGameYnForAllQuarterPlayer( QuarterPlayerRecords params );
+
     int updateQuarterRecords(QuarterPlayerRecords quarterPlayerRecords);
 
     /**********
