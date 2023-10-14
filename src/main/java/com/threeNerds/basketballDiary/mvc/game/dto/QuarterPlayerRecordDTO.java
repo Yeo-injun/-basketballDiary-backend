@@ -25,6 +25,8 @@ public class QuarterPlayerRecordDTO {
     private String playerTypeCode;
     private String playerTypeCodeName;
     private String name;
+    private String userName; // TODO 임시 속성 name 속성과 통합 필요
+    private String email;   // 엔트리의 key역할
     private String backNumber;
     private String positionCode;
     private String positionCodeName;
