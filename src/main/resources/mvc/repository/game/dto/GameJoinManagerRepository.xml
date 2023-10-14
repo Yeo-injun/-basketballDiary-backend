@@ -26,8 +26,10 @@
              , QPR.FOUL
              , GJP.PLAYER_TYPE_CODE
              , GJP.NAME
+             , GJP.NAME AS USER_NAME /* 임시처리 TODO NAME 속성과 통일화 필요 */
              , GJP.BACK_NUMBER
              , GJP.POSITION_CODE
+             , GJP.EMAIL
           FROM GAME_JOIN_PLAYER GJP
          INNER JOIN QUARTER_PLAYER_RECORDS QPR
             ON GJP.GAME_JOIN_PLAYER_SEQ = QPR.GAME_JOIN_PLAYER_SEQ
