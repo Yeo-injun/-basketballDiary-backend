@@ -2,6 +2,25 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.threeNerds.basketballDiary.mvc.game.repository.QuarterPlayerRecordsRepository">
+    <sql id="DomainProperties" >
+          QUARTER_PLAYER_RECORDS_SEQ
+        , GAME_SEQ
+        , GAME_JOIN_PLAYER_SEQ
+        , GAME_JOIN_TEAM_SEQ
+        , QUARTER_CODE
+        , IN_GAME_YN
+        , TRY_FREE_THROW
+        , FREE_THROW
+        , TRY_TWO_POINT
+        , TWO_POINT
+        , TRY_THREE_POINT
+        , THREE_POINT
+        , REBOUND
+        , STEAL
+        , BLOCK
+        , TURNOVER
+        , FOUL
+    </sql>
 
     <select id="findAllInGame" resultType="com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords">
         /* QuarterPlayerRecordsRepository.findAllInGame */
@@ -25,6 +44,17 @@
           FROM QUARTER_PLAYER_RECORDS
          WHERE 1=1
            AND GAME_SEQ = #{gameSeq}
+    </select>
+
+    <select id="findOneTeamQuarterRecord" resultType="com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords">
+        /* QuarterPlayerRecordsRepository.findOneTeamQuarterRecord */
+        SELECT
+        <include refid="DomainProperties"></include>
+          FROM QUARTER_PLAYER_RECORDS
+         WHERE 1=1
+           AND GAME_SEQ         = #{gameSeq}
+           AND HOME_AWAY_CODE   = #{homeAwayCode}
+           AND QUARTER_CODE     = #{quarterCode}
     </select>
 
     <update id="updateInGameYn" parameterType="com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords">

@@ -11,7 +11,7 @@ public interface QuarterPlayerRecordsRepository {
      * SELECT
      **********/
     List<QuarterPlayerRecords> findAllInGame(Long gameSeq);
-
+    List<QuarterPlayerRecords> findOneTeamQuarterRecord( QuarterPlayerRecords params );
     /**********
      * INSERT
      **********/
@@ -29,5 +29,6 @@ public interface QuarterPlayerRecordsRepository {
      * DELETE
      **********/
     Long deleteGameQuarter(QuarterPlayerRecords quarterPlayerRecords);
+
 
 }
