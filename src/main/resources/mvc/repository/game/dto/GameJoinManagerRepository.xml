@@ -26,8 +26,10 @@
              , QPR.FOUL
              , GJP.PLAYER_TYPE_CODE
              , GJP.NAME
+             , GJP.NAME AS USER_NAME /* 임시처리 TODO NAME 속성과 통일화 필요 */
              , GJP.BACK_NUMBER
              , GJP.POSITION_CODE
+             , GJP.EMAIL
           FROM GAME_JOIN_PLAYER GJP
          INNER JOIN QUARTER_PLAYER_RECORDS QPR
             ON GJP.GAME_JOIN_PLAYER_SEQ = QPR.GAME_JOIN_PLAYER_SEQ
@@ -180,13 +182,10 @@
              , GJP.EMAIL
              , GJP.BACK_NUMBER
              , GJP.POSITION_CODE
-          FROM GAME_JOIN_TEAM GJT           /* 경기참가팀 */
+          FROM GAME_JOIN_TEAM GJT          /* 경기참가팀 */
          INNER JOIN GAME_JOIN_PLAYER GJP   /* 경기참가선수 */
             ON GJT.GAME_SEQ = GJP.GAME_SEQ
            AND GJT.HOME_AWAY_CODE = GJP.HOME_AWAY_CODE
-         INNER JOIN TEAM_MEMBER TM          /* 팀원 - 경기에 참가한 팀에 소속된 팀원 */
-            ON TM.TEAM_SEQ = GJT.TEAM_SEQ
-           AND TM.USER_SEQ = GJP.USER_SEQ
      WHERE 1=1
            AND GJT.GAME_SEQ = #{gameSeq}
         <if test='homeAwayCode != null and homeAwayCode != ""'>

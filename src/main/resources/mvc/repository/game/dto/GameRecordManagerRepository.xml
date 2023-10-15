@@ -136,6 +136,12 @@
         /* GameRecordManagerRepository.findAllGameRecorders */
         SELECT GRA.GAME_RECORD_AUTH_SEQ
              , TM.TEAM_SEQ
+             , (
+                SELECT TEAM_NAME
+                  FROM TEAM
+                 WHERE 1=1
+                   AND TEAM_SEQ = TM.TEAM_SEQ
+               ) AS TEAM_NAME
              , U.USER_SEQ
              , GRA.GAME_RECORD_AUTH_CODE
              , U.NAME AS USER_NAME

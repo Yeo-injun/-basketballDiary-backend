@@ -6,8 +6,10 @@ COPY . /build
 RUN gradle build -x test --parallel
 
 FROM openjdk:11
+RUN mkdir /app
 WORKDIR /app
-COPY --from=builder /build/build/libs/basketballDiary-0.0.1-SNAPSHOT.jar .
+
+ADD ./build/libs/*.jar /app/app.jar
+
 EXPOSE 8080
-USER nobody
-ENTRYPOINT ["java", "-jar", "basketballDiary-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]

@@ -53,6 +53,7 @@ public class GameRecordManagerService {
 
     private final GameRepository gameRepository;
     private final GameJoinTeamRepository gameJoinTeamRepo;
+    private final GameJoinPlayerRepository gameJoinPlayerRepo;
     private final QuarterTeamRecordsRepository quarterTeamRecordsRepository;
     private final QuarterPlayerRecordsRepository quarterPlayerRecordsRepository;
 
@@ -319,6 +320,7 @@ public class GameRecordManagerService {
      * @author 이성주
      */
     public void deleteGameQuarter(DeleteGameQuarterRequest request) {
+        // TODO 게임기록권한자인지 확인
         Long gameSeq = request.getGameSeq();
         String quarterCode = request.getQuarterCode();
         quarterTeamRecordsRepository.deleteGameQuarter( QuarterTeamRecords.builder()
@@ -342,9 +344,10 @@ public class GameRecordManagerService {
         // 2, 게임에 참가선수로 등록되지 않아도 된다.
         // 이에따른 조회 쿼리 및 조회 내용 정립
         Long gameSeq = request.getGameSeq();
-        SearchGameDTO gameCond = new SearchGameDTO().gameSeq( gameSeq);
+        SearchGameDTO gameCond = new SearchGameDTO().gameSeq( gameSeq );
         List<GameRecorderDTO> gameRecorders = gameRecordManagerRepository.findAllGameRecorders( gameCond );
 
+        // TODO 자체전일 경우 TeamName에 prifix 붙여주기 ( HOME_ or AWAY_ )
         return new GetGameRecordersResponse( gameRecorders );
     }
 
@@ -435,10 +438,17 @@ public class GameRecordManagerService {
         Long gameSeq        = request.getGameSeq();
         String quarterCode  = request.getQuarterCode();
 
+        /** 게임참가팀 지정유무 검증 */
         List<GameJoinTeam> gameJoinTeams = gameJoinTeamRepo.findAllGameJoinTeam( gameSeq );
         if ( gameJoinTeams.isEmpty() ) {
             log.debug("Exception구현하기=================================");
             return;
+        }
+
+        /** 게임참가선수 검증 - 홈팀과 어웨이팀 게임참가선수 각가 5명 이상이어야 한다. */
+        List<GameJoinPlayer> gameJoinPlayers = gameJoinPlayerRepo.findAllPlayersOnGame( gameSeq );
+        if ( !hasEnoughPlayersOnGame( gameJoinPlayers ) ) {
+            throw new CustomException( Error.INSUFFICIENT_PLAYERS_ON_GAME );
         }
 
         for ( GameJoinTeam joinTeam : gameJoinTeams ) {
@@ -452,6 +462,25 @@ public class GameRecordManagerService {
         }
     }
 
+    private boolean hasEnoughPlayersOnGame( List<GameJoinPlayer> allPlayersOnGame ) {
+        int homeTeamPlayerCnt = 0;
+        int awayTeamPlayerCnt = 0;
+
+        for ( GameJoinPlayer player : allPlayersOnGame ) {
+            String homeAwayCode = player.getHomeAwayCode();
+            if ( HomeAwayCode.HOME_TEAM.getCode().equals( homeAwayCode ) ) {
+                homeTeamPlayerCnt++;
+            }
+            if ( HomeAwayCode.AWAY_TEAM.getCode().equals( homeAwayCode ) ) {
+                awayTeamPlayerCnt++;
+            }
+            if ( homeTeamPlayerCnt >= 5 && awayTeamPlayerCnt >= 5 ) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * 23.03.19
      * 게임쿼터 기록 저장 및 수정
@@ -460,14 +489,18 @@ public class GameRecordManagerService {
      *      - 해당 서비스의 전제 조건 : QuarterTeamRecords와 QuarterPlayerRecords에 데이터가 이미 존재해야 한다.
      * @author 여인준
      */
-    public void saveQuarterRecord(SaveQuarterRecordsRequest requestMessage)
-    {
+    public void saveQuarterRecord(SaveQuarterRecordsRequest requestMessage) {
         Long gameSeq = requestMessage.getGameSeq();
         String quarterCode = requestMessage.getQuarterCode();
+        String quarterTime = requestMessage.getQuarterTime();
         QuarterTeamRecords inqCondQuarterTeamRecords = QuarterTeamRecords.builder()
                 .gameSeq( gameSeq )
                 .quarterCode( quarterCode )
                 .build();
+
+        /** 경기의 쿼터 시간 update */
+        gameRepository.updateQuarterTime( new Game( gameSeq, QuarterCode.getType( quarterCode ), quarterTime ) );
+
         /** 경기에 참가한 팀의 쿼터기록 조회 */
         List<QuarterTeamRecords> allTeamRecords = quarterTeamRecordsRepository.findAllGameJoinTeam( inqCondQuarterTeamRecords );
 

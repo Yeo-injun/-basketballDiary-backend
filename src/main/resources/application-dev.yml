@@ -1,0 +1,18 @@
+file:
+  upload:
+    root:
+      ## 개발서버의 디렉토리 잡기... ~
+      image: /app/image
+
+server:
+  port: 18080
+  servlet:
+    session:
+      timeout: 1800
+      tracking-modes: cookie
+      cookie:
+        name: basketballDiary-DEV230826
+        same-site: lax
+        secure: false
+        http-only: true
+        path: /
