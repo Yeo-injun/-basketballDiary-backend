@@ -117,8 +117,7 @@ public class MyTeamController {
             @RequestParam(name = "playerName", required = false) String playerName
     ) {
         log.info("▒▒▒▒▒ API002: MyTeamController.searchMembers");
-        SearchAllTeamMembersRequest reqBody = new SearchAllTeamMembersRequest(teamSeq, pageNo, playerName);
-        SearchAllTeamMembersResponse resBody = myTeamService.searchAllTeamMembers(reqBody);
+        SearchAllTeamMembersResponse resBody = myTeamService.searchAllTeamMembers( new SearchAllTeamMembersRequest(teamSeq, pageNo, playerName) );
 
         return ResponseEntity.ok().body(resBody);
     }
