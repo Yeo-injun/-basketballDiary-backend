@@ -107,13 +107,12 @@ public class MyTeamService {
         return new GetTeamMembersResponse(pager, resultMembers);
     }
 
-    public SearchAllTeamMembersResponse searchAllTeamMembers(SearchAllTeamMembersRequest reqBody)
-    {
-        PagerDTO pager = new PagerDTO(reqBody.getPageNo());
+    public SearchAllTeamMembersResponse searchAllTeamMembers( SearchAllTeamMembersRequest reqBody ) {
+        PagerDTO pager = new PagerDTO( reqBody.getPageNo() );
         MemberDTO searchMemebrCond = new MemberDTO()
-                .teamSeq(reqBody.getTeamSeq())
-                .pagerDTO(pager)
-                .userName(reqBody.getPlayerName());
+                .teamSeq( reqBody.getTeamSeq() )
+                .pagerDTO( pager )
+                .userName( reqBody.getPlayerName() );
 
         List<MemberDTO> resultMembers = myTeamRepository.findAllTeamMemberPaging(searchMemebrCond);
 
