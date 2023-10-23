@@ -279,14 +279,16 @@ public class MyTeamController {
     public ResponseEntity<?> modifyMyTeamsProfile(
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession,
             @PathVariable Long teamSeq,
-            @ModelAttribute ModifyMyTeamProfileRequest reqBody
+//            @ModelAttribute ModifyMyTeamProfileRequest reqBody
+            @RequestParam(required = false) String backNumber,
+            @RequestParam(required = false) MultipartFile imageFile
     ) {
         teamMemberService.modifyMyTeamProfile(
             new ModifyMyTeamProfileRequest(
                     userSession.getUserSeq()
                   , teamSeq
-                  , reqBody.getBackNumber()
-                  , reqBody.getImageFile()
+                  , backNumber
+                  , imageFile
             )
         );
         return RESPONSE_OK;

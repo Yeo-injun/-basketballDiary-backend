@@ -10,6 +10,7 @@ public class ModifyMyTeamProfileRequest {
     private Long userSeq;
     private Long teamSeq;
     private String backNumber;
+    @Nullable
     private MultipartFile imageFile;
 
     public ModifyMyTeamProfileRequest( Long userSeq, Long teamSeq, String backNumber, MultipartFile imageFile ) {
