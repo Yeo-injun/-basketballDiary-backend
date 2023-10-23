@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *  Service
@@ -80,19 +81,21 @@ public class TeamMemberService {
 
         // TODO 기존 이미지를 삭제하는 로직은 데이터 처리 후로 옮기기 ( 트랜잭션 고려 ... )
         String prevImagePath = teamMember.getMemberImagePath();
-        if ( !( null == prevImagePath || "".equals( prevImagePath ) ) ) {
+        if ( null != prevImagePath && !"".equals( prevImagePath ) ) {
             // TODO 업로드된 이미지 삭제
         }
 
-        String imagePath = imageUploader.upload( "/myTeams/profile", reqBody.getImageFile() );
+        String imagePath = "";
+        MultipartFile imageFile = reqBody.getImageFile();
+        if ( null != imageFile ) {
+            imagePath = imageUploader.upload( "/myTeams/profile", imageFile );
+        }
 
-        TeamMember updatedTeamMember = TeamMember.builder()
-                                            .teamMemberSeq( teamMember.getTeamMemberSeq() )
-                                            .backNumber( reqBody.getBackNumber() )
-                                            .memberImagePath( imagePath )
-                                            .build();
-
-        return teamMemberRepository.updateMyTeamProfile( updatedTeamMember );
+        return teamMemberRepository.updateMyTeamProfile( TeamMember.builder()
+                .teamMemberSeq( teamMember.getTeamMemberSeq() )
+                .backNumber( reqBody.getBackNumber() )
+                .memberImagePath( imagePath )
+                .build() );
     }
 
     public void deleteMyTeamProfile(FindMyTeamProfileDTO userDto){
