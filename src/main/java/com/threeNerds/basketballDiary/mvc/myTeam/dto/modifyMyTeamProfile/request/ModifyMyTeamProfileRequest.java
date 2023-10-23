@@ -1,8 +1,9 @@
 package com.threeNerds.basketballDiary.mvc.myTeam.dto.modifyMyTeamProfile.request;
 
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.FindMyTeamProfileDTO;
 import lombok.Getter;
+import org.springframework.lang.Nullable;
 import org.springframework.web.multipart.MultipartFile;
+
 
 @Getter
 public class ModifyMyTeamProfileRequest {
