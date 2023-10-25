@@ -201,6 +201,7 @@
                      , TM.TEAM_SEQ
                      , TM.TEAM_AUTH_CODE
                      , U.NAME  AS USER_NAME
+                     , U.EMAIL
                      , U.BIRTH_YMD
                      , U.HEIGHT
                      , U.WEIGHT

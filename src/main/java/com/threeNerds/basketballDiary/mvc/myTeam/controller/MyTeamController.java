@@ -117,8 +117,7 @@ public class MyTeamController {
             @RequestParam(name = "playerName", required = false) String playerName
     ) {
         log.info("▒▒▒▒▒ API002: MyTeamController.searchMembers");
-        SearchAllTeamMembersRequest reqBody = new SearchAllTeamMembersRequest(teamSeq, pageNo, playerName);
-        SearchAllTeamMembersResponse resBody = myTeamService.searchAllTeamMembers(reqBody);
+        SearchAllTeamMembersResponse resBody = myTeamService.searchAllTeamMembers( new SearchAllTeamMembersRequest(teamSeq, pageNo, playerName) );
 
         return ResponseEntity.ok().body(resBody);
     }
@@ -280,14 +279,16 @@ public class MyTeamController {
     public ResponseEntity<?> modifyMyTeamsProfile(
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession,
             @PathVariable Long teamSeq,
-            @ModelAttribute ModifyMyTeamProfileRequest reqBody
+//            @ModelAttribute ModifyMyTeamProfileRequest reqBody
+            @RequestParam(required = false) String backNumber,
+            @RequestParam(required = false) MultipartFile imageFile
     ) {
         teamMemberService.modifyMyTeamProfile(
             new ModifyMyTeamProfileRequest(
                     userSession.getUserSeq()
                   , teamSeq
-                  , reqBody.getBackNumber()
-                  , reqBody.getImageFile()
+                  , backNumber
+                  , imageFile
             )
         );
         return RESPONSE_OK;

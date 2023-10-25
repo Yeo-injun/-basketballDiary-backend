@@ -105,19 +105,17 @@ public class GameController {
      */
     @Auth(GRADE = USER)
     @PutMapping("/{gameSeq}/quarters/{quarterCode}")
-    public ResponseEntity<?> saveQuarterRecords(
+    public ResponseEntity<Void> saveQuarterRecords(
             @PathVariable(name = "gameSeq") Long gameSeq,
             @PathVariable(name = "quarterCode") String quarterCode,
             @RequestBody @Valid SaveQuarterRecordsRequest requestMessage
     ) {
-        SaveQuarterRecordsRequest message = new SaveQuarterRecordsRequest(
-            gameSeq,
-            quarterCode,
-            requestMessage
-        );
-
-        gameRecordManagerService.saveQuarterRecord( message );
-        return RESPONSE_OK;
+        gameRecordManagerService.saveQuarterRecord( new SaveQuarterRecordsRequest(
+                gameSeq,
+                quarterCode,
+                requestMessage
+        ) );
+        return ResponseEntity.ok().build();
     }
 
     /**

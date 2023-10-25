@@ -27,6 +27,8 @@ public class MemberDTO {
     private Long teamMemberSeq;
     /* 유저 pk */
     private Long userSeq;
+    /* 이메일주소 */
+    private String email;
     /* 팀 pk */
     private Long teamSeq;
     /* 팀권한코드 */
