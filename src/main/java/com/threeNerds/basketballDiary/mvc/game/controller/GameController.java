@@ -278,7 +278,7 @@ public class GameController {
     @PostMapping("/{gameSeq}/confirmation")
     public ResponseEntity<?> confirmGame(
             @PathVariable("gameSeq") Long gameSeq
-    ){
+    ) {
         gameService.confirmGame(gameSeq);
         return RESPONSE_OK;
     }
