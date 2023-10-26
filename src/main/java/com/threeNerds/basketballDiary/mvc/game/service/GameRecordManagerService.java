@@ -438,11 +438,16 @@ public class GameRecordManagerService {
         Long gameSeq        = request.getGameSeq();
         String quarterCode  = request.getQuarterCode();
 
+        /** 게임기록 수정가능여부 확인 */
+        Game game = gameRepository.findGame( gameSeq );
+        if ( !game.canUpdateRecord() ) {
+            throw new CustomException( Error.CANT_ADD_QUARTER_RECORD );
+        }
+
         /** 게임참가팀 지정유무 검증 */
         List<GameJoinTeam> gameJoinTeams = gameJoinTeamRepo.findAllGameJoinTeam( gameSeq );
-        if ( gameJoinTeams.isEmpty() ) {
-            log.debug("Exception구현하기=================================");
-            return;
+        if ( 2 != gameJoinTeams.size() ) {
+            throw new CustomException( Error.INSUFFICIENT_GAME_JOIN_TEAMS );
         }
 
         /** 게임참가선수 검증 - 홈팀과 어웨이팀 게임참가선수 각가 5명 이상이어야 한다. */
@@ -452,13 +457,10 @@ public class GameRecordManagerService {
         }
 
         for ( GameJoinTeam joinTeam : gameJoinTeams ) {
-            QuarterTeamRecords quarterTeamBasicInfo = new QuarterTeamRecords(
-                    gameSeq ,
-                    joinTeam.getHomeAwayCode() ,
-                    joinTeam.getGameJoinTeamSeq() ,
-                    quarterCode
-            );
-            quarterTeamRecordsRepository.save( quarterTeamBasicInfo );
+            quarterTeamRecordsRepository.save( new QuarterTeamRecords(
+                    gameSeq ,                           joinTeam.getHomeAwayCode() ,
+                    joinTeam.getGameJoinTeamSeq() ,     quarterCode
+            ) );
         }
     }
 

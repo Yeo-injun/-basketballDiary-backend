@@ -451,15 +451,13 @@ public class GameController {
      */
     @Auth(GRADE = USER)  // TODO 게임기록권한자
     @PostMapping("/{gameSeq}/quarters/{quarterCode}")
-    public ResponseEntity<?> createGameQuarterBasicInfo (
+    public ResponseEntity< Void > createGameQuarterBasicInfo (
             @PathVariable(name = "gameSeq") Long gameSeq,
-            @PathVariable(name = "quarterCode") String quarterCode,
-            @RequestBody @Valid CreateGameQuarterBasicInfoRequest request
+            @PathVariable(name = "quarterCode") String quarterCode
     ) {
-        request = new CreateGameQuarterBasicInfoRequest()
-                                    .gameSeq( gameSeq )
-                                    .quarterCode( quarterCode );
-        gameRecordManagerService.createGameQuarterBasicInfo( request );
-        return RESPONSE_OK;
+        gameRecordManagerService.createGameQuarterBasicInfo( new CreateGameQuarterBasicInfoRequest()
+                .gameSeq( gameSeq )
+                .quarterCode( quarterCode ) );
+        return ResponseEntity.ok().build();
     }
 }
