@@ -102,14 +102,23 @@ public class GameService {
      * 22.12.12
      * 게임 확정
      * @author 이성주
+     * - 23.10.26 인준 : 경기상태 변경시 게임기록상태코드 확인해서 exception처리
      */
-    public void confirmGame(Long gameSeq)
-    {
+    public void confirmGame(Long gameSeq) {
+        /** 해당 경기의 게임기록상태코드 확인 */
+        Game game = gameRepository.findGame( gameSeq );
+        if ( game.isConfirmed() ) {
+            throw new CustomException( Error.ALREADY_GAME_CONFIRMED );
+        }
+
+        if ( !game.canUpdateRecord() ) {
+            throw new CustomException( Error.CANT_UPDATE_GAME_CONFIRMATION );
+        }
+
         /** 게임기록상태코드 변경 - >> 게임확정(03) */
-        Game gameConfirm = Game.builder()
-                .gameSeq(gameSeq)
-                .gameRecordStateCode(GameRecordStateCode.CONFIRMATION.getCode())
-                .build();
-            gameRepository.updateGameRecordState(gameConfirm);
+        gameRepository.updateGameRecordState( Game.builder()
+                .gameSeq(               gameSeq )
+                .gameRecordStateCode(   GameRecordStateCode.CONFIRMATION.getCode() )
+                .build() );
     }
 }
