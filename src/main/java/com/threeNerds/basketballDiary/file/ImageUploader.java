@@ -19,6 +19,9 @@ public class ImageUploader implements Uploader {
 
     @Override
     public String upload( String path, MultipartFile input ) {
+        if ( null == input ) {
+            return ""; // 이미지가 없으면 경로를 ""로 return
+        }
         // TODO 이름 중복 체크
         // TODO 최대 사이즈 체크
         String uploadName = input.getOriginalFilename();
