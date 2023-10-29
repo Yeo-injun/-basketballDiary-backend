@@ -3,6 +3,9 @@ package com.threeNerds.basketballDiary.mvc.myTeam.service;
 import com.threeNerds.basketballDiary.constant.code.PlayerTypeCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
+import com.threeNerds.basketballDiary.file.ImageUploader;
+import com.threeNerds.basketballDiary.file.Uploader;
+import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.ModifyMyTeamInfoRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getManagers.request.GetManagersRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getManagers.response.GetManagersResponse;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getTeamMembers.request.GetTeamMembersRequest;
@@ -53,6 +56,14 @@ import java.util.stream.Collectors;
 @Transactional
 public class MyTeamService {
 
+    /**------------------------------------
+     * Components
+     *-------------------------------------*/
+    private final Uploader imageUploader;
+
+    /**------------------------------------
+     * Repository
+     *-------------------------------------*/
     private final MyTeamRepository myTeamRepository;
     private final TeamRepository teamRepository;
     private final TeamRegularExerciseRepository teamRegularExerciseRepository;
@@ -199,20 +210,25 @@ public class MyTeamService {
 
     /**
      * 소속팀 수정
-     * @param teamSeq, dto
+     * @param dto
      */
-    public void modifyMyTeam(Long teamSeq, MyTeamDTO dto) {
+    public void modifyMyTeamInfo( ModifyMyTeamInfoRequest dto, MultipartFile teamLogo ) {
         // TODO 차후 TeamRegularExcerciseDTO로 수정하기. 임시 처리
+        Long teamSeq        = dto.getTeamSeq();
         List<TeamRegularExerciseDTO> paramExerciseList = dto.getTeamRegularExercises();
 
-        /* 1. 팀정보 수정 */
+        /** 1. 팀정보 수정 - 존재여부 검증 > 이미지 존재여부 확인 및 업로드 > 데이터 수정 */
         Team team = Optional.ofNullable(teamRepository.findByTeamSeq(teamSeq))
                 .orElseThrow(() -> new CustomException(Error.MY_TEAM_NOT_FOUND));
-        Team resultTeam = Team.builder()
+
+        /** 이미지 업로드 */
+        String imageUploadPath = imageUploader.upload( "/myTeams/info", teamLogo );
+
+        teamRepository.updateTeam( Team.builder()
                 .teamSeq(teamSeq)
                 .leaderUserSeq(team.getLeaderUserSeq())
                 .teamName(dto.getTeamName())
-                .teamImagePath(dto.getTeamImagePath())
+                .teamImagePath( "".equals( imageUploadPath ) ? team.getTeamImagePath() : imageUploadPath )
                 .hometown(dto.getHometown())
                 .introduction(dto.getIntroduction())
                 .foundationYmd(dto.getFoundationYmd())
@@ -220,8 +236,7 @@ public class MyTeamService {
                 .updateDate(LocalDate.now(ZoneId.of("Asia/Seoul")))
                 .sidoCode(dto.getSidoCode())
                 .sigunguCode(dto.getSigunguCode())
-                .build();
-        teamRepository.updateTeam(resultTeam);
+                .build() );
 
         /* 2. 정기운동내역 수정 */
         // 실제 db에 저장된 정기운동내역

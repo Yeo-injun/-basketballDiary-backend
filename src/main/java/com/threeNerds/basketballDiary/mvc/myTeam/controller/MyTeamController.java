@@ -2,6 +2,7 @@ package com.threeNerds.basketballDiary.mvc.myTeam.controller;
 
 import com.threeNerds.basketballDiary.file.ImageUploader;
 import com.threeNerds.basketballDiary.interceptor.Auth;
+import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.ModifyMyTeamInfoRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getManagers.request.GetManagersRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getManagers.response.GetManagersResponse;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getMyTeamProfile.request.GetMyTeamProfileRequest;
@@ -23,6 +24,7 @@ import com.threeNerds.basketballDiary.session.SessionUser;
 import com.threeNerds.basketballDiary.utils.SessionUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -371,17 +373,17 @@ public class MyTeamController {
 
     /**
      * API017 : 소속팀 정보 수정
+     * 23.10.28 인준 : 팀 이미지 속성 추가 반영 ( @RequestPart를 적용하여 mulitpart/form 데이터의 객체 바인딩 제공 )
      */
     @Auth(GRADE = MANAGER)
-    @PostMapping("/{teamSeq}/info")
-    public ResponseEntity<?> modifyMyTeam(
-            @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,
-            @PathVariable(value = "teamSeq") Long teamSeq,
-            @RequestBody MyTeamDTO dto
+    @PostMapping( "/{teamSeq}/info" )
+    public ResponseEntity<?> modifyMyTeamInfo(
+            @PathVariable( value = "teamSeq" ) Long teamSeq,
+            @RequestPart( value = "teamLogo", required = false ) MultipartFile teamLogo,
+            @RequestPart( value = "teamInfo", required = false ) ModifyMyTeamInfoRequest teamInfo
     ) {
-        log.info("▒▒▒▒▒ API017: MyTeamController.modifyMyTeam");
-        Long userSeq = sessionUser.getUserSeq();
-        myTeamService.modifyMyTeam(teamSeq, dto);
+
+        myTeamService.modifyMyTeamInfo( new ModifyMyTeamInfoRequest( teamSeq, teamInfo ), teamLogo );
 
         return RESPONSE_OK;
     }
