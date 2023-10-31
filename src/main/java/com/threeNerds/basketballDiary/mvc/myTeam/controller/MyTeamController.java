@@ -118,9 +118,7 @@ public class MyTeamController {
             @RequestParam(name = "pageNo", defaultValue = "0") Integer pageNo,
             @RequestParam(name = "playerName", required = false) String playerName
     ) {
-        log.info("▒▒▒▒▒ API002: MyTeamController.searchMembers");
         SearchAllTeamMembersResponse resBody = myTeamService.searchAllTeamMembers( new SearchAllTeamMembersRequest(teamSeq, pageNo, playerName) );
-
         return ResponseEntity.ok().body(resBody);
     }
 
@@ -323,7 +321,6 @@ public class MyTeamController {
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,
             @RequestParam(name = "pageNo", defaultValue = "0") Integer pageNo
     ) {
-        log.info("▒▒▒▒▒ API014: MyTeamController.searchTeams");
         Long userSeq = SessionUtil.getUserSeq();
 
         SearchMyTeamDTO searchMyTeamDTO = new SearchMyTeamDTO()
@@ -361,7 +358,6 @@ public class MyTeamController {
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,
             @PathVariable(value = "teamSeq") Long teamSeq
     ) {
-        log.info("▒▒▒▒▒ API016: MyTeamController.searchTeam");
         Long userSeq = sessionUser.getUserSeq();
         FindMyTeamProfileDTO paramDTO = new FindMyTeamProfileDTO()
                 .teamSeq(teamSeq)
@@ -396,8 +392,7 @@ public class MyTeamController {
     public ResponseEntity<?> removeMyTeam(
             @PathVariable(value = "teamSeq") Long teamSeq
     ) {
-        log.info("▒▒▒▒▒ API018: MyTeamController.removeMyTeam");
-        myTeamService.deleteMyTeam(teamSeq);
+        myTeamService.deleteMyTeam( teamSeq );
 
         // 삭제가 정상적으로 완료된 경우 204 No Content로 응답한다.
         return ResponseEntity.noContent().build();
@@ -417,7 +412,6 @@ public class MyTeamController {
             @RequestParam( name = "gameTypeCode"    , required = false )  String gameTypeCode   ,
             @RequestParam( name = "homeAwayCode"    , required = false ) String homeAwayCode
     ) {
-        log.info("▒▒▒▒▒ API052: MyTeamController.searchMyTeamGames");
         GameCondDTO condDTO = new GameCondDTO()
                                     .userSeq(sessionUser.getUserSeq())
                                     .teamSeq(teamSeq)
