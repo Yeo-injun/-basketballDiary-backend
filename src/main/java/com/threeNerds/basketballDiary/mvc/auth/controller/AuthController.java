@@ -63,10 +63,8 @@ public class AuthController {
     public ResponseEntity<CheckDuplicationUserIdResponse> checkDuplicateUserId (
             @RequestBody @Valid CheckDuplicateUserIdRequest reqBody
     ) {
-        CheckDuplicateUserIdDTO checkForDuplication = new CheckDuplicateUserIdDTO()
-                .userId(reqBody.getUserId());
         return ResponseEntity.ok()
-                .body( new CheckDuplicationUserIdResponse( authService.checkDuplicationUserId( checkForDuplication ) ) );
+                .body( new CheckDuplicationUserIdResponse( authService.checkDuplicationUserId( reqBody.getUserId() ) ) );
     }
 
     /**

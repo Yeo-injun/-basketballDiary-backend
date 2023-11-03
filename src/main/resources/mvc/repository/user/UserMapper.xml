@@ -37,12 +37,6 @@
                , #{roadAddress})
     </insert>
 
-    <select id="validationUserId" resultType="int">
-        SELECT COUNT(*)
-        FROM USER U
-        WHERE 1=1
-            AND U.USER_ID = #{userId}
-    </select>
 
     <select id="findUser" resultType="com.threeNerds.basketballDiary.mvc.user.domain.User">
         SELECT DISTINCT USER_SEQ

@@ -15,7 +15,6 @@ public enum Error {
     INVALID_PARAMETER(BAD_REQUEST, "유효하지 않은 파라미터입니다."),
     INSUFFICIENT_PLAYERS_ON_ENTRY(BAD_REQUEST, "엔트리에 등록할 선수가 부족합니다."),
     INSUFFICIENT_PLAYERS_ON_GAME(BAD_REQUEST, "게임에 참가한 선수가 부족합니다."),
-    VALIDATION_USER(BAD_REQUEST, "이미 등록된 회원이 존재합니다."),
 
     /** 401 UNAUTHORIZED : 인증되지 않은 사용자 */
     UNAUTHORIZED_ACCESS(UNAUTHORIZED, "접근 권한이 없습니다."),
@@ -59,8 +58,8 @@ public enum Error {
 
 
     /** 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재 */
-    DUPLICATE_RESOURCE(CONFLICT, "데이터가 이미 존재합니다"),
-    DUPLICATE_USER_ID(CONFLICT, "중복된 ID가 존재합니다."),
+    DUPLICATE_RESOURCE( CONFLICT, "데이터가 이미 존재합니다"),
+    NOT_AVAILABLE_USER_ID( CONFLICT, "동일한 회원ID가 존재합니다."),
     DUPLICATE_BACK_NUMBER(CONFLICT, "중복된 등번호가 존재합니다."),
 
     ALREADY_EXIST_TEAM_MEMBER(CONFLICT, "이미 팀원으로 존재합니다"),
