@@ -39,26 +39,22 @@ public class AuthService {
     private final UserRepository userRepository;
     private final TeamMemberRepository teamMemberRepository;
 
-    public boolean checkDuplicationUserId(CheckDuplicateUserIdDTO checkUser) {
-        User user = userRepository.findUserByUserId(checkUser.getUserId());
-//        if (user != null) {
-//            throw new CustomException(Error.DUPLICATE_USER_ID);
-//        }
-        return user!=null;
+    public boolean checkDuplicationUserId( String userId ) {
+        return !isUserIdAvailable( userId );
     }
 
-    public void createMember(CreateUserRequest request){
-        validationUserCheck(request);
-
-        User user = User.createForRegistration(request);
-        userRepository.saveUser(user);
-    }
-
-    private void validationUserCheck(CreateUserRequest request) {
-        int cnt = userRepository.validationUserId(request.getUserId());
-        if(cnt>0){
-            throw new CustomException(Error.VALIDATION_USER);
+    public void createMember( CreateUserRequest request ) {
+        if ( isUserIdAvailable( request.getUserId() ) ) {
+            User user = User.createForRegistration( request );
+            userRepository.saveUser( user );
+            return;
         }
+
+        throw new CustomException( Error.NOT_AVAILABLE_USER_ID );
+    }
+
+    private boolean isUserIdAvailable( String userId ) {
+        return null == userRepository.findUserByUserId( userId );
     }
 
     // TODO 세션 정보 생성은 controller에서 책임을 가지고 있음. SessionUser는 Service에서 참조할 수 없음

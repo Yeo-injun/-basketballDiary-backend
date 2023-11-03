@@ -1,6 +1,5 @@
 package com.threeNerds.basketballDiary.mvc.auth.controller;
 
-import com.threeNerds.basketballDiary.http.response.BooleanResponse;
 import com.threeNerds.basketballDiary.mvc.auth.controller.request.CheckDuplicateUserIdRequest;
 import com.threeNerds.basketballDiary.mvc.auth.controller.request.CreateUserRequest;
 import com.threeNerds.basketballDiary.mvc.auth.controller.request.LoginRequest;
@@ -58,15 +57,14 @@ public class AuthController {
      *      >> 기존 BooleanResult 클래스를 사용하지 않는 이유는 true or false 값을 return한다고 해도 API마다 속성명이 미묘하게 달라져야 의미가 더 명확하게 전달되기 때문
      *          - success 속성은 중복여부 체크의 성공여부를 알려주는 뉘앙스로, 중복여부를 직접적으로 나타내는 의미를 전달하지 못함.
      *          - 이에 따라 중복여부를 명확하게 드러내는 속성명을 적용하고, true/false를 return하는 API마다 맥락에 맞는 속성명을 정의해서 사용.
+     * - 23.11.02 목 / 회의 결과 Marker Interface 방식 적용은 보류
      */
     @PostMapping("/duplicationCheck")
-    public ResponseEntity<BooleanResponse> checkDuplicateUserId (
+    public ResponseEntity<CheckDuplicationUserIdResponse> checkDuplicateUserId (
             @RequestBody @Valid CheckDuplicateUserIdRequest reqBody
     ) {
-        CheckDuplicateUserIdDTO checkForDuplication = new CheckDuplicateUserIdDTO()
-                .userId(reqBody.getUserId());
         return ResponseEntity.ok()
-                .body( new CheckDuplicationUserIdResponse( authService.checkDuplicationUserId( checkForDuplication ) ) );
+                .body( new CheckDuplicationUserIdResponse( authService.checkDuplicationUserId( reqBody.getUserId() ) ) );
     }
 
     /**
