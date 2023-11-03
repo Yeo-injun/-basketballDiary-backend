@@ -38,18 +38,14 @@ public class SessionUser {
         return new SessionUser(loginUser.getUserSeq(), loginUser.getUserId());
     }
 
-    public SessionUser updateAuthority(List<TeamAuthDTO> authList)
-    {
+    public SessionUser updateAuthority(List<TeamAuthDTO> authList) {
         Map<Long, Long> userAuth = authList.stream()
-                .collect(Collectors.toMap(authDTO -> Long.parseLong(authDTO.getTeamSeq()),
-                                          authDTO -> Long.parseLong(authDTO.getTeamAuthCode())
+                .collect( Collectors.toMap(
+                                            authDTO -> Long.parseLong(authDTO.getTeamSeq()),
+                                            authDTO -> Long.parseLong(authDTO.getTeamAuthCode())
                                           )
-                         );
+                        );
         this.userAuth = userAuth;
-        // TODO 권한 정보 변경 Enum 활용해서
-//        Map<Long, TeamAuthCode> teamAuth = authList.stream()
-//                .collect( Collectors.toMap( auth -> Long.parseLong( auth.getTeamSeq() ),
-//                                            auth ->  )
         return this;
     }
 }
