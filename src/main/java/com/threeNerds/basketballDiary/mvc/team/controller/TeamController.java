@@ -2,6 +2,7 @@ package com.threeNerds.basketballDiary.mvc.team.controller;
 
 import com.threeNerds.basketballDiary.interceptor.Auth;
 
+import com.threeNerds.basketballDiary.mvc.team.controller.request.RegisterTeamRequest;
 import com.threeNerds.basketballDiary.pagination.PaginatedTeamDTO;
 import com.threeNerds.basketballDiary.mvc.team.dto.TeamAuthDTO;
 import com.threeNerds.basketballDiary.mvc.team.dto.SearchTeamDTO;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -72,17 +74,18 @@ public class TeamController {
      */
     @Auth(GRADE = USER)
     @PostMapping
-    public ResponseEntity<?> registerTeam(
+    public ResponseEntity<Void> registerTeam(
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,
-            @RequestBody @Valid TeamDTO teamDTO
+            @RequestPart( required = false ) MultipartFile teamLogoImage,
+            @RequestPart RegisterTeamRequest teamInfo
     ) {
-        log.info("▒▒▒▒▒ API021: TeamController.registerTeam");
-
-        Long userSeq = sessionUser.getUserSeq();
-        teamDTO.leaderUserSeq(userSeq);
-        List<TeamAuthDTO> authList = teamService.createTeam(teamDTO);
+        List<TeamAuthDTO> authList = teamService.createTeam( new RegisterTeamRequest(
+                sessionUser.getUserSeq(),
+                teamInfo,
+                teamLogoImage
+        ) );
         sessionUser.updateAuthority(authList);
 
-        return RESPONSE_CREATED;
+        return ResponseEntity.ok().build();
     }
 }

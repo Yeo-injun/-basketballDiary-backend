@@ -222,7 +222,7 @@ public class MyTeamService {
                 .orElseThrow(() -> new CustomException(Error.MY_TEAM_NOT_FOUND));
 
         /** 이미지 업로드 */
-        String imageUploadPath = imageUploader.upload( "/myTeams/info", teamLogo );
+        String imageUploadPath = imageUploader.upload( ImageUploader.Path.TEAM_LOGO, teamLogo );
 
         teamRepository.updateTeam( Team.builder()
                 .teamSeq(teamSeq)
