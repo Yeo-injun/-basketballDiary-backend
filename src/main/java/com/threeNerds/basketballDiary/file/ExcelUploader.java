@@ -7,7 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Component
 @RequiredArgsConstructor
-public class ExcelUploader implements Uploader {
+public class ExcelUploader implements Uploader<String> {
 
     private final PathManager excelPathManger;
 

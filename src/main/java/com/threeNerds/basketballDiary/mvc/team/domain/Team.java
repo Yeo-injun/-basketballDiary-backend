@@ -1,5 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.team.domain;
 
+import com.threeNerds.basketballDiary.mvc.team.controller.request.RegisterTeamRequest;
 import com.threeNerds.basketballDiary.mvc.team.dto.TeamDTO;
 import lombok.*;
 
@@ -44,18 +45,17 @@ public class Team {
     // 팀 이미지 경로
     private String teamImagePath;
 
-    public static Team create(TeamDTO teamDTO)
-    {
+    public static Team create( RegisterTeamRequest teamDTO, String teamImagePath ) {
         LocalDate now = LocalDate.now(ZoneId.of("Asia/Seoul"));
         return Team.builder()
-                    .teamName(teamDTO.getTeamName())
-                    .hometown(teamDTO.getHometown())
-                    .foundationYmd(teamDTO.getFoundationYmd())
-                    .introduction(teamDTO.getIntroduction())
-                    .teamImagePath(teamDTO.getTeamImagePath())
-                    .leaderUserSeq(teamDTO.getLeaderUserSeq())
-                    .regDate(now)
-                    .updateDate(now)
+                    .teamName(      teamDTO.getTeamName() )
+                    .hometown(      teamDTO.getHometown() )
+                    .foundationYmd( teamDTO.getFoundationYmd() )
+                    .introduction(  teamDTO.getIntroduction() )
+                    .teamImagePath( teamImagePath )
+                    .leaderUserSeq( teamDTO.getLeaderUserSeq() )
+                    .regDate(       now )
+                    .updateDate(    now )
                     .build();
     }
 }

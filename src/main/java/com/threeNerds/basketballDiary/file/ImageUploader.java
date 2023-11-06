@@ -1,5 +1,6 @@
 package com.threeNerds.basketballDiary.file;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,12 +14,12 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class ImageUploader implements Uploader {
+public class ImageUploader implements Uploader<ImageUploader.Path> {
 
     private final PathManager imagePathManager;
 
     @Override
-    public String upload( String path, MultipartFile input ) {
+    public String upload( Path path, MultipartFile input ) {
         if ( null == input ) {
             return ""; // 이미지가 없으면 경로를 ""로 return
         }
@@ -41,8 +42,8 @@ public class ImageUploader implements Uploader {
      * 이미지 저장 목적지 경로 생성
      * - path/yyyyMMdd 형태의 경로 return
      */
-    private String getUploadFullPath( String path ) {
-        return  Optional.ofNullable( path ).orElseGet( ()-> "" )
+    private String getUploadFullPath( Path path ) {
+        return  Optional.ofNullable( path.getImagePath() ).orElseGet( ()-> "" )
                 + "/"
                 + LocalDate
                     .now()
@@ -50,4 +51,20 @@ public class ImageUploader implements Uploader {
                     .replace( "/", "" );
     }
 
+    /**
+     * 이미지 Path관리
+     */
+    @Getter
+    public enum Path {
+        PROFILE_THUMBNAIL( "소속팀 프로필", "/myTeam/profile" ),
+        TEAM_LOGO( "팀로고", "/myTeam/logo" );
+
+        private String imageName;
+        private String imagePath;
+
+        Path( String imageName, String imagePath ) {
+            this.imageName = imageName;
+            this.imagePath = imagePath;
+        }
+    }
 }

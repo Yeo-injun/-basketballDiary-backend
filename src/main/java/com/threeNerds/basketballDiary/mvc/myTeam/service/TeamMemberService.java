@@ -1,5 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.myTeam.service;
 
+import com.threeNerds.basketballDiary.file.ImageUploader;
 import com.threeNerds.basketballDiary.file.Uploader;
 import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.FindMyTeamProfileDTO;
@@ -85,11 +86,7 @@ public class TeamMemberService {
             // TODO 업로드된 이미지 삭제
         }
 
-        String imagePath = "";
-        MultipartFile imageFile = reqBody.getImageFile();
-        if ( null != imageFile ) {
-            imagePath = imageUploader.upload( "/myTeams/profile", imageFile );
-        }
+        String imagePath = imageUploader.upload( ImageUploader.Path.PROFILE_THUMBNAIL, reqBody.getImageFile() );
 
         return teamMemberRepository.updateMyTeamProfile( TeamMember.builder()
                 .teamMemberSeq( teamMember.getTeamMemberSeq() )

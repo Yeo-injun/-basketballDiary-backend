@@ -1,6 +1,9 @@
 package com.threeNerds.basketballDiary.mvc.team.service;
 
 import com.threeNerds.basketballDiary.exception.custom.TeamNotFound;
+import com.threeNerds.basketballDiary.file.ImageUploader;
+import com.threeNerds.basketballDiary.file.Uploader;
+import com.threeNerds.basketballDiary.mvc.team.controller.request.RegisterTeamRequest;
 import com.threeNerds.basketballDiary.mvc.team.domain.Team;
 import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember;
 import com.threeNerds.basketballDiary.mvc.team.domain.TeamRegularExercise;
@@ -42,6 +45,14 @@ import java.util.Optional;
 @Transactional
 public class TeamService {
 
+    /**------------------------------------
+     * Components
+     *-------------------------------------*/
+    private final Uploader imageUploader;
+
+    /**------------------------------------
+     * Repository
+     *-------------------------------------*/
     private final TeamRepository teamRepository;
     private final TeamRegularExerciseRepository teamRegularExerciseRepository;
     private final TeamMemberRepository teamMemberRepository;
@@ -51,12 +62,11 @@ public class TeamService {
      * 팀 목록 조회
      * @return List<TeamDTO>
      */
-    public PaginatedTeamDTO searchTeams(SearchTeamDTO searchTeamDTO)
-    {
+    public PaginatedTeamDTO searchTeams(SearchTeamDTO searchTeamDTO) {
         log.info("TeamService.searchTeams");
-        if (searchTeamDTO.getStartTime() != null
-            && searchTeamDTO.getEndTime() != "")
-        {
+        if ( searchTeamDTO.getStartTime() != null
+            && searchTeamDTO.getEndTime() != ""
+        ) {
             searchTeamDTO
                     .startTime(searchTeamDTO.getStartTime().replace(":", ""))
                     .endTime(searchTeamDTO.getEndTime().replace(":", ""));
@@ -92,14 +102,16 @@ public class TeamService {
      * @return Long
      */
     @Transactional
-    public List<TeamAuthDTO> createTeam(TeamDTO teamDTO)
-    {
+    public List<TeamAuthDTO> createTeam( RegisterTeamRequest teamDTO ) {
+
+        String uploadUrl = imageUploader.upload( ImageUploader.Path.TEAM_LOGO, teamDTO.getTeamLogoImage() );
+
         /** 팀정보 저장  - seq생성 */
-        Team newTeam = Team.create(teamDTO);
+        Team newTeam = Team.create( teamDTO, uploadUrl );
         teamRepository.saveTeam(newTeam);
 
         /** 팀장 팀멤버로 등록 */
-        TeamMember newMember = TeamMember.createLeader(newTeam);
+        TeamMember newMember = TeamMember.createLeader( newTeam );
         teamMemberRepository.saveTeamMemeber(newMember);
 
         /** 팀 정기운동 정보 저장 - 없으면 비어있는 리스트로 처리 */
