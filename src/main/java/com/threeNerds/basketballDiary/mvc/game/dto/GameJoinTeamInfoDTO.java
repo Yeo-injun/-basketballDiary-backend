@@ -15,6 +15,7 @@ public class GameJoinTeamInfoDTO {
 
     private String teamName;
     private String hometown;
+    private String teamImagePath;
     private String leaderName;
 
 
