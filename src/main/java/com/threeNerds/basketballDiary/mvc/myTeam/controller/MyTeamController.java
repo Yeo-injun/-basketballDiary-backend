@@ -2,7 +2,9 @@ package com.threeNerds.basketballDiary.mvc.myTeam.controller;
 
 import com.threeNerds.basketballDiary.file.ImageUploader;
 import com.threeNerds.basketballDiary.interceptor.Auth;
+import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.GetMyTeamsRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.ModifyMyTeamInfoRequest;
+import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.GetMyTeamsResponse;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getManagers.request.GetManagersRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getManagers.response.GetManagersResponse;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getMyTeamProfile.request.GetMyTeamProfileRequest;
@@ -15,24 +17,17 @@ import com.threeNerds.basketballDiary.mvc.myTeam.dto.searchAllTeamMembers.reques
 import com.threeNerds.basketballDiary.mvc.team.dto.PlayerDTO;
 import com.threeNerds.basketballDiary.mvc.game.service.GameRecordManagerService;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.*;
-import com.threeNerds.basketballDiary.pagination.PaginatedMyTeamDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.searchAllTeamMembers.response.SearchAllTeamMembersResponse;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.MyTeamService;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.TeamMemberManagerService;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.TeamMemberService;
 import com.threeNerds.basketballDiary.session.SessionUser;
-import com.threeNerds.basketballDiary.utils.SessionUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static com.threeNerds.basketballDiary.constant.UserAuthConst.*;
@@ -316,18 +311,15 @@ public class MyTeamController {
      */
     @Auth(GRADE = TEAM_MEMBER)
     @GetMapping
-    public ResponseEntity<PaginatedMyTeamDTO> searchMyTeams(
-            @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,
-            @RequestParam(name = "pageNo", defaultValue = "0") Integer pageNo
+    public ResponseEntity<GetMyTeamsResponse> getMyTeams(
+            @SessionAttribute( value = LOGIN_USER ) SessionUser sessionUser,
+            @RequestParam( name = "pageNo", defaultValue = "0" ) Integer pageNo
     ) {
-        Long userSeq = SessionUtil.getUserSeq();
+        GetMyTeamsResponse myTeamList = myTeamService.findTeams(
+            new GetMyTeamsRequest( sessionUser.getUserSeq(), pageNo )
+        );
 
-        SearchMyTeamDTO searchMyTeamDTO = new SearchMyTeamDTO()
-                 .pageNo(pageNo)
-                 .userSeq(userSeq);
-        PaginatedMyTeamDTO myTeamList = myTeamService.findTeams(searchMyTeamDTO);
-
-        return ResponseEntity.ok().body(myTeamList);
+        return ResponseEntity.ok().body( myTeamList );
     }
 
     /**
