@@ -5,7 +5,9 @@ import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.Error;
 import com.threeNerds.basketballDiary.file.ImageUploader;
 import com.threeNerds.basketballDiary.file.Uploader;
+import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.GetMyTeamsRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.ModifyMyTeamInfoRequest;
+import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.GetMyTeamsResponse;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getManagers.request.GetManagersRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getManagers.response.GetManagersResponse;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getTeamMembers.request.GetTeamMembersRequest;
@@ -17,7 +19,6 @@ import com.threeNerds.basketballDiary.mvc.myTeam.dto.FindMyTeamProfileDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.MemberDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.MyTeamDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.SearchMyTeamDTO;
-import com.threeNerds.basketballDiary.pagination.PaginatedMyTeamDTO;
 import com.threeNerds.basketballDiary.mvc.team.dto.TeamRegularExerciseDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.repository.MyTeamRepository;
 import com.threeNerds.basketballDiary.mvc.team.repository.TeamRegularExerciseRepository;
@@ -144,34 +145,33 @@ public class MyTeamService {
 
     /**
      * 소속팀 목록 조회
-     * @param searchMyTeamDTO
+     * @param reqBody
      * @return List<MyTeamDTO>
      */
-    public PaginatedMyTeamDTO findTeams(SearchMyTeamDTO searchMyTeamDTO)
-    {
+    public GetMyTeamsResponse findTeams( GetMyTeamsRequest reqBody ) {
         /** 페이징 정보 세팅 */
-        PagerDTO pager = new PagerDTO(searchMyTeamDTO.getPageNo(), 3);
-        searchMyTeamDTO.pagerDTO(pager);
+        PagerDTO pager = new PagerDTO( reqBody.getPageNo(), 3 );
+        SearchMyTeamDTO searchTeamParam = new SearchMyTeamDTO()
+                                                .userSeq( reqBody.getUserSeq() )
+                                                .pagerDTO( pager );
 
         /** 소속팀 목록 조회 */
-        List<MyTeamDTO> myTeamSearchResults = myTeamRepository.findPagingMyTeams(searchMyTeamDTO);
+        List<MyTeamDTO> myTeams = myTeamRepository.findPagingMyTeams( searchTeamParam );
 
         /** 페이징DTO에 조회 결과 세팅 */
-        if (myTeamSearchResults.isEmpty())
-        {
+        if ( myTeams.isEmpty()) {
             pager.setPagingData(0);
-            return new PaginatedMyTeamDTO(pager, Collections.emptyList());
+            return new GetMyTeamsResponse( pager, Collections.emptyList() );
         }
-        pager.setPagingData(myTeamSearchResults.get(0).getTotalCount());
+        pager.setPagingData( myTeams.get(0).getTotalCount() );
 
         /** 팀들의 정기운동시간 조회 및 세팅 */
-        myTeamSearchResults.forEach(myTeamInfo -> {
-            Long teamSeq = myTeamInfo.getTeamSeq();
-            List<TeamRegularExerciseDTO> exercises = teamRegularExerciseRepository.findByTeamSeq(teamSeq);
-            myTeamInfo.setParsedTeamRegularExercises(exercises);
+        myTeams.forEach( myTeamInfo -> {
+            List<TeamRegularExerciseDTO> exercises = teamRegularExerciseRepository.findByTeamSeq( myTeamInfo.getTeamSeq() );
+            myTeamInfo.setParsedTeamRegularExercises( exercises );
         });
 
-        return new PaginatedMyTeamDTO(pager, myTeamSearchResults);
+        return new GetMyTeamsResponse( pager, myTeams );
     }
 
     /**

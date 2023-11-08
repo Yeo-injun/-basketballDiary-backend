@@ -47,8 +47,8 @@ public class MyTeamDTO {
      * 정기운동 목록 정보
      */
     private List<TeamRegularExerciseDTO> teamRegularExercises;
-    // TODO 삭제예정
-    private List<TeamRegularExercise> teamRegularExercisesList;
+//    // TODO 삭제예정
+//    private List<TeamRegularExercise> teamRegularExercisesList;
 
 
     public MyTeamDTO teamSeq (Long teamSeq) {
@@ -101,13 +101,12 @@ public class MyTeamDTO {
         return this;
     }
 
-    public MyTeamDTO teamRegularExercises (List<TeamRegularExerciseDTO> teamRegularExercises) {
-        this.teamRegularExercises = teamRegularExercises;
-        return this;
-    }
+//    public MyTeamDTO teamRegularExercises (List<TeamRegularExerciseDTO> teamRegularExercises) {
+//        this.teamRegularExercises = teamRegularExercises;
+//        return this;
+//    }
 
-    public MyTeamDTO setParsedTeamRegularExercises (List<TeamRegularExerciseDTO> exercisesDTO)
-    {
+    public MyTeamDTO setParsedTeamRegularExercises( List<TeamRegularExerciseDTO> exercisesDTO ) {
         if (exercisesDTO.isEmpty()) {
             this.teamRegularExercises = Collections.emptyList();
             return this;
