@@ -8,7 +8,10 @@ import java.util.List;
 
 @Getter
 public class GameRecordDTO {
+    /* 페이징 처리 - 조회 대상 데이터 총 row갯수 */
+    private Integer totalCount;
 
+    /** 데이터 속성 */
     private Long gameSeq;
     private String gameRecordStateCode;
     private String gameRecordStateCodeName;

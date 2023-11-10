@@ -16,7 +16,7 @@ import java.util.List;
 public interface GameRecordManagerRepository {
 
     /** 게임기록조회 */
-    List<GameRecordDTO> findGamesByTeamSeq(GameCondDTO gc);
+    List<GameRecordDTO> findPagingGamesByTeamSeq( GameCondDTO gc );
 
     /** 게임참가팀들 조회 - 홈/어웨이팀 모두 */
     List<GameJoinTeamRecordDTO> findGameJoinTeamRecordsByGameSeq(Long gameSeq);
