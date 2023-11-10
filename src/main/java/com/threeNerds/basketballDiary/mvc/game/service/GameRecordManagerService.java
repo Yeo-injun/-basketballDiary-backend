@@ -31,6 +31,8 @@ import com.threeNerds.basketballDiary.mvc.game.dto.saveQuarterRecords.request.Sa
 import com.threeNerds.basketballDiary.mvc.game.dto.saveQuarterRecords.request.SaveQuarterRecordsRequest;
 import com.threeNerds.basketballDiary.mvc.game.repository.*;
 import com.threeNerds.basketballDiary.mvc.game.repository.dto.GameRecordManagerRepository;
+import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.SearchMyTeamGamesRequest;
+import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.SearchMyTeamGamesResponse;
 import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameCondDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameJoinTeamRecordDTO;
@@ -233,8 +235,7 @@ public class GameRecordManagerService {
      * 소속팀의 게임기록조회
      * @author 여인준
      **/
-    public List<GameRecordDTO> searchMyTeamGames(GameCondDTO gc)
-    {
+    public SearchMyTeamGamesResponse searchMyTeamGames( SearchMyTeamGamesRequest message ) {
         /**
          *  1. 소속팀을 기준으로 게임정보 조회 - List<GameRecordDTO>를 받아서 이후 for순회
          *  2. 조회된 게임정보목록을 순회
@@ -242,12 +243,24 @@ public class GameRecordManagerService {
          *  3. 참가팀 조회시 쿼터별기록을 조회해서 GameJoinTeamRecord필드에 할당해주기
          **/
         // 게임참가팀 테이블에서 TEAM_SEQ를 조회
-        // TODO homeAwayCode로 게임 목록을 조회하기
-        // TODO 페이징 처리 구현하기
-        List<GameRecordDTO> games = gameRecordManagerRepository.findGamesByTeamSeq(gc);
+        // TODO homeAwayCode로 게임 목록을 조회하기 +a 검색조건 추가
+        List<GameRecordDTO> games = gameRecordManagerRepository.findPagingGamesByTeamSeq( new GameCondDTO()
+                .userSeq( 		message.getUserSeq() )
+                .teamSeq( 		message.getTeamSeq() )
+                .pagination(    message.getPageNo() )
+                .gameBgngYmd( 	message.getGameBgngYmd() )
+                .gameEndYmd( 	message.getGameEndYmd() )
+                .sidoCode( 		message.getSidoCode() )
+                .gamePlaceName( message.getGamePlaceName() )
+                .gameTypeCode( 	message.getGameTypeCode() )
+                .homeAwayCode( 	message.getHomeAwayCode() )
+        );
 
-        for (GameRecordDTO gr : games)
-        {
+        if ( games.isEmpty() ) {
+            return new SearchMyTeamGamesResponse( message.getPageNo(), 0, Collections.emptyList() );
+        }
+
+        for (GameRecordDTO gr : games) {
             gr.gameRecordStateCodeName(gr.getGameRecordStateCode());
             gr.gameTypeCodeName(gr.getGameTypeCode());
             if (GameRecordStateCode.CREATION.getCode().equals(gr.getGameRecordStateCode())) {
@@ -263,7 +276,11 @@ public class GameRecordManagerService {
                     .awayTeam(awayTeam);
         }
 
-        return games;
+        return new SearchMyTeamGamesResponse(
+                message.getPageNo(),
+                games.get( 0 ).getTotalCount(),
+                games
+        );
     }
 
     // TODO 메소드 쪼개기... 함수명과 다른 처리를 하는 동작이 존재...

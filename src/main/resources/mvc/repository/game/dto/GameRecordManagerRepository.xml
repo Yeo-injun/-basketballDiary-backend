@@ -3,21 +3,29 @@
 
 <mapper namespace="com.threeNerds.basketballDiary.mvc.game.repository.dto.GameRecordManagerRepository">
 
-    <select id="findGamesByTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.myTeam.dto.GameRecordDTO">
-        /* GameRecordManagerRepository.findGamesByTeamSeq */
-        SELECT GAME_SEQ
-             , GAME_RECORD_STATE_CODE
-             , GAME_TYPE_CODE
-             , GAME_YMD
-             , GAME_START_TIME
-             , GAME_END_TIME
-             , GAME_PLACE_ADDRESS
-             , GAME_PLACE_NAME
-          FROM GAME
-         WHERE 1=1
-           AND GAME_SEQ IN ( SELECT GAME_SEQ
-                               FROM GAME_JOIN_TEAM
-                              WHERE TEAM_SEQ = #{teamSeq} )
+    <select id="findPagingGamesByTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.myTeam.dto.GameRecordDTO">
+        /* GameRecordManagerRepository.findPagingGamesByTeamSeq */
+        SELECT *
+        FROM (
+        /* TODO 페이징 쿼리 개선 - 공통화 */
+            SELECT COUNT(*) OVER() TOTAL_COUNT
+                 , GAME_SEQ
+                 , GAME_RECORD_STATE_CODE
+                 , GAME_TYPE_CODE
+                 , GAME_YMD
+                 , GAME_START_TIME
+                 , GAME_END_TIME
+                 , GAME_PLACE_ADDRESS
+                 , GAME_PLACE_NAME
+              FROM GAME
+             WHERE 1=1
+               AND GAME_SEQ IN (
+                                SELECT GAME_SEQ
+                                  FROM GAME_JOIN_TEAM
+                                 WHERE TEAM_SEQ = #{teamSeq}
+                               )
+        )
+        ORDERS LIMIT #{pagination.rowCount} OFFSET #{pagination.offset}
     </select>
 
     <select id="findGameJoinTeamRecordsByGameSeq" resultType="com.threeNerds.basketballDiary.mvc.myTeam.dto.GameJoinTeamRecordDTO">

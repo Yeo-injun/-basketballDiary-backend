@@ -4,7 +4,9 @@ import com.threeNerds.basketballDiary.file.ImageUploader;
 import com.threeNerds.basketballDiary.interceptor.Auth;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.GetMyTeamsRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.ModifyMyTeamInfoRequest;
+import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.SearchMyTeamGamesRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.GetMyTeamsResponse;
+import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.SearchMyTeamGamesResponse;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getManagers.request.GetManagersRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getManagers.response.GetManagersResponse;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getMyTeamProfile.request.GetMyTeamProfileRequest;
@@ -393,28 +395,24 @@ public class MyTeamController {
      * API052 : 소속팀 게임목록조회
      */
     @GetMapping("/{teamSeq}/games")
-    public ResponseEntity<?> searchMyTeamGames (
-            @SessionAttribute( value = LOGIN_USER ) SessionUser sessionUser,
-            @PathVariable( value = "teamSeq" ) Long teamSeq,
+    public ResponseEntity<SearchMyTeamGamesResponse> searchMyTeamGames (
+            @SessionAttribute( value = LOGIN_USER ) SessionUser sessionUser                     ,
+            @PathVariable( value = "teamSeq" ) Long teamSeq                                     ,
+            @RequestParam( name = "pageNo", defaultValue = "0") Integer pageNo                  ,
             @RequestParam( name = "gameBgngYmd"     , required = false ) String gameBgngYmd     ,
             @RequestParam( name = "gameEndYmd"      , required = false ) String gameEndYmd      ,
             @RequestParam( name = "sidoCode"        , required = false ) String sidoCode        ,
             @RequestParam( name = "gamePlaceName"   , required = false ) String gamePlaceName   ,
-            @RequestParam( name = "gameTypeCode"    , required = false )  String gameTypeCode   ,
+            @RequestParam( name = "gameTypeCode"    , required = false ) String gameTypeCode    ,
             @RequestParam( name = "homeAwayCode"    , required = false ) String homeAwayCode
     ) {
-        GameCondDTO condDTO = new GameCondDTO()
-                                    .userSeq(sessionUser.getUserSeq())
-                                    .teamSeq(teamSeq)
-                                    .gameBgngYmd(gameBgngYmd)
-                                    .gameEndYmd(gameEndYmd)
-                                    .sidoCode(sidoCode)
-                                    .gamePlaceName(gamePlaceName)
-                                    .gameTypeCode(gameTypeCode)
-                                    .homeAwayCode(homeAwayCode);
-
-        List<GameRecordDTO> myTeamGames = gameRecordManagerService.searchMyTeamGames(condDTO);
-        return ResponseEntity.ok(myTeamGames);
+        return ResponseEntity.ok( gameRecordManagerService.searchMyTeamGames( new SearchMyTeamGamesRequest(
+                    sessionUser.getUserSeq()    , teamSeq           , pageNo        ,
+                    gameBgngYmd                 , gameEndYmd        , sidoCode      ,
+                    gamePlaceName               , gameTypeCode      , homeAwayCode
+                )
+            )
+        );
     }
 
 }
