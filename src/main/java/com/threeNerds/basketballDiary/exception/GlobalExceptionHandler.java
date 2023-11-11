@@ -1,6 +1,7 @@
 package com.threeNerds.basketballDiary.exception;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,10 +36,13 @@ public class GlobalExceptionHandler { //extends ResponseEntityExceptionHandler {
      * HttpResponse 메세지를 만들어서 클라이언트에게 Reponse한다.
      */
     @ExceptionHandler(value = { CustomException.class })
-    protected ResponseEntity<ErrorResponse> handleCustomException (CustomException ex)
+    protected ResponseEntity<ErrorResponseV1> handleCustomException (CustomException ex)
     {
         log.error("handleCustomException throw CustomException : {}", ex.getError(),ex);
-        return ErrorResponse.toResponseEntity(ex.getError());
+        int status = ex.getError().getHttpStatus().value();
+        String message = ex.getError().getMessage();
+        return ResponseEntity.status(status).body(getErrorResponseV1(status, message, null));
+//        return ErrorResponse.toResponseEntity(ex.getError());
     }
 
     @ExceptionHandler(value = { NullPointerException.class  })
@@ -52,21 +56,24 @@ public class GlobalExceptionHandler { //extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = { MethodArgumentNotValidException.class })
     protected ResponseEntity<ErrorResponseV1> handleMethodArgumentNotValid ( MethodArgumentNotValidException ex ) {
         int status = HttpStatus.BAD_REQUEST.value();
-        String message = HttpStatus.BAD_REQUEST.getReasonPhrase();
+        String message = HttpStatus.BAD_REQUEST.name();
 
         Map<String,String> validation = new HashMap<>();
         for (FieldError fieldError : ex.getFieldErrors()) {
             validation.put(fieldError.getField(),fieldError.getDefaultMessage());
         }
+        return ResponseEntity.status(status).body(getErrorResponseV1(status, message, validation));
+    }
 
-        ErrorResponseV1 responseError = ErrorResponseV1.builder()
+    private ErrorResponseV1 getErrorResponseV1(int status, String message, Map<String, String> validation) {
+        return ErrorResponseV1.builder()
                 .status(status)
                 .message(message)
                 .validation(validation)
                 .build();
-        return ResponseEntity.status(status).body(responseError);
     }
 
+    //TODO : 삭제예정
     @ExceptionHandler(value = BasketballException.class)
     public ErrorResponseV1 handlerBasketballException(BasketballException ex){
         ErrorType exception = ex.getException();

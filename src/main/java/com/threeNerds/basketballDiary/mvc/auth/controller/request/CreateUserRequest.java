@@ -5,28 +5,29 @@ import lombok.Getter;
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 @Getter
 public class CreateUserRequest {
     /** 아이디 **/
-    @NotEmpty
+    @NotEmpty(message = "userId 는 필수입니다.")
     private String userId;
     /** 패스워드 **/
-    @NotEmpty
+    @NotEmpty(message = "password 는 필수입니다")
     private String password;
     /** 이름 **/
-    @NotEmpty
+    @NotEmpty(message = "name 은 필수입니다")
     private String name;
     /** 이메일 **/
-    @Email
+    @Email(message = "email 은 필수입니다.")
     private String email;
     /** 성별 **/
-    @NotEmpty
+    @NotEmpty(message = "gender 는 필수입니다")
     private String gender;
     /** 생년월일 **/
     private String birthYmd;
     /** 키 **/
-    @NotEmpty
+    @NotNull(message = "height 는 필수입니다.")
     private Double height;
     /** 몸무게 **/
     private Double weight;
