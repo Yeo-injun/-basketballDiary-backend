@@ -9,11 +9,11 @@ import java.util.List;
 @Getter
 public class GetTeamMembersResponse {
 
-    private PagerDTO pager;
+    private PagerDTO pagination;
     private List<MemberDTO> teamMembers;
 
-    public GetTeamMembersResponse(PagerDTO pager, List<MemberDTO> teamMembers) {
-        this.pager = pager;
+    public GetTeamMembersResponse(PagerDTO pagination, List<MemberDTO> teamMembers) {
+        this.pagination = pagination;
         this.teamMembers = teamMembers;
     }
 }

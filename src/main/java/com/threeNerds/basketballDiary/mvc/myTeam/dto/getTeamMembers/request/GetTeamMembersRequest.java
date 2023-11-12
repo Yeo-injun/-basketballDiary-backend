@@ -9,13 +9,8 @@ public class GetTeamMembersRequest {
     private Long teamSeq;
     private PagerDTO pagerDTO;
 
-    public GetTeamMembersRequest(Long teamSeq, PagerDTO pagerDTO) {
-        this.teamSeq = teamSeq;
-        this.pagerDTO = pagerDTO;
-    }
-
     public GetTeamMembersRequest(Long teamSeq, Integer pageNo) {
         this.teamSeq = teamSeq;
-        pagerDTO = new PagerDTO(pageNo);
+        pagerDTO = new PagerDTO(pageNo, 5);
     }
 }
