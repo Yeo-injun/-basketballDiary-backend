@@ -82,8 +82,7 @@ public class TeamService {
         /** 페이징DTO에 조회 결과 세팅 */
         if(teamSearchResults.isEmpty()) {
             pager.setPagingData(0);
-//            return new PaginatedTeamDTO(pager, Collections.emptyList());
-            throw new TeamNotFound();
+            return new PaginatedTeamDTO(pager, Collections.emptyList());
         }
         pager.setPagingData(teamSearchResults.get(0).getTotalCount());
 
