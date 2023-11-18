@@ -1,15 +1,14 @@
 package com.threeNerds.basketballDiary.mvc.team.service;
 
-import com.threeNerds.basketballDiary.exception.custom.TeamNotFound;
 import com.threeNerds.basketballDiary.file.ImageUploader;
 import com.threeNerds.basketballDiary.file.Uploader;
 import com.threeNerds.basketballDiary.mvc.team.controller.request.RegisterTeamRequest;
+import com.threeNerds.basketballDiary.mvc.team.controller.response.SearchTeamsResponse;
 import com.threeNerds.basketballDiary.mvc.team.domain.Team;
 import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember;
 import com.threeNerds.basketballDiary.mvc.team.domain.TeamRegularExercise;
 import com.threeNerds.basketballDiary.mvc.user.domain.User;
 import com.threeNerds.basketballDiary.mvc.team.dto.TeamAuthDTO;
-import com.threeNerds.basketballDiary.pagination.PaginatedTeamDTO;
 import com.threeNerds.basketballDiary.mvc.team.dto.SearchTeamDTO;
 import com.threeNerds.basketballDiary.mvc.team.dto.TeamDTO;
 import com.threeNerds.basketballDiary.mvc.team.dto.TeamRegularExerciseDTO;
@@ -62,7 +61,7 @@ public class TeamService {
      * 팀 목록 조회
      * @return List<TeamDTO>
      */
-    public PaginatedTeamDTO searchTeams(SearchTeamDTO searchTeamDTO) {
+    public SearchTeamsResponse searchTeams(SearchTeamDTO searchTeamDTO) {
         log.info("TeamService.searchTeams");
         if ( searchTeamDTO.getStartTime() != null
             && searchTeamDTO.getEndTime() != ""
@@ -82,7 +81,7 @@ public class TeamService {
         /** 페이징DTO에 조회 결과 세팅 */
         if(teamSearchResults.isEmpty()) {
             pager.setPagingData(0);
-            return new PaginatedTeamDTO(pager, Collections.emptyList());
+            return new SearchTeamsResponse(pager, Collections.emptyList());
         }
         pager.setPagingData(teamSearchResults.get(0).getTotalCount());
 
@@ -93,7 +92,7 @@ public class TeamService {
             teamDTO.setParsedTeamRegularExercises(exercises);
         });
 
-        return new PaginatedTeamDTO(pager, teamSearchResults);
+        return new SearchTeamsResponse(pager, teamSearchResults);
     }
 
     /**
