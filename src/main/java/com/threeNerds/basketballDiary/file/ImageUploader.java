@@ -1,5 +1,6 @@
 package com.threeNerds.basketballDiary.file;
 
+import com.threeNerds.basketballDiary.file.exception.NotAllowedExtensionException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -10,12 +11,14 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 
 @Component
 @RequiredArgsConstructor
 public class ImageUploader implements Uploader<ImageUploader.Path> {
 
+    private static String[] allowedExtensions = { "png", "jpeg", "jpg", "gif", "svg" };
     private final PathManager imagePathManager;
 
     @Override
@@ -23,10 +26,18 @@ public class ImageUploader implements Uploader<ImageUploader.Path> {
         if ( null == input ) {
             return ""; // 이미지가 없으면 경로를 ""로 return
         }
+
+        String fileName = input.getOriginalFilename();
+        if ( !isAllowedExtenstion( getFileExtenstion( fileName ) ) ) {
+            throw new NotAllowedExtensionException();
+        }
+
         // TODO 이름 중복 체크
+
         // TODO 최대 사이즈 체크
-        String uploadName = input.getOriginalFilename();
-        File targetFile = new File( imagePathManager.makeDir( getUploadFullPath( path ), PathManager.Type.IMAGE ), uploadName );
+
+
+        File targetFile = new File( imagePathManager.makeDir( getUploadFullPath( path ), PathManager.Type.IMAGE ), fileName );
         try {
             // 이미지 물리적 저장 완료
             input.transferTo( targetFile );
@@ -36,6 +47,31 @@ public class ImageUploader implements Uploader<ImageUploader.Path> {
 
         // 이미지 저장위치 리턴 : URL로
         return imagePathManager.toURL( targetFile, PathManager.Type.IMAGE );
+    }
+
+    /**
+     * 확장자 추출
+     */
+    private String getFileExtenstion( String fileName ) {
+       int extensionSeparatorIdx = fileName.lastIndexOf( "." );
+       boolean hasExtension = extensionSeparatorIdx > 0;
+       if ( hasExtension ) {
+           return fileName.substring( extensionSeparatorIdx + 1 );
+       }
+       return "";
+    }
+
+    /**
+     * 업로드 가능한 파일 확장자
+     */
+    private boolean isAllowedExtenstion( String fileExtension ) {
+        if ( "".equals( fileExtension ) ) {
+            return false;
+        }
+
+        return Stream
+                .of( allowedExtensions )
+                .anyMatch( extension -> extension.equals( fileExtension ) );
     }
 
     /**
