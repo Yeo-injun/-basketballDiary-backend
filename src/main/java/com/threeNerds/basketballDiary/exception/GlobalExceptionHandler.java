@@ -1,5 +1,7 @@
 package com.threeNerds.basketballDiary.exception;
 
+import com.threeNerds.basketballDiary.file.exception.FileException;
+import com.threeNerds.basketballDiary.file.exception.NotAllowedExtensionException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.Response;
 import org.springframework.http.HttpHeaders;
@@ -36,8 +38,7 @@ public class GlobalExceptionHandler { //extends ResponseEntityExceptionHandler {
      * HttpResponse 메세지를 만들어서 클라이언트에게 Reponse한다.
      */
     @ExceptionHandler(value = { CustomException.class })
-    protected ResponseEntity<ErrorResponseV1> handleCustomException (CustomException ex)
-    {
+    protected ResponseEntity<ErrorResponseV1> handleCustomException (CustomException ex) {
         log.error("handleCustomException throw CustomException : {}", ex.getError(),ex);
         int status = ex.getError().getHttpStatus().value();
         String message = ex.getError().getMessage();
@@ -45,9 +46,20 @@ public class GlobalExceptionHandler { //extends ResponseEntityExceptionHandler {
 //        return ErrorResponse.toResponseEntity(ex.getError());
     }
 
+    @ExceptionHandler(value = { FileException.class })
+    protected ResponseEntity<ErrorResponseV1> handleFileException ( FileException ex ) {
+        log.error( "throw FileException" );
+        if ( ex instanceof NotAllowedExtensionException ) {
+            return ResponseEntity.status( 403 ).body(getErrorResponseV1( 403, "업로드 할 수 없는 확장자 입니다.", null));
+        }
+        // TODO 오류 임시 처리
+        int status = 400;
+        String message = "파일 업로드 오류 입니다.";
+        return ResponseEntity.status( status ).body( getErrorResponseV1( status, message, null) );
+    }
+
     @ExceptionHandler(value = { NullPointerException.class  })
-    protected ResponseEntity<ErrorResponse> handleNullPointerException (NullPointerException ex)
-    {
+    protected ResponseEntity<ErrorResponse> handleNullPointerException (NullPointerException ex) {
         log.error("handleCustomException throw CustomException : {}", ex.getMessage(),ex);
         return ErrorResponse.toResponseEntity(Error.INTERNAL_ERROR);
     }
