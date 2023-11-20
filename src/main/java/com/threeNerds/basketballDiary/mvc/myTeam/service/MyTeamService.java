@@ -25,6 +25,7 @@ import com.threeNerds.basketballDiary.mvc.team.repository.TeamRegularExerciseRep
 import com.threeNerds.basketballDiary.mvc.team.repository.TeamRepository;
 import com.threeNerds.basketballDiary.pagination.PagerDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.searchAllTeamMembers.response.SearchAllTeamMembersResponse;
+import com.threeNerds.basketballDiary.pagination.Pagination;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -150,28 +151,25 @@ public class MyTeamService {
      */
     public GetMyTeamsResponse findTeams( GetMyTeamsRequest reqBody ) {
         /** 페이징 정보 세팅 */
-        PagerDTO pager = new PagerDTO( reqBody.getPageNo(), 3 );
+        Pagination pagination = Pagination.of( reqBody.getPageNo(), 3 );
         SearchMyTeamDTO searchTeamParam = new SearchMyTeamDTO()
                                                 .userSeq( reqBody.getUserSeq() )
-                                                .pagerDTO( pager );
+                                                .pagination( pagination );
 
         /** 소속팀 목록 조회 */
         List<MyTeamDTO> myTeams = myTeamRepository.findPagingMyTeams( searchTeamParam );
 
         /** 페이징DTO에 조회 결과 세팅 */
         if ( myTeams.isEmpty()) {
-            pager.setPagingData(0);
-            return new GetMyTeamsResponse( pager, Collections.emptyList() );
+            return new GetMyTeamsResponse( pagination.empty(), Collections.emptyList() );
         }
-        pager.setPagingData( myTeams.get(0).getTotalCount() );
-
         /** 팀들의 정기운동시간 조회 및 세팅 */
         myTeams.forEach( myTeamInfo -> {
             List<TeamRegularExerciseDTO> exercises = teamRegularExerciseRepository.findByTeamSeq( myTeamInfo.getTeamSeq() );
             myTeamInfo.setParsedTeamRegularExercises( exercises );
         });
 
-        return new GetMyTeamsResponse( pager, myTeams );
+        return new GetMyTeamsResponse( pagination.getPages( myTeams.get(0).getTotalCount() ), myTeams );
     }
 
     /**

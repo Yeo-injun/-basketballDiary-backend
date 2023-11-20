@@ -4,10 +4,11 @@ import lombok.Getter;
 
 @Getter
 public class PagerDTO {
-    private static Integer DEFAULT_ROW_COUNT = 10; // TODO 확인하기 static아니어도 가능한지
+    private static final Integer DEFAULT_ROW_COUNT = 10; // TODO 확인하기 static아니어도 가능한지
     private Integer pageNo; // 현재 page 번호
-    private Integer rowCount = DEFAULT_ROW_COUNT; // 한 page에 보여줄 row 수
     private Integer offset; // 시작 row 수
+
+    private Integer rowCount = DEFAULT_ROW_COUNT; // 한 page에 보여줄 row 수
     private Integer totalPageCount; // 총 page 수
     private Integer totalCount; // 총 row 수
 
