@@ -23,7 +23,6 @@ import com.threeNerds.basketballDiary.mvc.team.dto.TeamRegularExerciseDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.repository.MyTeamRepository;
 import com.threeNerds.basketballDiary.mvc.team.repository.TeamRegularExerciseRepository;
 import com.threeNerds.basketballDiary.mvc.team.repository.TeamRepository;
-import com.threeNerds.basketballDiary.pagination.PagerDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.searchAllTeamMembers.response.SearchAllTeamMembersResponse;
 import com.threeNerds.basketballDiary.pagination.Pagination;
 import lombok.RequiredArgsConstructor;

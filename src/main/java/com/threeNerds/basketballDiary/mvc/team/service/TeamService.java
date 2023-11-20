@@ -16,7 +16,6 @@ import com.threeNerds.basketballDiary.mvc.myTeam.repository.TeamMemberRepository
 import com.threeNerds.basketballDiary.mvc.team.repository.TeamRegularExerciseRepository;
 import com.threeNerds.basketballDiary.mvc.team.repository.TeamRepository;
 import com.threeNerds.basketballDiary.mvc.user.repository.UserRepository;
-import com.threeNerds.basketballDiary.pagination.PagerDTO;
 import com.threeNerds.basketballDiary.pagination.Pagination;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
