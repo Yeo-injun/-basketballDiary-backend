@@ -46,7 +46,7 @@
                         AND USER_SEQ = #{userSeq}) A
                 INNER JOIN TEAM B
                    ON A.TEAM_SEQ = B.TEAM_SEQ
-        ) ORDERS LIMIT #{pagerDTO.rowCount} OFFSET #{pagerDTO.offset}
+        ) ORDERS LIMIT #{pagination.rowCount} OFFSET #{pagination.offset}
     </select>
 
     <select id="findProfileByUserSeqAndTeamSeqOld" resultType="com.threeNerds.basketballDiary.mvc.myTeam.dto.MemberDTO">
