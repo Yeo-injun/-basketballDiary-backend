@@ -156,7 +156,7 @@
           AND B.TEAM_SEQ = #{teamSeq}
     </select>
 
-    <select id="findPagingMemberByTeamSeq" parameterType="com.threeNerds.basketballDiary.mvc.myTeam.dto.MemberDTO" resultType="com.threeNerds.basketballDiary.mvc.myTeam.dto.MemberDTO">
+    <select id="findPagingMemberByTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.myTeam.dto.MemberDTO">
         SELECT *
           FROM (
                 SELECT COUNT(*) OVER() TOTAL_COUNT
@@ -187,7 +187,7 @@
                    AND B.TEAM_SEQ = #{teamSeq}
                  ORDER BY B.TEAM_AUTH_CODE DESC, A.NAME
                )
-        ORDERS LIMIT #{pagerDTO.rowCount} OFFSET #{pagerDTO.offset}
+        ORDERS LIMIT #{pagination.rowCount} OFFSET #{pagination.offset}
     </select>
 
 
@@ -229,7 +229,7 @@
             </if>
                  ORDER BY TM.TEAM_AUTH_CODE DESC, U.NAME
               )
-        ORDERS LIMIT #{pagerDTO.rowCount} OFFSET #{pagerDTO.offset}
+        ORDERS LIMIT #{pagination.rowCount} OFFSET #{pagination.offset}
     </select>
 
 </mapper>

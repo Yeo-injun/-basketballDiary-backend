@@ -1,10 +1,13 @@
 package com.threeNerds.basketballDiary.mvc.team.dto;
 
 import com.threeNerds.basketballDiary.pagination.PagerDTO;
+import com.threeNerds.basketballDiary.pagination.Pagination;
 import lombok.Getter;
 
 @Getter
 public class SearchTeamDTO {
+    /* 페이징 처리를 위한 VO */
+    private Pagination pagination;
 
     private Long teamSeq;
     private String teamName;
@@ -15,8 +18,6 @@ public class SearchTeamDTO {
     private String endTime;
     private Integer pageNo;
 
-    /* 페이징 처리를 위한 VO */
-    private PagerDTO pagerDTO;
 
     public SearchTeamDTO teamSeq (Long teamSeq) {
         this.teamSeq = teamSeq;
@@ -58,8 +59,8 @@ public class SearchTeamDTO {
         return this;
     }
 
-    public SearchTeamDTO pagerDTO (PagerDTO pagerDTO) {
-        this.pagerDTO = pagerDTO;
+    public SearchTeamDTO pagination ( Pagination pagination ) {
+        this.pagination = pagination;
         return this;
     }
 }
