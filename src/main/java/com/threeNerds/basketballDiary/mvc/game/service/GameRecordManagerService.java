@@ -38,6 +38,7 @@ import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameCondDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameJoinTeamRecordDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameRecordDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.repository.TeamMemberRepository;
+import com.threeNerds.basketballDiary.pagination.Pagination;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -244,10 +245,11 @@ public class GameRecordManagerService {
          **/
         // 게임참가팀 테이블에서 TEAM_SEQ를 조회
         // TODO homeAwayCode로 게임 목록을 조회하기 +a 검색조건 추가
+        Pagination pagination = Pagination.of( message.getPageNo(), 5 );
         List<GameRecordDTO> games = gameRecordManagerRepository.findPagingGamesByTeamSeq( new GameCondDTO()
                 .userSeq( 		message.getUserSeq() )
                 .teamSeq( 		message.getTeamSeq() )
-                .pagination(    message.getPageNo() )
+                .pagination(    pagination )
                 .gameBgngYmd( 	message.getGameBgngYmd() )
                 .gameEndYmd( 	message.getGameEndYmd() )
                 .sidoCode( 		message.getSidoCode() )
@@ -257,7 +259,7 @@ public class GameRecordManagerService {
         );
 
         if ( games.isEmpty() ) {
-            return new SearchMyTeamGamesResponse( message.getPageNo(), 0, Collections.emptyList() );
+            return new SearchMyTeamGamesResponse( pagination.empty(), Collections.emptyList() );
         }
 
         for (GameRecordDTO gr : games) {
@@ -276,11 +278,7 @@ public class GameRecordManagerService {
                     .awayTeam(awayTeam);
         }
 
-        return new SearchMyTeamGamesResponse(
-                message.getPageNo(),
-                games.get( 0 ).getTotalCount(),
-                games
-        );
+        return new SearchMyTeamGamesResponse( pagination.getPages( games.get( 0 ).getTotalCount() ), games );
     }
 
     // TODO 메소드 쪼개기... 함수명과 다른 처리를 하는 동작이 존재...

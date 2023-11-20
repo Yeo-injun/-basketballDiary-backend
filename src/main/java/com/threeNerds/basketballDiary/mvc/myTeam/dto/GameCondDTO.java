@@ -1,13 +1,14 @@
 package com.threeNerds.basketballDiary.mvc.myTeam.dto;
 
 import com.threeNerds.basketballDiary.pagination.PagerDTO;
+import com.threeNerds.basketballDiary.pagination.Pagination;
 import lombok.Getter;
 
 @Getter
 public class GameCondDTO {
     private Long userSeq;
     private Long teamSeq;
-    private PagerDTO pagination;
+    private Pagination pagination;
     private String gameBgngYmd;
     private String gameEndYmd;
     private String sidoCode;
@@ -25,8 +26,8 @@ public class GameCondDTO {
         return this;
     }
 
-    public GameCondDTO pagination( Integer pageNo ) {
-        this.pagination = new PagerDTO( pageNo, 5 );
+    public GameCondDTO pagination( Pagination pagination ) {
+        this.pagination = pagination;
         return this;
     }
 
