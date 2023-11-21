@@ -23,7 +23,6 @@ import com.threeNerds.basketballDiary.mvc.team.dto.TeamRegularExerciseDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.repository.MyTeamRepository;
 import com.threeNerds.basketballDiary.mvc.team.repository.TeamRegularExerciseRepository;
 import com.threeNerds.basketballDiary.mvc.team.repository.TeamRepository;
-import com.threeNerds.basketballDiary.pagination.PagerDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.searchAllTeamMembers.response.SearchAllTeamMembersResponse;
 import com.threeNerds.basketballDiary.pagination.Pagination;
 import lombok.RequiredArgsConstructor;
@@ -95,53 +94,48 @@ public class MyTeamService {
      * @param
      * @return List<MemberDTO>
      */
-
-    public GetTeamMembersResponse getTeamMembers(GetTeamMembersRequest reqBody ) {
-        PagerDTO pager = reqBody.getPagerDTO();
+    public GetTeamMembersResponse getTeamMembers( GetTeamMembersRequest reqBody ) {
+        Pagination pagination = Pagination.of( reqBody.getPageNo(), 5 );
 
         MemberDTO searchMemebrCond = new MemberDTO()
-                .teamSeq(reqBody.getTeamSeq())
-                .pagerDTO(pager);
+                .teamSeq( reqBody.getTeamSeq() )
+                .pagination( pagination );
 
         // 소속팀은 팀장과 운영진을 제외하므로, 팀원 정보가 존재하지 않더라도 404 처리하지 않는다.
         List<MemberDTO> resultMembers = myTeamRepository.findPagingMemberByTeamSeq(searchMemebrCond);
 
         /** 페이징DTO에 조회 결과 세팅 */
         if(resultMembers.isEmpty()) {
-            pager.setPagingData(0);
-            return new GetTeamMembersResponse(pager, Collections.emptyList());
+            return new GetTeamMembersResponse( pagination.empty(), Collections.emptyList());
         }
-        pager.setPagingData(resultMembers.get(0).getTotalCount());
 
         resultMembers.stream()
                 .map(MemberDTO::setAllCodeName)
                 .collect(Collectors.toList());
 
-        return new GetTeamMembersResponse(pager, resultMembers);
+        return new GetTeamMembersResponse( pagination.getPages( resultMembers.get(0).getTotalCount() ), resultMembers);
     }
 
     public SearchAllTeamMembersResponse searchAllTeamMembers( SearchAllTeamMembersRequest reqBody ) {
-        PagerDTO pager = new PagerDTO( reqBody.getPageNo() );
+        Pagination pagination = Pagination.of( reqBody.getPageNo() );
         MemberDTO searchMemebrCond = new MemberDTO()
-                .teamSeq( reqBody.getTeamSeq() )
-                .pagerDTO( pager )
-                .userName( reqBody.getPlayerName() );
+                                        .teamSeq(       reqBody.getTeamSeq() )
+                                        .pagination(    pagination )
+                                        .userName(      reqBody.getPlayerName() );
 
         List<MemberDTO> resultMembers = myTeamRepository.findAllTeamMemberPaging(searchMemebrCond);
 
         /** 페이징DTO에 조회 결과 세팅 */
         if(resultMembers.isEmpty()) {
-            pager.setPagingData(0);
-            return new SearchAllTeamMembersResponse(pager, Collections.emptyList());
+            return new SearchAllTeamMembersResponse( pagination.empty(), Collections.emptyList());
         }
-        pager.setPagingData(resultMembers.get(0).getTotalCount());
 
         resultMembers.stream()
                 .map(MemberDTO::setAllCodeName)
                 .map( m -> m.setPlayerType(PlayerTypeCode.TEAM_MEMBER))
                 .collect(Collectors.toList());
 
-        return new SearchAllTeamMembersResponse(pager, resultMembers);
+        return new SearchAllTeamMembersResponse( pagination.getPages( resultMembers.get(0).getTotalCount() ), resultMembers );
     }
 
     /**

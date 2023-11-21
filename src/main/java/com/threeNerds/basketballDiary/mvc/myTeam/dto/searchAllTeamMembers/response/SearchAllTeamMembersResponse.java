@@ -1,7 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.myTeam.dto.searchAllTeamMembers.response;
 
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.MemberDTO;
-import com.threeNerds.basketballDiary.pagination.PagerDTO;
+import com.threeNerds.basketballDiary.pagination.Pagination;
 import lombok.Getter;
 
 import java.util.List;
@@ -9,11 +9,11 @@ import java.util.List;
 @Getter
 public class SearchAllTeamMembersResponse {
 
-    private PagerDTO pager;
+    private Pagination pagination;
     private List<MemberDTO> teamMembers;
 
-    public SearchAllTeamMembersResponse(PagerDTO pager, List<MemberDTO> teamMembers) {
-        this.pager = pager;
+    public SearchAllTeamMembersResponse( Pagination pagination, List<MemberDTO> teamMembers ) {
+        this.pagination = pagination;
         this.teamMembers = teamMembers;
     }
 }

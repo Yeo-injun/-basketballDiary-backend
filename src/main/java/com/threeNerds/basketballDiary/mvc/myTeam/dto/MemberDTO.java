@@ -3,7 +3,7 @@ package com.threeNerds.basketballDiary.mvc.myTeam.dto;
 import com.threeNerds.basketballDiary.constant.code.PlayerTypeCode;
 import com.threeNerds.basketballDiary.constant.code.PositionCode;
 import com.threeNerds.basketballDiary.constant.code.TeamAuthCode;
-import com.threeNerds.basketballDiary.pagination.PagerDTO;
+import com.threeNerds.basketballDiary.pagination.Pagination;
 import lombok.Getter;
 
 /**
@@ -16,7 +16,7 @@ public class MemberDTO {
     /* 페이징을 위한 총 row갯수 */
     private Integer totalCount;
     /* 페이징 처리를 위한 VO */
-    private PagerDTO pagerDTO;
+    private Pagination pagination;
 
     /* 선수유형코드 */
     private String playerTypeCode;
@@ -134,13 +134,12 @@ public class MemberDTO {
         this.totGame = totGame;
         return this;
     }
-    public MemberDTO pagerDTO(PagerDTO pagerDTO) {
-        this.pagerDTO = pagerDTO;
+    public MemberDTO pagination( Pagination pagination ) {
+        this.pagination = pagination;
         return this;
     }
 
-    public MemberDTO setAllCodeName()
-    {
+    public MemberDTO setAllCodeName() {
         teamAuthCodeName();
         positionCodeName();
         return this;

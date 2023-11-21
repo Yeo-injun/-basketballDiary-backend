@@ -111,7 +111,7 @@
             </if>
                   GROUP BY A.TEAM_SEQ
                   ORDER BY A.TEAM_NAME
-        ) ORDERS LIMIT #{pagerDTO.rowCount} OFFSET #{pagerDTO.offset}
+        ) ORDERS LIMIT #{pagination.rowCount} OFFSET #{pagination.offset}
     </select>
 
     <delete id="deleteById">
