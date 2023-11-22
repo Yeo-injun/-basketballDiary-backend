@@ -1,18 +1,18 @@
 package com.threeNerds.basketballDiary.exception;
 
+import com.threeNerds.basketballDiary.exception.error.DomainErrorResponse;
+import com.threeNerds.basketballDiary.exception.error.ErrorResponse;
+import com.threeNerds.basketballDiary.exception.error.SystemErrorResponse;
+import com.threeNerds.basketballDiary.exception.error.SystemErrorType;
 import com.threeNerds.basketballDiary.file.exception.FileException;
 import com.threeNerds.basketballDiary.file.exception.NotAllowedExtensionException;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.Response;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,42 +31,36 @@ import java.util.Map;
 public class GlobalExceptionHandler { //extends ResponseEntityExceptionHandler {
 
     /**
-     * @ExceptionHandelr에 value로 할당해준 Exception 클래스가 예외로 던져지면 해당 메소드가 호출된다.
-     *  >> 다른 Exception클래스를 적어주면 해당 클래스가 예외로 던져질때 메소드가 호출됨.
-     * 메소드의 파라미터로 발생한 Exception 객체가 넘어오고
-     * ErrorResponse클래스의 toResponseEntity()메소드를 호출하여
-     * HttpResponse 메세지를 만들어서 클라이언트에게 Reponse한다.
+     * 처리 흐름
+     * 1. Exception 발생
+     * 2. Exception내부에 ErrorMessage정보를 전달받음
+     * 3. 전달받은 Message정보로 ResponseEntity를 만든다.
      */
     @ExceptionHandler(value = { CustomException.class })
-    protected ResponseEntity<ErrorResponseV1> handleCustomException (CustomException ex) {
-        log.error("handleCustomException throw CustomException : {}", ex.getError(),ex);
-        int status = ex.getError().getHttpStatus().value();
-        String message = ex.getError().getMessage();
-        return ResponseEntity.status(status).body(getErrorResponseV1(status, message, null));
-//        return ErrorResponse.toResponseEntity(ex.getError());
+    protected ResponseEntity<ErrorResponse> handleCustomException (CustomException ex ) {
+        log.error( "throw CustomException : {}", ex.getMessage(), ex );
+        return DomainErrorResponse.toEntity( ex.getError() );
     }
 
     @ExceptionHandler(value = { FileException.class })
-    protected ResponseEntity<ErrorResponseV1> handleFileException ( FileException ex ) {
+    protected ResponseEntity<ErrorResponse> handleFileException ( FileException ex ) {
         log.error( "throw FileException" );
         if ( ex instanceof NotAllowedExtensionException ) {
-            return ResponseEntity.status( 403 ).body(getErrorResponseV1( 403, "업로드 할 수 없는 확장자 입니다.", null));
+            return SystemErrorResponse.toEntity( SystemErrorType.NOT_ALLOWED_FILE_EXTENSTION );
         }
-        // TODO 오류 임시 처리
-        int status = 400;
-        String message = "파일 업로드 오류 입니다.";
-        return ResponseEntity.status( status ).body( getErrorResponseV1( status, message, null) );
+        return SystemErrorResponse.toEntity( SystemErrorType.ERROR_IN_PROCESS_FILE );
     }
 
     @ExceptionHandler(value = { NullPointerException.class  })
     protected ResponseEntity<ErrorResponse> handleNullPointerException (NullPointerException ex) {
         log.error("handleCustomException throw CustomException : {}", ex.getMessage(),ex);
-        return ErrorResponse.toResponseEntity(Error.INTERNAL_ERROR);
+        return SystemErrorResponse.toEntity( SystemErrorType.INTERNAL_ERROR );
     }
 
 
     @ExceptionHandler(value = { MethodArgumentNotValidException.class })
     protected ResponseEntity<ErrorResponseV1> handleMethodArgumentNotValid ( MethodArgumentNotValidException ex ) {
+        // TODO BindingException에 대한 에러메세지 처리 구현하기
         int status = HttpStatus.BAD_REQUEST.value();
         String message = HttpStatus.BAD_REQUEST.name();
 

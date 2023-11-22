@@ -2,7 +2,7 @@ package com.threeNerds.basketballDiary.mvc.game.controller;
 
 import com.threeNerds.basketballDiary.constant.code.HomeAwayCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
-import com.threeNerds.basketballDiary.exception.Error;
+import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import com.threeNerds.basketballDiary.http.ResponseJsonBody;
 import com.threeNerds.basketballDiary.interceptor.Auth;
 import com.threeNerds.basketballDiary.mvc.game.dto.confirmGameJoinTeam.request.ConfirmGameJoinTeamRequest;
@@ -39,14 +39,11 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static com.threeNerds.basketballDiary.constant.HttpResponseConst.RESPONSE_CREATED;
 import static com.threeNerds.basketballDiary.constant.HttpResponseConst.RESPONSE_OK;
-import static com.threeNerds.basketballDiary.constant.UserAuthConst.TEAM_MEMBER;
 import static com.threeNerds.basketballDiary.constant.UserAuthConst.USER;
 import static com.threeNerds.basketballDiary.utils.SessionUtil.LOGIN_USER;
 
@@ -256,10 +253,10 @@ public class GameController {
             @PathVariable(name = "quarterCode") String quarterCode
     ) {
         if(ObjectUtils.isEmpty(gameSeq))
-            throw new CustomException(Error.NO_PARAMETER);
+            throw new CustomException(DomainErrorType.NO_PARAMETER);
 
         if(ObjectUtils.isEmpty(quarterCode) || !StringUtils.hasText(quarterCode))
-            throw new CustomException(Error.NO_PARAMETER);
+            throw new CustomException(DomainErrorType.NO_PARAMETER);
 
         GetGameQuarterRecordsRequest reqBody = new GetGameQuarterRecordsRequest()
                 .gameSeq(gameSeq)

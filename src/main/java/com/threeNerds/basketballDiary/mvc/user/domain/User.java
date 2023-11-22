@@ -1,7 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.user.domain;
 
 import com.threeNerds.basketballDiary.exception.CustomException;
-import com.threeNerds.basketballDiary.exception.Error;
+import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import com.threeNerds.basketballDiary.mvc.auth.controller.request.CreateUserRequest;
 import com.threeNerds.basketballDiary.utils.EncryptUtil;
 import lombok.AllArgsConstructor;
@@ -77,7 +77,7 @@ public class User {
     public boolean isAuthUser (String userId, String plainPassword){
         /** 평문비밀번호 null체크 */
         if (plainPassword == null || plainPassword.isEmpty()) {
-            throw new CustomException(Error.NO_EXIST_PASSWORD);
+            throw new CustomException(DomainErrorType.NO_EXIST_PASSWORD);
         }
 
         /** 비밀번호 암호화 : 평문비밀번호 + userId로 */
@@ -86,7 +86,7 @@ public class User {
 
         boolean isNotCorrectPassword = !this.password.equals(cryptPassword);
         if (isNotCorrectPassword) {
-            throw new CustomException(Error.INCORRECT_PASSWORD);
+            throw new CustomException(DomainErrorType.INCORRECT_PASSWORD);
         }
         return true;
     }

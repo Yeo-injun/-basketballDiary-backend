@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.threeNerds.basketballDiary.exception.Error.*;
+import static com.threeNerds.basketballDiary.exception.error.DomainErrorType.*;
 
 /**
  * 사용자가 팀의 구성원으로서 관련된 업무를 수행하기 위한 Service

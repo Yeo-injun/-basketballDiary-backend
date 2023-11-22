@@ -3,6 +3,7 @@ package com.threeNerds.basketballDiary.exception;
 import com.threeNerds.basketballDiary.exception.custom.MemberNotFound;
 import com.threeNerds.basketballDiary.exception.custom.TeamNotFound;
 import lombok.Getter;
+import org.springframework.http.ResponseEntity;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -34,5 +35,10 @@ public enum ErrorType {
 
     public static ErrorType from(Class<? extends BasketballException> ex){
         return codeMap.get(ex);
+    }
+
+    public static interface ErrorResponse {
+
+        ResponseEntity toEntity(javax.lang.model.type.ErrorType errorType );
     }
 }

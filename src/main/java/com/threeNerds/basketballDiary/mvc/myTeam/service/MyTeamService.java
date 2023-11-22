@@ -2,7 +2,7 @@ package com.threeNerds.basketballDiary.mvc.myTeam.service;
 
 import com.threeNerds.basketballDiary.constant.code.PlayerTypeCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
-import com.threeNerds.basketballDiary.exception.Error;
+import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import com.threeNerds.basketballDiary.file.ImageUploader;
 import com.threeNerds.basketballDiary.file.Uploader;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.GetMyTeamsRequest;
@@ -211,7 +211,7 @@ public class MyTeamService {
 
         /** 1. 팀정보 수정 - 존재여부 검증 > 이미지 존재여부 확인 및 업로드 > 데이터 수정 */
         Team team = Optional.ofNullable(teamRepository.findByTeamSeq(teamSeq))
-                .orElseThrow(() -> new CustomException(Error.MY_TEAM_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(DomainErrorType.MY_TEAM_NOT_FOUND));
 
         /** 이미지 업로드 */
         String imageUploadPath = imageUploader.upload( ImageUploader.Path.TEAM_LOGO, teamLogo );
@@ -295,7 +295,7 @@ public class MyTeamService {
 
         // 1. 소속팀이 존재하는지 체크
         Optional.ofNullable(teamRepository.findByTeamSeq(teamSeq))
-                .orElseThrow(() -> new CustomException(Error.MY_TEAM_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(DomainErrorType.MY_TEAM_NOT_FOUND));
 
         teamRepository.deleteById(teamSeq);
     }
