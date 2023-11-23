@@ -1,11 +1,13 @@
 package com.threeNerds.basketballDiary.exception.error;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.http.ResponseEntity;
 
 @Getter
 @Builder
+@AllArgsConstructor
 public class DomainErrorResponse implements ErrorResponse {
 
     private final Integer status;   // HTTP상태코드 ( 코드의 상위 도메인 )

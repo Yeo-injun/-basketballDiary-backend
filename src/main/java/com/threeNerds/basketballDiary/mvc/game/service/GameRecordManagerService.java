@@ -430,11 +430,6 @@ public class GameRecordManagerService {
      * @author 강창기
      */
     public List<PlayerInfoDTO> getListTeamMembers(SearchGameDTO searchGameDTO) {
-        if(ObjectUtils.isEmpty(searchGameDTO))
-            throw new CustomException(DomainErrorType.NO_PARAMETER);
-
-        if(ObjectUtils.isEmpty(searchGameDTO.getGameSeq()))
-            throw new CustomException(DomainErrorType.NO_PARAMETER);
 
         List<PlayerInfoDTO> resultDVOList = gameRecordManagerRepository.findTeamMembersByGameSeq(searchGameDTO);
 
