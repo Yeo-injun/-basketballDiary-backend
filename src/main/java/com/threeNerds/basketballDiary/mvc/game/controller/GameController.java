@@ -252,12 +252,6 @@ public class GameController {
             @PathVariable(name = "gameSeq") Long gameSeq,
             @PathVariable(name = "quarterCode") String quarterCode
     ) {
-        if(ObjectUtils.isEmpty(gameSeq))
-            throw new CustomException(DomainErrorType.NO_PARAMETER);
-
-        if(ObjectUtils.isEmpty(quarterCode) || !StringUtils.hasText(quarterCode))
-            throw new CustomException(DomainErrorType.NO_PARAMETER);
-
         GetGameQuarterRecordsRequest reqBody = new GetGameQuarterRecordsRequest()
                 .gameSeq(gameSeq)
                 .quarterCode(quarterCode);
