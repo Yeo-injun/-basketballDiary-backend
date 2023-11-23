@@ -1,16 +1,16 @@
 package com.threeNerds.basketballDiary.exception;
 
-import com.threeNerds.basketballDiary.exception.error.DomainErrorResponse;
-import com.threeNerds.basketballDiary.exception.error.ErrorResponse;
-import com.threeNerds.basketballDiary.exception.error.SystemErrorResponse;
-import com.threeNerds.basketballDiary.exception.error.SystemErrorType;
+import com.threeNerds.basketballDiary.exception.error.*;
 import com.threeNerds.basketballDiary.file.exception.FileException;
 import com.threeNerds.basketballDiary.file.exception.NotAllowedExtensionException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingRequestValueException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -51,33 +51,31 @@ public class GlobalExceptionHandler { //extends ResponseEntityExceptionHandler {
         return SystemErrorResponse.toEntity( SystemErrorType.ERROR_IN_PROCESS_FILE );
     }
 
-    @ExceptionHandler(value = { NullPointerException.class  })
+    @ExceptionHandler(value = { NullPointerException.class, IllegalArgumentException.class })
     protected ResponseEntity<ErrorResponse> handleNullPointerException (NullPointerException ex) {
-        log.error("handleCustomException throw CustomException : {}", ex.getMessage(),ex);
+        log.error( "throw NullPointerException" );
         return SystemErrorResponse.toEntity( SystemErrorType.INTERNAL_ERROR );
     }
 
-
-    @ExceptionHandler(value = { MethodArgumentNotValidException.class })
-    protected ResponseEntity<ErrorResponseV1> handleMethodArgumentNotValid ( MethodArgumentNotValidException ex ) {
-        // TODO BindingException에 대한 에러메세지 처리 구현하기
-        int status = HttpStatus.BAD_REQUEST.value();
-        String message = HttpStatus.BAD_REQUEST.name();
-
-        Map<String,String> validation = new HashMap<>();
-        for (FieldError fieldError : ex.getFieldErrors()) {
-            validation.put(fieldError.getField(),fieldError.getDefaultMessage());
-        }
-        return ResponseEntity.status(status).body(getErrorResponseV1(status, message, validation));
+    @ExceptionHandler(value = { MissingRequestValueException.class })
+    protected ResponseEntity<ErrorResponse> handleMissingParametersException ( MissingRequestValueException ex ) {
+        return SystemErrorResponse.toEntity( SystemErrorType.MISSING_REQUIRED_PARAMETERS ) ;
     }
 
-    private ErrorResponseV1 getErrorResponseV1(int status, String message, Map<String, String> validation) {
-        return ErrorResponseV1.builder()
-                .status(status)
-                .message(message)
-                .validation(validation)
-                .build();
+    /**
+     * Controller에서 메세지 바인딩시 발생하는 오류 ( BindException) 는 이 Handler에서 처리.
+     * ErrorResponse의 기본 속성외에 다음 속성이 추가된다.
+     * - errorFields : 오류건이 존재하는 속성(필드)명 목록. 화면에서 오류가 발생한 항목을 표시할때 사용
+     * - validations : 오류건의 내용 목록. 속성(필드)명과 오류 메세지를 가지고 있는 객체목록을 리턴한다.
+     * @param ex
+     * @return
+     */
+    @ExceptionHandler(value = { BindException.class })
+    protected ResponseEntity<ErrorResponse> handleBindException ( BindException ex ) {
+        log.error( "throw BindException" );
+        return BindErrorResponse.toEntity( new BindErrorType( ex.getFieldErrors() ) );
     }
+
 
     //TODO : 삭제예정
     @ExceptionHandler(value = BasketballException.class)
