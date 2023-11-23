@@ -22,8 +22,6 @@ public enum DomainErrorType implements ErrorMessageType {
     REFRESH_TOKEN_NOT_FOUND(NOT_FOUND, "로그아웃 된 사용자입니다"),
     INCORRECT_PASSWORD(FORBIDDEN,"비밀번호가 일치하지 않습니다"),
     NOT_AVAILABLE_USER_ID( CONFLICT, "동일한 회원ID가 존재합니다."),
-    /** 500 INTERNAL_SERVER_ERROR : null point에러 등 */
-    INTERNAL_ERROR(INTERNAL_SERVER_ERROR, "서버 내부에서 오류가 발생했습니다."),
     // TODO 위의 Error 항목들은 추후 별도 클래스로 이동
 
 
