@@ -37,15 +37,13 @@ public class ImageController {
      * 파일로 저장된 이미지 조회
      * >> /image 이하로 오는 모든 request는 해당 메소드에 매핑됨.
      * >> /image 이하의 url이 이미지 저장경로를 의미
+     * TODO 해당 메소드는 Local용으로 서버에서는 Nginx가 직접 정적자원을 return
      */
     @GetMapping("/**")
     public ResponseEntity<Resource> getImage( HttpServletRequest request ) throws MalformedURLException {
 
         String requestUrl = request.getRequestURI();
-        // TODO 아래 데이터 차이 확인 필요
-        log.info( request.getPathInfo() );
-        log.info( request.getRequestURI() );
-        log.info( request.getRequestURL().toString() );
+        log.info( "Target IMAGE URL : {}", request.getRequestURL().toString() );
         String imageSaveUrl = requestUrl.replace( "/image", "" );
         return ResponseEntity.ok( provider.provide( imageSaveUrl ) );
     }
