@@ -36,10 +36,10 @@ public class ImageProvider implements Provider {
     public Resource provide( String saveUrl ) throws MalformedURLException {
         Resource imageResource = new FileSystemResource( imagePathManager.toPath( saveUrl, PathManager.Type.IMAGE ) );
         if ( imageResource.exists() ) {
-            log.info( "Success Get SAVE Image : {}", saveUrl );
+            log.info( "Success Get Saved Image : {}", saveUrl );
             return imageResource;
         }
-        log.info( "Fail Get SAVE Image : {}", saveUrl );
+        log.error( "Fail Get Saved Image : {}", saveUrl );
         throw new NotFoundFileException();
     }
 
