@@ -1,6 +1,6 @@
 package com.threeNerds.basketballDiary.file;
 
-import com.threeNerds.basketballDiary.file.exception.NotAllowedExtensionException;
+import com.threeNerds.basketballDiary.file.exception.NotAllowedFileExtensionException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -29,7 +29,7 @@ public class ImageUploader implements Uploader<ImageUploader.Path> {
 
         String fileName = input.getOriginalFilename();
         if ( !isAllowedExtenstion( getFileExtenstion( fileName ) ) ) {
-            throw new NotAllowedExtensionException();
+            throw new NotAllowedFileExtensionException();
         }
 
         // TODO 이름 중복 체크
