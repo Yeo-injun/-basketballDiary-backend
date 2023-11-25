@@ -2,20 +2,14 @@ package com.threeNerds.basketballDiary.exception;
 
 import com.threeNerds.basketballDiary.exception.error.*;
 import com.threeNerds.basketballDiary.file.exception.FileException;
-import com.threeNerds.basketballDiary.file.exception.NotAllowedExtensionException;
+import com.threeNerds.basketballDiary.file.exception.NotAllowedFileExtensionException;
+import com.threeNerds.basketballDiary.file.exception.NotFoundFileException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestValueException;
-import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 부모 클래스인 ResponseEntityExceptionHandler 내부에서 기본적으로 처리해주는 Exception이 존재 ( MethodArgumentNotValidException 포함 )
@@ -45,8 +39,11 @@ public class GlobalExceptionHandler { //extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = { FileException.class })
     protected ResponseEntity<ErrorResponse> handleFileException ( FileException ex ) {
         log.error( "throw FileException" );
-        if ( ex instanceof NotAllowedExtensionException ) {
+        if ( ex instanceof NotAllowedFileExtensionException ) {
             return SystemErrorResponse.toEntity( SystemErrorType.NOT_ALLOWED_FILE_EXTENSTION );
+        }
+        if ( ex instanceof NotFoundFileException ) {
+            return SystemErrorResponse.toEntity( SystemErrorType.NOT_FOUND_IMAGE_FOR_URL );
         }
         return SystemErrorResponse.toEntity( SystemErrorType.ERROR_IN_PROCESS_FILE );
     }

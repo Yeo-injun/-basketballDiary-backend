@@ -1,5 +1,7 @@
 package com.threeNerds.basketballDiary.file;
 
+import com.threeNerds.basketballDiary.file.exception.FileException;
+import com.threeNerds.basketballDiary.file.exception.NotFoundFileException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.FileSystemResource;
@@ -32,16 +34,13 @@ public class ImageProvider implements Provider {
 
     @Override
     public Resource provide( String saveUrl ) throws MalformedURLException {
-        // TODO 작동방식 확인하기 - 파일이 존재하지 않을 경우 발생하는 에러로그 처리
-        /**
-         * 20231123 22:50:01.190 [http-nio-18080-exec-6] ERROR o.a.c.c.C.[.[.[.[dispatcherServlet] - Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception
-         * java.io.FileNotFoundException: file [D:\image\myTeams\info\20231102\1111.jpg] cannot be resolved in the file system for checking its content length
-         * 	at org.springframework.core.io.FileSystemResource.contentLength(FileSystemResource.java:279)
-         */
-        log.info( "IMAGE SAVE URL : {}", saveUrl );
         Resource imageResource = new FileSystemResource( imagePathManager.toPath( saveUrl, PathManager.Type.IMAGE ) );
-        log.info( "Success Get SAVE Image : {}", saveUrl );
-        return imageResource;
+        if ( imageResource.exists() ) {
+            log.info( "Success Get SAVE Image : {}", saveUrl );
+            return imageResource;
+        }
+        log.info( "Fail Get SAVE Image : {}", saveUrl );
+        throw new NotFoundFileException();
     }
 
 }
