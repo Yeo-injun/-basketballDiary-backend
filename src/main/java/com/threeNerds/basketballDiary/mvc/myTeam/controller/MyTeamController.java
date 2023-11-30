@@ -6,6 +6,7 @@ import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.GetMyTeamsRe
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.ModifyMyTeamInfoRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.SearchMyTeamGamesRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.GetMyTeamsResponse;
+import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.GetTeamInfoResponse;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.SearchMyTeamGamesResponse;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getManagers.request.GetManagersRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getManagers.response.GetManagersResponse;
@@ -343,21 +344,15 @@ public class MyTeamController {
     }
 
     /**
-     * API016 : 소속팀 정보 단건 조회
+     * API016 : 소속팀 정보 조회
      */
     @Auth(GRADE = TEAM_MEMBER)
     @GetMapping("/{teamSeq}/info")
-    public ResponseEntity<MyTeamDTO> searchTeam(
-            @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,
+    public ResponseEntity<GetTeamInfoResponse> getTeamInfo(
+            @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession,
             @PathVariable(value = "teamSeq") Long teamSeq
     ) {
-        Long userSeq = sessionUser.getUserSeq();
-        FindMyTeamProfileDTO paramDTO = new FindMyTeamProfileDTO()
-                .teamSeq(teamSeq)
-                .userSeq(userSeq);
-        MyTeamDTO myTeam = myTeamService.findTeam(paramDTO);
-
-        return ResponseEntity.ok().body(myTeam);
+        return ResponseEntity.ok().body( myTeamService.getTeamInfo( teamSeq, userSession.getUserSeq() ) );
     }
 
     /**

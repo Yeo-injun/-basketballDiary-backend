@@ -36,7 +36,8 @@ public enum DomainErrorType implements ErrorMessageType {
     REGULAR_EXERCISE_NOT_FOUND(NOT_FOUND, "정기운동 정보가 존재하지 않습니다"),
 
     MANAGER_NOT_FOUND(NOT_FOUND, "운영진 정보가 존재하지 않습니다"),
-    MY_TEAM_NOT_FOUND(NOT_FOUND, "소속팀 정보가 존재하지 않습니다"),
+    NOT_FOUND_ASSIGNED_TEAM(NOT_FOUND, "소속팀 정보가 존재하지 않습니다"),
+
     TEAM_NOT_FOUND(NOT_FOUND, "해당 팀이 존재하지 않습니다."),
 
     NOT_FOUND_GAME(NOT_FOUND,"게임 정보가 존재하지 않습니다."),

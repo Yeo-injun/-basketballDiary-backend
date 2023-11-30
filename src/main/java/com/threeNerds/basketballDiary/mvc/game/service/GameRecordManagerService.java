@@ -384,7 +384,7 @@ public class GameRecordManagerService {
                                         .map( GameJoinTeam::getTeamSeq )
                                         .collect( Collectors.toSet() );
         if ( !isJoinedGameJoinTeamMember( teamSeqSet, gameRecorders ) ) {
-            throw new CustomException(DomainErrorType.MY_TEAM_NOT_FOUND); // TODO 에러메세지 정보 수정
+            throw new CustomException(DomainErrorType.NOT_FOUND_ASSIGNED_TEAM); // TODO 에러메세지 정보 수정
         }
 
         /** 기존 게임 기록권한 목록을 제거한다. - 게임생성자는 삭제대상에서 제외 */
@@ -402,7 +402,7 @@ public class GameRecordManagerService {
                     .build();
             TeamMember teamMember = Optional
                     .ofNullable( teamMemberRepo.findTeamMemberByUserAndTeamSeq( teamMemberParam ) )
-                    .orElseThrow( () -> new CustomException(DomainErrorType.MY_TEAM_NOT_FOUND));
+                    .orElseThrow( () -> new CustomException(DomainErrorType.NOT_FOUND_ASSIGNED_TEAM));
 
             GameRecordAuth newRecorder = GameRecordAuth.createOnlyWriter( gameSeq, teamMember.getTeamMemberSeq() );
             /** TODO 기록자 중복 체크 - GameSeq와 TeamMemberSeq로 조회시 기존 데이터 존재하는지 체크 */

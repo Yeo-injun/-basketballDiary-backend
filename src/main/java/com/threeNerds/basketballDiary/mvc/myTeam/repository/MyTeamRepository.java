@@ -1,9 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.myTeam.repository;
 
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.FindMyTeamProfileDTO;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.MemberDTO;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.MyTeamDTO;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.SearchMyTeamDTO;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.*;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getMyTeamProfile.response.MyTeamProfileDTO;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -13,7 +10,7 @@ import java.util.List;
 public interface MyTeamRepository {
 
     // 소속팀 단건 조회
-    MyTeamDTO findByUserSeqAndTeamSeq(FindMyTeamProfileDTO paramDTO);
+    TeamInfoDTO findByUserSeqAndTeamSeq( FindTeamInfoDTO params );
     // 운영진 목록 리스트 조회
     List<MemberDTO> findAllManagerByTeamSeq(Long teamSeq);
     // 팀원 목록 리스트 조회 TODO 삭제 검토
