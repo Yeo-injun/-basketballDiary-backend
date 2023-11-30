@@ -8,6 +8,8 @@ import com.threeNerds.basketballDiary.file.Uploader;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.GetMyTeamsRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.ModifyMyTeamInfoRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.GetMyTeamsResponse;
+import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.GetTeamInfoResponse;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.*;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getManagers.request.GetManagersRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getManagers.response.GetManagersResponse;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getTeamMembers.request.GetTeamMembersRequest;
@@ -15,10 +17,6 @@ import com.threeNerds.basketballDiary.mvc.myTeam.dto.getTeamMembers.response.Get
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.searchAllTeamMembers.request.SearchAllTeamMembersRequest;
 import com.threeNerds.basketballDiary.mvc.team.domain.Team;
 import com.threeNerds.basketballDiary.mvc.team.domain.TeamRegularExercise;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.FindMyTeamProfileDTO;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.MemberDTO;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.MyTeamDTO;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.SearchMyTeamDTO;
 import com.threeNerds.basketballDiary.mvc.team.dto.TeamRegularExerciseDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.repository.MyTeamRepository;
 import com.threeNerds.basketballDiary.mvc.team.repository.TeamRegularExerciseRepository;
@@ -168,36 +166,22 @@ public class MyTeamService {
 
     /**
      * 소속팀 단건 조회
-     * @param paramDTO
+     * @param teamSeq
+     * @param userSeq
      * @return MyTeamDTO
      */
-    public MyTeamDTO findTeam(FindMyTeamProfileDTO paramDTO) {
+    public GetTeamInfoResponse getTeamInfo( Long teamSeq, Long userSeq ) {
+
         // 소속되지 않은 팀에 대한 조회는 Interceptor에 의해 처리됨.
 
-        MyTeamDTO myTeam = myTeamRepository.findByUserSeqAndTeamSeq(paramDTO);
-        List<TeamRegularExerciseDTO> exercisesDTO
-                = teamRegularExerciseRepository.findByTeamSeq(paramDTO.getTeamSeq());
+        TeamInfoDTO teamInfo = myTeamRepository.findByUserSeqAndTeamSeq( new FindTeamInfoDTO( teamSeq, userSeq ) );
+        boolean assignedTeam = null != teamInfo;
+        if ( !assignedTeam ) {
+            throw new CustomException( DomainErrorType.NOT_FOUND_ASSIGNED_TEAM );
+        }
 
-        /**
-         * Amazon s3로부터 teamImageUrl컬럼을 통해 이미지를 받아와서 MultipartFile로 받아 front로 던져주기.
-         */
-        MultipartFile teamImage = null;
-
-        MyTeamDTO resultDTO = new MyTeamDTO()
-                .teamSeq(myTeam.getTeamSeq())
-                .teamName(myTeam.getTeamName())
-                .teamImagePath(myTeam.getTeamImagePath())
-                .teamImage(teamImage)
-                .hometown(myTeam.getHometown())
-                .sidoCode(myTeam.getSidoCode())
-                .sigunguCode(myTeam.getSigunguCode())
-                .foundationYmd(myTeam.getFoundationYmd())
-                .introduction(myTeam.getIntroduction())
-                .totMember(myTeam.getTotMember())
-                .setParsedTeamRegularExercises(exercisesDTO);
-
-        log.info("teamName = {}", myTeam.getTeamName());
-        return resultDTO;
+        List<TeamRegularExerciseDTO> regularExercises = teamRegularExerciseRepository.findByTeamSeq( teamSeq );
+        return new GetTeamInfoResponse( teamInfo, regularExercises );
     }
 
     /**
@@ -211,7 +195,7 @@ public class MyTeamService {
 
         /** 1. 팀정보 수정 - 존재여부 검증 > 이미지 존재여부 확인 및 업로드 > 데이터 수정 */
         Team team = Optional.ofNullable(teamRepository.findByTeamSeq(teamSeq))
-                .orElseThrow(() -> new CustomException(DomainErrorType.MY_TEAM_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(DomainErrorType.NOT_FOUND_ASSIGNED_TEAM));
 
         /** 이미지 업로드 */
         String imageUploadPath = imageUploader.upload( ImageUploader.Path.TEAM_LOGO, teamLogo );
@@ -295,7 +279,7 @@ public class MyTeamService {
 
         // 1. 소속팀이 존재하는지 체크
         Optional.ofNullable(teamRepository.findByTeamSeq(teamSeq))
-                .orElseThrow(() -> new CustomException(DomainErrorType.MY_TEAM_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(DomainErrorType.NOT_FOUND_ASSIGNED_TEAM));
 
         teamRepository.deleteById(teamSeq);
     }
