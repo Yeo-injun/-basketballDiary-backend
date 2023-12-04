@@ -2,6 +2,12 @@ package com.threeNerds.basketballDiary.mvc.myTeam.controller;
 
 import com.threeNerds.basketballDiary.file.ImageUploader;
 import com.threeNerds.basketballDiary.interceptor.Auth;
+import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.GetMyTeamsRequest;
+import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.ModifyMyTeamInfoRequest;
+import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.SearchMyTeamGamesRequest;
+import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.GetMyTeamsResponse;
+import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.GetTeamInfoResponse;
+import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.SearchMyTeamGamesResponse;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getManagers.request.GetManagersRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getManagers.response.GetManagersResponse;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getMyTeamProfile.request.GetMyTeamProfileRequest;
@@ -14,23 +20,17 @@ import com.threeNerds.basketballDiary.mvc.myTeam.dto.searchAllTeamMembers.reques
 import com.threeNerds.basketballDiary.mvc.team.dto.PlayerDTO;
 import com.threeNerds.basketballDiary.mvc.game.service.GameRecordManagerService;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.*;
-import com.threeNerds.basketballDiary.pagination.PaginatedMyTeamDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.searchAllTeamMembers.response.SearchAllTeamMembersResponse;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.MyTeamService;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.TeamMemberManagerService;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.TeamMemberService;
 import com.threeNerds.basketballDiary.session.SessionUser;
-import com.threeNerds.basketballDiary.utils.SessionUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static com.threeNerds.basketballDiary.constant.UserAuthConst.*;
@@ -116,9 +116,7 @@ public class MyTeamController {
             @RequestParam(name = "pageNo", defaultValue = "0") Integer pageNo,
             @RequestParam(name = "playerName", required = false) String playerName
     ) {
-        log.info("▒▒▒▒▒ API002: MyTeamController.searchMembers");
         SearchAllTeamMembersResponse resBody = myTeamService.searchAllTeamMembers( new SearchAllTeamMembersRequest(teamSeq, pageNo, playerName) );
-
         return ResponseEntity.ok().body(resBody);
     }
 
@@ -279,9 +277,8 @@ public class MyTeamController {
     public ResponseEntity<?> modifyMyTeamsProfile(
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession,
             @PathVariable Long teamSeq,
-//            @ModelAttribute ModifyMyTeamProfileRequest reqBody
-            @RequestParam(required = false) String backNumber,
-            @RequestParam(required = false) MultipartFile imageFile
+            @RequestPart(required = false) String backNumber,
+            @RequestPart(required = false) MultipartFile imageFile
     ) {
         teamMemberService.modifyMyTeamProfile(
             new ModifyMyTeamProfileRequest(
@@ -317,19 +314,15 @@ public class MyTeamController {
      */
     @Auth(GRADE = TEAM_MEMBER)
     @GetMapping
-    public ResponseEntity<PaginatedMyTeamDTO> searchMyTeams(
-            @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,
-            @RequestParam(name = "pageNo", defaultValue = "0") Integer pageNo
+    public ResponseEntity<GetMyTeamsResponse> getMyTeams(
+            @SessionAttribute( value = LOGIN_USER ) SessionUser sessionUser,
+            @RequestParam( name = "pageNo", defaultValue = "0" ) Integer pageNo
     ) {
-        log.info("▒▒▒▒▒ API014: MyTeamController.searchTeams");
-        Long userSeq = SessionUtil.getUserSeq();
+        GetMyTeamsResponse myTeamList = myTeamService.findTeams(
+            new GetMyTeamsRequest( sessionUser.getUserSeq(), pageNo )
+        );
 
-        SearchMyTeamDTO searchMyTeamDTO = new SearchMyTeamDTO()
-                 .pageNo(pageNo)
-                 .userSeq(userSeq);
-        PaginatedMyTeamDTO myTeamList = myTeamService.findTeams(searchMyTeamDTO);
-
-        return ResponseEntity.ok().body(myTeamList);
+        return ResponseEntity.ok().body( myTeamList );
     }
 
     /**
@@ -351,37 +344,30 @@ public class MyTeamController {
     }
 
     /**
-     * API016 : 소속팀 정보 단건 조회
+     * API016 : 소속팀 정보 조회
      */
     @Auth(GRADE = TEAM_MEMBER)
     @GetMapping("/{teamSeq}/info")
-    public ResponseEntity<MyTeamDTO> searchTeam(
-            @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,
+    public ResponseEntity<GetTeamInfoResponse> getTeamInfo(
+            @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession,
             @PathVariable(value = "teamSeq") Long teamSeq
     ) {
-        log.info("▒▒▒▒▒ API016: MyTeamController.searchTeam");
-        Long userSeq = sessionUser.getUserSeq();
-        FindMyTeamProfileDTO paramDTO = new FindMyTeamProfileDTO()
-                .teamSeq(teamSeq)
-                .userSeq(userSeq);
-        MyTeamDTO myTeam = myTeamService.findTeam(paramDTO);
-
-        return ResponseEntity.ok().body(myTeam);
+        return ResponseEntity.ok().body( myTeamService.getTeamInfo( teamSeq, userSession.getUserSeq() ) );
     }
 
     /**
      * API017 : 소속팀 정보 수정
+     * 23.10.28 인준 : 팀 이미지 속성 추가 반영 ( @RequestPart를 적용하여 mulitpart/form 데이터의 객체 바인딩 제공 )
      */
     @Auth(GRADE = MANAGER)
-    @PostMapping("/{teamSeq}/info")
-    public ResponseEntity<?> modifyMyTeam(
-            @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,
-            @PathVariable(value = "teamSeq") Long teamSeq,
-            @RequestBody MyTeamDTO dto
+    @PostMapping( "/{teamSeq}/info" )
+    public ResponseEntity<?> modifyMyTeamInfo(
+            @PathVariable( value = "teamSeq" ) Long teamSeq,
+            @RequestPart( value = "teamLogo", required = false ) MultipartFile teamLogo,
+            @RequestPart( value = "teamInfo", required = false ) ModifyMyTeamInfoRequest teamInfo
     ) {
-        log.info("▒▒▒▒▒ API017: MyTeamController.modifyMyTeam");
-        Long userSeq = sessionUser.getUserSeq();
-        myTeamService.modifyMyTeam(teamSeq, dto);
+
+        myTeamService.modifyMyTeamInfo( new ModifyMyTeamInfoRequest( teamSeq, teamInfo ), teamLogo );
 
         return RESPONSE_OK;
     }
@@ -394,8 +380,7 @@ public class MyTeamController {
     public ResponseEntity<?> removeMyTeam(
             @PathVariable(value = "teamSeq") Long teamSeq
     ) {
-        log.info("▒▒▒▒▒ API018: MyTeamController.removeMyTeam");
-        myTeamService.deleteMyTeam(teamSeq);
+        myTeamService.deleteMyTeam( teamSeq );
 
         // 삭제가 정상적으로 완료된 경우 204 No Content로 응답한다.
         return ResponseEntity.noContent().build();
@@ -405,29 +390,24 @@ public class MyTeamController {
      * API052 : 소속팀 게임목록조회
      */
     @GetMapping("/{teamSeq}/games")
-    public ResponseEntity<?> searchMyTeamGames (
-            @SessionAttribute( value = LOGIN_USER ) SessionUser sessionUser,
-            @PathVariable( value = "teamSeq" ) Long teamSeq,
+    public ResponseEntity<SearchMyTeamGamesResponse> searchMyTeamGames (
+            @SessionAttribute( value = LOGIN_USER ) SessionUser sessionUser                     ,
+            @PathVariable( value = "teamSeq" ) Long teamSeq                                     ,
+            @RequestParam( name = "pageNo", defaultValue = "0") Integer pageNo                  ,
             @RequestParam( name = "gameBgngYmd"     , required = false ) String gameBgngYmd     ,
             @RequestParam( name = "gameEndYmd"      , required = false ) String gameEndYmd      ,
             @RequestParam( name = "sidoCode"        , required = false ) String sidoCode        ,
             @RequestParam( name = "gamePlaceName"   , required = false ) String gamePlaceName   ,
-            @RequestParam( name = "gameTypeCode"    , required = false )  String gameTypeCode   ,
+            @RequestParam( name = "gameTypeCode"    , required = false ) String gameTypeCode    ,
             @RequestParam( name = "homeAwayCode"    , required = false ) String homeAwayCode
     ) {
-        log.info("▒▒▒▒▒ API052: MyTeamController.searchMyTeamGames");
-        GameCondDTO condDTO = new GameCondDTO()
-                                    .userSeq(sessionUser.getUserSeq())
-                                    .teamSeq(teamSeq)
-                                    .gameBgngYmd(gameBgngYmd)
-                                    .gameEndYmd(gameEndYmd)
-                                    .sidoCode(sidoCode)
-                                    .gamePlaceName(gamePlaceName)
-                                    .gameTypeCode(gameTypeCode)
-                                    .homeAwayCode(homeAwayCode);
-
-        List<GameRecordDTO> myTeamGames = gameRecordManagerService.searchMyTeamGames(condDTO);
-        return ResponseEntity.ok(myTeamGames);
+        return ResponseEntity.ok( gameRecordManagerService.searchMyTeamGames( new SearchMyTeamGamesRequest(
+                    sessionUser.getUserSeq()    , teamSeq           , pageNo        ,
+                    gameBgngYmd                 , gameEndYmd        , sidoCode      ,
+                    gamePlaceName               , gameTypeCode      , homeAwayCode
+                )
+            )
+        );
     }
 
 }

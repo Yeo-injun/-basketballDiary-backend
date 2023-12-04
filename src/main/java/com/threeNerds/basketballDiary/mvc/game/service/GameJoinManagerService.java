@@ -5,7 +5,7 @@ import com.threeNerds.basketballDiary.constant.code.GameTypeCode;
 import com.threeNerds.basketballDiary.constant.code.HomeAwayCode;
 import com.threeNerds.basketballDiary.constant.code.PlayerTypeCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
-import com.threeNerds.basketballDiary.exception.Error;
+import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import com.threeNerds.basketballDiary.http.ResponseJsonBody;
 import com.threeNerds.basketballDiary.mvc.game.controller.request.RegisterGameJoinPlayersRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameEntry.response.GetGameEntryResponse;
@@ -34,7 +34,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
@@ -65,7 +64,7 @@ public class GameJoinManagerService {
         /** 어웨이팀 등록 여부 확인 - HOME팀은 Game create단계에서 이미 생성됨 */
         boolean hasAlreadyConfirmAwayTeam = hasGameJoinTeam(gameSeq, HomeAwayCode.AWAY_TEAM);
         if ( hasAlreadyConfirmAwayTeam ) {
-            throw new CustomException(Error.ALREADY_EXIST_JOIN_TEAM);
+            throw new CustomException(DomainErrorType.ALREADY_EXIST_JOIN_TEAM);
         }
 
         /** 게임기록상태코드 변경 - 게임생성(01) >> 게임참가팀확정(02) */
@@ -104,7 +103,7 @@ public class GameJoinManagerService {
         if (GameTypeCode.MATCH_UP_GAME.getCode().equals(gameTypeCode)) {
             Team opponentTeam = Optional
                     .ofNullable(teamRepository.findByTeamSeq(opponentTeamSeq))
-                    .orElseThrow(()-> new CustomException(Error.TEAM_NOT_FOUND));
+                    .orElseThrow(()-> new CustomException(DomainErrorType.TEAM_NOT_FOUND));
             return GameJoinTeam.create(gameSeq, HomeAwayCode.AWAY_TEAM, opponentTeam);
         }
 
@@ -117,8 +116,7 @@ public class GameJoinManagerService {
         return gameJoinManagerRepo.findOpponents(searchCond);
     }
 
-    public Map<HomeAwayCode, GameJoinTeamInfoDTO> getGameJoinTeams(SearchGameJoinTeamDTO searchParam)
-    {
+    public Map<HomeAwayCode, GameJoinTeamInfoDTO> getGameJoinTeams(SearchGameJoinTeamDTO searchParam) {
         List<GameJoinTeamInfoDTO> joinTeams = gameJoinManagerRepo.findGameJoinTeams(searchParam);
 
         Map<HomeAwayCode, GameJoinTeamInfoDTO> joinTeamsMap = new HashMap<>();
@@ -151,18 +149,18 @@ public class GameJoinManagerService {
         GameJoinTeam joinTeamParam = GameJoinTeam.createInqCond( gameSeq, homeAwayCode );
         GameJoinTeam gameJoinTeam = Optional
                                         .ofNullable( gameJoinTeamRepository.findGameJoinTeam( joinTeamParam ) )
-                                        .orElseThrow( () -> new CustomException( Error.NOT_FOUND_GAME_JOIN_TEAM ) );
+                                        .orElseThrow( () -> new CustomException( DomainErrorType.NOT_FOUND_GAME_JOIN_TEAM ) );
         /** 게임기록상태 확인 */
         Game game = gameRepository.findGame( gameSeq );
         if ( !game.isPossibleRecordUpdate() ) {
-            throw new CustomException( Error.CANT_ADD_GAME_JOIN_PLAYER );
+            throw new CustomException( DomainErrorType.CANT_ADD_GAME_JOIN_PLAYER );
         }
 
         /** 해당 게임의 쿼터선수기록 존재여부 확인 - 쿼터기록이 존재할 경우 수정 불가 */
         List<QuarterPlayerRecords> playersRecord = quarterPlayerRecordsRepo.findAllInGame(gameSeq);
         boolean hasPlayerRecord = !playersRecord.isEmpty();
         if (hasPlayerRecord) {
-            throw new CustomException( Error.INVALID_REGISTER_PLAYERS_FOR_ALREADY_HAS_RECORDS );
+            throw new CustomException( DomainErrorType.INVALID_REGISTER_PLAYERS_FOR_ALREADY_HAS_RECORDS );
         }
 
         /** 게임참가선수 데이터 존재여부 확인 - 기존 데이터 존재시 삭제 */
@@ -179,7 +177,7 @@ public class GameJoinManagerService {
             String backNumber = player.getBackNumber();
             boolean isDuplicatedBackNumber = !backNumberSet.add(backNumber);
             if (isDuplicatedBackNumber) {
-                throw new CustomException(Error.DUPLICATE_BACK_NUMBER);
+                throw new CustomException(DomainErrorType.DUPLICATE_BACK_NUMBER);
             }
         }
         // TODO 중복된 회원이 있는지 체크하기 - userSeq의 중복이 있는지 stream으로 확인
@@ -284,7 +282,7 @@ public class GameJoinManagerService {
         List<PlayerInfoDTO> entryInput = quarterEntryInfoDTO.getPlayerList();
         boolean hasNotValidEntry = entryInput.size() != 5;
         if (hasNotValidEntry) {
-            throw new CustomException(Error.INSUFFICIENT_PLAYERS_ON_ENTRY);
+            throw new CustomException(DomainErrorType.INSUFFICIENT_PLAYERS_ON_ENTRY);
         }
 
         /**--------------------------------

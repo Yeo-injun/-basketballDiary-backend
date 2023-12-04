@@ -4,13 +4,12 @@ import com.threeNerds.basketballDiary.constant.code.GameRecordStateCode;
 import com.threeNerds.basketballDiary.constant.code.GameTypeCode;
 import com.threeNerds.basketballDiary.constant.code.QuarterCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
-import com.threeNerds.basketballDiary.exception.Error;
+import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import com.threeNerds.basketballDiary.mvc.game.dto.GameCreationDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.apache.ibatis.javassist.compiler.CompileError;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -75,12 +74,30 @@ public class Game {
     }
 
     /** 게임기록상태 체크 - 게임기록수정가능한 상태인지 */
+    @Deprecated
     public boolean isPossibleRecordUpdate() {
         // 게임 확정상태일때만 게임기록 수정 불가
         if ( GameRecordStateCode.CONFIRMATION.getCode().equals( this.gameRecordStateCode ) ) {
             return false;
         }
         return true;
+    }
+
+    // 게임이 확정되었는지 상태 체크
+    public boolean isConfirmed() {
+        if ( GameRecordStateCode.CONFIRMATION.getCode().equals( this.gameRecordStateCode ) ) {
+            return true;
+        }
+        return false;
+    }
+
+    // 게임이 수정가능한 상태인지 체크 ( 게임참가팀 확정상태일때만 게임기록 수정 가능 )
+    // cf. 게임 생성 상태에서는 참가팀을 선택해야 함. 게임기록을 할 수 없음
+    public boolean canUpdateRecord() {
+        if ( GameRecordStateCode.JOIN_TEAM_CONFIRMATION.getCode().equals( this.gameRecordStateCode ) ) {
+            return true;
+        }
+        return false;
     }
 
     // TODO 에레메세지 재정의 필요
@@ -90,7 +107,7 @@ public class Game {
             case SECOND : return this.quarterTime2;
             case THIRD  : return this.quarterTime3;
             case FOURTH : return this.quarterTime4;
-        default     : throw new CustomException( Error.INVALID_PARAMETER );
+        default     : throw new CustomException( DomainErrorType.INVALID_PARAMETER );
         }
     }
 
@@ -102,7 +119,7 @@ public class Game {
             case SECOND : this.quarterTime2 = quarterTime; break;
             case THIRD  : this.quarterTime3 = quarterTime; break;
             case FOURTH : this.quarterTime4 = quarterTime; break;
-            default     : throw new CustomException( Error.INVALID_PARAMETER );
+            default     : throw new CustomException( DomainErrorType.INVALID_PARAMETER );
         }
     }
 }

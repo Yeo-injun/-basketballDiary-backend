@@ -2,7 +2,14 @@ package com.threeNerds.basketballDiary.mvc.myTeam.service;
 
 import com.threeNerds.basketballDiary.constant.code.PlayerTypeCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
-import com.threeNerds.basketballDiary.exception.Error;
+import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
+import com.threeNerds.basketballDiary.file.ImageUploader;
+import com.threeNerds.basketballDiary.file.Uploader;
+import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.GetMyTeamsRequest;
+import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.ModifyMyTeamInfoRequest;
+import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.GetMyTeamsResponse;
+import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.GetTeamInfoResponse;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.*;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getManagers.request.GetManagersRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getManagers.response.GetManagersResponse;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getTeamMembers.request.GetTeamMembersRequest;
@@ -10,17 +17,12 @@ import com.threeNerds.basketballDiary.mvc.myTeam.dto.getTeamMembers.response.Get
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.searchAllTeamMembers.request.SearchAllTeamMembersRequest;
 import com.threeNerds.basketballDiary.mvc.team.domain.Team;
 import com.threeNerds.basketballDiary.mvc.team.domain.TeamRegularExercise;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.FindMyTeamProfileDTO;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.MemberDTO;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.MyTeamDTO;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.SearchMyTeamDTO;
-import com.threeNerds.basketballDiary.pagination.PaginatedMyTeamDTO;
 import com.threeNerds.basketballDiary.mvc.team.dto.TeamRegularExerciseDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.repository.MyTeamRepository;
 import com.threeNerds.basketballDiary.mvc.team.repository.TeamRegularExerciseRepository;
 import com.threeNerds.basketballDiary.mvc.team.repository.TeamRepository;
-import com.threeNerds.basketballDiary.pagination.PagerDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.searchAllTeamMembers.response.SearchAllTeamMembersResponse;
+import com.threeNerds.basketballDiary.pagination.Pagination;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -53,6 +55,14 @@ import java.util.stream.Collectors;
 @Transactional
 public class MyTeamService {
 
+    /**------------------------------------
+     * Components
+     *-------------------------------------*/
+    private final Uploader imageUploader;
+
+    /**------------------------------------
+     * Repository
+     *-------------------------------------*/
     private final MyTeamRepository myTeamRepository;
     private final TeamRepository teamRepository;
     private final TeamRegularExerciseRepository teamRegularExerciseRepository;
@@ -82,137 +92,119 @@ public class MyTeamService {
      * @param
      * @return List<MemberDTO>
      */
-
-    public GetTeamMembersResponse getTeamMembers(GetTeamMembersRequest reqBody ) {
-        PagerDTO pager = reqBody.getPagerDTO();
+    public GetTeamMembersResponse getTeamMembers( GetTeamMembersRequest reqBody ) {
+        Pagination pagination = Pagination.of( reqBody.getPageNo(), 5 );
 
         MemberDTO searchMemebrCond = new MemberDTO()
-                .teamSeq(reqBody.getTeamSeq())
-                .pagerDTO(pager);
+                .teamSeq( reqBody.getTeamSeq() )
+                .pagination( pagination );
 
         // 소속팀은 팀장과 운영진을 제외하므로, 팀원 정보가 존재하지 않더라도 404 처리하지 않는다.
         List<MemberDTO> resultMembers = myTeamRepository.findPagingMemberByTeamSeq(searchMemebrCond);
 
         /** 페이징DTO에 조회 결과 세팅 */
         if(resultMembers.isEmpty()) {
-            pager.setPagingData(0);
-            return new GetTeamMembersResponse(pager, Collections.emptyList());
+            return new GetTeamMembersResponse( pagination.empty(), Collections.emptyList());
         }
-        pager.setPagingData(resultMembers.get(0).getTotalCount());
 
         resultMembers.stream()
                 .map(MemberDTO::setAllCodeName)
                 .collect(Collectors.toList());
 
-        return new GetTeamMembersResponse(pager, resultMembers);
+        return new GetTeamMembersResponse( pagination.getPages( resultMembers.get(0).getTotalCount() ), resultMembers);
     }
 
     public SearchAllTeamMembersResponse searchAllTeamMembers( SearchAllTeamMembersRequest reqBody ) {
-        PagerDTO pager = new PagerDTO( reqBody.getPageNo() );
+        Pagination pagination = Pagination.of( reqBody.getPageNo() );
         MemberDTO searchMemebrCond = new MemberDTO()
-                .teamSeq( reqBody.getTeamSeq() )
-                .pagerDTO( pager )
-                .userName( reqBody.getPlayerName() );
+                                        .teamSeq(       reqBody.getTeamSeq() )
+                                        .pagination(    pagination )
+                                        .userName(      reqBody.getPlayerName() );
 
         List<MemberDTO> resultMembers = myTeamRepository.findAllTeamMemberPaging(searchMemebrCond);
 
         /** 페이징DTO에 조회 결과 세팅 */
         if(resultMembers.isEmpty()) {
-            pager.setPagingData(0);
-            return new SearchAllTeamMembersResponse(pager, Collections.emptyList());
+            return new SearchAllTeamMembersResponse( pagination.empty(), Collections.emptyList());
         }
-        pager.setPagingData(resultMembers.get(0).getTotalCount());
 
         resultMembers.stream()
                 .map(MemberDTO::setAllCodeName)
                 .map( m -> m.setPlayerType(PlayerTypeCode.TEAM_MEMBER))
                 .collect(Collectors.toList());
 
-        return new SearchAllTeamMembersResponse(pager, resultMembers);
+        return new SearchAllTeamMembersResponse( pagination.getPages( resultMembers.get(0).getTotalCount() ), resultMembers );
     }
 
     /**
      * 소속팀 목록 조회
-     * @param searchMyTeamDTO
+     * @param reqBody
      * @return List<MyTeamDTO>
      */
-    public PaginatedMyTeamDTO findTeams(SearchMyTeamDTO searchMyTeamDTO)
-    {
+    public GetMyTeamsResponse findTeams( GetMyTeamsRequest reqBody ) {
         /** 페이징 정보 세팅 */
-        PagerDTO pager = new PagerDTO(searchMyTeamDTO.getPageNo(), 3);
-        searchMyTeamDTO.pagerDTO(pager);
+        Pagination pagination = Pagination.of( reqBody.getPageNo(), 3 );
+        SearchMyTeamDTO searchTeamParam = new SearchMyTeamDTO()
+                                                .userSeq( reqBody.getUserSeq() )
+                                                .pagination( pagination );
 
         /** 소속팀 목록 조회 */
-        List<MyTeamDTO> myTeamSearchResults = myTeamRepository.findPagingMyTeams(searchMyTeamDTO);
+        List<MyTeamDTO> myTeams = myTeamRepository.findPagingMyTeams( searchTeamParam );
 
         /** 페이징DTO에 조회 결과 세팅 */
-        if (myTeamSearchResults.isEmpty())
-        {
-            pager.setPagingData(0);
-            return new PaginatedMyTeamDTO(pager, Collections.emptyList());
+        if ( myTeams.isEmpty()) {
+            return new GetMyTeamsResponse( pagination.empty(), Collections.emptyList() );
         }
-        pager.setPagingData(myTeamSearchResults.get(0).getTotalCount());
-
         /** 팀들의 정기운동시간 조회 및 세팅 */
-        myTeamSearchResults.forEach(myTeamInfo -> {
-            Long teamSeq = myTeamInfo.getTeamSeq();
-            List<TeamRegularExerciseDTO> exercises = teamRegularExerciseRepository.findByTeamSeq(teamSeq);
-            myTeamInfo.setParsedTeamRegularExercises(exercises);
+        myTeams.forEach( myTeamInfo -> {
+            List<TeamRegularExerciseDTO> exercises = teamRegularExerciseRepository.findByTeamSeq( myTeamInfo.getTeamSeq() );
+            myTeamInfo.setParsedTeamRegularExercises( exercises );
         });
 
-        return new PaginatedMyTeamDTO(pager, myTeamSearchResults);
+        return new GetMyTeamsResponse( pagination.getPages( myTeams.get(0).getTotalCount() ), myTeams );
     }
 
     /**
      * 소속팀 단건 조회
-     * @param paramDTO
+     * @param teamSeq
+     * @param userSeq
      * @return MyTeamDTO
      */
-    public MyTeamDTO findTeam(FindMyTeamProfileDTO paramDTO) {
+    public GetTeamInfoResponse getTeamInfo( Long teamSeq, Long userSeq ) {
+
         // 소속되지 않은 팀에 대한 조회는 Interceptor에 의해 처리됨.
 
-        MyTeamDTO myTeam = myTeamRepository.findByUserSeqAndTeamSeq(paramDTO);
-        List<TeamRegularExerciseDTO> exercisesDTO
-                = teamRegularExerciseRepository.findByTeamSeq(paramDTO.getTeamSeq());
+        TeamInfoDTO teamInfo = myTeamRepository.findByUserSeqAndTeamSeq( new FindTeamInfoDTO( teamSeq, userSeq ) );
+        boolean assignedTeam = null != teamInfo;
+        if ( !assignedTeam ) {
+            throw new CustomException( DomainErrorType.NOT_FOUND_ASSIGNED_TEAM );
+        }
 
-        /**
-         * Amazon s3로부터 teamImageUrl컬럼을 통해 이미지를 받아와서 MultipartFile로 받아 front로 던져주기.
-         */
-        MultipartFile teamImage = null;
-
-        MyTeamDTO resultDTO = new MyTeamDTO()
-                .teamSeq(myTeam.getTeamSeq())
-                .teamName(myTeam.getTeamName())
-                .teamImagePath(myTeam.getTeamImagePath())
-                .teamImage(teamImage)
-                .hometown(myTeam.getHometown())
-                .sidoCode(myTeam.getSidoCode())
-                .sigunguCode(myTeam.getSigunguCode())
-                .foundationYmd(myTeam.getFoundationYmd())
-                .introduction(myTeam.getIntroduction())
-                .totMember(myTeam.getTotMember())
-                .setParsedTeamRegularExercises(exercisesDTO);
-
-        log.info("teamName = {}", myTeam.getTeamName());
-        return resultDTO;
+        List<TeamRegularExerciseDTO> regularExercises = teamRegularExerciseRepository.findByTeamSeq( teamSeq );
+        return new GetTeamInfoResponse( teamInfo, regularExercises );
     }
 
     /**
      * 소속팀 수정
-     * @param teamSeq, dto
+     * @param dto
      */
-    public void modifyMyTeam(Long teamSeq, MyTeamDTO dto) {
+    public void modifyMyTeamInfo( ModifyMyTeamInfoRequest dto, MultipartFile teamLogo ) {
         // TODO 차후 TeamRegularExcerciseDTO로 수정하기. 임시 처리
+        Long teamSeq        = dto.getTeamSeq();
         List<TeamRegularExerciseDTO> paramExerciseList = dto.getTeamRegularExercises();
 
-        /* 1. 팀정보 수정 */
+        /** 1. 팀정보 수정 - 존재여부 검증 > 이미지 존재여부 확인 및 업로드 > 데이터 수정 */
         Team team = Optional.ofNullable(teamRepository.findByTeamSeq(teamSeq))
-                .orElseThrow(() -> new CustomException(Error.MY_TEAM_NOT_FOUND));
-        Team resultTeam = Team.builder()
+                .orElseThrow(() -> new CustomException(DomainErrorType.NOT_FOUND_ASSIGNED_TEAM));
+
+        /** 이미지 업로드 */
+        String imageUploadPath = imageUploader.upload( ImageUploader.Path.TEAM_LOGO, teamLogo );
+
+        teamRepository.updateTeam( Team.builder()
                 .teamSeq(teamSeq)
                 .leaderUserSeq(team.getLeaderUserSeq())
                 .teamName(dto.getTeamName())
-                .teamImagePath(dto.getTeamImagePath())
+                .teamImagePath( "".equals( imageUploadPath ) ? team.getTeamImagePath() : imageUploadPath )
                 .hometown(dto.getHometown())
                 .introduction(dto.getIntroduction())
                 .foundationYmd(dto.getFoundationYmd())
@@ -220,8 +212,7 @@ public class MyTeamService {
                 .updateDate(LocalDate.now(ZoneId.of("Asia/Seoul")))
                 .sidoCode(dto.getSidoCode())
                 .sigunguCode(dto.getSigunguCode())
-                .build();
-        teamRepository.updateTeam(resultTeam);
+                .build() );
 
         /* 2. 정기운동내역 수정 */
         // 실제 db에 저장된 정기운동내역
@@ -288,7 +279,7 @@ public class MyTeamService {
 
         // 1. 소속팀이 존재하는지 체크
         Optional.ofNullable(teamRepository.findByTeamSeq(teamSeq))
-                .orElseThrow(() -> new CustomException(Error.MY_TEAM_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(DomainErrorType.NOT_FOUND_ASSIGNED_TEAM));
 
         teamRepository.deleteById(teamSeq);
     }

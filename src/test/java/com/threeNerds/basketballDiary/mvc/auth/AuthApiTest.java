@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -27,6 +28,28 @@ public class AuthApiTest {
     ObjectMapper objectMapper;
 
     private static final String URL = "/api/user";
+
+    @Test
+    void 회원가입_테스트_valid() throws Exception{
+        //given
+        var request = new CreateUserRequest()
+                .userId("testId")
+                .password("1234")
+                .name("jipdol2")
+                .email("jipdol2@gmail.com")
+                .gender("01");
+        //expected
+        String json = objectMapper.writeValueAsString(request);
+
+        mockMvc.perform(post(URL+"/registration")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+                .andExpect(jsonPath("$.message").value(HttpStatus.BAD_REQUEST.name()))
+                .andExpect(jsonPath("$.validation.height").value("height 는 필수입니다."))
+                .andDo(print());
+    }
 
     @Test
     void 회원가입_테스트() throws Exception {

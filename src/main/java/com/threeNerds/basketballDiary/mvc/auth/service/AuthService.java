@@ -1,10 +1,8 @@
 package com.threeNerds.basketballDiary.mvc.auth.service;
 
 import com.threeNerds.basketballDiary.exception.CustomException;
-import com.threeNerds.basketballDiary.exception.Error;
+import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import com.threeNerds.basketballDiary.mvc.auth.controller.request.CreateUserRequest;
-import com.threeNerds.basketballDiary.mvc.auth.dto.CheckDuplicateUserIdDTO;
-import com.threeNerds.basketballDiary.mvc.auth.dto.CreateUserDTO;
 import com.threeNerds.basketballDiary.mvc.user.domain.User;
 import com.threeNerds.basketballDiary.mvc.team.dto.TeamAuthDTO;
 
@@ -39,26 +37,22 @@ public class AuthService {
     private final UserRepository userRepository;
     private final TeamMemberRepository teamMemberRepository;
 
-    public boolean checkDuplicationUserId(CheckDuplicateUserIdDTO checkUser) {
-        User user = userRepository.findUserByUserId(checkUser.getUserId());
-//        if (user != null) {
-//            throw new CustomException(Error.DUPLICATE_USER_ID);
-//        }
-        return user!=null;
+    public boolean checkDuplicationUserId( String userId ) {
+        return !isUserIdAvailable( userId );
     }
 
-    public void createMember(CreateUserRequest request){
-        validationUserCheck(request);
-
-        User user = User.createForRegistration(request);
-        userRepository.saveUser(user);
-    }
-
-    private void validationUserCheck(CreateUserRequest request) {
-        int cnt = userRepository.validationUserId(request.getUserId());
-        if(cnt>0){
-            throw new CustomException(Error.VALIDATION_USER);
+    public void createMember( CreateUserRequest request ) {
+        if ( isUserIdAvailable( request.getUserId() ) ) {
+            User user = User.createForRegistration( request );
+            userRepository.saveUser( user );
+            return;
         }
+
+        throw new CustomException( DomainErrorType.NOT_AVAILABLE_USER_ID );
+    }
+
+    private boolean isUserIdAvailable( String userId ) {
+        return null == userRepository.findUserByUserId( userId );
     }
 
     // TODO 세션 정보 생성은 controller에서 책임을 가지고 있음. SessionUser는 Service에서 참조할 수 없음
@@ -70,7 +64,7 @@ public class AuthService {
         User findUser = userRepository.findUserByUserId(userId);
 
         if (findUser == null) {
-            throw new CustomException(Error.USER_NOT_FOUND);
+            throw new CustomException(DomainErrorType.USER_NOT_FOUND);
         }
 
         /** 로그인가능여부 체크 */

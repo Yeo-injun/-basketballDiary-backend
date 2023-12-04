@@ -1,7 +1,7 @@
 package com.threeNerds.basketballDiary.constant.code;
 
 import com.threeNerds.basketballDiary.exception.CustomException;
-import com.threeNerds.basketballDiary.exception.Error;
+import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import lombok.Getter;
 
 import java.util.Arrays;
@@ -37,6 +37,6 @@ public enum QuarterCode {
                 .stream( values() )
                 .filter(item -> item.getCode().equals(code))
                 .findFirst()
-                .orElseThrow( () -> new CustomException( Error.INVALID_PARAMETER ) );
+                .orElseThrow( () -> new CustomException( DomainErrorType.INVALID_PARAMETER ) );
     }
 }

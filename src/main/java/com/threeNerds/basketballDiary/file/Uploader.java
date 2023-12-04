@@ -5,8 +5,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.net.URISyntaxException;
 
-public interface Uploader {
+public interface Uploader <T> {
 
-    String upload( String savePath, MultipartFile input );
+    String upload( T savePath, MultipartFile input );
 
 }

@@ -4,7 +4,7 @@ import com.threeNerds.basketballDiary.constant.code.TeamAuthCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.mvc.team.domain.Team;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.CmnMyTeamDTO;
-import com.threeNerds.basketballDiary.exception.Error;
+import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -35,7 +35,7 @@ public class TeamMember {
     public TeamMember toManager()
     {
         if (!TeamAuthCode.TEAM_MEMBER.getCode().equals(this.teamAuthCode)) {
-            throw new CustomException(Error.CANT_APPOINTMENT_MANAGER);
+            throw new CustomException(DomainErrorType.CANT_APPOINTMENT_MANAGER);
         }
         this.teamAuthCode = TeamAuthCode.MANAGER.getCode();
         return this;
@@ -44,7 +44,7 @@ public class TeamMember {
     public TeamMember toMember()
     {
         if (!TeamAuthCode.MANAGER.getCode().equals(this.teamAuthCode)) {
-            throw new CustomException(Error.CANT_DISMISSAL_MANAGER);
+            throw new CustomException(DomainErrorType.CANT_DISMISSAL_MANAGER);
         }
         this.teamAuthCode = TeamAuthCode.TEAM_MEMBER.getCode();
         return this;

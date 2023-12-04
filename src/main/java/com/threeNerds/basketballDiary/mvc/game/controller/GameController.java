@@ -2,7 +2,7 @@ package com.threeNerds.basketballDiary.mvc.game.controller;
 
 import com.threeNerds.basketballDiary.constant.code.HomeAwayCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
-import com.threeNerds.basketballDiary.exception.Error;
+import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import com.threeNerds.basketballDiary.http.ResponseJsonBody;
 import com.threeNerds.basketballDiary.interceptor.Auth;
 import com.threeNerds.basketballDiary.mvc.game.dto.confirmGameJoinTeam.request.ConfirmGameJoinTeamRequest;
@@ -39,14 +39,11 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static com.threeNerds.basketballDiary.constant.HttpResponseConst.RESPONSE_CREATED;
 import static com.threeNerds.basketballDiary.constant.HttpResponseConst.RESPONSE_OK;
-import static com.threeNerds.basketballDiary.constant.UserAuthConst.TEAM_MEMBER;
 import static com.threeNerds.basketballDiary.constant.UserAuthConst.USER;
 import static com.threeNerds.basketballDiary.utils.SessionUtil.LOGIN_USER;
 
@@ -255,12 +252,6 @@ public class GameController {
             @PathVariable(name = "gameSeq") Long gameSeq,
             @PathVariable(name = "quarterCode") String quarterCode
     ) {
-        if(ObjectUtils.isEmpty(gameSeq))
-            throw new CustomException(Error.NO_PARAMETER);
-
-        if(ObjectUtils.isEmpty(quarterCode) || !StringUtils.hasText(quarterCode))
-            throw new CustomException(Error.NO_PARAMETER);
-
         GetGameQuarterRecordsRequest reqBody = new GetGameQuarterRecordsRequest()
                 .gameSeq(gameSeq)
                 .quarterCode(quarterCode);
@@ -278,7 +269,7 @@ public class GameController {
     @PostMapping("/{gameSeq}/confirmation")
     public ResponseEntity<?> confirmGame(
             @PathVariable("gameSeq") Long gameSeq
-    ){
+    ) {
         gameService.confirmGame(gameSeq);
         return RESPONSE_OK;
     }
@@ -451,15 +442,13 @@ public class GameController {
      */
     @Auth(GRADE = USER)  // TODO 게임기록권한자
     @PostMapping("/{gameSeq}/quarters/{quarterCode}")
-    public ResponseEntity<?> createGameQuarterBasicInfo (
+    public ResponseEntity< Void > createGameQuarterBasicInfo (
             @PathVariable(name = "gameSeq") Long gameSeq,
-            @PathVariable(name = "quarterCode") String quarterCode,
-            @RequestBody @Valid CreateGameQuarterBasicInfoRequest request
+            @PathVariable(name = "quarterCode") String quarterCode
     ) {
-        request = new CreateGameQuarterBasicInfoRequest()
-                                    .gameSeq( gameSeq )
-                                    .quarterCode( quarterCode );
-        gameRecordManagerService.createGameQuarterBasicInfo( request );
-        return RESPONSE_OK;
+        gameRecordManagerService.createGameQuarterBasicInfo( new CreateGameQuarterBasicInfoRequest()
+                .gameSeq( gameSeq )
+                .quarterCode( quarterCode ) );
+        return ResponseEntity.ok().build();
     }
 }

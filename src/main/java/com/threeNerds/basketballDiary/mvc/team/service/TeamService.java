@@ -1,12 +1,14 @@
 package com.threeNerds.basketballDiary.mvc.team.service;
 
-import com.threeNerds.basketballDiary.exception.custom.TeamNotFound;
+import com.threeNerds.basketballDiary.file.ImageUploader;
+import com.threeNerds.basketballDiary.file.Uploader;
+import com.threeNerds.basketballDiary.mvc.team.controller.request.RegisterTeamRequest;
+import com.threeNerds.basketballDiary.mvc.team.controller.response.SearchTeamsResponse;
 import com.threeNerds.basketballDiary.mvc.team.domain.Team;
 import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember;
 import com.threeNerds.basketballDiary.mvc.team.domain.TeamRegularExercise;
 import com.threeNerds.basketballDiary.mvc.user.domain.User;
 import com.threeNerds.basketballDiary.mvc.team.dto.TeamAuthDTO;
-import com.threeNerds.basketballDiary.pagination.PaginatedTeamDTO;
 import com.threeNerds.basketballDiary.mvc.team.dto.SearchTeamDTO;
 import com.threeNerds.basketballDiary.mvc.team.dto.TeamDTO;
 import com.threeNerds.basketballDiary.mvc.team.dto.TeamRegularExerciseDTO;
@@ -14,7 +16,7 @@ import com.threeNerds.basketballDiary.mvc.myTeam.repository.TeamMemberRepository
 import com.threeNerds.basketballDiary.mvc.team.repository.TeamRegularExerciseRepository;
 import com.threeNerds.basketballDiary.mvc.team.repository.TeamRepository;
 import com.threeNerds.basketballDiary.mvc.user.repository.UserRepository;
-import com.threeNerds.basketballDiary.pagination.PagerDTO;
+import com.threeNerds.basketballDiary.pagination.Pagination;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -42,6 +44,14 @@ import java.util.Optional;
 @Transactional
 public class TeamService {
 
+    /**------------------------------------
+     * Components
+     *-------------------------------------*/
+    private final Uploader imageUploader;
+
+    /**------------------------------------
+     * Repository
+     *-------------------------------------*/
     private final TeamRepository teamRepository;
     private final TeamRegularExerciseRepository teamRegularExerciseRepository;
     private final TeamMemberRepository teamMemberRepository;
@@ -51,31 +61,27 @@ public class TeamService {
      * 팀 목록 조회
      * @return List<TeamDTO>
      */
-    public PaginatedTeamDTO searchTeams(SearchTeamDTO searchTeamDTO)
-    {
+    public SearchTeamsResponse searchTeams(SearchTeamDTO searchTeamDTO) {
         log.info("TeamService.searchTeams");
-        if (searchTeamDTO.getStartTime() != null
-            && searchTeamDTO.getEndTime() != "")
-        {
+        if ( searchTeamDTO.getStartTime() != null
+            && searchTeamDTO.getEndTime() != ""
+        ) {
             searchTeamDTO
                     .startTime(searchTeamDTO.getStartTime().replace(":", ""))
                     .endTime(searchTeamDTO.getEndTime().replace(":", ""));
         }
 
         /** 페이징 정보 세팅 */
-        PagerDTO pager = new PagerDTO(searchTeamDTO.getPageNo(), 5);
-        searchTeamDTO.pagerDTO(pager);
+        Pagination pagination = Pagination.of( searchTeamDTO.getPageNo(), 5 );
+        searchTeamDTO.pagination( pagination );
 
         /** 팀목록 조회 */
         List<TeamDTO> teamSearchResults = teamRepository.findPagingTeam(searchTeamDTO);
 
         /** 페이징DTO에 조회 결과 세팅 */
         if(teamSearchResults.isEmpty()) {
-            pager.setPagingData(0);
-//            return new PaginatedTeamDTO(pager, Collections.emptyList());
-            throw new TeamNotFound();
+            return new SearchTeamsResponse( pagination.empty(), Collections.emptyList());
         }
-        pager.setPagingData(teamSearchResults.get(0).getTotalCount());
 
         /** 팀들의 정기운동시간 조회 및 세팅 */
         teamSearchResults.forEach(teamDTO -> {
@@ -84,7 +90,7 @@ public class TeamService {
             teamDTO.setParsedTeamRegularExercises(exercises);
         });
 
-        return new PaginatedTeamDTO(pager, teamSearchResults);
+        return new SearchTeamsResponse( pagination.getPages( teamSearchResults.get(0).getTotalCount() ), teamSearchResults);
     }
 
     /**
@@ -92,14 +98,16 @@ public class TeamService {
      * @return Long
      */
     @Transactional
-    public List<TeamAuthDTO> createTeam(TeamDTO teamDTO)
-    {
+    public List<TeamAuthDTO> createTeam( RegisterTeamRequest teamDTO ) {
+
+        String uploadUrl = imageUploader.upload( ImageUploader.Path.TEAM_LOGO, teamDTO.getTeamLogoImage() );
+
         /** 팀정보 저장  - seq생성 */
-        Team newTeam = Team.create(teamDTO);
+        Team newTeam = Team.create( teamDTO, uploadUrl );
         teamRepository.saveTeam(newTeam);
 
         /** 팀장 팀멤버로 등록 */
-        TeamMember newMember = TeamMember.createLeader(newTeam);
+        TeamMember newMember = TeamMember.createLeader( newTeam );
         teamMemberRepository.saveTeamMemeber(newMember);
 
         /** 팀 정기운동 정보 저장 - 없으면 비어있는 리스트로 처리 */

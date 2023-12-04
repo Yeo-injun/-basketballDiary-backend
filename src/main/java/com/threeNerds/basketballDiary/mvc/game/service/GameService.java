@@ -1,7 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.game.service;
 
 import com.threeNerds.basketballDiary.constant.code.GameRecordStateCode;
-import com.threeNerds.basketballDiary.exception.Error;
+import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.mvc.game.domain.Game;
 import com.threeNerds.basketballDiary.mvc.game.domain.GameJoinTeam;
@@ -19,11 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.swing.text.html.Option;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -42,7 +38,7 @@ public class GameService {
         boolean isDeleteGame = gameRepository.deleteGame(gameSeq) > 0;
         if ( !isDeleteGame ) {
             // TODO 임시 에러 던지기 - 삭제할 게임이 없습니다.
-            throw new CustomException(Error.INVALID_PARAMETER);
+            throw new CustomException(DomainErrorType.INVALID_PARAMETER);
         }
         // TODO 게임참가팀, 게임참가선수, 쿼터기록, 게임기록권한 테이블도 다 삭제해줘야 함....
     }
@@ -61,7 +57,7 @@ public class GameService {
                 .build();
 
         TeamMember tm = Optional.ofNullable(teamMemberRepository.findTeamMemberByUserAndTeamSeq(tmParam))
-                .orElseThrow(()-> new CustomException(Error.ONLY_TEAM_MEMBER_HANDLE));
+                .orElseThrow(()-> new CustomException(DomainErrorType.ONLY_TEAM_MEMBER_HANDLE));
         Long teamMemeberSeq = tm.getTeamMemberSeq();
 
         /** 게임 생성 */
@@ -73,7 +69,7 @@ public class GameService {
         /** 게임참가팀 - HOME팀 생성 */
         Team homeTeam = Optional
                                 .ofNullable( teamRepository.findByTeamSeq( teamSeq ) )
-                                .orElseThrow(()-> new CustomException(Error.TEAM_NOT_FOUND));
+                                .orElseThrow(()-> new CustomException(DomainErrorType.TEAM_NOT_FOUND));
         GameJoinTeam homeJoinTeam =  GameJoinTeam.createHomeTeamForSelfGame( newGameSeq, homeTeam );
         gameJoinTeamRepository.saveGameJoinTeam( homeJoinTeam );
 
@@ -95,21 +91,30 @@ public class GameService {
     {
         return Optional
                 .ofNullable(gameRepository.findGameBasicInfo(gameSeq))
-                .orElseThrow(()->new CustomException(Error.NOT_FOUND_GAME));
+                .orElseThrow(()->new CustomException(DomainErrorType.NOT_FOUND_GAME));
     }
 
     /**
      * 22.12.12
      * 게임 확정
      * @author 이성주
+     * - 23.10.26 인준 : 경기상태 변경시 게임기록상태코드 확인해서 exception처리
      */
-    public void confirmGame(Long gameSeq)
-    {
+    public void confirmGame(Long gameSeq) {
+        /** 해당 경기의 게임기록상태코드 확인 */
+        Game game = gameRepository.findGame( gameSeq );
+        if ( game.isConfirmed() ) {
+            throw new CustomException( DomainErrorType.ALREADY_GAME_CONFIRMED );
+        }
+
+        if ( !game.canUpdateRecord() ) {
+            throw new CustomException( DomainErrorType.CANT_UPDATE_GAME_CONFIRMATION );
+        }
+
         /** 게임기록상태코드 변경 - >> 게임확정(03) */
-        Game gameConfirm = Game.builder()
-                .gameSeq(gameSeq)
-                .gameRecordStateCode(GameRecordStateCode.CONFIRMATION.getCode())
-                .build();
-            gameRepository.updateGameRecordState(gameConfirm);
+        gameRepository.updateGameRecordState( Game.builder()
+                .gameSeq(               gameSeq )
+                .gameRecordStateCode(   GameRecordStateCode.CONFIRMATION.getCode() )
+                .build() );
     }
 }

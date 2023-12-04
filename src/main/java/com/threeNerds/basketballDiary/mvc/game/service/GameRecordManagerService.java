@@ -5,7 +5,7 @@ import com.threeNerds.basketballDiary.constant.code.GameRecordStateCode;
 import com.threeNerds.basketballDiary.constant.code.HomeAwayCode;
 import com.threeNerds.basketballDiary.constant.code.QuarterCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
-import com.threeNerds.basketballDiary.exception.Error;
+import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import com.threeNerds.basketballDiary.http.ResponseJsonBody;
 import com.threeNerds.basketballDiary.mvc.game.domain.*;
 
@@ -31,11 +31,14 @@ import com.threeNerds.basketballDiary.mvc.game.dto.saveQuarterRecords.request.Sa
 import com.threeNerds.basketballDiary.mvc.game.dto.saveQuarterRecords.request.SaveQuarterRecordsRequest;
 import com.threeNerds.basketballDiary.mvc.game.repository.*;
 import com.threeNerds.basketballDiary.mvc.game.repository.dto.GameRecordManagerRepository;
+import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.SearchMyTeamGamesRequest;
+import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.SearchMyTeamGamesResponse;
 import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameCondDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameJoinTeamRecordDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameRecordDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.repository.TeamMemberRepository;
+import com.threeNerds.basketballDiary.pagination.Pagination;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -83,7 +86,7 @@ public class GameRecordManagerService {
         // gameSeq에 해당하는 게임내역이 존재하는지 확인.
         boolean isExistGame = !ObjectUtils.isEmpty( gameRepository.findGameBasicInfo( gameSeq ) );
         if( !isExistGame ) {
-            throw new CustomException(Error.NOT_FOUND_GAME);  // 게임 정보가 존재하지 않습니다.
+            throw new CustomException(DomainErrorType.NOT_FOUND_GAME);  // 게임 정보가 존재하지 않습니다.
         }
 
         SearchGameDTO searchPlayerRecordsParam = new SearchGameDTO()
@@ -121,7 +124,7 @@ public class GameRecordManagerService {
         Long gameSeq = reqBody.getGameSeq();
         Game gameInfo = Optional
                             .ofNullable( gameRepository.findGame( gameSeq ) )
-                            .orElseThrow( () -> new CustomException(Error.NOT_FOUND_GAME) );
+                            .orElseThrow( () -> new CustomException(DomainErrorType.NOT_FOUND_GAME) );
 
         String quarterCode = reqBody.getQuarterCode();
         SearchGameDTO gameSearchCond = new SearchGameDTO()
@@ -186,7 +189,7 @@ public class GameRecordManagerService {
     {
         Game game = Optional
                         .ofNullable( gameRepository.findGame( searchGameDTO.getGameSeq() ) )
-                        .orElseThrow( () -> new CustomException(Error.NOT_FOUND_GAME) );
+                        .orElseThrow( () -> new CustomException(DomainErrorType.NOT_FOUND_GAME) );
 
         List<QuarterTeamRecordsDTO> allQuarterRecords = gameRecordManagerRepository.findAllQuarterRecords(searchGameDTO);
         if (allQuarterRecords.isEmpty()) {
@@ -233,8 +236,7 @@ public class GameRecordManagerService {
      * 소속팀의 게임기록조회
      * @author 여인준
      **/
-    public List<GameRecordDTO> searchMyTeamGames(GameCondDTO gc)
-    {
+    public SearchMyTeamGamesResponse searchMyTeamGames( SearchMyTeamGamesRequest message ) {
         /**
          *  1. 소속팀을 기준으로 게임정보 조회 - List<GameRecordDTO>를 받아서 이후 for순회
          *  2. 조회된 게임정보목록을 순회
@@ -242,12 +244,25 @@ public class GameRecordManagerService {
          *  3. 참가팀 조회시 쿼터별기록을 조회해서 GameJoinTeamRecord필드에 할당해주기
          **/
         // 게임참가팀 테이블에서 TEAM_SEQ를 조회
-        // TODO homeAwayCode로 게임 목록을 조회하기
-        // TODO 페이징 처리 구현하기
-        List<GameRecordDTO> games = gameRecordManagerRepository.findGamesByTeamSeq(gc);
+        // TODO homeAwayCode로 게임 목록을 조회하기 +a 검색조건 추가
+        Pagination pagination = Pagination.of( message.getPageNo(), 5 );
+        List<GameRecordDTO> games = gameRecordManagerRepository.findPagingGamesByTeamSeq( new GameCondDTO()
+                .userSeq( 		message.getUserSeq() )
+                .teamSeq( 		message.getTeamSeq() )
+                .pagination(    pagination )
+                .gameBgngYmd( 	message.getGameBgngYmd() )
+                .gameEndYmd( 	message.getGameEndYmd() )
+                .sidoCode( 		message.getSidoCode() )
+                .gamePlaceName( message.getGamePlaceName() )
+                .gameTypeCode( 	message.getGameTypeCode() )
+                .homeAwayCode( 	message.getHomeAwayCode() )
+        );
 
-        for (GameRecordDTO gr : games)
-        {
+        if ( games.isEmpty() ) {
+            return new SearchMyTeamGamesResponse( pagination.empty(), Collections.emptyList() );
+        }
+
+        for (GameRecordDTO gr : games) {
             gr.gameRecordStateCodeName(gr.getGameRecordStateCode());
             gr.gameTypeCodeName(gr.getGameTypeCode());
             if (GameRecordStateCode.CREATION.getCode().equals(gr.getGameRecordStateCode())) {
@@ -263,7 +278,7 @@ public class GameRecordManagerService {
                     .awayTeam(awayTeam);
         }
 
-        return games;
+        return new SearchMyTeamGamesResponse( pagination.getPages( games.get( 0 ).getTotalCount() ), games );
     }
 
     // TODO 메소드 쪼개기... 함수명과 다른 처리를 하는 동작이 존재...
@@ -274,7 +289,7 @@ public class GameRecordManagerService {
                                             .filter(t -> homeAwayCode.getCode().equals(t.getHomeAwayCode()))
                                             .findFirst()
                                             // TODO 에러메세지 동적으로 처리하기 homeAwayCode.getName();
-                                            .orElseThrow(() -> new CustomException(Error.NOT_FOUND_HOME_TEAM));
+                                            .orElseThrow(() -> new CustomException(DomainErrorType.NOT_FOUND_HOME_TEAM));
         joinTeam.homeAwayCodeName(joinTeam.getHomeAwayCode());
 
         /** 참가팀의 기록 조회 */
@@ -363,13 +378,13 @@ public class GameRecordManagerService {
         /** 게임참가팀의 팀원인지 확인 - 게임기록자가 되려면 게임에 참가한 팀의 팀원이어야 한다. */
         List<GameJoinTeam> joinTeams = gameJoinTeamRepo.findAllGameJoinTeam( gameSeq );
         if ( joinTeams.isEmpty() ) {
-            throw new CustomException(Error.TEAM_NOT_FOUND);
+            throw new CustomException(DomainErrorType.TEAM_NOT_FOUND);
         }
         Set<Long> teamSeqSet = joinTeams.stream()
                                         .map( GameJoinTeam::getTeamSeq )
                                         .collect( Collectors.toSet() );
         if ( !isJoinedGameJoinTeamMember( teamSeqSet, gameRecorders ) ) {
-            throw new CustomException(Error.MY_TEAM_NOT_FOUND); // TODO 에러메세지 정보 수정
+            throw new CustomException(DomainErrorType.NOT_FOUND_ASSIGNED_TEAM); // TODO 에러메세지 정보 수정
         }
 
         /** 기존 게임 기록권한 목록을 제거한다. - 게임생성자는 삭제대상에서 제외 */
@@ -387,7 +402,7 @@ public class GameRecordManagerService {
                     .build();
             TeamMember teamMember = Optional
                     .ofNullable( teamMemberRepo.findTeamMemberByUserAndTeamSeq( teamMemberParam ) )
-                    .orElseThrow( () -> new CustomException(Error.MY_TEAM_NOT_FOUND));
+                    .orElseThrow( () -> new CustomException(DomainErrorType.NOT_FOUND_ASSIGNED_TEAM));
 
             GameRecordAuth newRecorder = GameRecordAuth.createOnlyWriter( gameSeq, teamMember.getTeamMemberSeq() );
             /** TODO 기록자 중복 체크 - GameSeq와 TeamMemberSeq로 조회시 기존 데이터 존재하는지 체크 */
@@ -415,11 +430,6 @@ public class GameRecordManagerService {
      * @author 강창기
      */
     public List<PlayerInfoDTO> getListTeamMembers(SearchGameDTO searchGameDTO) {
-        if(ObjectUtils.isEmpty(searchGameDTO))
-            throw new CustomException(Error.NO_PARAMETER);
-
-        if(ObjectUtils.isEmpty(searchGameDTO.getGameSeq()))
-            throw new CustomException(Error.NO_PARAMETER);
 
         List<PlayerInfoDTO> resultDVOList = gameRecordManagerRepository.findTeamMembersByGameSeq(searchGameDTO);
 
@@ -438,27 +448,29 @@ public class GameRecordManagerService {
         Long gameSeq        = request.getGameSeq();
         String quarterCode  = request.getQuarterCode();
 
+        /** 게임기록 수정가능여부 확인 */
+        Game game = gameRepository.findGame( gameSeq );
+        if ( !game.canUpdateRecord() ) {
+            throw new CustomException( DomainErrorType.CANT_ADD_QUARTER_RECORD );
+        }
+
         /** 게임참가팀 지정유무 검증 */
         List<GameJoinTeam> gameJoinTeams = gameJoinTeamRepo.findAllGameJoinTeam( gameSeq );
-        if ( gameJoinTeams.isEmpty() ) {
-            log.debug("Exception구현하기=================================");
-            return;
+        if ( 2 != gameJoinTeams.size() ) {
+            throw new CustomException( DomainErrorType.INSUFFICIENT_GAME_JOIN_TEAMS );
         }
 
         /** 게임참가선수 검증 - 홈팀과 어웨이팀 게임참가선수 각가 5명 이상이어야 한다. */
         List<GameJoinPlayer> gameJoinPlayers = gameJoinPlayerRepo.findAllPlayersOnGame( gameSeq );
         if ( !hasEnoughPlayersOnGame( gameJoinPlayers ) ) {
-            throw new CustomException( Error.INSUFFICIENT_PLAYERS_ON_GAME );
+            throw new CustomException( DomainErrorType.INSUFFICIENT_PLAYERS_ON_GAME );
         }
 
         for ( GameJoinTeam joinTeam : gameJoinTeams ) {
-            QuarterTeamRecords quarterTeamBasicInfo = new QuarterTeamRecords(
-                    gameSeq ,
-                    joinTeam.getHomeAwayCode() ,
-                    joinTeam.getGameJoinTeamSeq() ,
-                    quarterCode
-            );
-            quarterTeamRecordsRepository.save( quarterTeamBasicInfo );
+            quarterTeamRecordsRepository.save( new QuarterTeamRecords(
+                    gameSeq ,                           joinTeam.getHomeAwayCode() ,
+                    joinTeam.getGameJoinTeamSeq() ,     quarterCode
+            ) );
         }
     }
 
@@ -525,7 +537,7 @@ public class GameRecordManagerService {
                 .filter(t -> homeAwayCode.getCode().equals(t.getHomeAwayCode()))
                 .findFirst()
                 // TODO 에러메세지 동적으로 처리하기 homeAwayCode.getName();
-                .orElseThrow(() -> new CustomException(Error.NOT_FOUND_HOME_TEAM));
+                .orElseThrow(() -> new CustomException(DomainErrorType.NOT_FOUND_HOME_TEAM));
     }
 
 

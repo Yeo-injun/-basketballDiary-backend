@@ -1,6 +1,9 @@
 package com.threeNerds.basketballDiary.file;
 
+import com.threeNerds.basketballDiary.file.exception.FileException;
+import com.threeNerds.basketballDiary.file.exception.NotFoundFileException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -22,6 +25,7 @@ import java.net.MalformedURLException;
  *          참고자료 : https://velog.io/@gmtmoney2357/%EC%8A%A4%ED%94%84%EB%A7%81-%EB%B6%80%ED%8A%B8-%ED%8C%8C%EC%9D%BC-%EC%97%85%EB%A1%9C%EB%93%9C-%EB%8B%A4%EC%9A%B4%EB%A1%9C%EB%93%9C-%EC%9D%B4%EB%AF%B8%EC%A7%80-%EB%B3%B4%EC%97%AC%EC%A3%BC%EA%B8%B0
  *
  */
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class ImageProvider implements Provider {
@@ -30,10 +34,13 @@ public class ImageProvider implements Provider {
 
     @Override
     public Resource provide( String saveUrl ) throws MalformedURLException {
-        // TODO 작동방식 확인하기
-        // 로컬 테스트 결과 - 성공
-        // 개발서버 테스트 결과 -
-        return new FileSystemResource( imagePathManager.toPath( saveUrl, PathManager.Type.IMAGE ) );
+        Resource imageResource = new FileSystemResource( imagePathManager.toPath( saveUrl, PathManager.Type.IMAGE ) );
+        if ( imageResource.exists() ) {
+            log.info( "Success Get Saved Image : {}", saveUrl );
+            return imageResource;
+        }
+        log.error( "Fail Get Saved Image : {}", saveUrl );
+        throw new NotFoundFileException();
     }
 
 }

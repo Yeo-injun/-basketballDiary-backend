@@ -10,9 +10,7 @@ import java.util.Map;
 public class ErrorResponseV1 {
 
     private int status;
-
     private String message;
-
     private Map<String,String> validation;
 
     @Builder
