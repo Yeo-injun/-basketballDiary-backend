@@ -36,6 +36,8 @@ dependencies {
 	testImplementation "org.mockito:mockito-core:3.3.3"
 //	SQL 쿼리 로그 출력을 위한 추가 (2022.02.26)
 	implementation group: 'org.bgee.log4jdbc-log4j2', name: 'log4jdbc-log4j2-jdbc4.1', version: '1.16'
+	// JSR 305 스펙 도입 : 어노테이션을 인식하여 코드에서 발생할 수 있는 오류를 미리 예방하고 경고를 표시
+	implementation 'com.google.code.findbugs:jsr305:3.0.2'
 }
 
 test {
