@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Getter
+@Deprecated
 public enum ErrorType {
 
     M001("M001","회원을 찾을 수 없습니다",MemberNotFound.class),

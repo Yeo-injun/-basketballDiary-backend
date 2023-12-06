@@ -21,7 +21,6 @@ import static com.threeNerds.basketballDiary.utils.SessionUtil.LOGIN_USER;
 /**
  * ... 수행하는 Controller
  * @author 책임자 작성
- *
  * issue and history
  * <pre>
  * 2022.02.08 여인준 : 소스코드 생성

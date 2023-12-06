@@ -19,6 +19,18 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
  * 따라서 ResponseEntityExceptionHandler에서 구현한 handleMethodArgumentNotValid() 메소드를 override해서 구현해야 함.
  */
 
+/**
+ * GlobalExceptionHandler 클래스의 역할
+ * - Application에서 발생한 Exception에 따라 ErrorMessage를 만들어서 Response하기
+ * - Exception타입에 따라 ErrorResponse 인터페이스를 구현한 클래스로 Response를 return
+ * - ErrorMessageType 인터페이스를 구현하여 Error에 대한 HTTP상태코드와 에러 메세지를 Exception타입에 전달
+ * - 각 ExceptionHandler에서 Exception으로 전달받은 ErrorMessageType을 이용하여 ErrorResponse을 생성
+ * - 다음은 Exception별 전달가능한 ErrorMessageType클래스와 return하는 ErrorResponse클래스
+ *      1) CustomException( DomainErrorType ) -> DomainErrorResponse
+ *      2) FileException( SystemErrorType ) -> SystemErrorResponse
+ *      3) BindException( BindErrorType ) -> BindErrorResponse
+ *      4) 그외 기타 SpringFramework Exception -> SystemErrorResponse
+ */
 // TODO @RestControllerAdvice에 대한 학습 필요
 @Slf4j
 @RestControllerAdvice
@@ -75,6 +87,7 @@ public class GlobalExceptionHandler { //extends ResponseEntityExceptionHandler {
 
 
     //TODO : 삭제예정
+    @Deprecated
     @ExceptionHandler(value = BasketballException.class)
     public ErrorResponseV1 handlerBasketballException(BasketballException ex){
         ErrorType exception = ex.getException();
