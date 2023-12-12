@@ -23,7 +23,7 @@ import java.util.stream.Stream;
 public class ImageUploader implements Uploader<ImageUploader.Path> {
 
     private static final String[] allowedExtensions = { "png", "jpeg", "jpg", "gif", "svg" };
-    private static final long MAX_SIZE_IN_BYTES = 1024 / 10L;   // 0.5Mb로 반영 ( bytes > Kb > Mb > Gb > Tb ... )
+    private static final long MAX_SIZE_IN_BYTES = 1024 * 1024 * 3 / 2; // 1.5Mb로 반영. yml파일의 Multipart max-size보다 작게 반영 ( bytes > Kb > Mb > Gb > Tb ... )
 
     private final PathManager imagePathManager;
 
