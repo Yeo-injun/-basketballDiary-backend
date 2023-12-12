@@ -2,6 +2,17 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.threeNerds.basketballDiary.mvc.myTeam.repository.TeamMemberRepository">
+    <sql id="AllProperties">
+        TEAM_MEMBER_SEQ
+        , TEAM_SEQ
+        , USER_SEQ
+        , MEMBER_IMAGE_PATH
+        , JOIN_YMD
+        , TEAM_AUTH_CODE
+        , BACK_NUMBER
+        , WITHDRAWAL_YN
+    </sql>
+
     <insert id="saveTeamMemeber" parameterType="com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember">
         INSERT INTO TEAM_MEMBER (
             TEAM_SEQ
@@ -20,17 +31,14 @@
     </insert>
 
     <select id="findTeamMember" resultType="com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember">
-        SELECT TEAM_MEMBER_SEQ
-        , TEAM_SEQ
-        , USER_SEQ
-        , JOIN_YMD
-        , TEAM_AUTH_CODE
-        , BACK_NUMBER
-        FROM TEAM_MEMBER
-        WHERE 1=1
-        AND TEAM_SEQ = #{teamSeq}
-        AND USER_SEQ = #{userSeq}
-        AND WITHDRAWAL_YN = 'N'
+        /* TeamMemberRepository.findTeamMember */
+        SELECT
+        <include refid="AllProperties"/>
+          FROM TEAM_MEMBER
+         WHERE 1=1
+           AND TEAM_SEQ = #{teamSeq}
+           AND USER_SEQ = #{userSeq}
+           AND WITHDRAWAL_YN = 'N'
     </select>
 
     <select id="findByTeamMemberSeq" resultType="com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember">

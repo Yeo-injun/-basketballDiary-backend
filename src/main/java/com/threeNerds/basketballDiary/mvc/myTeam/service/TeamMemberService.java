@@ -83,9 +83,9 @@ public class TeamMemberService {
         String imagePath = imageUploader.upload( ImageUploader.Path.PROFILE_THUMBNAIL, reqBody.getImageFile() );
 
         teamMemberRepository.updateMyTeamProfile( TeamMember.builder()
-                                                    .teamMemberSeq( teamMember.getTeamMemberSeq() )
-                                                    .backNumber( reqBody.getBackNumber() )
-                                                    .memberImagePath( imagePath )
+                                                    .teamMemberSeq(     teamMember.getTeamMemberSeq() )
+                                                    .backNumber(        reqBody.getBackNumber() )
+                                                    .memberImagePath(   "".equals( imagePath ) ? teamMember.getMemberImagePath() : imagePath )
                                                     .build() );
 
         // TODO 기존 이미지를 삭제하는 로직은 별도 배치 만들어서 돌리기 ( 적재하는 API구현하기 )
