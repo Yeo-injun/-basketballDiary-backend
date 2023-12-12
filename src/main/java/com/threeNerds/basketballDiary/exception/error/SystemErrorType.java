@@ -13,6 +13,7 @@ public enum SystemErrorType implements ErrorMessageType {
     /** 400 BAD_REQUEST : 잘못된 요청 */
     NOT_ALLOWED_FILE_EXTENSTION( BAD_REQUEST, "허용되지 않는 파일 확장자입니다." ),
     MISSING_REQUIRED_PARAMETERS( BAD_REQUEST, "필수 파라미터값이 누락되었습니다." ),
+    EXCEED_MAX_FILE_SIZE( BAD_REQUEST, "파일 업로드 최대크기를 초과하였습니다." ),
 
     /** 404 NOT_FOUND : Resource 를 찾을 수 없음 */
     NOT_FOUND_IMAGE_FOR_URL( NOT_FOUND, "해당 URL에 이미지 파일이 존재하지 않습니다."),

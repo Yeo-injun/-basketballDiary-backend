@@ -1,6 +1,7 @@
 package com.threeNerds.basketballDiary.exception;
 
 import com.threeNerds.basketballDiary.exception.error.*;
+import com.threeNerds.basketballDiary.file.exception.ExceedMaxFileSizeException;
 import com.threeNerds.basketballDiary.file.exception.FileException;
 import com.threeNerds.basketballDiary.file.exception.NotAllowedFileExtensionException;
 import com.threeNerds.basketballDiary.file.exception.NotFoundFileException;
@@ -43,7 +44,7 @@ public class GlobalExceptionHandler { //extends ResponseEntityExceptionHandler {
      * 3. 전달받은 Message정보로 ResponseEntity를 만든다.
      */
     @ExceptionHandler(value = { CustomException.class })
-    protected ResponseEntity<ErrorResponse> handleCustomException (CustomException ex ) {
+    protected ResponseEntity<ErrorResponse> handleCustomException ( CustomException ex ) {
         log.error( "throw CustomException : {}", ex.getMessage(), ex );
         return DomainErrorResponse.toEntity( ex.getError() );
     }
@@ -51,11 +52,15 @@ public class GlobalExceptionHandler { //extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = { FileException.class })
     protected ResponseEntity<ErrorResponse> handleFileException ( FileException ex ) {
         log.error( "throw FileException" );
+        // TODO Exception내부에 ErrorMessage를 관리하기 ( Exception 던지는 곳에서 ErrorMessage를 설정하여 해당 메세지를 ErrorResponse로 리턴 )
         if ( ex instanceof NotAllowedFileExtensionException ) {
             return SystemErrorResponse.toEntity( SystemErrorType.NOT_ALLOWED_FILE_EXTENSTION );
         }
         if ( ex instanceof NotFoundFileException ) {
             return SystemErrorResponse.toEntity( SystemErrorType.NOT_FOUND_IMAGE_FOR_URL );
+        }
+        if ( ex instanceof ExceedMaxFileSizeException ) {
+            return SystemErrorResponse.toEntity( SystemErrorType.EXCEED_MAX_FILE_SIZE );
         }
         return SystemErrorResponse.toEntity( SystemErrorType.ERROR_IN_PROCESS_FILE );
     }
