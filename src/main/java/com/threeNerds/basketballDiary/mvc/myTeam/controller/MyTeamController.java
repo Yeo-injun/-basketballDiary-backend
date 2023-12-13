@@ -295,16 +295,15 @@ public class MyTeamController {
     /**
      * API013 소속팀 탈퇴
      */
+    @Auth(GRADE = TEAM_MEMBER)
     @DeleteMapping("/{teamSeq}/profile")
-    public ResponseEntity<?> deleteMyTeamsProfile(
-            @SessionAttribute(value = LOGIN_USER,required = false) SessionUser sessionDTO,
-            @PathVariable Long teamSeq)
-    {
-        Long id = sessionDTO.getUserSeq();
-
+    public ResponseEntity<?> deleteMyTeamProfile(
+            @SessionAttribute(value = LOGIN_USER,required = false) SessionUser userSession,
+            @PathVariable Long teamSeq
+    ) {
         FindMyTeamProfileDTO findMyTeamProfileDTO = new FindMyTeamProfileDTO()
-                .userSeq(id)
-                .teamSeq(teamSeq);
+                                                            .userSeq( userSession.getUserSeq() )
+                                                            .teamSeq( teamSeq );
         teamMemberService.deleteMyTeamProfile(findMyTeamProfileDTO);
         return RESPONSE_OK;
     }
