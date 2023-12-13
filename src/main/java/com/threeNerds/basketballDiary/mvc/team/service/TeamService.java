@@ -108,7 +108,7 @@ public class TeamService {
 
         /** 팀장 팀멤버로 등록 */
         TeamMember newMember = TeamMember.createLeader( newTeam );
-        teamMemberRepository.saveTeamMemeber(newMember);
+        teamMemberRepository.saveTeamMember(newMember);
 
         /** 팀 정기운동 정보 저장 - 없으면 비어있는 리스트로 처리 */
         Long newTeamSeq = newTeam.getTeamSeq();

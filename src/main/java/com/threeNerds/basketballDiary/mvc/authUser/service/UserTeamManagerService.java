@@ -127,7 +127,7 @@ public class UserTeamManagerService {
         /** 팀원 추가 */
         TeamJoinRequest joinInfo = teamJoinRequestRepository.findUserByTeamJoinRequestSeq(loginUserDTO.getTeamJoinRequestSeq());
         TeamMember newTeamMember = TeamMember.create(joinInfo);
-        teamMemberRepository.saveTeamMemeber(newTeamMember);
+        teamMemberRepository.saveTeamMember(newTeamMember);
 
         /** 변경된 권한정보 조회 */
         User user = new User().builder()
