@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Getter
+@Deprecated
 public class ErrorResponseV1 {
 
     private int status;

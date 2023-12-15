@@ -1,8 +1,10 @@
 package com.threeNerds.basketballDiary.file;
 
+import com.threeNerds.basketballDiary.file.exception.ExceedMaxFileSizeException;
 import com.threeNerds.basketballDiary.file.exception.NotAllowedFileExtensionException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,9 +19,12 @@ import java.util.stream.Stream;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class ImageUploader implements Uploader<ImageUploader.Path> {
 
-    private static String[] allowedExtensions = { "png", "jpeg", "jpg", "gif", "svg" };
+    private static final String[] allowedExtensions = { "png", "jpeg", "jpg", "gif", "svg" };
+    private static final long MAX_SIZE_IN_BYTES = 1024 * 1024 * 3 / 2; // 1.5Mb로 반영. yml파일의 Multipart max-size보다 작게 반영 ( bytes > Kb > Mb > Gb > Tb ... )
+
     private final PathManager imagePathManager;
 
     /**
@@ -42,24 +47,26 @@ public class ImageUploader implements Uploader<ImageUploader.Path> {
 
     @Override
     public String upload( Path path, MultipartFile input ) {
-        if ( null == input ) {
+        if ( null == input || input.isEmpty() ) {
             return ""; // 이미지가 없으면 경로를 ""로 return
         }
 
-        String fileName = input.getOriginalFilename();
-        String fileExtension = getFileExtenstion( fileName );
+        String fileExtension = getFileExtenstion( input.getOriginalFilename() );
         if ( !isAllowedExtenstion( fileExtension ) ) {
             throw new NotAllowedFileExtensionException();
         }
 
-        // TODO 최대 사이즈 체크
+        if ( exceedMaxSizeInBytes( input ) ) {
+            throw new ExceedMaxFileSizeException();
+        }
 
         File uploadPath = imagePathManager.makeDir( getUploadPath( path ), PathManager.Type.IMAGE );
         File targetFile = new File( uploadPath, getUniqueFileName( fileExtension ) );
         try {
             // 이미지 물리적 저장
             input.transferTo( targetFile );
-        } catch (IOException e) {
+        } catch ( IOException e ) {
+            log.warn( "[ Fail To Save Image ]" );
             e.printStackTrace();
         }
 
@@ -67,6 +74,12 @@ public class ImageUploader implements Uploader<ImageUploader.Path> {
         return imagePathManager.toURL( targetFile, PathManager.Type.IMAGE );
     }
 
+    /**
+     * image파일의 bytes사이즈가 최대Size를 초과하는지 검사하는 메소드
+     */
+    private boolean exceedMaxSizeInBytes( MultipartFile imageFile ) {
+        return MAX_SIZE_IN_BYTES < imageFile.getSize();
+    }
     /**
      * 확장자 추출
      */

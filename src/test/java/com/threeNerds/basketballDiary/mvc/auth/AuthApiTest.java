@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -45,9 +44,10 @@ public class AuthApiTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-                .andExpect(jsonPath("$.message").value(HttpStatus.BAD_REQUEST.name()))
-                .andExpect(jsonPath("$.validation.height").value("height 는 필수입니다."))
+                .andExpect(jsonPath("$.status").value( 400 ) )
+                .andExpect(jsonPath("$.message").value( "API메세지 규격 오류입니다." ) )
+                .andExpect(jsonPath("$.validations[0].name").value( "height" ) )
+                .andExpect(jsonPath("$.validations[0].message").value( "height 는 필수입니다." ) )
                 .andDo(print());
     }
 
@@ -78,7 +78,7 @@ public class AuthApiTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.isDuplicated").value(true))
                 .andDo(print());
     }
 }

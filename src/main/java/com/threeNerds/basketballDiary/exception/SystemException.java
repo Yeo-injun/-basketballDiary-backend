@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 
 @Getter
 @AllArgsConstructor
+@Deprecated
 public class SystemException extends RuntimeException {
     private final Integer status;   // HTTP상태코드 ( 코드의 상위 도메인 )
     private final String code;      // Error별 코드값

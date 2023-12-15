@@ -1,6 +1,7 @@
 package com.threeNerds.basketballDiary.exception;
 
 import com.threeNerds.basketballDiary.exception.error.*;
+import com.threeNerds.basketballDiary.file.exception.ExceedMaxFileSizeException;
 import com.threeNerds.basketballDiary.file.exception.FileException;
 import com.threeNerds.basketballDiary.file.exception.NotAllowedFileExtensionException;
 import com.threeNerds.basketballDiary.file.exception.NotFoundFileException;
@@ -19,6 +20,18 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
  * 따라서 ResponseEntityExceptionHandler에서 구현한 handleMethodArgumentNotValid() 메소드를 override해서 구현해야 함.
  */
 
+/**
+ * GlobalExceptionHandler 클래스의 역할
+ * - Application에서 발생한 Exception에 따라 ErrorMessage를 만들어서 Response하기
+ * - Exception타입에 따라 ErrorResponse 인터페이스를 구현한 클래스로 Response를 return
+ * - ErrorMessageType 인터페이스를 구현하여 Error에 대한 HTTP상태코드와 에러 메세지를 Exception타입에 전달
+ * - 각 ExceptionHandler에서 Exception으로 전달받은 ErrorMessageType을 이용하여 ErrorResponse을 생성
+ * - 다음은 Exception별 전달가능한 ErrorMessageType클래스와 return하는 ErrorResponse클래스
+ *      1) CustomException( DomainErrorType ) -> DomainErrorResponse
+ *      2) FileException( SystemErrorType ) -> SystemErrorResponse
+ *      3) BindException( BindErrorType ) -> BindErrorResponse
+ *      4) 그외 기타 SpringFramework Exception -> SystemErrorResponse
+ */
 // TODO @RestControllerAdvice에 대한 학습 필요
 @Slf4j
 @RestControllerAdvice
@@ -31,7 +44,7 @@ public class GlobalExceptionHandler { //extends ResponseEntityExceptionHandler {
      * 3. 전달받은 Message정보로 ResponseEntity를 만든다.
      */
     @ExceptionHandler(value = { CustomException.class })
-    protected ResponseEntity<ErrorResponse> handleCustomException (CustomException ex ) {
+    protected ResponseEntity<ErrorResponse> handleCustomException ( CustomException ex ) {
         log.error( "throw CustomException : {}", ex.getMessage(), ex );
         return DomainErrorResponse.toEntity( ex.getError() );
     }
@@ -39,11 +52,15 @@ public class GlobalExceptionHandler { //extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = { FileException.class })
     protected ResponseEntity<ErrorResponse> handleFileException ( FileException ex ) {
         log.error( "throw FileException" );
+        // TODO Exception내부에 ErrorMessage를 관리하기 ( Exception 던지는 곳에서 ErrorMessage를 설정하여 해당 메세지를 ErrorResponse로 리턴 )
         if ( ex instanceof NotAllowedFileExtensionException ) {
             return SystemErrorResponse.toEntity( SystemErrorType.NOT_ALLOWED_FILE_EXTENSTION );
         }
         if ( ex instanceof NotFoundFileException ) {
             return SystemErrorResponse.toEntity( SystemErrorType.NOT_FOUND_IMAGE_FOR_URL );
+        }
+        if ( ex instanceof ExceedMaxFileSizeException ) {
+            return SystemErrorResponse.toEntity( SystemErrorType.EXCEED_MAX_FILE_SIZE );
         }
         return SystemErrorResponse.toEntity( SystemErrorType.ERROR_IN_PROCESS_FILE );
     }
@@ -75,6 +92,7 @@ public class GlobalExceptionHandler { //extends ResponseEntityExceptionHandler {
 
 
     //TODO : 삭제예정
+    @Deprecated
     @ExceptionHandler(value = BasketballException.class)
     public ErrorResponseV1 handlerBasketballException(BasketballException ex){
         ErrorType exception = ex.getException();
