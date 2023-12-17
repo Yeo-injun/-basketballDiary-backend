@@ -32,7 +32,7 @@ public class WebConfig implements WebMvcConfigurer {
                 // CORS은 기본헤더만 접근가능하게 함. 따라서 브라우저에서는 set-Cookie 헤더에 접근이 불가함. 접근을 허용하기 위해 설정을 추가
                 // https://bogmong.tistory.com/5
                 .allowedHeaders("*")
-                .exposedHeaders("Set-Cookie")
+                .exposedHeaders( "Set-Cookie", "Location" )
                 .allowedOrigins(this.allowedOrigins) // TODO allowedCredentials이 true이면  *(와일드 카드)는 사용 못함. Origin을 명시해줘야 함
                 .allowCredentials(true);
     }
