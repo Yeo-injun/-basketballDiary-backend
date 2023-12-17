@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-import static com.threeNerds.basketballDiary.constant.UserAuthConst.USER;
 import static com.threeNerds.basketballDiary.utils.SessionUtil.LOGIN_USER;
 
 @Slf4j
@@ -36,7 +35,7 @@ public class AuthUserController {
      *  22.03.26 인준 : SessionUser null체크 로직 제거 - 인터셉터에서 하기 때문.
      *  22.03.29 인준 : 권한어노테이션 추가
      **/
-    @Auth(GRADE = USER)
+    @Auth
     @PostMapping("/joinRequestTo/{teamSeq}")
     public ResponseEntity<Void> sendJoinRequestToTeam (
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession,
@@ -56,7 +55,7 @@ public class AuthUserController {
      *  22.03.26 인준 : SessionUser null체크 로직 제거 - 인터셉터에서 체크하기 때문
      *  22.03.29 인준 : 권한어노테이션 추가
      **/
-    @Auth(GRADE = USER)
+    @Auth
     @GetMapping("/joinRequestsTo")
     public ResponseEntity<?> getJoinRequestsTo (
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession
@@ -72,7 +71,7 @@ public class AuthUserController {
      *  API023 : 팀 가입요청 취소
      *  22.03.29 인준 : 권한어노테이션 추가
      **/
-    @Auth(GRADE = USER)
+    @Auth
     @DeleteMapping("/joinRequestsTo/{teamJoinRequestSeq}")
     public ResponseEntity<?> cancelJoinReqeust (
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession,
@@ -93,7 +92,7 @@ public class AuthUserController {
      *  API024 : 팀 초대 승인
      *  22.03.29 인준 : 권한어노테이션 추가
      **/
-    @Auth(GRADE = USER)
+    @Auth
     @PutMapping("/joinRequestsFrom/{teamJoinRequestSeq}/approval")
     public ResponseEntity<?> approveInvitation (
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession,
@@ -118,7 +117,7 @@ public class AuthUserController {
      *  22.03.13 인준 : API022 세분화 - 가입요청 및 초대 목록을 하나의 API콜로 가져오는 것에서 API 2개를 콜해서 가져오는 구조로 변경
      *  22.03.29 인준 : 권한어노테이션 추가
      **/
-    @Auth(GRADE = USER)
+    @Auth
     @GetMapping("/joinRequestsFrom")
     public ResponseEntity<?> getJoinRequestsFrom(
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession
@@ -134,7 +133,7 @@ public class AuthUserController {
      *  API033 : 농구팀 초대 거절
      *  22.03.29 인준 : 권한어노테이션 추가
      **/
-    @Auth(GRADE = USER)
+    @Auth
     @PutMapping("/joinRequestsFrom/{teamJoinRequestSeq}/rejection")
     public ResponseEntity<?> rejectInvitation (
             @SessionAttribute(value=LOGIN_USER, required = false) SessionUser userSession,

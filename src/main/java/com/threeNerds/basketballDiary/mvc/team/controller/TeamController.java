@@ -68,7 +68,7 @@ public class TeamController {
     /**
      * API021 : 팀 등록
      */
-    @Auth(GRADE = USER)
+    @Auth
     @PostMapping
     public ResponseEntity<Void> registerTeam(
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,
