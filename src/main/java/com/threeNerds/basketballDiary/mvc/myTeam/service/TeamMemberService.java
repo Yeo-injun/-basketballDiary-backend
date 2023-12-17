@@ -93,7 +93,12 @@ public class TeamMemberService {
 
     }
 
-    public void deleteMyTeamProfile(FindMyTeamProfileDTO userDto){
-        teamMemberRepository.deleteMyTeamProfile(userDto);
+    public void deleteMyTeamProfile( FindMyTeamProfileDTO userDto ) {
+        // TODO 테스트 필요
+        TeamMember deleteTeamMember = TeamMember.builder()
+                                        .userSeq( userDto.getUserSeq() )
+                                        .teamSeq( userDto.getTeamSeq() )
+                                        .build();
+        teamMemberRepository.deleteTeamMemberByUserSeqAndTeamSeq( deleteTeamMember );
     }
 }
