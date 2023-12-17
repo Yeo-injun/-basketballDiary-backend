@@ -127,7 +127,7 @@ public class MyTeamController {
      */
     @Auth(GRADE = LEADER)
     @PatchMapping("{teamSeq}/members/{teamMemberSeq}/manager")
-    public ResponseEntity<?> appointManager (
+    public ResponseEntity<Void> appointManager (
             @PathVariable Long teamSeq,
             @PathVariable Long teamMemberSeq
     ) {
@@ -136,7 +136,7 @@ public class MyTeamController {
                 .teamMemberSeq(teamMemberSeq);
 
         teamMemberManagerService.appointManager(teamMemberKey);
-        return RESPONSE_OK;
+        return ResponseEntity.ok().build();
     }
 
     /**
@@ -294,6 +294,7 @@ public class MyTeamController {
 
     /**
      * API013 소속팀 탈퇴
+     * TODO 테스트 필요 FrontEnd에서 호출 하지 않음.
      */
     @Auth(GRADE = TEAM_MEMBER)
     @DeleteMapping("/{teamSeq}/profile")
