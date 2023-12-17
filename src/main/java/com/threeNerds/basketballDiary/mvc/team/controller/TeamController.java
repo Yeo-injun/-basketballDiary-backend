@@ -16,7 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-import static com.threeNerds.basketballDiary.constant.UserAuthConst.USER;
 import static com.threeNerds.basketballDiary.utils.SessionUtil.LOGIN_USER;
 
 /**
@@ -68,7 +67,7 @@ public class TeamController {
     /**
      * API021 : 팀 등록
      */
-    @Auth(GRADE = USER)
+    @Auth
     @PostMapping
     public ResponseEntity<Void> registerTeam(
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,
