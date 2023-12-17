@@ -67,7 +67,6 @@ public class GameController {
 
     /**
      * API035 게임참가 선수등록하기
-     * @result 특정쿼터의 선수별 기록조회
      * 22.12.15(목) @ReauestBody부분 Request클래스로 대체
      */
     @Auth(GRADE = USER)

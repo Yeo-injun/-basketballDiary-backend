@@ -1,6 +1,5 @@
 package com.threeNerds.basketballDiary.constant;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 
