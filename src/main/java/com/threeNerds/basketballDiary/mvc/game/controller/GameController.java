@@ -40,7 +40,6 @@ import java.util.List;
 import java.util.Map;
 
 import static com.threeNerds.basketballDiary.constant.HttpResponseConst.RESPONSE_OK;
-import static com.threeNerds.basketballDiary.constant.UserAuthConst.USER;
 import static com.threeNerds.basketballDiary.utils.SessionUtil.LOGIN_USER;
 
 /**
@@ -93,10 +92,9 @@ public class GameController {
 
     /**
      * API038 쿼터 저장하기/수정하기
-     * @auth    게임기록권한자인 경우
+     * - cf. 게임기록권한자인 경우 체크하기
      * @param gameSeq     게임Seq
      * @param quarterCode 쿼터코드; 01~04(1~4쿼터), 11(전반), 12(후반)
-     * @result 특정 경기의 쿼터 기록을 저장·수정한다.
      * @author 강창기
      */
     @Auth

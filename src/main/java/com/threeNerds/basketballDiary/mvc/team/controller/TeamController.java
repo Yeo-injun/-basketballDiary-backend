@@ -16,7 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-import static com.threeNerds.basketballDiary.constant.UserAuthConst.USER;
 import static com.threeNerds.basketballDiary.utils.SessionUtil.LOGIN_USER;
 
 /**
