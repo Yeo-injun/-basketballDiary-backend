@@ -77,16 +77,15 @@ public class GameRecordManagerService {
      * @author 강창기
      * @update 여인준 23.04.08 : 파라미터 및 조회 데이터 변경
      */
-    public ResponseJsonBody getGameJoinPlayerRecordsByQuarter(GetGameJoinPlayerRecordsByQuarterRequest reqBody)
-    {
+    public ResponseJsonBody getGameJoinPlayerRecordsByQuarter( GetGameJoinPlayerRecordsByQuarterRequest reqBody ) {
         Long gameSeq = reqBody.getGameSeq();
         String homeAwayCode = reqBody.getHomeAwayCode();
         String quarterCode = reqBody.getQuarterCode();
 
-        // gameSeq에 해당하는 게임내역이 존재하는지 확인.
-        boolean isExistGame = !ObjectUtils.isEmpty( gameRepository.findGameBasicInfo( gameSeq ) );
+        /** gameSeq에 해당하는 게임내역이 존재하는지 확인. */
+        boolean isExistGame = !ObjectUtils.isEmpty( gameRepository.findGame( gameSeq ) );
         if( !isExistGame ) {
-            throw new CustomException(DomainErrorType.NOT_FOUND_GAME);  // 게임 정보가 존재하지 않습니다.
+            throw new CustomException(DomainErrorType.NOT_FOUND_GAME);
         }
 
         SearchGameDTO searchPlayerRecordsParam = new SearchGameDTO()
