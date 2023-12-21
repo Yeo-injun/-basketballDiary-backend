@@ -205,14 +205,10 @@ public class GameController {
      */
     @Auth
     @GetMapping("{gameSeq}/info")
-    public ResponseEntity<?> getGameBasicInfo(
-            @PathVariable(name = "gameSeq")Long gameSeq
-    ){
-        GameInfoDTO gameInfo = gameService.getGameInfo(gameSeq);
-
-        GetGameBasicInfoResponse resBody = new GetGameBasicInfoResponse()
-                .gameInfo(gameInfo);
-        return ResponseEntity.ok(resBody);
+    public ResponseEntity<GetGameBasicInfoResponse> getGameBasicInfo(
+            @PathVariable(name = "gameSeq") Long gameSeq
+    ) {
+        return ResponseEntity.ok( gameService.getGameInfo( gameSeq ) );
     }
 
     /**

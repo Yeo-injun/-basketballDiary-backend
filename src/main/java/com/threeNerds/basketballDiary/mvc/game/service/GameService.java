@@ -3,6 +3,7 @@ package com.threeNerds.basketballDiary.mvc.game.service;
 import com.threeNerds.basketballDiary.constant.code.GameRecordStateCode;
 import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import com.threeNerds.basketballDiary.exception.CustomException;
+import com.threeNerds.basketballDiary.mvc.game.controller.response.GetGameBasicInfoResponse;
 import com.threeNerds.basketballDiary.mvc.game.domain.Game;
 import com.threeNerds.basketballDiary.mvc.game.domain.GameJoinTeam;
 import com.threeNerds.basketballDiary.mvc.game.domain.GameRecordAuth;
@@ -87,11 +88,11 @@ public class GameService {
      * 게임기록 상세조회
      * @author 이성주
      */
-    public GameInfoDTO getGameInfo(Long gameSeq)
-    {
-        return Optional
-                .ofNullable(gameRepository.findGameBasicInfo(gameSeq))
-                .orElseThrow(()->new CustomException(DomainErrorType.NOT_FOUND_GAME));
+    public GetGameBasicInfoResponse getGameInfo( Long gameSeq ) {
+        Game game = Optional
+                        .ofNullable( gameRepository.findGame( gameSeq ) )
+                        .orElseThrow( () -> new CustomException( DomainErrorType.NOT_FOUND_GAME ) );
+        return new GetGameBasicInfoResponse( game );
     }
 
     /**
