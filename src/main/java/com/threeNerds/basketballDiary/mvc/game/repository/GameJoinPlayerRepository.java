@@ -13,7 +13,10 @@ public interface GameJoinPlayerRepository {
     /**********
      * SELECT
      **********/
-    /** 게임참가선수의 참가팀Seq 조회 */
+    /**--------------------------
+     * 게임참가선수 단건 조회
+     * - GameJoinPlayerSeq로 조회
+     **--------------------------*/
     GameJoinPlayer findPlayer(GameJoinPlayer gameJoinPlayer);
 
     /** 게임참가선수 목록조회 - 게임에 참가한 모든 선수 조회 */
