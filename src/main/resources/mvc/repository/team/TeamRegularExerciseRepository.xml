@@ -3,8 +3,7 @@
 
 <mapper namespace="com.threeNerds.basketballDiary.mvc.team.repository.TeamRegularExerciseRepository">
 
-    <select id="findByTeamSeq"
-            resultType="com.threeNerds.basketballDiary.mvc.team.dto.TeamRegularExerciseDTO">
+    <sql id="SelectDomainProperties" >
         SELECT TEAM_REGULAR_EXERCISE_SEQ
              , TEAM_SEQ
              , DAY_OF_THE_WEEK_CODE
@@ -13,39 +12,64 @@
              , EXERCISE_PLACE_ADDRESS
              , EXERCISE_PLACE_NAME
           FROM TEAM_REGULAR_EXERCISE
-         WHERE TEAM_SEQ = #{teamSeq}
+         WHERE 1=1
+    </sql>
+
+
+    <select id="findByTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.team.dto.TeamRegularExerciseDTO">
+        /* TeamRegularExerciseRepository.findByTeamSeq */
+        <include refid="SelectDomainProperties" />
+           AND TEAM_SEQ = #{teamSeq}
+    </select>
+
+    <select id="find" resultType="com.threeNerds.basketballDiary.mvc.team.domain.TeamRegularExercise">
+        /* TeamRegularExerciseRepository.find */
+        <include refid="SelectDomainProperties" />
+           AND TEAM_SEQ = #{teamSeq}
     </select>
 
     <insert id="saveTeamRegularExercise">
-        INSERT
-        INTO TEAM_REGULAR_EXERCISE ( TEAM_SEQ
-                                   , DAY_OF_THE_WEEK_CODE
-                                   , START_TIME
-                                   , END_TIME
-                                   , EXERCISE_PLACE_ADDRESS
-                                   , EXERCISE_PLACE_NAME)
-        VALUES ( #{teamSeq}
-               , #{dayOfTheWeekCode}
-               , #{startTime}
-               , #{endTime}
-               , #{exercisePlaceAddress}
-               , #{exercisePlaceName})
+        /* TeamRegularExerciseRepository.saveTeamRegularExercise */
+        INSERT INTO TEAM_REGULAR_EXERCISE (
+               TEAM_SEQ
+             , DAY_OF_THE_WEEK_CODE
+             , START_TIME
+             , END_TIME
+             , EXERCISE_PLACE_ADDRESS
+             , EXERCISE_PLACE_NAME
+        )
+        VALUES (
+               #{teamSeq}
+             , #{dayOfTheWeekCode}
+             , #{startTime}
+             , #{endTime}
+             , #{exercisePlaceAddress}
+             , #{exercisePlaceName}
+        )
     </insert>
 
     <update id="updateTeamRegularExercise"
             parameterType="com.threeNerds.basketballDiary.mvc.team.domain.TeamRegularExercise">
+        /* TeamRegularExerciseRepository.updateTeamRegularExercise */
         UPDATE TEAM_REGULAR_EXERCISE
-        SET TEAM_SEQ               = #{teamSeq}
-          , DAY_OF_THE_WEEK_CODE   = #{dayOfTheWeekCode}
-          , START_TIME             = #{startTime}
-          , END_TIME               = #{endTime}
-          , EXERCISE_PLACE_ADDRESS = #{exercisePlaceAddress}
-          , EXERCISE_PLACE_NAME    = #{exercisePlaceName}
-        WHERE TEAM_REGULAR_EXERCISE_SEQ = #{teamRegularExerciseSeq}
+           SET TEAM_SEQ               = #{teamSeq}
+             , DAY_OF_THE_WEEK_CODE   = #{dayOfTheWeekCode}
+             , START_TIME             = #{startTime}
+             , END_TIME               = #{endTime}
+             , EXERCISE_PLACE_ADDRESS = #{exercisePlaceAddress}
+             , EXERCISE_PLACE_NAME    = #{exercisePlaceName}
+        WHERE 1=1
+          AND TEAM_REGULAR_EXERCISE_SEQ = #{teamRegularExerciseSeq}
     </update>
 
+
     <delete id="deleteTeamRegularExercise" parameterType="Long">
-        DELETE FROM TEAM_REGULAR_EXERCISE
-        WHERE TEAM_REGULAR_EXERCISE_SEQ = #{teamRegularExerciseSeq}
+        /* TeamRegularExerciseRepository.deleteTeamRegularExercise */
+        DELETE
+          FROM TEAM_REGULAR_EXERCISE
+         WHERE 1=1
+           AND TEAM_REGULAR_EXERCISE_SEQ = #{teamRegularExerciseSeq}
     </delete>
+
+
 </mapper>
