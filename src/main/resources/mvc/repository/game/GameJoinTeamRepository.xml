@@ -23,8 +23,6 @@
     <select id="findAllGameJoinTeam" resultType="com.threeNerds.basketballDiary.mvc.game.domain.GameJoinTeam">
         /* GameJoinTeamRepository.findAllGameJoinTeam */
         <include refid="SelectDomainProperties" />
-          FROM GAME_JOIN_TEAM
-         WHERE 1=1
            AND GAME_SEQ = #{gameSeq}
     </select>
 
