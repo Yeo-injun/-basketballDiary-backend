@@ -2,28 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.threeNerds.basketballDiary.mvc.game.repository.QuarterPlayerRecordsRepository">
-    <sql id="DomainProperties" >
-          QUARTER_PLAYER_RECORDS_SEQ
-        , GAME_SEQ
-        , GAME_JOIN_PLAYER_SEQ
-        , GAME_JOIN_TEAM_SEQ
-        , QUARTER_CODE
-        , IN_GAME_YN
-        , TRY_FREE_THROW
-        , FREE_THROW
-        , TRY_TWO_POINT
-        , TWO_POINT
-        , TRY_THREE_POINT
-        , THREE_POINT
-        , REBOUND
-        , STEAL
-        , BLOCK
-        , TURNOVER
-        , FOUL
-    </sql>
-
-    <select id="findAllInGame" resultType="com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords">
-        /* QuarterPlayerRecordsRepository.findAllInGame */
+    <sql id="SelectDomainProperties" >
         SELECT QUARTER_PLAYER_RECORDS_SEQ
              , GAME_SEQ
              , GAME_JOIN_PLAYER_SEQ
@@ -43,19 +22,70 @@
              , FOUL
           FROM QUARTER_PLAYER_RECORDS
          WHERE 1=1
+    </sql>
+
+    <select id="findAllInGame" resultType="com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords">
+        /* QuarterPlayerRecordsRepository.findAllInGame */
+        <include refid="SelectDomainProperties" />
            AND GAME_SEQ = #{gameSeq}
     </select>
 
     <select id="findOneTeamQuarterRecord" resultType="com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords">
         /* QuarterPlayerRecordsRepository.findOneTeamQuarterRecord */
-        SELECT
-        <include refid="DomainProperties"></include>
-          FROM QUARTER_PLAYER_RECORDS
-         WHERE 1=1
+        <include refid="SelectDomainProperties" />
            AND GAME_SEQ         = #{gameSeq}
            AND HOME_AWAY_CODE   = #{homeAwayCode}
            AND QUARTER_CODE     = #{quarterCode}
     </select>
+
+
+    <insert id="save" parameterType="com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords">
+        /* QuarterPlayerRecordsRepository.save */
+        <selectKey keyProperty="quarterPlayerRecordsSeq" order="AFTER" resultType="java.lang.Long">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        INSERT INTO QUARTER_PLAYER_RECORDS (
+               GAME_SEQ
+             , HOME_AWAY_CODE
+             , GAME_JOIN_PLAYER_SEQ
+             , GAME_JOIN_TEAM_SEQ
+             , QUARTER_CODE
+             , IN_GAME_YN
+             , TRY_FREE_THROW
+             , FREE_THROW
+             , TRY_TWO_POINT
+             , TWO_POINT
+             , TRY_THREE_POINT
+             , THREE_POINT
+             , ASSIST
+             , REBOUND
+             , STEAL
+             , BLOCK
+             , TURNOVER
+             , FOUL
+        )
+        VALUES (
+               #{gameSeq}
+             , #{homeAwayCode}
+             , #{gameJoinPlayerSeq}
+             , #{gameJoinTeamSeq}
+             , #{quarterCode}
+             , #{inGameYn}
+             , IFNULL(#{tryFreeThrow}, 0)
+             , IFNULL(#{freeThrow}, 0)
+             , IFNULL(#{tryTwoPoint}, 0)
+             , IFNULL(#{twoPoint}, 0)
+             , IFNULL(#{tryThreePoint}, 0)
+             , IFNULL(#{threePoint}, 0)
+             , IFNULL(#{assist}, 0)
+             , IFNULL(#{rebound}, 0)
+             , IFNULL(#{steal}, 0)
+             , IFNULL(#{block}, 0)
+             , IFNULL(#{turnover}, 0)
+             , IFNULL(#{foul}, 0)
+        )
+    </insert>
+
 
     <update id="updateInGameYn" parameterType="com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords">
         /* QuarterPlayerRecordsRepository.updateInGameYn */
@@ -109,55 +139,6 @@
            AND QUARTER_PLAYER_RECORDS_SEQ = #{quarterPlayerRecordsSeq}
     </update>
 
-
-    <insert id="save" parameterType="com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords">
-        /* QuarterPlayerRecordsRepository.save */
-        <selectKey keyProperty="quarterPlayerRecordsSeq" order="AFTER" resultType="java.lang.Long">
-        SELECT LAST_INSERT_ID()
-        </selectKey>
-        INSERT INTO
-               QUARTER_PLAYER_RECORDS
-        (
-          GAME_SEQ
-        , HOME_AWAY_CODE
-        , GAME_JOIN_PLAYER_SEQ
-        , GAME_JOIN_TEAM_SEQ
-        , QUARTER_CODE
-        , IN_GAME_YN
-        , TRY_FREE_THROW
-        , FREE_THROW
-        , TRY_TWO_POINT
-        , TWO_POINT
-        , TRY_THREE_POINT
-        , THREE_POINT
-        , ASSIST
-        , REBOUND
-        , STEAL
-        , BLOCK
-        , TURNOVER
-        , FOUL
-        ) VALUES
-        (
-          #{gameSeq}
-        , #{homeAwayCode}
-        , #{gameJoinPlayerSeq}
-        , #{gameJoinTeamSeq}
-        , #{quarterCode}
-        , #{inGameYn}
-        , IFNULL(#{tryFreeThrow}, 0)
-        , IFNULL(#{freeThrow}, 0)
-        , IFNULL(#{tryTwoPoint}, 0)
-        , IFNULL(#{twoPoint}, 0)
-        , IFNULL(#{tryThreePoint}, 0)
-        , IFNULL(#{threePoint}, 0)
-        , IFNULL(#{assist}, 0)
-        , IFNULL(#{rebound}, 0)
-        , IFNULL(#{steal}, 0)
-        , IFNULL(#{block}, 0)
-        , IFNULL(#{turnover}, 0)
-        , IFNULL(#{foul}, 0)
-        )
-    </insert>
 
     <delete id="deleteGameQuarter">
         DELETE FROM QUARTER_PLAYER_RECORDS

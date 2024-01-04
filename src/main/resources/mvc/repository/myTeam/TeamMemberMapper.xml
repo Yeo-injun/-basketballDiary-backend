@@ -2,51 +2,58 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.threeNerds.basketballDiary.mvc.myTeam.repository.TeamMemberRepository">
-    <insert id="saveTeamMemeber" parameterType="com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember">
-        INSERT INTO TEAM_MEMBER (
-            TEAM_SEQ
-            , USER_SEQ
-            , TEAM_AUTH_CODE
-            , JOIN_YMD
-            , WITHDRAWAL_YN
-        )
-        VALUES (
-            #{teamSeq}
-            , #{userSeq}
-            , #{teamAuthCode}
-            , #{joinYmd}
-            , #{withdrawalYn}
-        )
-    </insert>
-
-    <select id="findTeamMember" resultType="com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember">
-        SELECT TEAM_MEMBER_SEQ
+    <sql id="AllProperties">
+          TEAM_MEMBER_SEQ
         , TEAM_SEQ
         , USER_SEQ
+        , MEMBER_IMAGE_PATH
         , JOIN_YMD
         , TEAM_AUTH_CODE
         , BACK_NUMBER
-        FROM TEAM_MEMBER
-        WHERE 1=1
-        AND TEAM_SEQ = #{teamSeq}
-        AND USER_SEQ = #{userSeq}
-        AND WITHDRAWAL_YN = 'N'
+        , WITHDRAWAL_YN
+    </sql>
+
+    <select id="findTeamMember" resultType="com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember">
+        /* TeamMemberRepository.findTeamMember */
+        SELECT
+        <include refid="AllProperties"/>
+          FROM TEAM_MEMBER
+         WHERE 1=1
+           AND TEAM_SEQ = #{teamSeq}
+           AND USER_SEQ = #{userSeq}
+           AND WITHDRAWAL_YN = 'N'
     </select>
 
     <select id="findByTeamMemberSeq" resultType="com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember">
-        SELECT TEAM_MEMBER_SEQ
-             , TEAM_SEQ
-             , USER_SEQ
-             , JOIN_YMD
-             , TEAM_AUTH_CODE
-             , BACK_NUMBER
+        /* TeamMemberRepository.findByTeamMemberSeq */
+        SELECT
+        <include refid="AllProperties"/>
           FROM TEAM_MEMBER
          WHERE 1=1
            AND TEAM_MEMBER_SEQ = #{teamMemberSeq}
            AND WITHDRAWAL_YN = 'N'
     </select>
 
+    <select id="findTeamMemberByUserAndTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember">
+        /* TeamMemberRepository.findTeamMemberByUserAndTeamSeq */
+        SELECT
+        <include refid="AllProperties"/>
+          FROM TEAM_MEMBER
+         WHERE 1=1
+           AND USER_SEQ = #{userSeq}
+           AND TEAM_SEQ = #{teamSeq}
+           AND WITHDRAWAL_YN = 'N'
+    </select>
+
+    <select id="findMyTeamCount" resultType="long">
+        /* TeamMemberRepository.findMyTeamCount */
+        SELECT COUNT(*)
+          FROM TEAM_MEMBER
+         WHERE USER_SEQ = #{userSeq}
+    </select>
+
     <select id="checkDuplicatedTeamMember" resultType="int">
+        /* TeamMemberRepository.checkDuplicatedTeamMember */
         SELECT COUNT(*)
           FROM TEAM_MEMBER
          WHERE 1=1
@@ -54,14 +61,34 @@
            AND USER_SEQ = #{userSeq}
     </select>
 
+    <insert id="saveTeamMember" parameterType="com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember">
+        /* TeamMemberRepository.saveTeamMember */
+        INSERT INTO TEAM_MEMBER (
+               TEAM_SEQ
+             , USER_SEQ
+             , TEAM_AUTH_CODE
+             , JOIN_YMD
+             , WITHDRAWAL_YN
+        )
+        VALUES (
+               #{teamSeq}
+             , #{userSeq}
+             , #{teamAuthCode}
+             , #{joinYmd}
+             , #{withdrawalYn}
+        )
+    </insert>
+
     <update id="updateWithdrawalState">
+        /* TeamMemberRepository.updateWithdrawalState */
         UPDATE TEAM_MEMBER
-           SET WITHDRAWAL_YN = #{withdrawalYn}
+           SET WITHDRAWAL_YN   = #{withdrawalYn}
          WHERE TEAM_MEMBER_SEQ = #{teamMemberSeq}
            AND TEAM_SEQ = #{teamSeq}
     </update>
 
     <update id="updateTeamAuth">
+        /* TeamMemberRepository.updateTeamAuth */
         UPDATE TEAM_MEMBER
            SET TEAM_AUTH_CODE = #{teamAuthCode}
          WHERE TEAM_MEMBER_SEQ = #{teamMemberSeq}
@@ -71,12 +98,12 @@
            AND TEAM_AUTH_CODE = '2' /* 관리자를 팀원으로 */
         </if>
         <if test='"2".equals(teamAuthCode)'>
-            AND TEAM_AUTH_CODE = '1' /* 팀원을 관리자로 */
+           AND TEAM_AUTH_CODE = '1' /* 팀원을 관리자로 */
         </if>
     </update>
 
     <update id="updateMyTeamProfile">
-        /* updateMyTeamProfile */
+        /* TeamMemberRepository.updateMyTeamProfile */
         UPDATE TEAM_MEMBER
            SET BACK_NUMBER       = #{backNumber}
              , MEMBER_IMAGE_PATH = #{memberImagePath}
@@ -92,29 +119,13 @@
         </choose>
     </update>
 
-    <delete id="deleteMyTeamProfild">
-        DELETE FROM TEAM_MEMBER WHERE USER_SEQ=#{userSeq} AND TEAMSEQ=#{teamSeq}
-    </delete>
-
-    <select id="findMyTeamCount" resultType="long">
-        SELECT COUNT(*)
-        FROM TEAM_MEMBER
-        WHERE USER_SEQ=#{userSeq}
-    </select>
-
-
-    <select id="findTeamMemberByUserAndTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember">
-        /* TeamMemberMapper.findTeamMemberByUserAndTeamSeq */
-        SELECT TEAM_MEMBER_SEQ
-             , TEAM_SEQ
-             , USER_SEQ
-             , JOIN_YMD
-             , TEAM_AUTH_CODE
-             , BACK_NUMBER
+    <delete id="deleteTeamMemberByUserSeqAndTeamSeq">
+        /* TeamMemberRepository.deleteTeamMemberByUserSeqAndTeamSeq */
+        DELETE
           FROM TEAM_MEMBER
          WHERE 1=1
            AND USER_SEQ = #{userSeq}
            AND TEAM_SEQ = #{teamSeq}
-           AND WITHDRAWAL_YN = 'N'
-    </select>
+    </delete>
+
 </mapper>

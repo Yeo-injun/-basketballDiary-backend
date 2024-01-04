@@ -18,10 +18,7 @@ public interface UserRepository {
      **********/
     User findUser(Long userSeq);
     User findUserByUserId(String userId);
-
-    List<UserDTO> findUserByUserNameOrEmail(CmnUserDTO findUserCond);
     List<UserDTO> findAllUsersExcludingTeamMemberByUserNameOrEmail(UserInqCondDTO inqCond);
-
     List<TeamAuthDTO> findAuthList(User user);
 
     /**********

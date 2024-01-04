@@ -1,7 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.authUser.service;
 
 import com.threeNerds.basketballDiary.exception.CustomException;
-import com.threeNerds.basketballDiary.exception.Error;
+import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import com.threeNerds.basketballDiary.mvc.user.domain.User;
 import com.threeNerds.basketballDiary.mvc.authUser.dto.PasswordUpdateDTO;
 import com.threeNerds.basketballDiary.mvc.authUser.dto.UpdateUserDTO;
@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-import static com.threeNerds.basketballDiary.exception.Error.INCORRECT_PASSWORD;
+import static com.threeNerds.basketballDiary.exception.error.DomainErrorType.INCORRECT_PASSWORD;
 
 @Service
 @Slf4j
@@ -28,7 +28,7 @@ public class AuthUserService {
     public UserDTO getUserProfileForUpdate(Long userSeq)
     {
         User findUser = Optional.ofNullable(userRepository.findUser(userSeq))
-                .orElseThrow(()-> new CustomException(Error.USER_NOT_FOUND));
+                .orElseThrow(()-> new CustomException(DomainErrorType.USER_NOT_FOUND));
         return UserDTO.getInstance(findUser);
     }
 
@@ -46,7 +46,7 @@ public class AuthUserService {
     public void updatePassword(PasswordUpdateDTO passwordUpdateDTO)
     {
         User findUser = Optional.ofNullable(userRepository.findUser(passwordUpdateDTO.getUserSeq()))
-                .orElseThrow(()-> new CustomException(Error.USER_NOT_FOUND));
+                .orElseThrow(()-> new CustomException(DomainErrorType.USER_NOT_FOUND));
 
         String prevPassword = Optional.ofNullable(passwordUpdateDTO.getPrevPassword())
                 .orElseThrow(()-> new CustomException(INCORRECT_PASSWORD));

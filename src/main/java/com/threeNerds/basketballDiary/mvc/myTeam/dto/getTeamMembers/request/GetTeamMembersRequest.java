@@ -1,16 +1,15 @@
 package com.threeNerds.basketballDiary.mvc.myTeam.dto.getTeamMembers.request;
 
-import com.threeNerds.basketballDiary.pagination.PagerDTO;
 import lombok.Getter;
 
 @Getter
 public class GetTeamMembersRequest {
 
     private Long teamSeq;
-    private PagerDTO pagerDTO;
+    private Integer pageNo;
 
     public GetTeamMembersRequest(Long teamSeq, Integer pageNo) {
-        this.teamSeq = teamSeq;
-        pagerDTO = new PagerDTO(pageNo, 5);
+        this.teamSeq    = teamSeq;
+        this.pageNo     = pageNo;
     }
 }

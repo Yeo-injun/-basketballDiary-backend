@@ -4,7 +4,7 @@ import com.threeNerds.basketballDiary.constant.code.JoinRequestStateCode;
 import com.threeNerds.basketballDiary.constant.code.JoinRequestTypeCode;
 import com.threeNerds.basketballDiary.constant.code.PositionCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
-import com.threeNerds.basketballDiary.exception.Error;
+import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamJoinRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember;
 import com.threeNerds.basketballDiary.mvc.team.dto.PlayerDTO;
@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.threeNerds.basketballDiary.exception.Error.USER_NOT_FOUND;
+import static com.threeNerds.basketballDiary.exception.error.DomainErrorType.USER_NOT_FOUND;
 
 /**
  * 팀관리자가 팀원을 관리하기 위한 업무를 수행하는 Service
@@ -54,13 +54,13 @@ public class TeamMemberManagerService {
         /** 초대-가입요청 존재여부 확인 : 대기중인 가입요청 혹은 초대가 있을 경우 중복가입요청 방지 */
         int pendingJoinReqCnt = teamJoinRequestRepository.checkPendingJoinRequest(invitationInfo);
         if (pendingJoinReqCnt > 0) {
-            throw new CustomException(Error.ALREADY_EXIST_JOIN_REQUEST);
+            throw new CustomException(DomainErrorType.ALREADY_EXIST_JOIN_REQUEST);
         }
 
         /** 팀원으로 존재하는지 확인 : 팀원으로 존재할 경우 예외를 던짐(409에러) */
         int duplicatedTeamMemberCnt = teamMemberRepository.checkDuplicatedTeamMember(joinRequest);
         if (duplicatedTeamMemberCnt > 0) {
-            throw new CustomException(Error.ALREADY_EXIST_TEAM_MEMBER);
+            throw new CustomException(DomainErrorType.ALREADY_EXIST_TEAM_MEMBER);
         }
 
         /** 초대-가입요청이 없고, 팀원이 아닐 경우에만 INSERT */
@@ -83,7 +83,7 @@ public class TeamMemberManagerService {
         /** 팀원 추가 */
         TeamJoinRequest joinRequestInfo = teamJoinRequestRepository.findUserByTeamJoinRequestSeq(joinRequest.getTeamJoinRequestSeq());
         TeamMember newTeamMember = TeamMember.create(joinRequestInfo);
-        teamMemberRepository.saveTeamMemeber(newTeamMember);
+        teamMemberRepository.saveTeamMember(newTeamMember);
     }
 
     /**
@@ -96,7 +96,7 @@ public class TeamMemberManagerService {
 
         boolean isRejectionSuccess = teamJoinRequestRepository.updateJoinRequestState(rejectionInfo) == 1;
         if (!isRejectionSuccess) {
-            throw new CustomException(Error.JOIN_REQUEST_NOT_FOUND);
+            throw new CustomException(DomainErrorType.JOIN_REQUEST_NOT_FOUND);
         }
     }
 

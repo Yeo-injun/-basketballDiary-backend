@@ -3,7 +3,6 @@ package com.threeNerds.basketballDiary.mvc.auth.controller;
 import com.threeNerds.basketballDiary.mvc.auth.controller.request.CheckDuplicateUserIdRequest;
 import com.threeNerds.basketballDiary.mvc.auth.controller.request.CreateUserRequest;
 import com.threeNerds.basketballDiary.mvc.auth.controller.request.LoginRequest;
-import com.threeNerds.basketballDiary.mvc.auth.dto.CheckDuplicateUserIdDTO;
 import com.threeNerds.basketballDiary.mvc.auth.dto.LoginUserDTO;
 import com.threeNerds.basketballDiary.mvc.auth.service.AuthService;
 import com.threeNerds.basketballDiary.mvc.authUser.controller.response.CheckDuplicationUserIdResponse;
@@ -22,7 +21,6 @@ import static com.threeNerds.basketballDiary.utils.SessionUtil.LOGIN_USER;
 /**
  * ... 수행하는 Controller
  * @author 책임자 작성
- *
  * issue and history
  * <pre>
  * 2022.02.08 여인준 : 소스코드 생성

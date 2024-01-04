@@ -3,9 +3,9 @@
 
 <mapper namespace="com.threeNerds.basketballDiary.mvc.myTeam.repository.MyTeamRepository">
 
-    <select id="findByUserSeqAndTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.myTeam.dto.MyTeamDTO">
+    <select id="findByUserSeqAndTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.myTeam.dto.TeamInfoDTO">
+        /* MyTeamRepository.findByUserSeqAndTeamSeq */
         SELECT A.TEAM_SEQ
-             , A.TEAM_AUTH_CODE -- 팀정보 수정 권한을 위해
              , B.TEAM_NAME
              , B.TEAM_IMAGE_PATH
              , B.HOMETOWN
@@ -13,11 +13,13 @@
              , B.SIGUNGU_CODE
              , B.INTRODUCTION
              , B.FOUNDATION_YMD
-        FROM (SELECT * FROM TEAM_MEMBER WHERE WITHDRAWAL_YN != 'Y') A
-                 JOIN TEAM B
-                      ON A.TEAM_SEQ = B.TEAM_SEQ
-        WHERE A.USER_SEQ = #{userSeq}
-          AND A.TEAM_SEQ = #{teamSeq}
+          FROM TEAM_MEMBER A
+         INNER JOIN TEAM B
+            ON A.TEAM_SEQ = B.TEAM_SEQ
+         WHERE 1=1
+           AND A.USER_SEQ = #{userSeq}
+           AND A.TEAM_SEQ = #{teamSeq}
+           AND A.WITHDRAWAL_YN != 'Y'
     </select>
 
     <select id="findPagingMyTeams" resultType="com.threeNerds.basketballDiary.mvc.myTeam.dto.MyTeamDTO">
@@ -46,7 +48,7 @@
                         AND USER_SEQ = #{userSeq}) A
                 INNER JOIN TEAM B
                    ON A.TEAM_SEQ = B.TEAM_SEQ
-        ) ORDERS LIMIT #{pagerDTO.rowCount} OFFSET #{pagerDTO.offset}
+        ) ORDERS LIMIT #{pagination.rowCount} OFFSET #{pagination.offset}
     </select>
 
     <select id="findProfileByUserSeqAndTeamSeqOld" resultType="com.threeNerds.basketballDiary.mvc.myTeam.dto.MemberDTO">
@@ -156,7 +158,7 @@
           AND B.TEAM_SEQ = #{teamSeq}
     </select>
 
-    <select id="findPagingMemberByTeamSeq" parameterType="com.threeNerds.basketballDiary.mvc.myTeam.dto.MemberDTO" resultType="com.threeNerds.basketballDiary.mvc.myTeam.dto.MemberDTO">
+    <select id="findPagingMemberByTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.myTeam.dto.MemberDTO">
         SELECT *
           FROM (
                 SELECT COUNT(*) OVER() TOTAL_COUNT
@@ -187,7 +189,7 @@
                    AND B.TEAM_SEQ = #{teamSeq}
                  ORDER BY B.TEAM_AUTH_CODE DESC, A.NAME
                )
-        ORDERS LIMIT #{pagerDTO.rowCount} OFFSET #{pagerDTO.offset}
+        ORDERS LIMIT #{pagination.rowCount} OFFSET #{pagination.offset}
     </select>
 
 
@@ -229,7 +231,7 @@
             </if>
                  ORDER BY TM.TEAM_AUTH_CODE DESC, U.NAME
               )
-        ORDERS LIMIT #{pagerDTO.rowCount} OFFSET #{pagerDTO.offset}
+        ORDERS LIMIT #{pagination.rowCount} OFFSET #{pagination.offset}
     </select>
 
 </mapper>

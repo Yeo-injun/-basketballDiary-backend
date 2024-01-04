@@ -6,6 +6,7 @@ import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.GetMyTeamsRe
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.ModifyMyTeamInfoRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.SearchMyTeamGamesRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.GetMyTeamsResponse;
+import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.GetTeamInfoResponse;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.SearchMyTeamGamesResponse;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getManagers.request.GetManagersRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getManagers.response.GetManagersResponse;
@@ -126,7 +127,7 @@ public class MyTeamController {
      */
     @Auth(GRADE = LEADER)
     @PatchMapping("{teamSeq}/members/{teamMemberSeq}/manager")
-    public ResponseEntity<?> appointManager (
+    public ResponseEntity<Void> appointManager (
             @PathVariable Long teamSeq,
             @PathVariable Long teamMemberSeq
     ) {
@@ -135,7 +136,7 @@ public class MyTeamController {
                 .teamMemberSeq(teamMemberSeq);
 
         teamMemberManagerService.appointManager(teamMemberKey);
-        return RESPONSE_OK;
+        return ResponseEntity.ok().build();
     }
 
     /**
@@ -293,17 +294,17 @@ public class MyTeamController {
 
     /**
      * API013 소속팀 탈퇴
+     * TODO 테스트 필요 FrontEnd에서 호출 하지 않음.
      */
+    @Auth(GRADE = TEAM_MEMBER)
     @DeleteMapping("/{teamSeq}/profile")
-    public ResponseEntity<?> deleteMyTeamsProfile(
-            @SessionAttribute(value = LOGIN_USER,required = false) SessionUser sessionDTO,
-            @PathVariable Long teamSeq)
-    {
-        Long id = sessionDTO.getUserSeq();
-
+    public ResponseEntity<?> deleteMyTeamProfile(
+            @SessionAttribute(value = LOGIN_USER,required = false) SessionUser userSession,
+            @PathVariable Long teamSeq
+    ) {
         FindMyTeamProfileDTO findMyTeamProfileDTO = new FindMyTeamProfileDTO()
-                .userSeq(id)
-                .teamSeq(teamSeq);
+                                                            .userSeq( userSession.getUserSeq() )
+                                                            .teamSeq( teamSeq );
         teamMemberService.deleteMyTeamProfile(findMyTeamProfileDTO);
         return RESPONSE_OK;
     }
@@ -343,21 +344,15 @@ public class MyTeamController {
     }
 
     /**
-     * API016 : 소속팀 정보 단건 조회
+     * API016 : 소속팀 정보 조회
      */
     @Auth(GRADE = TEAM_MEMBER)
     @GetMapping("/{teamSeq}/info")
-    public ResponseEntity<MyTeamDTO> searchTeam(
-            @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,
+    public ResponseEntity<GetTeamInfoResponse> getTeamInfo(
+            @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession,
             @PathVariable(value = "teamSeq") Long teamSeq
     ) {
-        Long userSeq = sessionUser.getUserSeq();
-        FindMyTeamProfileDTO paramDTO = new FindMyTeamProfileDTO()
-                .teamSeq(teamSeq)
-                .userSeq(userSeq);
-        MyTeamDTO myTeam = myTeamService.findTeam(paramDTO);
-
-        return ResponseEntity.ok().body(myTeam);
+        return ResponseEntity.ok().body( myTeamService.getTeamInfo( teamSeq, userSession.getUserSeq() ) );
     }
 
     /**

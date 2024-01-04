@@ -1,7 +1,9 @@
+## File 업로드 경로 설정
 file:
   upload:
     root:
-      image: D://image
+      image: C://image # D://image
+
 
 
 spring:
@@ -21,6 +23,12 @@ spring:
       hibernate:
         #     show_sql: true
         format_sql: true
+
+  ## HttpRequest Multipart 설정
+  servlet:
+    multipart:
+      max-file-size: 2MB
+      max-request-size: 5MB
 
 mybatis:
   configuration:

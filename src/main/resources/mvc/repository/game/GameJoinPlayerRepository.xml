@@ -19,19 +19,19 @@
 
     <select id="findPlayer" resultType="com.threeNerds.basketballDiary.mvc.game.domain.GameJoinPlayer" >
         /* GameJoinPlayerRepository.findPlayer */
-        <include refid="GameJoinPlayerSelect"></include>
+        <include refid="GameJoinPlayerSelect"/>
            AND GAME_JOIN_PLAYER_SEQ = #{gameJoinPlayerSeq}
     </select>
 
     <select id="findAllPlayersOnGame" resultType="com.threeNerds.basketballDiary.mvc.game.domain.GameJoinPlayer" >
         /* GameJoinPlayerRepository.findAllPlayersOnGame */
-        <include refid="GameJoinPlayerSelect"></include>
+        <include refid="GameJoinPlayerSelect"/>
            AND GAME_SEQ = #{gameSeq}
     </select>
 
     <select id="findAllPlayersOnOneSideTeam" resultType="com.threeNerds.basketballDiary.mvc.game.domain.GameJoinPlayer" >
         /* GameJoinPlayerRepository.findAllPlayersOnOneSideTeam */
-        <include refid="GameJoinPlayerSelect"></include>
+        <include refid="GameJoinPlayerSelect"/>
         <choose>
             <when test='gameJoinTeamSeq != null and "".equals(gameJoinTeamSeq)' >
            AND GAME_JOIN_TEAM_SEQ = #{gameJoinTeamSeq}
@@ -49,25 +49,26 @@
         </selectKey>
         /* GameJoinPlayerRepository.save */
         INSERT INTO GAME_JOIN_PLAYER (
-        GAME_JOIN_TEAM_SEQ
-        , GAME_SEQ
-        , HOME_AWAY_CODE
-        , PLAYER_TYPE_CODE
-        , USER_SEQ
-        , NAME
-        , BACK_NUMBER
-        , POSITION_CODE
-        , EMAIL
-        ) VALUES (
-        #{gameJoinTeamSeq}
-        , #{gameSeq}
-        , #{homeAwayCode}
-        , #{playerTypeCode}
-        , #{userSeq}
-        , #{name}
-        , #{backNumber}
-        , #{positionCode}
-        , #{email}
+               GAME_JOIN_TEAM_SEQ
+             , GAME_SEQ
+             , HOME_AWAY_CODE
+             , PLAYER_TYPE_CODE
+             , USER_SEQ
+             , NAME
+             , BACK_NUMBER
+             , POSITION_CODE
+             , EMAIL
+        )
+        VALUES (
+               #{gameJoinTeamSeq}
+             , #{gameSeq}
+             , #{homeAwayCode}
+             , #{playerTypeCode}
+             , #{userSeq}
+             , #{name}
+             , #{backNumber}
+             , #{positionCode}
+             , #{email}
         )
     </insert>
 
@@ -87,4 +88,5 @@
             </otherwise>
         </choose>
     </delete>
+
 </mapper>

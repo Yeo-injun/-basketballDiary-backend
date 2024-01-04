@@ -1,10 +1,8 @@
 package com.threeNerds.basketballDiary.mvc.auth.service;
 
 import com.threeNerds.basketballDiary.exception.CustomException;
-import com.threeNerds.basketballDiary.exception.Error;
+import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import com.threeNerds.basketballDiary.mvc.auth.controller.request.CreateUserRequest;
-import com.threeNerds.basketballDiary.mvc.auth.dto.CheckDuplicateUserIdDTO;
-import com.threeNerds.basketballDiary.mvc.auth.dto.CreateUserDTO;
 import com.threeNerds.basketballDiary.mvc.user.domain.User;
 import com.threeNerds.basketballDiary.mvc.team.dto.TeamAuthDTO;
 
@@ -50,7 +48,7 @@ public class AuthService {
             return;
         }
 
-        throw new CustomException( Error.NOT_AVAILABLE_USER_ID );
+        throw new CustomException( DomainErrorType.NOT_AVAILABLE_USER_ID );
     }
 
     private boolean isUserIdAvailable( String userId ) {
@@ -66,7 +64,7 @@ public class AuthService {
         User findUser = userRepository.findUserByUserId(userId);
 
         if (findUser == null) {
-            throw new CustomException(Error.USER_NOT_FOUND);
+            throw new CustomException(DomainErrorType.USER_NOT_FOUND);
         }
 
         /** 로그인가능여부 체크 */

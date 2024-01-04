@@ -74,28 +74,31 @@ public class TeamMemberService {
      * - 프로필 사진이 존재하는 경우 기존 프로필 사진 삭제 후 업로드
      * @return
      */
-    public int modifyMyTeamProfile( ModifyMyTeamProfileRequest reqBody ) {
+    public void modifyMyTeamProfile( ModifyMyTeamProfileRequest reqBody ) {
         TeamMember teamMember = teamMemberRepository.findTeamMember( TeamMember.builder()
                                                                         .userSeq( reqBody.getUserSeq() )
                                                                         .teamSeq( reqBody.getTeamSeq() )
                                                                         .build() );
 
-        // TODO 기존 이미지를 삭제하는 로직은 데이터 처리 후로 옮기기 ( 트랜잭션 고려 ... )
-        String prevImagePath = teamMember.getMemberImagePath();
-        if ( null != prevImagePath && !"".equals( prevImagePath ) ) {
-            // TODO 업로드된 이미지 삭제
-        }
-
         String imagePath = imageUploader.upload( ImageUploader.Path.PROFILE_THUMBNAIL, reqBody.getImageFile() );
 
-        return teamMemberRepository.updateMyTeamProfile( TeamMember.builder()
-                .teamMemberSeq( teamMember.getTeamMemberSeq() )
-                .backNumber( reqBody.getBackNumber() )
-                .memberImagePath( imagePath )
-                .build() );
+        teamMemberRepository.updateMyTeamProfile( TeamMember.builder()
+                                                    .teamMemberSeq(     teamMember.getTeamMemberSeq() )
+                                                    .backNumber(        reqBody.getBackNumber() )
+                                                    .memberImagePath(   "".equals( imagePath ) ? teamMember.getMemberImagePath() : imagePath )
+                                                    .build() );
+
+        // TODO 기존 이미지를 삭제하는 로직은 별도 배치 만들어서 돌리기 ( 적재하는 API구현하기 )
+        // 삭제대상 URL를 적재하여 별도 삭제 시행 - 서비스내에서 이미지 파일 삭제를 수행하지 않음)
+
     }
 
-    public void deleteMyTeamProfile(FindMyTeamProfileDTO userDto){
-        teamMemberRepository.deleteMyTeamProfile(userDto);
+    public void deleteMyTeamProfile( FindMyTeamProfileDTO userDto ) {
+        // TODO 테스트 필요
+        TeamMember deleteTeamMember = TeamMember.builder()
+                                        .userSeq( userDto.getUserSeq() )
+                                        .teamSeq( userDto.getTeamSeq() )
+                                        .build();
+        teamMemberRepository.deleteTeamMemberByUserSeqAndTeamSeq( deleteTeamMember );
     }
 }

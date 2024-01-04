@@ -3,10 +3,9 @@ package com.threeNerds.basketballDiary.mvc.team.controller;
 import com.threeNerds.basketballDiary.interceptor.Auth;
 
 import com.threeNerds.basketballDiary.mvc.team.controller.request.RegisterTeamRequest;
-import com.threeNerds.basketballDiary.pagination.PaginatedTeamDTO;
+import com.threeNerds.basketballDiary.mvc.team.controller.response.SearchTeamsResponse;
 import com.threeNerds.basketballDiary.mvc.team.dto.TeamAuthDTO;
 import com.threeNerds.basketballDiary.mvc.team.dto.SearchTeamDTO;
-import com.threeNerds.basketballDiary.mvc.team.dto.TeamDTO;
 import com.threeNerds.basketballDiary.mvc.team.service.TeamService;
 import com.threeNerds.basketballDiary.session.SessionUser;
 import lombok.RequiredArgsConstructor;
@@ -15,11 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.Valid;
 import java.util.List;
 
-import static com.threeNerds.basketballDiary.constant.UserAuthConst.USER;
-import static com.threeNerds.basketballDiary.constant.HttpResponseConst.RESPONSE_CREATED;
 import static com.threeNerds.basketballDiary.utils.SessionUtil.LOGIN_USER;
 
 /**
@@ -46,7 +42,7 @@ public class TeamController {
      * API019 : 팀 목록 조회
      */
     @GetMapping
-    public ResponseEntity<?> searchTeams(
+    public ResponseEntity<SearchTeamsResponse> searchTeams(
             @RequestParam(name = "team-name"  , required = false) String teamName,
             @RequestParam(name = "sigungu"    , required = false) String sigungu,
             @RequestParam(name = "start-day"  , required = false) String startDay,
@@ -65,14 +61,13 @@ public class TeamController {
                 .endTime(endTime)
                 .pageNo(pageNo);
 
-        PaginatedTeamDTO teamList = teamService.searchTeams(searchTeamDTO);
-        return ResponseEntity.ok().body(teamList);
+        return ResponseEntity.ok().body( teamService.searchTeams( searchTeamDTO ) );
     }
 
     /**
      * API021 : 팀 등록
      */
-    @Auth(GRADE = USER)
+    @Auth
     @PostMapping
     public ResponseEntity<Void> registerTeam(
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,

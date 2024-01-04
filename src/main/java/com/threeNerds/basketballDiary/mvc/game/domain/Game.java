@@ -4,13 +4,12 @@ import com.threeNerds.basketballDiary.constant.code.GameRecordStateCode;
 import com.threeNerds.basketballDiary.constant.code.GameTypeCode;
 import com.threeNerds.basketballDiary.constant.code.QuarterCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
-import com.threeNerds.basketballDiary.exception.Error;
+import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import com.threeNerds.basketballDiary.mvc.game.dto.GameCreationDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.apache.ibatis.javassist.compiler.CompileError;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -108,7 +107,7 @@ public class Game {
             case SECOND : return this.quarterTime2;
             case THIRD  : return this.quarterTime3;
             case FOURTH : return this.quarterTime4;
-        default     : throw new CustomException( Error.INVALID_PARAMETER );
+        default     : throw new CustomException( DomainErrorType.INVALID_PARAMETER );
         }
     }
 
@@ -120,7 +119,7 @@ public class Game {
             case SECOND : this.quarterTime2 = quarterTime; break;
             case THIRD  : this.quarterTime3 = quarterTime; break;
             case FOURTH : this.quarterTime4 = quarterTime; break;
-            default     : throw new CustomException( Error.INVALID_PARAMETER );
+            default     : throw new CustomException( DomainErrorType.INVALID_PARAMETER );
         }
     }
 }
