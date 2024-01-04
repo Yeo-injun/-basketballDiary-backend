@@ -28,6 +28,9 @@ import com.threeNerds.basketballDiary.mvc.game.service.GameJoinManagerService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameRecordManagerService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameService;
 import com.threeNerds.basketballDiary.session.SessionUser;
+import com.threeNerds.basketballDiary.swagger.docs.ApiDocs035;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -57,6 +60,11 @@ import static com.threeNerds.basketballDiary.utils.SessionUtil.LOGIN_USER;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/games")
+@Tag(
+    name        = "게임컨트롤러",
+    description = "Game의 생성, 조회, 입력, 수정 등을 수행하는 서비스를 위한 Controller"
+)
+/** swagger 관련 참고 자료 : https://devocean.sk.com/experts/techBoardDetail.do?ID=164919 */
 public class GameController {
 
     private final GameService gameService;
@@ -70,6 +78,7 @@ public class GameController {
      */
     @Auth
     @PostMapping("/{gameSeq}/homeAwayCode/{homeAwayCode}/players")
+    @ApiDocs035
     public ResponseEntity<URI> registerGameJoinPlayers(
             @PathVariable(name = "gameSeq") Long gameSeq,
             @PathVariable(name = "homeAwayCode") String homeAwayCode,
