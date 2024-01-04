@@ -36,6 +36,8 @@ dependencies {
 	testImplementation "org.mockito:mockito-core:3.3.3"
 //	SQL 쿼리 로그 출력을 위한 추가 (2022.02.26)
 	implementation group: 'org.bgee.log4jdbc-log4j2', name: 'log4jdbc-log4j2-jdbc4.1', version: '1.16'
+	//    swagger
+	implementation 'org.springdoc:springdoc-openapi-ui:1.6.9'
 }
 
 test {
