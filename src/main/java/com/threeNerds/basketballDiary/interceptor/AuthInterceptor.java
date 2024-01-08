@@ -3,6 +3,7 @@ package com.threeNerds.basketballDiary.interceptor;
 import com.threeNerds.basketballDiary.constant.UserAuthConst;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
+import com.threeNerds.basketballDiary.exception.error.SystemErrorType;
 import com.threeNerds.basketballDiary.utils.SessionUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.method.HandlerMethod;
@@ -37,7 +38,7 @@ public class AuthInterceptor implements HandlerInterceptor {
 
         /** 2. @Auth가 있는 경우 - 세션이 있는지 확인 */
         if (!SessionUtil.isLogin()) {
-            throw new CustomException(DomainErrorType.LOGIN_REQUIRED);
+            throw new CustomException( SystemErrorType.LOGIN_REQUIRED );
         }
 
         /** 소속팀의 권한 체크 - pathVariables에 teamSeq가 없는 경우는 권한체크를 할 필요없음. */
@@ -65,7 +66,7 @@ public class AuthInterceptor implements HandlerInterceptor {
         log.info("= 팀Seq : {} ", teamSeq);
         log.info("= API권한정보 : {} / 사용자권한정보 : {} ", userAuthGrade, apiAuthGrade);
         log.info("======================================================");
-        throw new CustomException(DomainErrorType.UNAUTHORIZED_ACCESS);
+        throw new CustomException( SystemErrorType.UNAUTHORIZED_ACCESS );
     }
 
     @Override
