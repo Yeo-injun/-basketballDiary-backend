@@ -35,11 +35,10 @@ public class GameService {
     private final GameJoinTeamRepository gameJoinTeamRepository;
     private final GameRecordAuthRepository gameRecordAuthRepo;
 
-    public void deleteGame(Long gameSeq){
+    public void deleteGame( Long gameSeq ) {
         boolean isDeleteGame = gameRepository.deleteGame(gameSeq) > 0;
         if ( !isDeleteGame ) {
-            // TODO 임시 에러 던지기 - 삭제할 게임이 없습니다.
-            throw new CustomException(DomainErrorType.INVALID_PARAMETER);
+            throw new CustomException( DomainErrorType.NOT_FOUND_GAME_FOR_DELETE );
         }
         // TODO 게임참가팀, 게임참가선수, 쿼터기록, 게임기록권한 테이블도 다 삭제해줘야 함....
     }

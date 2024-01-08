@@ -425,10 +425,6 @@ public class GameController {
     public ResponseEntity<?> getGameAllQuartersRecords (
             @PathVariable(name = "gameSeq") Long gameSeq
     ) {
-//        if(ObjectUtils.isEmpty(gameSeq)) {
-//            throw new CustomException(Error.NO_PARAMETER);
-//        }
-
         SearchGameDTO searchGameDTO = new SearchGameDTO()
                                              .gameSeq(gameSeq);
 

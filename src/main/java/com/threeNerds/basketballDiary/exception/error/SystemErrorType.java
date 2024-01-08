@@ -15,8 +15,13 @@ public enum SystemErrorType implements ErrorMessageType {
     MISSING_REQUIRED_PARAMETERS( BAD_REQUEST, "필수 파라미터값이 누락되었습니다." ),
     EXCEED_MAX_FILE_SIZE( BAD_REQUEST, "파일 업로드 최대크기를 초과하였습니다." ),
 
+    /** 401 UNAUTHORIZED : 인증되지 않은 사용자 ( 시스템 권한 으로 관리 ) */
+    UNAUTHORIZED_ACCESS(UNAUTHORIZED, "접근 권한이 없습니다."),
+    LOGIN_REQUIRED(UNAUTHORIZED, "로그인이 필요합니다"),
+
     /** 404 NOT_FOUND : Resource 를 찾을 수 없음 */
     NOT_FOUND_IMAGE_FOR_URL( NOT_FOUND, "해당 URL에 이미지 파일이 존재하지 않습니다."),
+    NOT_FOUND_VALID_VALUE( NOT_FOUND, "유효한 값을 찾지 못했습니다." ),
 
     /** 500 INTERNAL_SERVER_ERROR : null point에러 등 */
     INTERNAL_ERROR( INTERNAL_SERVER_ERROR, "서버 내부에서 오류가 발생했습니다." ),
