@@ -29,6 +29,7 @@ import com.threeNerds.basketballDiary.mvc.game.service.GameRecordManagerService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameService;
 import com.threeNerds.basketballDiary.session.SessionUser;
 import com.threeNerds.basketballDiary.swagger.docs.game.ApiDocs035;
+import com.threeNerds.basketballDiary.swagger.docs.game.ApiDocs044;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -61,7 +62,7 @@ import static com.threeNerds.basketballDiary.utils.SessionUtil.LOGIN_USER;
 @RequestMapping("/api/games")
 @Tag(
     name        = "게임컨트롤러",
-    description = "Game의 생성, 조회, 입력, 수정 등을 수행하는 서비스를 위한 Controller"
+    description = "Game 도메인과 관련된 서비스를 수행하는 Controller. Game도메인의 생성, 조회, 수정, 삭제 등"
 )
 /** swagger 관련 참고 자료 : https://devocean.sk.com/experts/techBoardDetail.do?ID=164919 */
 public class GameController {
@@ -75,9 +76,10 @@ public class GameController {
      * API035 게임참가 선수등록하기
      * 22.12.15(목) @ReauestBody부분 Request클래스로 대체
      */
+
+    @ApiDocs035
     @Auth
     @PostMapping("/{gameSeq}/homeAwayCode/{homeAwayCode}/players")
-    @ApiDocs035
     public ResponseEntity<URI> registerGameJoinPlayers(
             @PathVariable(name = "gameSeq") Long gameSeq,
             @PathVariable(name = "homeAwayCode") String homeAwayCode,
@@ -191,6 +193,7 @@ public class GameController {
     /**
      * API044 상대팀 목록 조회
      */
+    @ApiDocs044
     @Auth
     @GetMapping("/opponents")
     public ResponseEntity<?> searchOpponents(
