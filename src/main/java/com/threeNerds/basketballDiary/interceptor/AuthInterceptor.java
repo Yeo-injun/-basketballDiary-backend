@@ -5,6 +5,7 @@ import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import com.threeNerds.basketballDiary.exception.error.SystemErrorType;
 import com.threeNerds.basketballDiary.utils.SessionUtil;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -20,14 +21,21 @@ public class AuthInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        log.info("============= 인증 체크 인터셉터 실행 =============");
-        log.info("= {} {} ", request.getMethod(), request.getRequestURI());
-        log.info("===============================================");
 
+        /**
+         * URL 로그 처리
+         */
         if(!(handler instanceof HandlerMethod)) {
+            log.info("=> {} {} ", request.getMethod(), request.getRequestURI());
             return true;
         }
         HandlerMethod hm = (HandlerMethod) handler;
+        Operation apiSpec = hm.getMethodAnnotation( Operation.class );
+        if ( null != apiSpec ) {
+            log.info( "=> {} : {} {} ", apiSpec.summary(), request.getMethod(), request.getRequestURI() );
+        } else {
+            log.info( "=> {} {} ", request.getMethod(), request.getRequestURI() );
+        }
 
         Auth apiAuth = hm.getMethodAnnotation(Auth.class);
         /** 1. @Auth 가 없는 경우 - 인증이 별도로 필요없음

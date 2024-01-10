@@ -17,6 +17,7 @@ import static java.lang.annotation.ElementType.METHOD;
 @Target( METHOD )
 @Retention( RetentionPolicy.RUNTIME )
 @Operation(
+    operationId = "API044",
     summary     = "[ API044 ] 상대팀 목록 조회",
     description =
             "교류전으로 생성한 경기에서 상대팀으로 지정할 수 있는 팀의 목록을 조회한다. \n" +
@@ -30,5 +31,4 @@ import static java.lang.annotation.ElementType.METHOD;
     }
 )
 public @interface ApiDocs044 {
-    String apiId() default "API044";
 }
