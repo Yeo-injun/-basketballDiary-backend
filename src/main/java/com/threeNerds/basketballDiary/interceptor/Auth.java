@@ -1,5 +1,7 @@
 package com.threeNerds.basketballDiary.interceptor;
 
+import com.threeNerds.basketballDiary.constant.UserAuthConst;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -18,5 +20,5 @@ public @interface Auth {
      * 6. an array of any of the above
      * => don't use 'wrapper class'
      */
-    long GRADE() default 0L;
+    long GRADE() default UserAuthConst.USER;
 }

@@ -22,16 +22,17 @@ public interface TeamMemberRepository {
     /** 팀원 단건조회(팀원SEQ로) */
     TeamMember findByTeamMemberSeq(Long teamMemberSeq);
 
-    Long findMyTeamCount(Long userSeq);
-
     /** 사용자 및 팀Seq로 팀원정보 조회 */
     TeamMember findTeamMemberByUserAndTeamSeq(TeamMember tmParam);
+
+    Long findMyTeamCount(Long userSeq);
+
 
     /**********
      * INSERT
      **********/
     /** 팀원 등록  */
-    int saveTeamMemeber(TeamMember teamMember);
+    int saveTeamMember(TeamMember teamMember);
 
     /**********
      * UPDATE
@@ -48,6 +49,6 @@ public interface TeamMemberRepository {
     /**********
      * DELETE
      **********/
-    int deleteMyTeamProfile(FindMyTeamProfileDTO userDto);
+    int deleteTeamMemberByUserSeqAndTeamSeq( TeamMember userDto );
 
 }

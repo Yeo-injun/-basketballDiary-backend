@@ -12,6 +12,7 @@ public interface QuarterPlayerRecordsRepository {
      **********/
     List<QuarterPlayerRecords> findAllInGame(Long gameSeq);
     List<QuarterPlayerRecords> findOneTeamQuarterRecord( QuarterPlayerRecords params );
+
     /**********
      * INSERT
      **********/
@@ -22,7 +23,6 @@ public interface QuarterPlayerRecordsRepository {
      **********/
     int updateInGameYn( QuarterPlayerRecords params );
     int updateInGameYnForAllQuarterPlayer( QuarterPlayerRecords params );
-
     int updateQuarterRecords(QuarterPlayerRecords quarterPlayerRecords);
 
     /**********

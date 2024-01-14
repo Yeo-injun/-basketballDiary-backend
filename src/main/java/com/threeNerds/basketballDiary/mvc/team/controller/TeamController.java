@@ -14,9 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.util.List;
 
-import static com.threeNerds.basketballDiary.constant.UserAuthConst.USER;
 import static com.threeNerds.basketballDiary.utils.SessionUtil.LOGIN_USER;
 
 /**
@@ -68,12 +68,12 @@ public class TeamController {
     /**
      * API021 : 팀 등록
      */
-    @Auth(GRADE = USER)
+    @Auth
     @PostMapping
     public ResponseEntity<Void> registerTeam(
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,
             @RequestPart( required = false ) MultipartFile teamLogoImage,
-            @RequestPart RegisterTeamRequest teamInfo
+            @RequestPart @Valid RegisterTeamRequest teamInfo
     ) {
         List<TeamAuthDTO> authList = teamService.createTeam( new RegisterTeamRequest(
                 sessionUser.getUserSeq(),

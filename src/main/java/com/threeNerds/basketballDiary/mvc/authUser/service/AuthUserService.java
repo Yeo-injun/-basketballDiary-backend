@@ -43,8 +43,7 @@ public class AuthUserService {
     }
 
     @Transactional
-    public void updatePassword(PasswordUpdateDTO passwordUpdateDTO)
-    {
+    public void updatePassword(PasswordUpdateDTO passwordUpdateDTO) {
         User findUser = Optional.ofNullable(userRepository.findUser(passwordUpdateDTO.getUserSeq()))
                 .orElseThrow(()-> new CustomException(DomainErrorType.USER_NOT_FOUND));
 

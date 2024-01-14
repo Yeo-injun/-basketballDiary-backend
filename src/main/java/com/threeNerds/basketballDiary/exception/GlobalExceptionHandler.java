@@ -90,19 +90,4 @@ public class GlobalExceptionHandler { //extends ResponseEntityExceptionHandler {
         return BindErrorResponse.toEntity( new BindErrorType( ex.getFieldErrors() ) );
     }
 
-
-    //TODO : 삭제예정
-    @Deprecated
-    @ExceptionHandler(value = BasketballException.class)
-    public ErrorResponseV1 handlerBasketballException(BasketballException ex){
-        ErrorType exception = ex.getException();
-        int status  = ex.getStatus().value();
-        String message = exception.getMessage();
-
-        ErrorResponseV1 responseError = ErrorResponseV1.builder()
-                .status(status)
-                .message(message)
-                .build();
-        return responseError;
-    }
 }

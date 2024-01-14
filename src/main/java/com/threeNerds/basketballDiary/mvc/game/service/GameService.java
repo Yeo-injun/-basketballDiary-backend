@@ -3,6 +3,7 @@ package com.threeNerds.basketballDiary.mvc.game.service;
 import com.threeNerds.basketballDiary.constant.code.GameRecordStateCode;
 import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import com.threeNerds.basketballDiary.exception.CustomException;
+import com.threeNerds.basketballDiary.mvc.game.controller.response.GetGameBasicInfoResponse;
 import com.threeNerds.basketballDiary.mvc.game.domain.Game;
 import com.threeNerds.basketballDiary.mvc.game.domain.GameJoinTeam;
 import com.threeNerds.basketballDiary.mvc.game.domain.GameRecordAuth;
@@ -34,11 +35,10 @@ public class GameService {
     private final GameJoinTeamRepository gameJoinTeamRepository;
     private final GameRecordAuthRepository gameRecordAuthRepo;
 
-    public void deleteGame(Long gameSeq){
+    public void deleteGame( Long gameSeq ) {
         boolean isDeleteGame = gameRepository.deleteGame(gameSeq) > 0;
         if ( !isDeleteGame ) {
-            // TODO 임시 에러 던지기 - 삭제할 게임이 없습니다.
-            throw new CustomException(DomainErrorType.INVALID_PARAMETER);
+            throw new CustomException( DomainErrorType.NOT_FOUND_GAME_FOR_DELETE );
         }
         // TODO 게임참가팀, 게임참가선수, 쿼터기록, 게임기록권한 테이블도 다 삭제해줘야 함....
     }
@@ -87,11 +87,11 @@ public class GameService {
      * 게임기록 상세조회
      * @author 이성주
      */
-    public GameInfoDTO getGameInfo(Long gameSeq)
-    {
-        return Optional
-                .ofNullable(gameRepository.findGameBasicInfo(gameSeq))
-                .orElseThrow(()->new CustomException(DomainErrorType.NOT_FOUND_GAME));
+    public GetGameBasicInfoResponse getGameInfo( Long gameSeq ) {
+        Game game = Optional
+                        .ofNullable( gameRepository.findGame( gameSeq ) )
+                        .orElseThrow( () -> new CustomException( DomainErrorType.NOT_FOUND_GAME ) );
+        return new GetGameBasicInfoResponse( game );
     }
 
     /**

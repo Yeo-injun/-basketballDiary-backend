@@ -282,23 +282,15 @@ public class GameJoinManagerService {
         List<PlayerInfoDTO> entryInput = quarterEntryInfoDTO.getPlayerList();
         boolean hasNotValidEntry = entryInput.size() != 5;
         if (hasNotValidEntry) {
-            throw new CustomException(DomainErrorType.INSUFFICIENT_PLAYERS_ON_ENTRY);
+            throw new CustomException( DomainErrorType.INSUFFICIENT_PLAYERS_ON_ENTRY );
         }
 
         /**--------------------------------
-         *             TODO 게임참가선수 등록여부 검증로직 수정
          * 게임참가선수 테이블에 존재하는 선수인지 확인 - 게임참가선수Seq로만 조회
          *  - 홈 혹은 어웨이팀 게임참가선수목록 조회
          *  - gameJoinPlayerSeq를 Set으로 변경
          *  - 해당 Set으로 존재여부 확인
          *---------------------------------*/
-//        GameJoinPlayer gameJoinPlayerParam = GameJoinPlayer.builder()
-//                .gameJoinPlayerSeq( gameJoinPlayerSeq )
-//                .build();
-//        Optional.ofNullable(gameJoinPlayerRepository.findPlayer(gameJoinPlayerParam))
-//                .orElseThrow(() -> new CustomException(Error.INVALID_PARAMETER));
-
-
         Long gameSeq         = quarterEntryInfoDTO.getGameSeq();
         String homeAwayCode  = quarterEntryInfoDTO.getHomeAwayCode();
         String quarterCode   = quarterEntryInfoDTO.getQuarterCode();
@@ -350,9 +342,7 @@ public class GameJoinManagerService {
                     .inGameYn(              "Y" )
                     .build();
             quarterPlayerRecordsRepo.save(paramForCreation);
-
         }
-        return;
     }
 
     /**
