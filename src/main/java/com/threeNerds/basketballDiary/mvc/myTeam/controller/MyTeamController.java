@@ -388,7 +388,7 @@ public class MyTeamController {
     public ResponseEntity<SearchMyTeamGamesResponse> searchMyTeamGames (
             @SessionAttribute( value = LOGIN_USER ) SessionUser sessionUser                     ,
             @PathVariable( value = "teamSeq" ) Long teamSeq                                     ,
-            @RequestParam( name = "pageNo", defaultValue = "0") Integer pageNo                  ,
+            @RequestParam( name = "pageNo", defaultValue = "1") Integer pageNo                  ,
             @RequestParam( name = "gameBgngYmd"     , required = false ) String gameBgngYmd     ,
             @RequestParam( name = "gameEndYmd"      , required = false ) String gameEndYmd      ,
             @RequestParam( name = "sidoCode"        , required = false ) String sidoCode        ,

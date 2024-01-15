@@ -242,19 +242,19 @@ public class GameRecordManagerService {
          *      - 참가팀 조회하여 GameRecordDTO안에 필드채우기
          *  3. 참가팀 조회시 쿼터별기록을 조회해서 GameJoinTeamRecord필드에 할당해주기
          **/
+        // TODO 팀원인지 확인하기 ( userSeq, teamSeq로 )
         // 게임참가팀 테이블에서 TEAM_SEQ를 조회
         // TODO homeAwayCode로 게임 목록을 조회하기 +a 검색조건 추가
         Pagination pagination = Pagination.of( message.getPageNo(), 5 );
         List<GameRecordDTO> games = gameRecordManagerRepository.findPagingGamesByTeamSeq( new GameCondDTO()
-                .userSeq( 		message.getUserSeq() )
                 .teamSeq( 		message.getTeamSeq() )
                 .pagination(    pagination )
-                .gameBgngYmd( 	message.getGameBgngYmd() )
-                .gameEndYmd( 	message.getGameEndYmd() )
-                .sidoCode( 		message.getSidoCode() )
-                .gamePlaceName( message.getGamePlaceName() )
                 .gameTypeCode( 	message.getGameTypeCode() )
                 .homeAwayCode( 	message.getHomeAwayCode() )
+                // TODO 시작일자 ~ 종료일자 유효성 체크 8자리. 날짜 유효성 반영. 시작일자가 더 빠른지.
+//                .gameBgngYmd( 	message.getGameBgngYmd() )
+//                .gameEndYmd( 	message.getGameEndYmd() )
+                .gamePlaceName( message.getGamePlaceName() )
         );
 
         if ( games.isEmpty() ) {
