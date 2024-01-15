@@ -1,6 +1,5 @@
 package com.threeNerds.basketballDiary.mvc.myTeam.controller;
 
-import com.threeNerds.basketballDiary.file.ImageUploader;
 import com.threeNerds.basketballDiary.interceptor.Auth;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.GetMyTeamsRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.ModifyMyTeamInfoRequest;
@@ -71,10 +70,6 @@ public class MyTeamController {
 
     private final GameRecordManagerService gameRecordManagerService;
 
-    /**--------------------------------------
-     * Components
-     **--------------------------------------*/
-    private final ImageUploader imageUploader;
 
     /**
      * API001 : 소속팀 운영진 조회
@@ -393,7 +388,7 @@ public class MyTeamController {
     public ResponseEntity<SearchMyTeamGamesResponse> searchMyTeamGames (
             @SessionAttribute( value = LOGIN_USER ) SessionUser sessionUser                     ,
             @PathVariable( value = "teamSeq" ) Long teamSeq                                     ,
-            @RequestParam( name = "pageNo", defaultValue = "0") Integer pageNo                  ,
+            @RequestParam( name = "pageNo", defaultValue = "1") Integer pageNo                  ,
             @RequestParam( name = "gameBgngYmd"     , required = false ) String gameBgngYmd     ,
             @RequestParam( name = "gameEndYmd"      , required = false ) String gameEndYmd      ,
             @RequestParam( name = "sidoCode"        , required = false ) String sidoCode        ,
@@ -401,7 +396,8 @@ public class MyTeamController {
             @RequestParam( name = "gameTypeCode"    , required = false ) String gameTypeCode    ,
             @RequestParam( name = "homeAwayCode"    , required = false ) String homeAwayCode
     ) {
-        return ResponseEntity.ok( gameRecordManagerService.searchMyTeamGames( new SearchMyTeamGamesRequest(
+        return ResponseEntity.ok(
+            gameRecordManagerService.searchMyTeamGames( new SearchMyTeamGamesRequest(
                     sessionUser.getUserSeq()    , teamSeq           , pageNo        ,
                     gameBgngYmd                 , gameEndYmd        , sidoCode      ,
                     gamePlaceName               , gameTypeCode      , homeAwayCode

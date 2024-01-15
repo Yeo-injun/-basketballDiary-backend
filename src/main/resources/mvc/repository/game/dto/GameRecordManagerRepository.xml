@@ -20,10 +20,21 @@
               FROM GAME
              WHERE 1=1
                AND GAME_SEQ IN (
+                                /* TODO IN절 다른 구문으로 변경하기 ... IN절에 반영되는 파라미터 갯수가 많아지면 DB 터짐... */
                                 SELECT GAME_SEQ
                                   FROM GAME_JOIN_TEAM
-                                 WHERE TEAM_SEQ = #{teamSeq}
-                               )
+                                 WHERE 1=1
+                                   AND TEAM_SEQ = #{teamSeq}
+        <if test='homeAwayCode != null and !"".equals( homeAwayCode )' >
+                                   AND HOME_AWAY_CODE = #{homeAwayCode}
+        </if>
+                                )
+        <if test='gameTypeCode != null and !"".equals( gameTypeCode )' >
+               AND GAME_TYPE_CODE = #{gameTypeCode}
+        </if>
+        <if test='gamePlaceName != null and !"".equals( gamePlaceName )' >
+               AND INSTR( GAME_PLACE_NAME, #{gamePlaceName} ) > 0
+        </if>
         )
         ORDERS LIMIT #{pagination.rowCount} OFFSET #{pagination.offset}
     </select>
