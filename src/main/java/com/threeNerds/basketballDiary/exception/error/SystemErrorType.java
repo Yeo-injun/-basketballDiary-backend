@@ -14,6 +14,7 @@ public enum SystemErrorType implements ErrorMessageType {
     NOT_ALLOWED_FILE_EXTENSTION( BAD_REQUEST, "허용되지 않는 파일 확장자입니다." ),
     MISSING_REQUIRED_PARAMETERS( BAD_REQUEST, "필수 파라미터값이 누락되었습니다." ),
     EXCEED_MAX_FILE_SIZE( BAD_REQUEST, "파일 업로드 최대크기를 초과하였습니다." ),
+    PARAMETER_FORMAT_ERROR( BAD_REQUEST, "파라미터 값 형식이 맞지 않습니다." ),
 
     /** 401 UNAUTHORIZED : 인증되지 않은 사용자 ( 시스템 권한 으로 관리 ) */
     UNAUTHORIZED_ACCESS(UNAUTHORIZED, "접근 권한이 없습니다."),
