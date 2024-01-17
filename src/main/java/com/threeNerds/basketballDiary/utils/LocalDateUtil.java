@@ -3,6 +3,7 @@ package com.threeNerds.basketballDiary.utils;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.SystemErrorType;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.StringUtils;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -16,9 +17,9 @@ public class LocalDateUtil {
     /**
      *  날짜포맷 유효성 체크
      **/
-    public static boolean isValidStringFormat( String date ) {
+    public static boolean isValidYmdFormat( String date ) {
         // yyyyMMdd 8자리인지 체크
-        if ( 8 != date.length() ) {
+        if ( !StringUtils.hasText( date ) ||  8 != date.length() ) {
             return false;
         }
 
@@ -35,7 +36,7 @@ public class LocalDateUtil {
      *  - startYmd에서 endYmd까지의 일자
      **/
     public static long getDateDifference( String startYmd, String endYmd ) {
-        if ( !isValidStringFormat( startYmd ) || !isValidStringFormat( endYmd ) ) {
+        if ( !isValidYmdFormat( startYmd ) || !isValidYmdFormat( endYmd ) ) {
             // TODO SystemErrorType 하위의 별도 구체타입 구현하기
             throw new CustomException( SystemErrorType.INTERNAL_ERROR );
         }

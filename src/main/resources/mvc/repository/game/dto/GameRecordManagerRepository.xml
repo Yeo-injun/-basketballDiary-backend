@@ -29,6 +29,9 @@
                                    AND HOME_AWAY_CODE = #{homeAwayCode}
         </if>
                                 )
+        <if test='inAllSpan != null and !inAllSpan' >
+               AND GAME_YMD BETWEEN #{gameBgngYmd} AND #{gameEndYmd}
+        </if>
         <if test='gameTypeCode != null and !"".equals( gameTypeCode )' >
                AND GAME_TYPE_CODE = #{gameTypeCode}
         </if>

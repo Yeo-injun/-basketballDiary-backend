@@ -34,9 +34,9 @@ import com.threeNerds.basketballDiary.mvc.game.repository.dto.GameRecordManagerR
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.SearchMyTeamGamesRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.SearchMyTeamGamesResponse;
 import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameCondDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameJoinTeamRecordDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameRecordDTO;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameSearchCriteriaDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.repository.TeamMemberRepository;
 import com.threeNerds.basketballDiary.pagination.Pagination;
 import com.threeNerds.basketballDiary.utils.LocalDateUtil;
@@ -249,24 +249,15 @@ public class GameRecordManagerService {
             throw new CustomException( DomainErrorType.ONLY_TEAM_MEMBER_QUERY );
         }
 
-        /** 검색기간 유효성 체크 + TODO 최대범위도 처리하기 */
-        String gameStartYmd = message.getGameBgngYmd();
-        String gameEndYmd   = message.getGameEndYmd();
-        if ( ( StringUtils.hasText( gameStartYmd ) && StringUtils.hasText( gameEndYmd ) )
-            && LocalDateUtil.getDateDifference( gameStartYmd, gameEndYmd ) < 0 ) {
-            throw new CustomException( DomainErrorType.INVALID_SEARCH_DATE_SPAN );
-        }
-
         /** 경기목록 조회 */
         // TODO 검색기간 조건 쿼리 반영 필요
         Pagination pagination = Pagination.of( message.getPageNo(), 5 );
-        List<GameRecordDTO> games = gameRecordManagerRepository.findPagingGamesByTeamSeq( new GameCondDTO()
-                .teamSeq( 		message.getTeamSeq() )
+        List<GameRecordDTO> games = gameRecordManagerRepository.findPagingGamesByTeamSeq( new GameSearchCriteriaDTO()
                 .pagination(    pagination )
+                .setSearchSpan( message.getGameBgngYmd(), message.getGameEndYmd() )
+                .teamSeq( 		message.getTeamSeq() )
                 .gameTypeCode( 	message.getGameTypeCode() )
                 .homeAwayCode( 	message.getHomeAwayCode() )
-                .gameBgngYmd( 	gameStartYmd )
-                .gameEndYmd( 	gameEndYmd )
                 .gamePlaceName( message.getGamePlaceName() )
         );
 
