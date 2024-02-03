@@ -5,9 +5,9 @@ import com.threeNerds.basketballDiary.mvc.game.dto.getGameAllQuartersRecords.Qua
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayerRecordsByQuarter.response.PlayerQuarterRecordDTO;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.response.TeamQuarterRecordsDTO;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameRecorders.response.GameRecorderDTO;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameCondDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameJoinTeamRecordDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameRecordDTO;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameSearchCriteriaDTO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -16,7 +16,7 @@ import java.util.List;
 public interface GameRecordManagerRepository {
 
     /** 게임기록조회 */
-    List<GameRecordDTO> findPagingGamesByTeamSeq( GameCondDTO gc );
+    List<GameRecordDTO> findPagingGamesByTeamSeq( GameSearchCriteriaDTO gc );
 
     /** 게임참가팀들 조회 - 홈/어웨이팀 모두 */
     List<GameJoinTeamRecordDTO> findGameJoinTeamRecordsByGameSeq(Long gameSeq);
