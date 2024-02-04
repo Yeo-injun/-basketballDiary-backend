@@ -29,6 +29,7 @@ import com.threeNerds.basketballDiary.mvc.game.service.GameRecordManagerService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameService;
 import com.threeNerds.basketballDiary.session.SessionUser;
 import com.threeNerds.basketballDiary.swagger.docs.game.ApiDocs035;
+import com.threeNerds.basketballDiary.swagger.docs.game.ApiDocs038;
 import com.threeNerds.basketballDiary.swagger.docs.game.ApiDocs044;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -101,12 +102,12 @@ public class GameController {
 
 
     /**
-     * API038 쿼터 저장하기/수정하기
-     * - cf. 게임기록권한자인 경우 체크하기
+     * API038 경기 쿼터기록 수정하기
      * @param gameSeq     게임Seq
      * @param quarterCode 쿼터코드; 01~04(1~4쿼터), 11(전반), 12(후반)
      * @author 강창기
      */
+    @ApiDocs038
     @Auth
     @PutMapping("/{gameSeq}/quarters/{quarterCode}")
     public ResponseEntity<Void> saveQuarterRecords(
