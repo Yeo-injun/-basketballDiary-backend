@@ -124,15 +124,12 @@ public class GameController {
     }
 
     /**
-     * API040 게임엔트리 조회하기
-     * @param gameSeq
-     * @param quarterCode
-     * @return GetGameEntryResponse
+     * API040 경기 엔트리 조회하기
      * Spring RestTemplate에서는 GET 메소드의  RequestBody를 지원하지 않음..
      * 참고자료 : https://brunch.co.kr/@kd4/158
      * 23.02.19(일) 인준 - API url 수정 (gameJoinTeamSeq를 화면에서 계속 가지고 있는 것이 번거롭기 때문)
      */
-    @Auth
+//    @Auth
     @GetMapping("/{gameSeq}/quarters/{quarterCode}/entry")
     public ResponseEntity<?> getGameEntry (
             @PathVariable("gameSeq") Long gameSeq,
