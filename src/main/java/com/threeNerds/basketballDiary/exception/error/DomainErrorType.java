@@ -29,6 +29,7 @@ public enum DomainErrorType implements ErrorMessageType {
     NOT_FOUND_AWAY_TEAM(NOT_FOUND, "어웨이팀 정보가 존재하지 않습니다."),
     USER_NOT_FOUND(NOT_FOUND, "해당 사용자를 찾을 수 없습니다"),
     NO_EXIST_PASSWORD(NOT_FOUND, "비밀번호를 입력해주시기 바랍니다."),
+    INVALID_HOME_AWAY_CODE_DOMAIN(NOT_FOUND, "유효하지 않은 홈어웨이 코드입니다." ),
 
     /** 403 FORBIDDEN : 서버에 정상적인 요청이 전송됐지만, 권한 문제로 거절 */
     ONLY_TEAM_MEMBER_QUERY( FORBIDDEN, "소속된 팀원만 조회할 수 있습니다." ),
