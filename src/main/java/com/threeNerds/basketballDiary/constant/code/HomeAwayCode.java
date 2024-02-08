@@ -1,6 +1,8 @@
 package com.threeNerds.basketballDiary.constant.code;
 
 
+import com.threeNerds.basketballDiary.exception.CustomException;
+import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import lombok.Getter;
 
 import java.util.Arrays;
@@ -28,8 +30,14 @@ public enum HomeAwayCode {
         return codeName;
     }
 
-    /** 코드 도메인에 속하는 값인지 확인하는 메소드 */
-    public static boolean isCodeDomain( String code ) {
-        return !"".equals( nameOf( code ) );
+    /**---------------------------------------------
+     * 코드 도메인에 속하는 값인지 확인하는 메소드
+     * - 코드 도메인에 해당하지 않으면 Exception Throw
+     *----------------------------------------------*/
+    public static boolean checkDomain( String code ) {
+        if ( "".equals( nameOf( code ) ) ) {
+            throw new CustomException( DomainErrorType.INVALID_HOME_AWAY_CODE_DOMAIN );
+        }
+        return true;
     }
 }
