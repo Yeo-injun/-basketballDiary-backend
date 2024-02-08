@@ -30,9 +30,7 @@ public class GetGameEntryRequest {
             throw new CustomException( SystemErrorType.NOT_NULLALLBE_VALUE );
         }
 
-        if ( !HomeAwayCode.isCodeDomain( homeAwayCode ) ) {
-            throw new CustomException( DomainErrorType.INVALID_HOME_AWAY_CODE_DOMAIN );
-        }
+        HomeAwayCode.checkDomain( homeAwayCode );
 
         // TODO 쿼터코드 도에인 체크
 //        if ( ) {
