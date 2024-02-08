@@ -1,10 +1,9 @@
 package com.threeNerds.basketballDiary.mvc.user.dto;
 
-import com.threeNerds.basketballDiary.constant.code.PositionCode;
+import com.threeNerds.basketballDiary.constant.code.type.PositionCode;
 import com.threeNerds.basketballDiary.mvc.user.domain.User;
 import lombok.Getter;
 
-import javax.swing.text.Position;
 import java.time.LocalDate;
 
 @Getter

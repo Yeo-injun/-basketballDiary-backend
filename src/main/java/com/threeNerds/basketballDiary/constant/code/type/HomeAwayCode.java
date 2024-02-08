@@ -1,14 +1,15 @@
-package com.threeNerds.basketballDiary.constant.code;
+package com.threeNerds.basketballDiary.constant.code.type;
 
 
+import com.threeNerds.basketballDiary.constant.code.CodeType;
+import com.threeNerds.basketballDiary.constant.code.CodeTypeUtil;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import lombok.Getter;
-
-import java.util.Arrays;
+import org.springframework.util.StringUtils;
 
 @Getter
-public enum HomeAwayCode {
+public enum HomeAwayCode implements CodeType {
     HOME_TEAM("홈팀", "01"),
     AWAY_TEAM("어웨이팀", "02");
 
@@ -22,22 +23,16 @@ public enum HomeAwayCode {
 
     /* enum의 열거된 항목들의 code값을 통해 이름을 가져오기 */
     public static String nameOf( String code ) {
-        String codeName = Arrays.stream(values())
-                .filter(item -> item.getCode().equals(code))
-                .map(HomeAwayCode::getName)
-                .findAny()
-                .orElse("");
-        return codeName;
+        return CodeTypeUtil.getCodeName( values(), code );
     }
 
     /**---------------------------------------------
      * 코드 도메인에 속하는 값인지 확인하는 메소드
      * - 코드 도메인에 해당하지 않으면 Exception Throw
      *----------------------------------------------*/
-    public static boolean checkDomain( String code ) {
-        if ( "".equals( nameOf( code ) ) ) {
+    public static void checkDomain( String code ) {
+        if ( !StringUtils.hasText( nameOf( code) ) ) {
             throw new CustomException( DomainErrorType.INVALID_HOME_AWAY_CODE_DOMAIN );
         }
-        return true;
     }
 }

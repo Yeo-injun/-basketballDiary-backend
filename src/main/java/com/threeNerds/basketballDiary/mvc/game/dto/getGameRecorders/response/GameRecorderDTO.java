@@ -1,8 +1,8 @@
 package com.threeNerds.basketballDiary.mvc.game.dto.getGameRecorders.response;
 
-import com.threeNerds.basketballDiary.constant.code.GameRecordAuthCode;
-import com.threeNerds.basketballDiary.constant.code.PlayerTypeCode;
-import com.threeNerds.basketballDiary.constant.code.PositionCode;
+import com.threeNerds.basketballDiary.constant.code.type.GameRecordAuthCode;
+import com.threeNerds.basketballDiary.constant.code.type.PlayerTypeCode;
+import com.threeNerds.basketballDiary.constant.code.type.PositionCode;
 import lombok.Getter;
 
 @Getter

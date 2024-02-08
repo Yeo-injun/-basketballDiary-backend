@@ -1,6 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.response;
 
-import com.threeNerds.basketballDiary.constant.code.HomeAwayCode;
+import com.threeNerds.basketballDiary.constant.code.type.HomeAwayCode;
 import lombok.Getter;
 
 @Getter

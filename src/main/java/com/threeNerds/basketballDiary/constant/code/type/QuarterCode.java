@@ -1,7 +1,6 @@
-package com.threeNerds.basketballDiary.constant.code;
+package com.threeNerds.basketballDiary.constant.code.type;
 
 import com.threeNerds.basketballDiary.exception.CustomException;
-import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import com.threeNerds.basketballDiary.exception.error.SystemErrorType;
 import lombok.Getter;
 

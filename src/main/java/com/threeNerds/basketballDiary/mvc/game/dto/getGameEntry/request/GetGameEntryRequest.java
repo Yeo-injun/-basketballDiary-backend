@@ -1,8 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.game.dto.getGameEntry.request;
 
-import com.threeNerds.basketballDiary.constant.code.HomeAwayCode;
+import com.threeNerds.basketballDiary.constant.code.type.HomeAwayCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
-import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import com.threeNerds.basketballDiary.exception.error.SystemErrorType;
 import lombok.Getter;
 

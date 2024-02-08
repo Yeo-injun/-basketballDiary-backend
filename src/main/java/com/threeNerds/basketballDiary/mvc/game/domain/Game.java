@@ -1,10 +1,9 @@
 package com.threeNerds.basketballDiary.mvc.game.domain;
 
-import com.threeNerds.basketballDiary.constant.code.GameRecordStateCode;
-import com.threeNerds.basketballDiary.constant.code.GameTypeCode;
-import com.threeNerds.basketballDiary.constant.code.QuarterCode;
+import com.threeNerds.basketballDiary.constant.code.type.GameRecordStateCode;
+import com.threeNerds.basketballDiary.constant.code.type.GameTypeCode;
+import com.threeNerds.basketballDiary.constant.code.type.QuarterCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
-import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import com.threeNerds.basketballDiary.exception.error.SystemErrorType;
 import com.threeNerds.basketballDiary.mvc.game.dto.GameCreationDTO;
 import lombok.AllArgsConstructor;

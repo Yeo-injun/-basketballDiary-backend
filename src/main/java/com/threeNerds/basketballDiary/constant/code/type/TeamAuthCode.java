@@ -1,4 +1,4 @@
-package com.threeNerds.basketballDiary.constant.code;
+package com.threeNerds.basketballDiary.constant.code.type;
 
 import com.threeNerds.basketballDiary.constant.UserAuthConst;
 import lombok.Getter;
