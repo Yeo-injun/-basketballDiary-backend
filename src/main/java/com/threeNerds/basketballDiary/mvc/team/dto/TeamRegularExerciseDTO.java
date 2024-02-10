@@ -1,6 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.team.dto;
 
-import com.threeNerds.basketballDiary.constant.code.DayOfTheWeekCode;
+import com.threeNerds.basketballDiary.constant.code.type.DayOfTheWeekCode;
 import lombok.Getter;
 
 @Getter

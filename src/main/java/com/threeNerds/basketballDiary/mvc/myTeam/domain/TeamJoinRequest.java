@@ -1,7 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.myTeam.domain;
 
-import com.threeNerds.basketballDiary.constant.code.JoinRequestStateCode;
-import com.threeNerds.basketballDiary.constant.code.JoinRequestTypeCode;
+import com.threeNerds.basketballDiary.constant.code.type.JoinRequestStateCode;
+import com.threeNerds.basketballDiary.constant.code.type.JoinRequestTypeCode;
 import com.threeNerds.basketballDiary.mvc.authUser.dto.CmnLoginUserDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.CmnMyTeamDTO;
 import lombok.AllArgsConstructor;

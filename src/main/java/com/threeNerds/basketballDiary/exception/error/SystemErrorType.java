@@ -16,6 +16,10 @@ public enum SystemErrorType implements ErrorMessageType {
     MISSING_REQUIRED_PARAMETERS( BAD_REQUEST, "필수 파라미터값이 누락되었습니다." ),
     EXCEED_MAX_FILE_SIZE( BAD_REQUEST, "파일 업로드 최대크기를 초과하였습니다." ),
     PARAMETER_FORMAT_ERROR( BAD_REQUEST, "파라미터 값 형식이 맞지 않습니다." ),
+    /** 400 BAD_REQUEST : 코드 도메인 유효성 실패 */
+    INVALID_CODE_DOMAIN_FOR_HOME_AWAY_CODE( BAD_REQUEST, "유효하지 않은 홈어웨이 코드입니다." ),
+    INVALID_CODE_DOMAIN_FOR_QUARTER_CODE( BAD_REQUEST, "유효하지 않은 쿼터 코드입니다." ),
+
 
     /** 401 UNAUTHORIZED : 인증되지 않은 사용자 ( 시스템 권한 으로 관리 ) */
     UNAUTHORIZED_ACCESS(UNAUTHORIZED, "접근 권한이 없습니다."),

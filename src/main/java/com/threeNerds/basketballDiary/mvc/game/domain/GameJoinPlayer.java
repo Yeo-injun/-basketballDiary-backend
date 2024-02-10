@@ -1,6 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.game.domain;
 
-import com.threeNerds.basketballDiary.constant.code.PlayerTypeCode;
+import com.threeNerds.basketballDiary.constant.code.type.PlayerTypeCode;
 import com.threeNerds.basketballDiary.mvc.user.domain.User;
 import com.threeNerds.basketballDiary.mvc.game.dto.GameJoinPlayerDTO;
 import lombok.AllArgsConstructor;

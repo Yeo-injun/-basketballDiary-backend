@@ -1,6 +1,6 @@
 package com.threeNerds.basketballDiary.session;
 
-import com.threeNerds.basketballDiary.constant.code.TeamAuthCode;
+import com.threeNerds.basketballDiary.constant.code.type.TeamAuthCode;
 import com.threeNerds.basketballDiary.mvc.user.domain.User;
 import com.threeNerds.basketballDiary.mvc.team.dto.TeamAuthDTO;
 import lombok.Getter;

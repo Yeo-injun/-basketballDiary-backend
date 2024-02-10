@@ -1,8 +1,8 @@
 package com.threeNerds.basketballDiary.mvc.myTeam.dto;
 
-import com.threeNerds.basketballDiary.constant.code.PlayerTypeCode;
-import com.threeNerds.basketballDiary.constant.code.PositionCode;
-import com.threeNerds.basketballDiary.constant.code.TeamAuthCode;
+import com.threeNerds.basketballDiary.constant.code.type.PlayerTypeCode;
+import com.threeNerds.basketballDiary.constant.code.type.PositionCode;
+import com.threeNerds.basketballDiary.constant.code.type.TeamAuthCode;
 import com.threeNerds.basketballDiary.pagination.Pagination;
 import lombok.Getter;
 
