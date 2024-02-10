@@ -5,6 +5,7 @@ import com.threeNerds.basketballDiary.constant.code.CodeType;
 import com.threeNerds.basketballDiary.constant.code.CodeTypeUtil;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
+import com.threeNerds.basketballDiary.exception.error.SystemErrorType;
 import lombok.Getter;
 import org.springframework.util.StringUtils;
 
@@ -21,7 +22,9 @@ public enum HomeAwayCode implements CodeType {
         this.code = code;
     }
 
-    /* enum의 열거된 항목들의 code값을 통해 이름을 가져오기 */
+    /**--------------------------------------
+     * code값으로 code이름 가져오기
+     *---------------------------------------*/
     public static String nameOf( String code ) {
         return CodeTypeUtil.getCodeName( values(), code );
     }
@@ -31,8 +34,8 @@ public enum HomeAwayCode implements CodeType {
      * - 코드 도메인에 해당하지 않으면 Exception Throw
      *----------------------------------------------*/
     public static void checkDomain( String code ) {
-        if ( !StringUtils.hasText( nameOf( code) ) ) {
-            throw new CustomException( DomainErrorType.INVALID_HOME_AWAY_CODE_DOMAIN );
+        if ( !StringUtils.hasText( nameOf( code ) ) ) {
+            throw new CustomException( SystemErrorType.INVALID_CODE_DOMAIN_FOR_HOME_AWAY_CODE );
         }
     }
 }
