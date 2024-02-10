@@ -1,6 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.game.dto.getGameEntry.request;
 
 import com.threeNerds.basketballDiary.constant.code.type.HomeAwayCode;
+import com.threeNerds.basketballDiary.constant.code.type.QuarterCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.SystemErrorType;
 import lombok.Getter;
@@ -29,12 +30,8 @@ public class GetGameEntryRequest {
             throw new CustomException( SystemErrorType.NOT_NULLALLBE_VALUE );
         }
 
+        QuarterCode.checkDomain( quarterCode );
         HomeAwayCode.checkDomain( homeAwayCode );
-
-        // TODO 쿼터코드 도에인 체크
-//        if ( ) {
-//
-//        }
 
         return true;
     }
