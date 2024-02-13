@@ -1,5 +1,7 @@
 package com.threeNerds.basketballDiary.constant.code.type;
 
+import com.threeNerds.basketballDiary.constant.code.CodeType;
+import com.threeNerds.basketballDiary.constant.code.CodeTypeUtil;
 import lombok.Getter;
 
 import java.util.Arrays;
@@ -9,9 +11,8 @@ import java.util.Arrays;
  * 가입요청 유형 코드 관리
  */
 
-/* 22.02.16 인준 제안  - domain하위에 code Package구조 추가 */
 @Getter
-public enum JoinRequestTypeCode {
+public enum JoinRequestTypeCode implements CodeType {
 
     INVITATION("팀초대", "01"),
     JOIN_REQUEST("팀가입요청", "02");
@@ -24,17 +25,10 @@ public enum JoinRequestTypeCode {
         this.code = code;
     }
 
-    /* enum의 열거된 항목들의 code값을 통해 이름을 가져오기 */
-    // Stream으로 구현한 이유 : https://tecoble.techcourse.co.kr/post/2021-09-30-java8-functional-programming/
-    // Steam API정리 : https://tecoble.techcourse.co.kr/post/2021-05-23-stream-api-basic/
-    public static String nameOf(String code) {
-//        if (code == null) return "";
-        String codeName = Arrays.stream(values())
-                .filter(item -> item.getCode().equals(code))
-                .map(JoinRequestTypeCode::getName)
-                .findAny()
-                .orElse("");
-//                .get();
-        return codeName;
+    /**--------------------------------------
+     * code값으로 code이름 가져오기
+     *---------------------------------------*/
+    public static String nameOf( String code ) {
+        return CodeTypeUtil.getCodeName( values(), code );
     }
 }
