@@ -1,11 +1,13 @@
 package com.threeNerds.basketballDiary.constant.code.type;
 
+import com.threeNerds.basketballDiary.constant.code.CodeType;
+import com.threeNerds.basketballDiary.constant.code.CodeTypeUtil;
 import lombok.Getter;
 
 import java.util.Arrays;
 
 @Getter
-public enum GameRecordStateCode {
+public enum GameRecordStateCode implements CodeType {
     CREATION("게임생성", "01"),
     JOIN_TEAM_CONFIRMATION("참가팀확정", "02"),
     CONFIRMATION("게임확정", "03");
@@ -18,13 +20,10 @@ public enum GameRecordStateCode {
         this.code = code;
     }
 
-    /* enum의 열거된 항목들의 code값을 통해 이름을 가져오기 */
-    public static String nameOf(String code) {
-        String codeName = Arrays.stream(values())
-                .filter(item -> item.getCode().equals(code))
-                .map(GameRecordStateCode::getName)
-                .findAny()
-                .orElse("");
-        return codeName;
+    /**--------------------------------------
+     * code값으로 code이름 가져오기
+     *---------------------------------------*/
+    public static String nameOf( String code ) {
+        return CodeTypeUtil.getCodeName( values(), code );
     }
 }

@@ -1,11 +1,13 @@
 package com.threeNerds.basketballDiary.constant.code.type;
 
+import com.threeNerds.basketballDiary.constant.code.CodeType;
+import com.threeNerds.basketballDiary.constant.code.CodeTypeUtil;
 import lombok.Getter;
 
 import java.util.Arrays;
 
 @Getter
-public enum PlayerTypeCode {
+public enum PlayerTypeCode implements CodeType {
 
     TEAM_MEMBER("팀원", "01"),
     AUTH_GUEST("게스트(회원)", "02"),
@@ -19,14 +21,10 @@ public enum PlayerTypeCode {
         this.code = code;
     }
 
-    public static String nameOf(String code) {
-//        if (code == null) return "";
-        String codeName = Arrays.stream(values())
-                .filter(item -> item.getCode().equals(code))
-                .map(PlayerTypeCode::getName)
-                .findAny()
-                .orElse("");
-//                .get();
-        return codeName;
+    /**--------------------------------------
+     * code값으로 code이름 가져오기
+     *---------------------------------------*/
+    public static String nameOf( String code ) {
+        return CodeTypeUtil.getCodeName( values(), code );
     }
 }
