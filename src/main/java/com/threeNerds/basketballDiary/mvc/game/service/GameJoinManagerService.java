@@ -1,9 +1,9 @@
 package com.threeNerds.basketballDiary.mvc.game.service;
 
-import com.threeNerds.basketballDiary.constant.code.GameRecordStateCode;
-import com.threeNerds.basketballDiary.constant.code.GameTypeCode;
-import com.threeNerds.basketballDiary.constant.code.HomeAwayCode;
-import com.threeNerds.basketballDiary.constant.code.PlayerTypeCode;
+import com.threeNerds.basketballDiary.constant.code.type.GameRecordStateCode;
+import com.threeNerds.basketballDiary.constant.code.type.GameTypeCode;
+import com.threeNerds.basketballDiary.constant.code.type.HomeAwayCode;
+import com.threeNerds.basketballDiary.constant.code.type.PlayerTypeCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import com.threeNerds.basketballDiary.http.ResponseJsonBody;
@@ -350,15 +350,14 @@ public class GameJoinManagerService {
      * @param request
      * @return GetGameEntryResponse
      */
-    public GetGameEntryResponse getGameEntry(GetGameEntryRequest request)
-    {
+    public GetGameEntryResponse getGameEntry(GetGameEntryRequest request) {
         String HOME_TEAM_CODE = HomeAwayCode.HOME_TEAM.getCode();
         String AWAY_TEAM_CODE = HomeAwayCode.AWAY_TEAM.getCode();
 
         /** 한 게임의 모든 게임참가팀 조회 */
         List<GameJoinTeam> gameJoinTeams = gameJoinTeamRepository.findAllGameJoinTeam( request.getGameSeq() );
 
-        String quarterCode = request.getQuarterCode();
+        String quarterCode  = request.getQuarterCode();
         String homeAwayCode = request.getHomeAwayCode();
 
         /** 홈어웨이코드 존재 여부확인 - 코드값이 존재하면 팀의 엔트리만 조회 */
@@ -372,7 +371,7 @@ public class GameJoinManagerService {
                  return new GetGameEntryResponse()
                                .awayTeamEntry( getQuarterTeamEntryInfo( quarterCode, AWAY_TEAM_CODE, gameJoinTeams ) );
             }
-            // TODO 에러 던지기 - 부적절한 코드값이 존재합니다. 코드값을 확인해주시기 바랍니다.
+            throw new CustomException( DomainErrorType.INVALID_HOME_AWAY_CODE_DOMAIN );
         }
 
         /** 홈/어웨이팀 전체 엔트리 조회 */

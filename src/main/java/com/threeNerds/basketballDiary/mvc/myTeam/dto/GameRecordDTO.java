@@ -1,10 +1,8 @@
 package com.threeNerds.basketballDiary.mvc.myTeam.dto;
 
-import com.threeNerds.basketballDiary.constant.code.GameRecordStateCode;
-import com.threeNerds.basketballDiary.constant.code.GameTypeCode;
+import com.threeNerds.basketballDiary.constant.code.type.GameRecordStateCode;
+import com.threeNerds.basketballDiary.constant.code.type.GameTypeCode;
 import lombok.Getter;
-
-import java.util.List;
 
 @Getter
 public class GameRecordDTO {

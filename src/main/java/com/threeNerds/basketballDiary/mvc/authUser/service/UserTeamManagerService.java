@@ -1,6 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.authUser.service;
 
-import com.threeNerds.basketballDiary.constant.code.JoinRequestTypeCode;
+import com.threeNerds.basketballDiary.constant.code.type.JoinRequestTypeCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.mvc.user.domain.User;
 import com.threeNerds.basketballDiary.mvc.team.dto.TeamAuthDTO;

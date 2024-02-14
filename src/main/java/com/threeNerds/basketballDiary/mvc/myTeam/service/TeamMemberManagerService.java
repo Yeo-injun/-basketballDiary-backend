@@ -1,8 +1,8 @@
 package com.threeNerds.basketballDiary.mvc.myTeam.service;
 
-import com.threeNerds.basketballDiary.constant.code.JoinRequestStateCode;
-import com.threeNerds.basketballDiary.constant.code.JoinRequestTypeCode;
-import com.threeNerds.basketballDiary.constant.code.PositionCode;
+import com.threeNerds.basketballDiary.constant.code.type.JoinRequestStateCode;
+import com.threeNerds.basketballDiary.constant.code.type.JoinRequestTypeCode;
+import com.threeNerds.basketballDiary.constant.code.type.PositionCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamJoinRequest;

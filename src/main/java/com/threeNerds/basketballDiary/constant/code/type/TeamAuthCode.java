@@ -1,12 +1,14 @@
-package com.threeNerds.basketballDiary.constant.code;
+package com.threeNerds.basketballDiary.constant.code.type;
 
 import com.threeNerds.basketballDiary.constant.UserAuthConst;
+import com.threeNerds.basketballDiary.constant.code.CodeType;
+import com.threeNerds.basketballDiary.constant.code.CodeTypeUtil;
 import lombok.Getter;
 
 import java.util.Arrays;
 
 @Getter
-public enum TeamAuthCode {
+public enum TeamAuthCode implements CodeType {
 
     // TODO 상수의 코드값 부여 정책 정해야 함 - 권한처리시 사용해야 하니까.
     // TODO 22.02.26(인준) code의 자료형을 int로 수정하는 것은? long타입은 과할것 같음
@@ -23,15 +25,11 @@ public enum TeamAuthCode {
         this.code = code;
     }
 
-    // enum의 열거된 항목들의 code값을 통해 이름을 가져오기
-    public static String nameOf(String code)
-    {
-        String codeName = Arrays.stream(values())
-                .filter(item -> item.getCode().equals(code))
-                .map(TeamAuthCode::getName)
-                .findAny()
-                .orElse("");
-        return codeName;
+    /**--------------------------------------
+     * code값으로 code이름 가져오기
+     *---------------------------------------*/
+    public static String nameOf( String code ) {
+        return CodeTypeUtil.getCodeName( values(), code );
     }
 
 }

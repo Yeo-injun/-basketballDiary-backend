@@ -1,6 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.game.dto.getGameAllQuartersRecords;
 
-import com.threeNerds.basketballDiary.constant.code.QuarterCode;
+import com.threeNerds.basketballDiary.constant.code.type.QuarterCode;
 import lombok.Getter;
 
 @Getter

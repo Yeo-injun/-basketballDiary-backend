@@ -1,6 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.game.controller;
 
-import com.threeNerds.basketballDiary.constant.code.HomeAwayCode;
+import com.threeNerds.basketballDiary.constant.code.type.HomeAwayCode;
 import com.threeNerds.basketballDiary.http.ResponseJsonBody;
 import com.threeNerds.basketballDiary.interceptor.Auth;
 import com.threeNerds.basketballDiary.mvc.game.dto.confirmGameJoinTeam.request.ConfirmGameJoinTeamRequest;
@@ -29,6 +29,8 @@ import com.threeNerds.basketballDiary.mvc.game.service.GameRecordManagerService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameService;
 import com.threeNerds.basketballDiary.session.SessionUser;
 import com.threeNerds.basketballDiary.swagger.docs.game.ApiDocs035;
+import com.threeNerds.basketballDiary.swagger.docs.game.ApiDocs038;
+import com.threeNerds.basketballDiary.swagger.docs.game.ApiDocs040;
 import com.threeNerds.basketballDiary.swagger.docs.game.ApiDocs044;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -101,12 +103,12 @@ public class GameController {
 
 
     /**
-     * API038 쿼터 저장하기/수정하기
-     * - cf. 게임기록권한자인 경우 체크하기
+     * API038 경기 쿼터기록 수정하기
      * @param gameSeq     게임Seq
      * @param quarterCode 쿼터코드; 01~04(1~4쿼터), 11(전반), 12(후반)
      * @author 강창기
      */
+    @ApiDocs038
     @Auth
     @PutMapping("/{gameSeq}/quarters/{quarterCode}")
     public ResponseEntity<Void> saveQuarterRecords(
@@ -123,14 +125,12 @@ public class GameController {
     }
 
     /**
-     * API040 게임엔트리 조회하기
-     * @param gameSeq
-     * @param quarterCode
-     * @return GetGameEntryResponse
+     * API040 경기 엔트리 조회하기
      * Spring RestTemplate에서는 GET 메소드의  RequestBody를 지원하지 않음..
      * 참고자료 : https://brunch.co.kr/@kd4/158
      * 23.02.19(일) 인준 - API url 수정 (gameJoinTeamSeq를 화면에서 계속 가지고 있는 것이 번거롭기 때문)
      */
+    @ApiDocs040
     @Auth
     @GetMapping("/{gameSeq}/quarters/{quarterCode}/entry")
     public ResponseEntity<?> getGameEntry (

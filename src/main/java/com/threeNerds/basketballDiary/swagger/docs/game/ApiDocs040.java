@@ -5,8 +5,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -17,16 +15,20 @@ import static java.lang.annotation.ElementType.METHOD;
 @Target( METHOD )
 @Retention( RetentionPolicy.RUNTIME )
 @Operation(
-    summary     = "[ API044 ] 상대팀 목록 조회",
-    description = "교류전으로 생성한 경기에서 상대팀으로 지정할 수 있는 팀의 목록을 조회한다. / "
-                + "[ 제약사항 ] 1. ",
+    summary     = "[ API040 ] 경기 엔트리 조회하기",
+    description = "경기의 특정 쿼터를 지정하여 기록을 저장, 수정한다. / "
+                + "[제약사항] : 1. 경기 기록 권한을 가지고 있어야 한다.",
     responses   = {
         @ApiResponse(
-            responseCode    = "200",
-            description     = "팀목록을 조회했습니다.",
-            content         = @Content( mediaType = MediaType.APPLICATION_JSON_VALUE )
+            responseCode = "200",
+            description  = "경기 엔트리가 조회됐습니다."
         ),
+        @ApiResponse(
+            responseCode = "404",
+            description  = "유효하지 않은 홈/어웨이 코드입니다.",
+            content      = @Content( schema = @Schema( implementation = DomainErrorResponse.class ) )
+        )
     }
 )
-public @interface ApiDocs044 {
+public @interface ApiDocs040 {
 }

@@ -1,9 +1,9 @@
 package com.threeNerds.basketballDiary.mvc.game.service;
 
-import com.threeNerds.basketballDiary.constant.code.GameRecordAuthCode;
-import com.threeNerds.basketballDiary.constant.code.GameRecordStateCode;
-import com.threeNerds.basketballDiary.constant.code.HomeAwayCode;
-import com.threeNerds.basketballDiary.constant.code.QuarterCode;
+import com.threeNerds.basketballDiary.constant.code.type.GameRecordAuthCode;
+import com.threeNerds.basketballDiary.constant.code.type.GameRecordStateCode;
+import com.threeNerds.basketballDiary.constant.code.type.HomeAwayCode;
+import com.threeNerds.basketballDiary.constant.code.type.QuarterCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import com.threeNerds.basketballDiary.http.ResponseJsonBody;
@@ -39,13 +39,11 @@ import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameRecordDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameSearchCriteriaDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.repository.TeamMemberRepository;
 import com.threeNerds.basketballDiary.pagination.Pagination;
-import com.threeNerds.basketballDiary.utils.LocalDateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;

@@ -1,9 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.myTeam.dto;
 
-import com.threeNerds.basketballDiary.constant.code.HomeAwayCode;
+import com.threeNerds.basketballDiary.constant.code.type.HomeAwayCode;
 import lombok.Getter;
-
-import java.util.List;
 
 @Getter
 public class GameJoinTeamRecordDTO {

@@ -1,6 +1,13 @@
 package com.threeNerds.basketballDiary.mvc.game.dto.getGameEntry.request;
 
+import com.threeNerds.basketballDiary.constant.code.type.HomeAwayCode;
+import com.threeNerds.basketballDiary.constant.code.type.QuarterCode;
+import com.threeNerds.basketballDiary.exception.CustomException;
+import com.threeNerds.basketballDiary.exception.error.SystemErrorType;
 import lombok.Getter;
+
+import java.util.Arrays;
+import java.util.Objects;
 
 @Getter
 public class GetGameEntryRequest {
@@ -13,5 +20,19 @@ public class GetGameEntryRequest {
         this.gameSeq = gameSeq;
         this.quarterCode = quarterCode;
         this.homeAwayCode = homeAwayCode;
+        this.validate();
+    }
+
+    public boolean validate() {
+        // 필수값 체크
+        Object[] notNullValues = new Object[] { gameSeq, quarterCode, homeAwayCode };
+        if ( Arrays.stream(notNullValues).anyMatch( Objects::isNull ) ) {
+            throw new CustomException( SystemErrorType.NOT_NULLALLBE_VALUE );
+        }
+
+        QuarterCode.checkDomain( quarterCode );
+        HomeAwayCode.checkDomain( homeAwayCode );
+
+        return true;
     }
 }
