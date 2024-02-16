@@ -3,6 +3,7 @@ package com.threeNerds.basketballDiary.utils;
 import com.threeNerds.basketballDiary.session.SessionStore;
 import com.threeNerds.basketballDiary.session.SessionUser;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class SessionUtil {
@@ -32,26 +33,23 @@ public class SessionUtil {
     }
 
     public static Long getUserSeq() {
-        Long userSeq = null;
-        SessionUser userInfo = getSessionUser();
-        if (userInfo == null) {
-            return userSeq;
+        if ( !isLogin() ) {
+            return null;
         }
-        userSeq = userInfo.getUserSeq();
-        return userSeq;
+        return getSessionUser().getUserSeq();
     }
 
     public static Map<Long, Long> getAuth() {
         SessionUser userInfo = getSessionUser();
-        if (userInfo == null) {
-            return null;
+        // 세션이 없으면 비어있는 Map객체 return ( 로그인여부는 isLogin메소드로 확인하도록 )
+        if ( null == userInfo ) {
+            return new HashMap<>();
         }
-        Map<Long, Long> userAuthMap = userInfo.getUserAuth();
-        return userAuthMap;
+        return userInfo.getUserAuth();
     }
 
     public static boolean isLogin() {
-        if (getSessionUser() == null) {
+        if ( getSessionUser() == null ) {
             return false;
         }
         return true;
