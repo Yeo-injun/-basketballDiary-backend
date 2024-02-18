@@ -1,6 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.team.controller;
 
-import com.threeNerds.basketballDiary.interceptor.Auth;
+import com.threeNerds.basketballDiary.auth.Auth;
 
 import com.threeNerds.basketballDiary.mvc.team.controller.request.RegisterTeamRequest;
 import com.threeNerds.basketballDiary.mvc.team.controller.response.SearchTeamsResponse;

@@ -1,5 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.user.controller;
 
+import com.threeNerds.basketballDiary.auth.Auth;
 import com.threeNerds.basketballDiary.exception.error.DomainErrorResponse;
 import com.threeNerds.basketballDiary.http.ResponseJsonBody;
 import com.threeNerds.basketballDiary.mvc.user.dto.SearchUsersExcludingTeamMember.request.SearchUsersExcludingTeamMemberRequest;
@@ -38,6 +39,7 @@ public class UserController {
      * API006 사용자 검색
      * 23.05.07 여인준 : 팀원 제외하고 조회되게끔 변경
      */
+    @Auth
     @Operation(summary = "사용자 검색 API",description = "사용자 검색",
             responses = {
                     @ApiResponse(responseCode = "200"),
