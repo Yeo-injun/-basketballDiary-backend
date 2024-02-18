@@ -31,7 +31,9 @@ public enum SystemErrorType implements ErrorMessageType {
 
     /** 500 INTERNAL_SERVER_ERROR : null point에러 등 */
     INTERNAL_ERROR( INTERNAL_SERVER_ERROR, "서버 내부에서 오류가 발생했습니다." ),
-    ERROR_IN_PROCESS_FILE( INTERNAL_SERVER_ERROR, "파일처리중 오류가 발생했습니다." );
+    ERROR_IN_PROCESS_FILE( INTERNAL_SERVER_ERROR, "파일처리중 오류가 발생했습니다." ),
+    ERROR_IN_TEAM_AUTH_CHECK(  INTERNAL_SERVER_ERROR, "요청한 URL은 팀권한을 체크할 수 없습니다." );
+
     private final HttpStatus httpStatus;
     private final String message;
 

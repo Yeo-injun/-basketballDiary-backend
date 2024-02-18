@@ -1,6 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.myTeam.controller;
 
-import com.threeNerds.basketballDiary.interceptor.Auth;
+import com.threeNerds.basketballDiary.auth.Auth;
+import com.threeNerds.basketballDiary.auth.constant.AuthLevel;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.GetMyTeamsRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.ModifyMyTeamInfoRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.SearchMyTeamGamesRequest;
@@ -75,7 +76,7 @@ public class MyTeamController {
      * API001 : 소속팀 운영진 조회
      * 23.05.14. Request & Response 형 변경
      */
-    @Auth(GRADE = TEAM_MEMBER)
+    @Auth( level = AuthLevel.TEAM_MEMBER )
     @GetMapping("/{teamSeq}/managers")
     public ResponseEntity<GetManagersResponse> getManagers(
             @PathVariable(value = "teamSeq") Long teamSeq
@@ -88,7 +89,7 @@ public class MyTeamController {
     /**
      * API002 : 소속팀 팀원등급인 팀원 목록 조회
      */
-    @Auth(GRADE = TEAM_MEMBER)
+    @Auth( level = AuthLevel.TEAM_MEMBER )
     @GetMapping("/{teamSeq}/members")
     public ResponseEntity<GetTeamMembersResponse> getTeamMembers(
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,
@@ -103,7 +104,7 @@ public class MyTeamController {
     /**
      * API036 : 소속팀 전체 팀원목록 검색
      */
-    @Auth(GRADE = TEAM_MEMBER)
+    @Auth( level = AuthLevel.TEAM_MEMBER )
     @GetMapping("/{teamSeq}/allTeamMembers")
     public ResponseEntity<SearchAllTeamMembersResponse> searchAllTeamMembers(
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,
@@ -120,7 +121,7 @@ public class MyTeamController {
      * 22.03.08 인준 : CustomException적용 - 퇴장상태로 업데이트된 결과가 없을 때 USER_NOT_FOUND 예외 발생
      * 22.03.29 인준 : 권한어노테이션 추가
      */
-    @Auth(GRADE = LEADER)
+    @Auth( level = AuthLevel.TEAM_LEADER )
     @PatchMapping("{teamSeq}/members/{teamMemberSeq}/manager")
     public ResponseEntity<Void> appointManager (
             @PathVariable Long teamSeq,
@@ -139,7 +140,7 @@ public class MyTeamController {
      * 22.03.08 인준 : CustomException적용 - 퇴장상태로 업데이트된 결과가 없을 때 USER_NOT_FOUND 예외 발생
      * 22.03.29 인준 : 권한어노테이션 추가
      */
-    @Auth(GRADE = LEADER)
+    @Auth( level = AuthLevel.TEAM_LEADER )
     @DeleteMapping("{teamSeq}/members/{teamMemberSeq}")
     public ResponseEntity<?> dischargeTeamMember(
             @PathVariable Long teamSeq,
@@ -157,7 +158,7 @@ public class MyTeamController {
      * 22.03.22(화) 인준 : 공통DTO적용 및 동적쿼리 수정
      * 22.03.29 인준 : 권한어노테이션 추가
      */
-    @Auth(GRADE = MANAGER)
+    @Auth( level = AuthLevel.TEAM_MANAGER )
     @GetMapping("/{teamSeq}/joinRequestsTo")
     public ResponseEntity<?> searchInvitedPlayer(
             @PathVariable Long teamSeq,
@@ -176,7 +177,7 @@ public class MyTeamController {
      * 22.03.10 인준 : Service Layer에 CustomException 적용
      * 22.03.29 인준 : 권한어노테이션 추가
      */
-    @Auth(GRADE = MANAGER)
+    @Auth( level = AuthLevel.TEAM_MANAGER )
     @PostMapping("/{teamSeq}/joinRequestTo/{userSeq}")
     public ResponseEntity<?> inviteTeamMember(
             @PathVariable Long teamSeq,
@@ -195,7 +196,7 @@ public class MyTeamController {
      * 22.03.23 인준 : QueryString 기본값 제거 및 필수값 설정 해제. 공통DTO로 Service넘겨주기
      * 22.03.29 인준 : 권한어노테이션 추가
      */
-    @Auth(GRADE = MANAGER)
+    @Auth( level = AuthLevel.TEAM_MANAGER )
     @GetMapping("/{teamSeq}/joinRequestsFrom")
     public ResponseEntity<?> searchJoinRequestPlayer (
             @PathVariable Long teamSeq,
@@ -215,7 +216,7 @@ public class MyTeamController {
      * 22.03.25 인준 : CmnMyTeamDTO적용
      * 22.03.29 인준 : 권한어노테이션 추가
      */
-    @Auth(GRADE = MANAGER)
+    @Auth( level = AuthLevel.TEAM_MANAGER )
     @PatchMapping("/{teamSeq}/joinRequestFrom/{teamJoinRequestSeq}/approval")
     public ResponseEntity<?> approveJoinRequest(
             @PathVariable Long teamJoinRequestSeq,
@@ -234,7 +235,7 @@ public class MyTeamController {
      * 22.03.25 인준 : CmnMyTeamDTO적용 및 예외처리
      * 22.03.29 인준 : 권한어노테이션 추가
      */
-    @Auth(GRADE = MANAGER)
+    @Auth( level = AuthLevel.TEAM_MANAGER )
     @PatchMapping("/{teamSeq}/joinRequestFrom/{teamJoinRequestSeq}/rejection")
     public ResponseEntity<?> rejectJoinRequest(
             @PathVariable Long teamSeq,
@@ -251,6 +252,7 @@ public class MyTeamController {
     /**
      * API011 소속팀 개인프로필 조회
      */
+    @Auth( level = AuthLevel.TEAM_MEMBER )
     @GetMapping("/{teamSeq}/profile")
     public ResponseEntity<GetMyTeamProfileResponse> getMyTeamProfile(
             @SessionAttribute(value = LOGIN_USER,required = false) SessionUser userSession,
@@ -268,6 +270,7 @@ public class MyTeamController {
     /**
      * API012 소속팀 개인프로필 수정
      */
+    @Auth( level = AuthLevel.TEAM_MEMBER )
     @PostMapping("/{teamSeq}/profile")
     public ResponseEntity<?> modifyMyTeamsProfile(
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession,
@@ -291,7 +294,7 @@ public class MyTeamController {
      * API013 소속팀 탈퇴
      * TODO 테스트 필요 FrontEnd에서 호출 하지 않음.
      */
-    @Auth(GRADE = TEAM_MEMBER)
+    @Auth( level = AuthLevel.TEAM_MEMBER )
     @DeleteMapping("/{teamSeq}/profile")
     public ResponseEntity<?> deleteMyTeamProfile(
             @SessionAttribute(value = LOGIN_USER,required = false) SessionUser userSession,
@@ -307,7 +310,7 @@ public class MyTeamController {
     /**
      * API014 : 소속팀 목록 조회
      */
-    @Auth(GRADE = TEAM_MEMBER)
+    @Auth( level = AuthLevel.TEAM_MEMBER )
     @GetMapping
     public ResponseEntity<GetMyTeamsResponse> getMyTeams(
             @SessionAttribute( value = LOGIN_USER ) SessionUser sessionUser,
@@ -325,7 +328,7 @@ public class MyTeamController {
      * 22.03.08 인준 : CustomException적용 - 퇴장상태로 업데이트된 결과가 없을 때 USER_NOT_FOUND 예외 발생
      * 22.03.29 인준 : 권한어노테이션 추가
      */
-    @Auth(GRADE = LEADER)
+    @Auth( level = AuthLevel.TEAM_LEADER )
     @DeleteMapping("/{teamSeq}/members/{teamMemberSeq}/manager")
     public ResponseEntity<?> dismissManager(
             @PathVariable Long teamSeq,
@@ -341,7 +344,7 @@ public class MyTeamController {
     /**
      * API016 : 소속팀 정보 조회
      */
-    @Auth(GRADE = TEAM_MEMBER)
+    @Auth( level = AuthLevel.TEAM_MEMBER )
     @GetMapping("/{teamSeq}/info")
     public ResponseEntity<GetTeamInfoResponse> getTeamInfo(
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession,
@@ -354,7 +357,7 @@ public class MyTeamController {
      * API017 : 소속팀 정보 수정
      * 23.10.28 인준 : 팀 이미지 속성 추가 반영 ( @RequestPart를 적용하여 mulitpart/form 데이터의 객체 바인딩 제공 )
      */
-    @Auth(GRADE = MANAGER)
+    @Auth( level = AuthLevel.TEAM_MANAGER )
     @PostMapping( "/{teamSeq}/info" )
     public ResponseEntity<?> modifyMyTeamInfo(
             @PathVariable( value = "teamSeq" ) Long teamSeq,
@@ -370,7 +373,7 @@ public class MyTeamController {
     /**
      * API018 : 소속팀 정보 삭제
      */
-    @Auth(GRADE = LEADER)
+    @Auth( level = AuthLevel.TEAM_LEADER )
     @DeleteMapping("/{teamSeq}")
     public ResponseEntity<?> removeMyTeam(
             @PathVariable(value = "teamSeq") Long teamSeq
@@ -384,6 +387,7 @@ public class MyTeamController {
     /**
      * API052 : 소속팀 게임목록조회
      */
+    @Auth( level = AuthLevel.TEAM_MEMBER )
     @GetMapping("/{teamSeq}/games")
     public ResponseEntity<SearchMyTeamGamesResponse> searchMyTeamGames (
             @SessionAttribute( value = LOGIN_USER ) SessionUser sessionUser                     ,
