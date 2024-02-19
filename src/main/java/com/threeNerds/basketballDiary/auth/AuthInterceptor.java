@@ -18,6 +18,10 @@ public class AuthInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
+        if ( !( handler instanceof HandlerMethod ) ) {
+            return true;
+        }
+
         /** Request 로깅 */
         HandlerMethod hm = (HandlerMethod) handler;
         loggingRequestInfo( request, hm );

@@ -13,10 +13,12 @@ public enum AuthLevel {
      * 권한유형 : 일반사용자 권한
      * - MEMBER : 일반회원
      * - ADMIN : 관리자
-     * - SUPER_ADMIN : 슈퍼 관리자
+     * - ROOT : 슈퍼 관리자
      *---------------------------*/
-    MEMBER(         AuthType.USER, "일반회원"     , 0 ),
-
+    MEMBER(         AuthType.USER, "일반회원"       , 0 ),
+    ADMIN(          AuthType.USER, "관리자"        , 90),      // 모든 권한 유형보다 높은 수준을 가짐
+    ROOT(           AuthType.USER, "최상위관리자"   , 91),      // 시스템내 최고 권한 수준을 가짐
+    
     /*---------------------------
      * 권한유형 : 소속팀 권한
      *---------------------------*/
