@@ -1,8 +1,10 @@
 package com.threeNerds.basketballDiary.mvc.game.controller;
 
+import com.threeNerds.basketballDiary.auth.constant.AuthLevel;
+import com.threeNerds.basketballDiary.auth.constant.AuthType;
 import com.threeNerds.basketballDiary.constant.code.type.HomeAwayCode;
 import com.threeNerds.basketballDiary.http.ResponseJsonBody;
-import com.threeNerds.basketballDiary.interceptor.Auth;
+import com.threeNerds.basketballDiary.auth.Auth;
 import com.threeNerds.basketballDiary.mvc.game.dto.confirmGameJoinTeam.request.ConfirmGameJoinTeamRequest;
 import com.threeNerds.basketballDiary.mvc.game.controller.request.CreateGameRequest;
 import com.threeNerds.basketballDiary.mvc.game.controller.request.RegisterGameJoinPlayersRequest;
@@ -315,7 +317,7 @@ public class GameController {
     /**
      * API055 게임기록자 조회
      */
-    @Auth  // TODO 게임기록권한자
+    @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_RECORDER )
     @GetMapping("/{gameSeq}/gameRecorders")
     public ResponseEntity<?> getGameRecorders(
             @PathVariable("gameSeq") Long gameSeq
@@ -329,7 +331,7 @@ public class GameController {
     /**
      * API056 게임기록자 목록 저장
      */
-    @Auth  // TODO 게임기록권한자
+    @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_CREATOR )
     @PostMapping("/{gameSeq}/gameRecorders")
     public ResponseEntity<?> saveGameRecorders(
             @PathVariable("gameSeq") Long gameSeq,
@@ -346,7 +348,7 @@ public class GameController {
      * 23.01.28(토)
      * @author 강창기
      */
-    @Auth  // TODO 게임기록권한자
+    @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_RECORDER )
     @GetMapping("/{gameSeq}/teamMembers")
     public ResponseEntity<?> getGameJoinTeamMembers(
             @PathVariable(name = "gameSeq") Long gameSeq,
@@ -361,7 +363,7 @@ public class GameController {
      * API060 쿼터 엔트리 정보 저장
      * 22.12.15(목) @ReauestBody부분 Request클래스로 대체
      */
-    @Auth  // TODO 게임기록권한자
+    @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_RECORDER )
     @PostMapping("/{gameSeq}/entry")
     public ResponseEntity<?> saveQuarterEntryInfo(
             @PathVariable(name = "gameSeq") Long gameSeq,
@@ -402,7 +404,7 @@ public class GameController {
      * 22.12.15(목) @ReauestBody부분 Request클래스로 대체
      * 23.01.11(수) 누락된 로직 추가 - 게임기록상태코드 업데이트
      */
-    @Auth  // TODO 게임기록권한자
+    @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_CREATOR )
     @PostMapping("/{gameSeq}/gameJoinTeams")
     public ResponseEntity<?> confirmGameJoinTeam (
             @PathVariable(name = "gameSeq") Long gameSeq,
@@ -440,7 +442,7 @@ public class GameController {
      * @since 23.03.10(금)
      * @author 여인준
      */
-    @Auth  // TODO 게임기록권한자
+    @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_RECORDER )
     @PostMapping("/{gameSeq}/quarters/{quarterCode}")
     public ResponseEntity< Void > createGameQuarterBasicInfo (
             @PathVariable(name = "gameSeq") Long gameSeq,

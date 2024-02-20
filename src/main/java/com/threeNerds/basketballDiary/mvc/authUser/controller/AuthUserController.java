@@ -1,6 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.authUser.controller;
 
-import com.threeNerds.basketballDiary.interceptor.Auth;
+import com.threeNerds.basketballDiary.auth.Auth;
+import com.threeNerds.basketballDiary.auth.constant.AuthLevel;
 import com.threeNerds.basketballDiary.mvc.authUser.service.AuthUserService;
 import com.threeNerds.basketballDiary.mvc.team.dto.TeamAuthDTO;
 import com.threeNerds.basketballDiary.mvc.authUser.dto.CmnLoginUserDTO;
@@ -148,11 +149,10 @@ public class AuthUserController {
         return ResponseEntity.ok().body(joinRequestDTOList);
     }
 
-    /**끝 인준 API **************************************************************************************************************/
-
     /**
      * API025 회원정보 수정데이터 조회
      */
+    @Auth
     @GetMapping("/profile")
     public ResponseEntity<UserDTO> getUserProfileForUpdate (
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession
@@ -164,13 +164,13 @@ public class AuthUserController {
     /**
      * API026 회원수정 : update 를 수행한 후 update 된 객체를 리턴시켜주자 => 이래야 TEST CODE 작성시 정확히 update 가 되었는지 확인할 수 있다.
      */
+    @Auth
     @PostMapping("/profile")
     public ResponseEntity<?> updateUserProfile (
             @SessionAttribute(value = LOGIN_USER,required = false) SessionUser userSession,
             @RequestBody @Valid UpdateUserDTO userDTO
     ) {
         authUserService.updateUserProfile( userDTO.userSeq( userSession.getUserSeq() ) );
-
         return ResponseEntity.ok().body(userDTO);
     }
 
@@ -178,6 +178,7 @@ public class AuthUserController {
      * API028 회원탈퇴 : 회원탈퇴기능은 verify로 deleteUser 메소드가 호출되었는지 확인하는 방법 말고는 존재하지 않는다.
      *          만약 컬럼값 1개만 Y->N 으로 변경했더라면 객체간 비교를 해줄 수 있지만, 아에 테이블에서 삭제를 해버리는 이상 마땅한 방법이 없음
      */
+    @Auth
     @DeleteMapping("/profile")
     public ResponseEntity<Void> deleteUser(
             @SessionAttribute(value = LOGIN_USER,required = false) SessionUser userSession
@@ -192,6 +193,7 @@ public class AuthUserController {
     /**
      * API027 비밀번호 변경
      */
+    @Auth
     @PostMapping("/profile/password")
     public ResponseEntity<Void> updatePassword (
             @SessionAttribute(value = LOGIN_USER,required = false) SessionUser userSession,
