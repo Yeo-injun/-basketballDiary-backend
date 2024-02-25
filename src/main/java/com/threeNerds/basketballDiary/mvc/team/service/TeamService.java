@@ -98,7 +98,7 @@ public class TeamService {
      * @return Long
      */
     @Transactional
-    public List<TeamAuthDTO> createTeam( RegisterTeamRequest teamDTO ) {
+    public void createTeam( RegisterTeamRequest teamDTO ) {
 
         String uploadUrl = imageUploader.upload( ImageUploader.Path.TEAM_LOGO, teamDTO.getTeamLogoImage() );
 
@@ -118,12 +118,5 @@ public class TeamService {
             TeamRegularExercise newExercise = TeamRegularExercise.create(newTeamSeq, exercise);
             teamRegularExerciseRepository.saveTeamRegularExercise(newExercise);
         });
-
-        /** 변경된 권한정보 조회 */
-        User user = new User().builder()
-                .userSeq(teamDTO.getLeaderUserSeq())
-                .build();
-        List<TeamAuthDTO> authList = userRepository.findAuthList(user);
-        return authList;
     }
 }
