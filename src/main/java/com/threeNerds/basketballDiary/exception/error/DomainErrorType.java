@@ -14,6 +14,8 @@ public enum DomainErrorType implements ErrorMessageType {
     INSUFFICIENT_PLAYERS_ON_ENTRY(BAD_REQUEST, "엔트리에 등록할 선수가 부족합니다."),
     INSUFFICIENT_PLAYERS_ON_GAME(BAD_REQUEST, "게임에 참가한 선수가 부족합니다."),
     INVALID_SEARCH_DATE_SPAN(BAD_REQUEST, "검색기간이 올바르지 않습니다. 검색기간을 확인해주세요."),
+    INCORRECT_PASSWORD( BAD_REQUEST, "비밀번호가 일치하지 않습니다." ),
+    INCORRECT_LOGIN_INFO( BAD_REQUEST,"입력한 ID 혹은 비밀번호가 일치하지 않습니다"),
 
     /** 404 NOT_FOUND : Resource 를 찾을 수 없음 */
     JOIN_REQUEST_NOT_FOUND(NOT_FOUND, "대기 중인 가입요청 건이 존재하지 않습니다."),
@@ -41,7 +43,6 @@ public enum DomainErrorType implements ErrorMessageType {
     CANT_UPDATE_GAME_CONFIRMATION( FORBIDDEN, "경기기록을 확정 상태로 바꿀 수 없습니다. 경기기록 상태를 확인해주시기 바랍니다."),
     INSUFFICIENT_GAME_JOIN_TEAMS( FORBIDDEN, "게임참가팀의 수가 부족합니다."),
     INVALID_REGISTER_PLAYERS_FOR_ALREADY_HAS_RECORDS(FORBIDDEN, "이미 쿼터기록이 입력되고 있어 선수 추가가 불가합니다."),
-    INCORRECT_PASSWORD(FORBIDDEN,"비밀번호가 일치하지 않습니다"),
 
     /** 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재 */
     DUPLICATE_BACK_NUMBER(CONFLICT, "중복된 등번호가 존재합니다."),
