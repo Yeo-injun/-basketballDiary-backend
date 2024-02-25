@@ -26,6 +26,7 @@ import com.threeNerds.basketballDiary.mvc.game.dto.getGameRecorders.request.GetG
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameRecorders.response.GetGameRecordersResponse;
 import com.threeNerds.basketballDiary.mvc.game.dto.saveGameRecorder.request.SaveGameRecordersRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.saveQuarterRecords.request.SaveQuarterRecordsRequest;
+import com.threeNerds.basketballDiary.mvc.game.service.GameAuthService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameJoinManagerService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameRecordManagerService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameService;
@@ -74,6 +75,7 @@ public class GameController {
     private final GameService gameService;
     private final GameJoinManagerService gameJoinManagerService;
     private final GameRecordManagerService gameRecordManagerService;
+    private final GameAuthService gameAuthService;
 
 
     /**
@@ -309,9 +311,12 @@ public class GameController {
         gameCreationInfo.userSeq(userSeq);
 
         GameCreationDTO result = gameService.createGame(gameCreationInfo);
+
+        // TODO 경기 권한정보 생성 및 Session에 할당 처리 추가
+        // gameAuthService.createGameCreatorAuth( userSeq, gameSeq );
+        // sessionUser.setAuthGames( gameAuthService.get
         return ResponseEntity.ok(result);
     }
-
 
 
     /**
@@ -323,8 +328,7 @@ public class GameController {
             @PathVariable("gameSeq") Long gameSeq
     ) {
         GetGameRecordersRequest reqBody = new GetGameRecordersRequest( gameSeq );
-
-        GetGameRecordersResponse resBody = gameRecordManagerService.getGameRecorders( reqBody );
+        GetGameRecordersResponse resBody = gameAuthService.getGameManagers( reqBody );
         return ResponseEntity.ok( resBody );
     }
 
@@ -338,8 +342,7 @@ public class GameController {
             @RequestBody @Valid SaveGameRecordersRequest request
     ) {
         request.gameSeq( gameSeq );
-        gameRecordManagerService.saveGameRecorders( request );
-
+        gameAuthService.saveGameRecorders( request );
         return RESPONSE_OK;
     }
 
