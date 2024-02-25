@@ -45,7 +45,6 @@ public class UserTeamManagerService {
     private final TeamMemberRepository teamMemberRepository;
     private final TeamJoinRequestRepository teamJoinRequestRepository;
     private final UserTeamManagerRepository userTeamManagerRepository;
-    private final UserRepository userRepository;
 
     // 농구팀에 가입요청 보내기
     public void sendJoinRequestToTeam(CmnLoginUserDTO loginUserDTO)
@@ -116,8 +115,7 @@ public class UserTeamManagerService {
     }
 
     // 사용자가 팀의 초대를 승인하는 API
-    public List<TeamAuthDTO> approveInvitation(CmnLoginUserDTO loginUserDTO)
-    {
+    public void approveInvitation(CmnLoginUserDTO loginUserDTO) {
         /** 초대요청 상태 업데이트 하기 */
         boolean isSuccess = teamJoinRequestRepository.updateJoinRequestState(TeamJoinRequest.approveInvitation(loginUserDTO)) == 1;
         if (!isSuccess) {
@@ -128,13 +126,6 @@ public class UserTeamManagerService {
         TeamJoinRequest joinInfo = teamJoinRequestRepository.findUserByTeamJoinRequestSeq(loginUserDTO.getTeamJoinRequestSeq());
         TeamMember newTeamMember = TeamMember.create(joinInfo);
         teamMemberRepository.saveTeamMember(newTeamMember);
-
-        /** 변경된 권한정보 조회 */
-        User user = new User().builder()
-                .userSeq(loginUserDTO.getUserSeq())
-                .build();
-        List<TeamAuthDTO> authList = userRepository.findAuthList(user);
-        return authList;
     }
 
     // 팀 초대 거절 API

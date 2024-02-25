@@ -6,7 +6,6 @@ import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.mvc.game.controller.response.GetGameBasicInfoResponse;
 import com.threeNerds.basketballDiary.mvc.game.domain.Game;
 import com.threeNerds.basketballDiary.mvc.game.domain.GameJoinTeam;
-import com.threeNerds.basketballDiary.mvc.game.domain.GameRecordAuth;
 import com.threeNerds.basketballDiary.mvc.game.dto.*;
 import com.threeNerds.basketballDiary.mvc.game.repository.GameJoinTeamRepository;
 import com.threeNerds.basketballDiary.mvc.game.repository.GameRecordAuthRepository;
@@ -72,10 +71,6 @@ public class GameService {
                                 .orElseThrow(()-> new CustomException(DomainErrorType.TEAM_NOT_FOUND));
         GameJoinTeam homeJoinTeam =  GameJoinTeam.createHomeTeamForSelfGame( newGameSeq, homeTeam );
         gameJoinTeamRepository.saveGameJoinTeam( homeJoinTeam );
-
-        /** 게임기록권한 정보 생성 */
-        GameRecordAuth gameCreatorAuth = GameRecordAuth.createCreator(newGameSeq, teamMemeberSeq);
-        gameRecordAuthRepo.saveGameRecordAuth(gameCreatorAuth);
 
         /** 생성된 게임Seq 반환 */
         gc.gameSeq(newGameSeq);
