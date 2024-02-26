@@ -4,6 +4,7 @@ import com.threeNerds.basketballDiary.auth.constant.AuthLevel;
 import com.threeNerds.basketballDiary.auth.constant.AuthType;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.SystemErrorType;
+import com.threeNerds.basketballDiary.session.SessionUser;
 import com.threeNerds.basketballDiary.utils.SessionUtil;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -22,10 +23,8 @@ public class AuthChecker {
      * 요구되는 권한을 충족하는지 확인해야 하는 사용자의 권한
      * 팀에 대한 권한 정보를 관리하며, 팀Seq가 key이고, 해당 팀의 권한수준(Auth Level)이 Key의 Value으로 관리된다.
      */
-    private final Map<Long, Long> teamAuthMap;
-
-    private final Set<Long> gameRecordAuthSet;
-    private final Set<Long> gameCreatorAuthSet;
+    private final Map< Long, Integer > authTeamMap;
+    private final Map< Long, Integer > authGameMap;
 
     /**
      * 요구되는 권한정보를 가지고 있는 어노테이션
@@ -33,17 +32,19 @@ public class AuthChecker {
      */
     private final Auth requiredAuth;
 
-    AuthChecker( Auth requiredAuth, Map<Long, Long> teamAuthMap ) {
+    // 외부에서는 사용할 수 없는 생성자. 객체를 생성하기 위해서는 정적 팩토리 메소드를 사용해야 함.
+    private AuthChecker( Auth requiredAuth, SessionUser userSession ) {
         this.requiredAuth  = requiredAuth;
-        this.teamAuthMap   = teamAuthMap;
-        this.gameRecordAuthSet  = null; // 세션에서 관리하는 Auth 타입을 반영해야 함.
-        this.gameCreatorAuthSet = null; // 세션에서 관리하는 Auth 타입을 반영.
+        this.authTeamMap   = userSession.getAuthTeams();
+        this.authGameMap   = userSession.getAuthGames();
     }
     // 세션의 권한정보 객체 생성
     public static AuthChecker ofSession( Auth requiredAuth ) {
         // 로그인한 상태임을 가정
-        //        Assert( )
-        return new AuthChecker( requiredAuth, SessionUtil.getAuth() );
+        if ( !SessionUtil.isLogin() ) {
+            throw new CustomException( SystemErrorType.LOGIN_REQUIRED );
+        }
+        return new AuthChecker( requiredAuth, SessionUtil.getSessionUser() );
     }
 
     // 권한체크
@@ -54,7 +55,7 @@ public class AuthChecker {
         }
         switch ( requiredAuth.type() ) {
             case AuthType.TEAM          : return checkTeamAuth( request );
-            case AuthType.GAME_RECORD   : return checkGameRecordAuth( request );
+            case AuthType.GAME_RECORD   : return checkGameAuth( request );
             default:    return true; // TODO 임시처리... 기본값 및 로직 처리를 어떻게 할지 고민
         }
     }
@@ -69,7 +70,7 @@ public class AuthChecker {
         if ( !StringUtils.hasText( queryStringTeamSeq ) ) {
             throw new CustomException( SystemErrorType.ERROR_IN_TEAM_AUTH_CHECK );
         }
-        Long userAuthLevel   = teamAuthMap.get( Long.parseLong( queryStringTeamSeq ) );
+        Integer userAuthLevel = authTeamMap.get( Long.parseLong( queryStringTeamSeq ) );
         // userAuthLevel이 null 이면 URL의 권한수준을 충족하지 못한 것으로 접근을 제한해야 함.
         if ( null == userAuthLevel ) {
             return false;
@@ -81,7 +82,7 @@ public class AuthChecker {
     /*-------------------------------
      * 경기기록 권한 체크
      *-------------------------------*/
-    private boolean checkGameRecordAuth( HttpServletRequest request ) {
+    private boolean checkGameAuth( HttpServletRequest request ) {
     // TODO 구현 요망
         return true;
     }

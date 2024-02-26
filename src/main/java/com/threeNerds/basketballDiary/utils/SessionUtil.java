@@ -25,7 +25,7 @@ public class SessionUtil {
     public static SessionUser getSessionUser() {
         SessionUser userInfo = null;
         try {
-            userInfo = (SessionUser) SessionStore.get(LOGIN_USER);
+            userInfo = (SessionUser) SessionStore.get( LOGIN_USER );
         } catch (Exception e) {
             // 로그 구현하기
         }
@@ -37,15 +37,6 @@ public class SessionUtil {
             return null;
         }
         return getSessionUser().getUserSeq();
-    }
-
-    public static Map<Long, Long> getAuth() {
-        SessionUser userInfo = getSessionUser();
-        // 세션이 없으면 비어있는 Map객체 return ( 로그인여부는 isLogin메소드로 확인하도록 )
-        if ( null == userInfo ) {
-            return new HashMap<>();
-        }
-        return userInfo.getUserAuth();
     }
 
     public static boolean isLogin() {
