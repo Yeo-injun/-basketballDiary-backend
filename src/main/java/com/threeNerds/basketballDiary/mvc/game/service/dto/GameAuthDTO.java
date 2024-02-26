@@ -1,15 +1,18 @@
 package com.threeNerds.basketballDiary.mvc.game.service.dto;
 
+import com.threeNerds.basketballDiary.auth.constant.AuthLevel;
+import lombok.Getter;
+
+import java.util.Map;
 import java.util.Set;
 
+@Getter
 public class GameAuthDTO {
     Long userSeq;
-    Set<String> creatorGames;
-    Set<String> recorderGames;
+    Map< Long, AuthLevel > authGames;
 
-    public GameAuthDTO( Long userSeq, Set<String> creatorGames, Set<String> recorderGames ) {
+    public GameAuthDTO(Long userSeq, Map< Long, AuthLevel > authGames ) {
         this.userSeq        = userSeq;
-        this.creatorGames   = creatorGames;
-        this.recorderGames  = recorderGames;
+        this.authGames      = authGames;
     }
 }

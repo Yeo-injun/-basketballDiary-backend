@@ -6,6 +6,10 @@ import com.threeNerds.basketballDiary.mvc.auth.controller.request.LoginRequest;
 import com.threeNerds.basketballDiary.mvc.auth.dto.LoginUserDTO;
 import com.threeNerds.basketballDiary.mvc.auth.service.AuthService;
 import com.threeNerds.basketballDiary.mvc.authUser.controller.response.CheckDuplicationUserIdResponse;
+import com.threeNerds.basketballDiary.mvc.game.service.GameAuthService;
+import com.threeNerds.basketballDiary.mvc.game.service.dto.GameAuthDTO;
+import com.threeNerds.basketballDiary.mvc.myTeam.service.MyTeamAuthService;
+import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.TeamAuthDTO;
 import com.threeNerds.basketballDiary.session.SessionUser;
 import com.threeNerds.basketballDiary.utils.SessionUtil;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +39,8 @@ import static com.threeNerds.basketballDiary.utils.SessionUtil.LOGIN_USER;
 public class AuthController {
 
     private final AuthService authService;
+    private final MyTeamAuthService myTeamAuthService;
+    private final GameAuthService gameAuthService;
 
     /**
      * API065 권한정보 조회
@@ -84,16 +90,32 @@ public class AuthController {
             @RequestBody @Valid LoginRequest reqBody
     ) {
         log.info("======= Try login =======");
-        LoginUserDTO loginUserDTO = new LoginUserDTO()
-                .userId(reqBody.getUserId())
-                .password(reqBody.getPassword());
+        LoginUserDTO loginRequest = new LoginUserDTO()
+                .userId( reqBody.getUserId() )
+                .password( reqBody.getPassword() );
 
-        SessionUser sessionUser = authService.login(loginUserDTO);
-        SessionUtil.setSessionUser(sessionUser);
+        /** 로그인 정보 확인 */
+        LoginUserDTO loginUser = authService.login( loginRequest );
+        Long loginUserSeq = loginUser.getUserSeq();
 
+        /** 소속팀 권한정보 조회 */
+        TeamAuthDTO userTeamAuthInfo = myTeamAuthService.getAllTeamAuthInfo( TeamAuthDTO.of( loginUserSeq ) );
+
+        /** 경기 권한정보 조회 */
+        GameAuthDTO userAuthGameInfo = gameAuthService.getGameAuthInfo( loginUserSeq );
+
+        /** 세션 정보 생성 및 저장 */
+        SessionUser sessionUser = SessionUser.createWithAuth(
+            loginUserSeq, loginUser.getUserId(),
+            userTeamAuthInfo.getAuthTeams(),
+            userAuthGameInfo.getAuthGames()
+        );
+        SessionUtil.setSessionUser( sessionUser );
+
+        /* 경기기록권한 정보 확인 */
         // TODO 세션ID 로그찍기  log.info(SessionUtil.get.getId());
         // TODO 쿠키생성 로직 - https://reflectoring.io/spring-boot-cookies/
-        return ResponseEntity.ok().body(sessionUser);
+        return ResponseEntity.ok().body( sessionUser );
     }
 
     /**
@@ -106,5 +128,4 @@ public class AuthController {
         return ResponseEntity.ok().build();
     }
 
-    //TODO : 아이디 중복체크 api 추가
 }
