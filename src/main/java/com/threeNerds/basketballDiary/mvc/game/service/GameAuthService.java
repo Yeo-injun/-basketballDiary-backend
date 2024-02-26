@@ -1,5 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.game.service;
 
+import com.threeNerds.basketballDiary.auth.constant.AuthLevel;
+import com.threeNerds.basketballDiary.auth.constant.AuthType;
 import com.threeNerds.basketballDiary.constant.code.type.GameRecordAuthCode;
 import com.threeNerds.basketballDiary.mvc.game.domain.*;
 import com.threeNerds.basketballDiary.mvc.game.dto.SearchGameDTO;
@@ -25,7 +27,6 @@ import java.util.stream.Collectors;
 public class GameAuthService {
 
     private final GameRecordManagerRepository gameRecordManagerRepo;
-    private final GameRepository gameRepository;
     private final GameRecordAuthRepository gameRecordAuthRepo;
 
  /**
@@ -77,24 +78,22 @@ public class GameAuthService {
      * 2024.02.24
      * 사용자의 경기권한 정보 조회
      * - 사용자가 가지고 있는 경기권한을 권한 수준 별로 조회한다.
-     * cf. 로그인시 사용자의 경기권한을 수준별로 조회해서 Session에 보관한다.
+     * cf. 로그인시 사용자의 경기별로 권한수준이 매핑된 Map객체를 Session에 보관한다.
      * @author 여인준
      */
     public GameAuthDTO getGameAuthInfo( Long userSeq ) {
-
         List<GameAuth> userAuthList = gameRecordAuthRepo.findAuthList( userSeq );
-
-        Set<String> creatorAuth     = toGameAuthSet( userAuthList, GameRecordAuthCode.CREATOR );
-        Set<String> recorderAuth    = toGameAuthSet( userAuthList, GameRecordAuthCode.RECORDER );
-
-        return new GameAuthDTO( userSeq, creatorAuth, recorderAuth );
+        Map< Long, AuthLevel > authGames     = toGameAuthSet( userAuthList );
+        return new GameAuthDTO( userSeq, authGames );
     }
 
-    private Set<String> toGameAuthSet( List<GameAuth > authList, GameRecordAuthCode authCode ) {
+    private Map< Long, AuthLevel > toGameAuthSet( List<GameAuth > authList ) {
         return authList.stream()
-                .map( GameAuth::getGameRecordAuthCode )
-                .filter( code -> authCode.getCode().equals( code ) )
-                .collect( Collectors.toSet() );
+                .collect( Collectors.toMap(
+                        GameAuth::getGameSeq,
+                        item -> AuthLevel.of( AuthType.GAME_RECORD, Integer.parseInt( item.getGameRecordAuthCode() ) )
+                    )
+                );
     }
 
 }
