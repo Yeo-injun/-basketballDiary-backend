@@ -4,9 +4,8 @@ import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import com.threeNerds.basketballDiary.mvc.auth.controller.request.CreateUserRequest;
 import com.threeNerds.basketballDiary.mvc.user.domain.User;
-import com.threeNerds.basketballDiary.mvc.team.dto.TeamAuthDTO;
 
-import com.threeNerds.basketballDiary.mvc.auth.dto.LoginUserDTO;
+import com.threeNerds.basketballDiary.mvc.auth.service.dto.LoginUserDTO;
 
 import com.threeNerds.basketballDiary.mvc.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

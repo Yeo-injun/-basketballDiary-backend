@@ -3,7 +3,7 @@ package com.threeNerds.basketballDiary.mvc.auth.controller;
 import com.threeNerds.basketballDiary.mvc.auth.controller.request.CheckDuplicateUserIdRequest;
 import com.threeNerds.basketballDiary.mvc.auth.controller.request.CreateUserRequest;
 import com.threeNerds.basketballDiary.mvc.auth.controller.request.LoginRequest;
-import com.threeNerds.basketballDiary.mvc.auth.dto.LoginUserDTO;
+import com.threeNerds.basketballDiary.mvc.auth.service.dto.LoginUserDTO;
 import com.threeNerds.basketballDiary.mvc.auth.service.AuthService;
 import com.threeNerds.basketballDiary.mvc.authUser.controller.response.CheckDuplicationUserIdResponse;
 import com.threeNerds.basketballDiary.mvc.game.service.GameAuthService;
