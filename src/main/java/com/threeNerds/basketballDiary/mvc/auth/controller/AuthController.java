@@ -35,7 +35,7 @@ import static com.threeNerds.basketballDiary.utils.SessionUtil.LOGIN_USER;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/user") // TODO /auth로 변경 필요
+@RequestMapping("/api/auth")
 public class AuthController {
 
     private final AuthService authService;
