@@ -20,8 +20,9 @@ import java.util.Set;
  */
 public class AuthChecker {
     /**
-     * 요구되는 권한을 충족하는지 확인해야 하는 사용자의 권한
-     * 팀에 대한 권한 정보를 관리하며, 팀Seq가 key이고, 해당 팀의 권한수준(Auth Level)이 Key의 Value으로 관리된다.
+     * 요구되는 권한을 충족하는지 확인해야 하는 사용자의 권한정보 관리 필드
+     * - authTeamMap은 팀에 대한 권한 정보를 Map으로 관리. cf. key : 팀Seq / value : 해당 팀의 권한수준(Auth Level)
+     * - authGameMap은 경기에 대한 권한 정보를 Map으로 관리. cf. key : 경기Seq / value : 해당 경기의 권한수준(Auth Level)
      */
     private final Map< Long, Integer > authTeamMap;
     private final Map< Long, Integer > authGameMap;

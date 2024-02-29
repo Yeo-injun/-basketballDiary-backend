@@ -33,7 +33,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-import static com.threeNerds.basketballDiary.constant.UserAuthConst.*;
 import static com.threeNerds.basketballDiary.constant.HttpResponseConst.RESPONSE_OK;
 import static com.threeNerds.basketballDiary.utils.SessionUtil.LOGIN_USER;
 
