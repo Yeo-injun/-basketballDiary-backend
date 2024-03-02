@@ -1,4 +1,4 @@
-package com.threeNerds.basketballDiary.utils;
+package com.threeNerds.basketballDiary.session.util;
 
 import com.threeNerds.basketballDiary.session.SessionStore;
 import com.threeNerds.basketballDiary.session.SessionUser;

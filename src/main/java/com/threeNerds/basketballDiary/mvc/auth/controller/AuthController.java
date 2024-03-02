@@ -11,7 +11,7 @@ import com.threeNerds.basketballDiary.mvc.game.service.dto.GameAuthDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.MyTeamAuthService;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.TeamAuthDTO;
 import com.threeNerds.basketballDiary.session.SessionUser;
-import com.threeNerds.basketballDiary.utils.SessionUtil;
+import com.threeNerds.basketballDiary.session.util.SessionUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
-import static com.threeNerds.basketballDiary.utils.SessionUtil.LOGIN_USER;
+import static com.threeNerds.basketballDiary.session.util.SessionUtil.LOGIN_USER;
 
 /**
  * ... 수행하는 Controller

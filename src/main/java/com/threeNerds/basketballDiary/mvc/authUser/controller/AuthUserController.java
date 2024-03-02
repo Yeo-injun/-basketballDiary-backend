@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-import static com.threeNerds.basketballDiary.utils.SessionUtil.LOGIN_USER;
+import static com.threeNerds.basketballDiary.session.util.SessionUtil.LOGIN_USER;
 
 @Slf4j
 @RestController

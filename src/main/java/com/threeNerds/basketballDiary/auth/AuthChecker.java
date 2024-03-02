@@ -5,14 +5,12 @@ import com.threeNerds.basketballDiary.auth.constant.AuthType;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.SystemErrorType;
 import com.threeNerds.basketballDiary.session.SessionUser;
-import com.threeNerds.basketballDiary.utils.SessionUtil;
-import org.springframework.util.Assert;
+import com.threeNerds.basketballDiary.session.util.SessionUtil;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * 현재 세션의 권한정보를 관리하는 객체
