@@ -1,13 +1,13 @@
 package com.threeNerds.basketballDiary.mvc.authUser.controller;
 
 import com.threeNerds.basketballDiary.auth.Auth;
-import com.threeNerds.basketballDiary.auth.constant.AuthLevel;
 import com.threeNerds.basketballDiary.mvc.authUser.service.AuthUserService;
-import com.threeNerds.basketballDiary.mvc.team.dto.TeamAuthDTO;
+import com.threeNerds.basketballDiary.mvc.myTeam.service.MyTeamAuthService;
 import com.threeNerds.basketballDiary.mvc.authUser.dto.CmnLoginUserDTO;
 import com.threeNerds.basketballDiary.mvc.authUser.dto.PasswordUpdateDTO;
 import com.threeNerds.basketballDiary.mvc.authUser.dto.JoinRequestDTO;
 import com.threeNerds.basketballDiary.mvc.authUser.dto.UpdateUserDTO;
+import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.TeamAuthDTO;
 import com.threeNerds.basketballDiary.mvc.user.dto.UserDTO;
 import com.threeNerds.basketballDiary.mvc.authUser.service.UserTeamManagerService;
 import com.threeNerds.basketballDiary.session.SessionUser;
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-import static com.threeNerds.basketballDiary.utils.SessionUtil.LOGIN_USER;
+import static com.threeNerds.basketballDiary.session.util.SessionUtil.LOGIN_USER;
 
 @Slf4j
 @RestController
@@ -28,6 +28,9 @@ import static com.threeNerds.basketballDiary.utils.SessionUtil.LOGIN_USER;
 public class AuthUserController {
 
     private final AuthUserService authUserService;
+
+    private final MyTeamAuthService myTeamAuthService;
+
     private final UserTeamManagerService userTeamManagerService;
 
     /**
@@ -103,10 +106,11 @@ public class AuthUserController {
                 .teamJoinRequestSeq( teamJoinRequestSeq )
                 .userSeq( userSession.getUserSeq() );
 
-        List<TeamAuthDTO> authList = userTeamManagerService.approveInvitation(loginUserDTO);
+        userTeamManagerService.approveInvitation(loginUserDTO);
 
-        /** 세션 정보 update */
-        userSession.updateAuthority(authList);
+        /** 세션 팀 권한 정보 update */
+        TeamAuthDTO teamAuthInfo = myTeamAuthService.getAllTeamAuthInfo( TeamAuthDTO.of( userSession.getUserSeq() ) );
+        userSession.setAuthTeams( teamAuthInfo.getAuthTeams() );
 
         // TODO 컨트롤러에서 서비스 호출하는 방식을 허용할 것인지 -> 우선 트랜잭션 이슈 검토, 서비스레이어의 역할 및 책임에 대해서 다시 공부 검토
         List<JoinRequestDTO> joinRequestDTOList = userTeamManagerService.getJoinRequestsFrom(loginUserDTO);

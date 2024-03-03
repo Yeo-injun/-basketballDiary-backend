@@ -7,6 +7,8 @@ import com.threeNerds.basketballDiary.mvc.myTeam.dto.FindMyTeamProfileDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.ModifyMyTeamProfileDTO;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 @Mapper
 public interface TeamMemberRepository {
     /**********
@@ -25,7 +27,8 @@ public interface TeamMemberRepository {
     /** 사용자 및 팀Seq로 팀원정보 조회 */
     TeamMember findTeamMemberByUserAndTeamSeq(TeamMember tmParam);
 
-    Long findMyTeamCount(Long userSeq);
+    /** 사용자가 소속된 모든 팀의 팀원정보 조회 */
+    List<TeamMember> findAllJoinTeamsByUserSeq( TeamMember teamMember );
 
 
     /**********

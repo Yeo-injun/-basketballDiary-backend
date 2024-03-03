@@ -9,7 +9,7 @@ import java.util.Arrays;
 @Getter
 public enum GameRecordAuthCode implements CodeType {
     CREATOR("게임생성자", "01"),
-    ONLY_WRITER("입력권한자", "02");
+    RECORDER("입력권한자", "02");
 
     private final String name;
     private final String code;

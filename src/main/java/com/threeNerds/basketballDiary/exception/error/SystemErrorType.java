@@ -16,6 +16,7 @@ public enum SystemErrorType implements ErrorMessageType {
     MISSING_REQUIRED_PARAMETERS( BAD_REQUEST, "필수 파라미터값이 누락되었습니다." ),
     EXCEED_MAX_FILE_SIZE( BAD_REQUEST, "파일 업로드 최대크기를 초과하였습니다." ),
     PARAMETER_FORMAT_ERROR( BAD_REQUEST, "파라미터 값 형식이 맞지 않습니다." ),
+
     /** 400 BAD_REQUEST : 코드 도메인 유효성 실패 */
     INVALID_CODE_DOMAIN_FOR_HOME_AWAY_CODE( BAD_REQUEST, "유효하지 않은 홈어웨이 코드입니다." ),
     INVALID_CODE_DOMAIN_FOR_QUARTER_CODE( BAD_REQUEST, "유효하지 않은 쿼터 코드입니다." ),
@@ -31,6 +32,8 @@ public enum SystemErrorType implements ErrorMessageType {
 
     /** 500 INTERNAL_SERVER_ERROR : null point에러 등 */
     INTERNAL_ERROR( INTERNAL_SERVER_ERROR, "서버 내부에서 오류가 발생했습니다." ),
+
+    NOT_FOUND_VALID_AUTH_INFO( INTERNAL_SERVER_ERROR, "유효한 권한정보를 찾는데 실패하였습니다." ),
     ERROR_IN_PROCESS_FILE( INTERNAL_SERVER_ERROR, "파일처리중 오류가 발생했습니다." ),
     ERROR_IN_TEAM_AUTH_CHECK(  INTERNAL_SERVER_ERROR, "요청한 URL은 팀권한을 체크할 수 없습니다." );
 

@@ -33,9 +33,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-import static com.threeNerds.basketballDiary.constant.UserAuthConst.*;
 import static com.threeNerds.basketballDiary.constant.HttpResponseConst.RESPONSE_OK;
-import static com.threeNerds.basketballDiary.utils.SessionUtil.LOGIN_USER;
+import static com.threeNerds.basketballDiary.session.util.SessionUtil.LOGIN_USER;
 
 /**
  * 소속팀과 관련된 업무를 처리하는 Controller

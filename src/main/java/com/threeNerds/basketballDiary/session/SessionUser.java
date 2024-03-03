@@ -1,51 +1,62 @@
 package com.threeNerds.basketballDiary.session;
 
+import com.threeNerds.basketballDiary.auth.constant.AuthLevel;
 import com.threeNerds.basketballDiary.constant.code.type.TeamAuthCode;
 import com.threeNerds.basketballDiary.mvc.user.domain.User;
 import com.threeNerds.basketballDiary.mvc.team.dto.TeamAuthDTO;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.relational.core.sql.In;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Getter
-@Setter
 public class SessionUser {
 
-    private Long userSeq;
-    private String userId;
-    private Map<Long,Long> userAuth = new HashMap<>();
-    private Map<Long, TeamAuthCode> teamAuth;
+    private final Long userSeq;
+    private final String userId;
 
-    public SessionUser() {
-    }
+    /* 이하 세션이 생성된 이후에도 속성들은 값이 변경될 수 있음 - 팀생성, 경기 생성 등. */
+    private Map< Long, Integer > authTeams;    // 팀을 기준으로 권한수준 관리
+    private Map< Long, Integer > authGames;    // 경기를 기준으로 권한수준 관리
 
-    public SessionUser(Long userSeq, String userId) {
+    private SessionUser(
+        Long userSeq, String userId,
+        Map< Long, AuthLevel > authTeams,
+        Map< Long, AuthLevel > authGames
+    ) {
         this.userSeq = userSeq;
         this.userId = userId;
+        this.authTeams = convertAuthLevelToInt( authTeams );
+        this.authGames = convertAuthLevelToInt( authGames );
+   }
+
+   // AuthLevel 타입을 정수형으로 변환하여 권한Map을 생성
+   private Map< Long, Integer > convertAuthLevelToInt( Map<Long, AuthLevel > authMaps ) {
+       Map< Long, Integer > resultAuthMap = new HashMap<>();
+       if ( null == authMaps ) {
+           return resultAuthMap;
+       }
+       authMaps.forEach( ( key, authLevel ) -> {
+           resultAuthMap.put( key, authLevel.getLevel() );
+       } );
+       return resultAuthMap;
+   }
+
+    public static SessionUser createWithAuth(
+            Long userSeq, String userId,
+            Map< Long, AuthLevel > authTeams,       // 소속팀을 기준으로 권한수준을 관리
+            Map< Long, AuthLevel > authGames        // 경기를 기준으로 권한수준 관리
+    ) {
+        return new SessionUser( userSeq, userId, authTeams, authGames );
     }
 
-    public SessionUser(Long userSeq, String userId, Map<Long, Long> userAuth) {
-        this.userSeq = userSeq;
-        this.userId = userId;
-        this.userAuth = userAuth;
+    public void setAuthTeams( Map< Long, AuthLevel > authTeams ) {
+        this.authTeams = convertAuthLevelToInt( authTeams );
     }
 
-    public static SessionUser create(User loginUser) {
-        return new SessionUser(loginUser.getUserSeq(), loginUser.getUserId());
-    }
-
-    public SessionUser updateAuthority(List<TeamAuthDTO> authList) {
-        Map<Long, Long> userAuth = authList.stream()
-                .collect( Collectors.toMap(
-                                            authDTO -> Long.parseLong(authDTO.getTeamSeq()),
-                                            authDTO -> Long.parseLong(authDTO.getTeamAuthCode())
-                                          )
-                        );
-        this.userAuth = userAuth;
-        return this;
-    }
 }

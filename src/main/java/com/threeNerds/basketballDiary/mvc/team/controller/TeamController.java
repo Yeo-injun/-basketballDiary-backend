@@ -2,9 +2,10 @@ package com.threeNerds.basketballDiary.mvc.team.controller;
 
 import com.threeNerds.basketballDiary.auth.Auth;
 
+import com.threeNerds.basketballDiary.mvc.myTeam.service.MyTeamAuthService;
+import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.TeamAuthDTO;
 import com.threeNerds.basketballDiary.mvc.team.controller.request.RegisterTeamRequest;
 import com.threeNerds.basketballDiary.mvc.team.controller.response.SearchTeamsResponse;
-import com.threeNerds.basketballDiary.mvc.team.dto.TeamAuthDTO;
 import com.threeNerds.basketballDiary.mvc.team.dto.SearchTeamDTO;
 import com.threeNerds.basketballDiary.mvc.team.service.TeamService;
 import com.threeNerds.basketballDiary.session.SessionUser;
@@ -15,9 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
-import java.util.List;
 
-import static com.threeNerds.basketballDiary.utils.SessionUtil.LOGIN_USER;
+import static com.threeNerds.basketballDiary.session.util.SessionUtil.LOGIN_USER;
 
 /**
  * ... 수행하는 Controller
@@ -38,6 +38,7 @@ import static com.threeNerds.basketballDiary.utils.SessionUtil.LOGIN_USER;
 public class TeamController {
 
     private final TeamService teamService;
+    private final MyTeamAuthService myTeamAuthService;
 
     /**
      * API019 : 팀 목록 조회
@@ -66,22 +67,25 @@ public class TeamController {
     }
 
     /**
-     * API021 : 팀 등록
+     * API021 : 팀 생성
      */
     @Auth
     @PostMapping
-    public ResponseEntity<Void> registerTeam(
+    public ResponseEntity<Void> createTeam(
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,
             @RequestPart( required = false ) MultipartFile teamLogoImage,
             @RequestPart @Valid RegisterTeamRequest teamInfo
     ) {
-        List<TeamAuthDTO> authList = teamService.createTeam( new RegisterTeamRequest(
-                sessionUser.getUserSeq(),
+        Long loginUserSeq = sessionUser.getUserSeq();
+        teamService.createTeam( new RegisterTeamRequest(
+                loginUserSeq,
                 teamInfo,
                 teamLogoImage
         ) );
-        sessionUser.updateAuthority(authList);
 
+        /** 소속팀 권한정보 update */
+        TeamAuthDTO authTeamInfo = myTeamAuthService.getAllTeamAuthInfo( TeamAuthDTO.of( loginUserSeq ) );
+        sessionUser.setAuthTeams( authTeamInfo.getAuthTeams() );
         return ResponseEntity.ok().build();
     }
 }

@@ -40,15 +40,6 @@
            AND USER_ID = #{userId}
     </select>
 
-    <select id="findAuthList" resultType="com.threeNerds.basketballDiary.mvc.team.dto.TeamAuthDTO">
-        /* UserRepository.findAuthList */
-        SELECT B.TEAM_SEQ
-        , B.TEAM_AUTH_CODE
-        FROM USER A
-        INNER JOIN TEAM_MEMBER B
-        ON A.USER_SEQ = B.USER_SEQ
-        WHERE A.USER_SEQ = #{userSeq}
-    </select>
 
     <select id="findAllUsersExcludingTeamMemberByUserNameOrEmail" resultType="com.threeNerds.basketballDiary.mvc.user.dto.UserDTO">
         /* UserRepository.findAllUsersExcludingTeamMemberByUserNameOrEmail */

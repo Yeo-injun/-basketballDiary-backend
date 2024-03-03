@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-import static com.threeNerds.basketballDiary.exception.error.DomainErrorType.INCORRECT_PASSWORD;
 
 @Service
 @Slf4j
@@ -43,15 +42,15 @@ public class AuthUserService {
     }
 
     @Transactional
-    public void updatePassword(PasswordUpdateDTO passwordUpdateDTO) {
+    public void updatePassword( PasswordUpdateDTO passwordUpdateDTO ) {
         User findUser = Optional.ofNullable(userRepository.findUser(passwordUpdateDTO.getUserSeq()))
                 .orElseThrow(()-> new CustomException(DomainErrorType.USER_NOT_FOUND));
 
         String prevPassword = Optional.ofNullable(passwordUpdateDTO.getPrevPassword())
-                .orElseThrow(()-> new CustomException(INCORRECT_PASSWORD));
+                .orElseThrow(()-> new CustomException( DomainErrorType.INCORRECT_PASSWORD ));
 
-        if(!prevPassword.equals(findUser.getPassword())) {
-            throw new CustomException(INCORRECT_PASSWORD);
+        if ( !prevPassword.equals( findUser.getPassword() ) ) {
+            throw new CustomException( DomainErrorType.INCORRECT_PASSWORD );
         }
         userRepository.updatePassword(passwordUpdateDTO);
     }

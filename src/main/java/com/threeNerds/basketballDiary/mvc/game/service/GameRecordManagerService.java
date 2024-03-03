@@ -61,7 +61,7 @@ public class GameRecordManagerService {
     private final QuarterPlayerRecordsRepository quarterPlayerRecordsRepository;
 
     private final GameRecordManagerRepository gameRecordManagerRepository;
-    private final GameRecordAuthRepository gameRecordAuthRepository;
+    private final GameRecordAuthRepository gameRecordAuthRepo;
 
     private final TeamMemberRepository teamMemberRepo;
 
@@ -221,8 +221,7 @@ public class GameRecordManagerService {
         return resBody;
     }
 
-    private QuarterTeamRecordsDTO filterTeamRecords (QuarterCode quarterCode, HomeAwayCode homeAwayCode, List<QuarterTeamRecordsDTO> allQuarterRecords)
-    {
+    private QuarterTeamRecordsDTO filterTeamRecords (QuarterCode quarterCode, HomeAwayCode homeAwayCode, List<QuarterTeamRecordsDTO> allQuarterRecords) {
         return allQuarterRecords
                     .stream()
                     .filter( r -> quarterCode.getCode().equals(r.getQuarterCode())
@@ -284,8 +283,7 @@ public class GameRecordManagerService {
     }
 
     // TODO 메소드 쪼개기... 함수명과 다른 처리를 하는 동작이 존재...
-    private GameJoinTeamRecordDTO filterGameJoinTeamByHomeAwayCodeTODO(List<GameJoinTeamRecordDTO> joinTeams, HomeAwayCode homeAwayCode)
-    {
+    private GameJoinTeamRecordDTO filterGameJoinTeamByHomeAwayCodeTODO(List<GameJoinTeamRecordDTO> joinTeams, HomeAwayCode homeAwayCode) {
         /** 참가팀 구분 - 홈/어웨이팀 */
         GameJoinTeamRecordDTO joinTeam = joinTeams.stream()
                                             .filter(t -> homeAwayCode.getCode().equals(t.getHomeAwayCode()))
@@ -348,79 +346,6 @@ public class GameRecordManagerService {
                                                             .gameSeq( gameSeq )
                                                             .quarterCode( quarterCode )
                                                             .build() );
-    }
-
-    /**
-     * 2022.01.04
-     * 게임기록자 조회
-     * @author 이성주
-     */
-    public GetGameRecordersResponse getGameRecorders( GetGameRecordersRequest request ) {
-        // TODO 경기기록 권한자의 요건 최종 검토
-        // 1. 게임에 참가하는 팀에 소속되어 있어야 한다.
-        // 2, 게임에 참가선수로 등록되지 않아도 된다.
-        // 이에따른 조회 쿼리 및 조회 내용 정립
-        Long gameSeq = request.getGameSeq();
-        SearchGameDTO gameCond = new SearchGameDTO().gameSeq( gameSeq );
-        List<GameRecorderDTO> gameRecorders = gameRecordManagerRepository.findAllGameRecorders( gameCond );
-
-        // TODO 자체전일 경우 TeamName에 prifix 붙여주기 ( HOME_ or AWAY_ )
-        return new GetGameRecordersResponse( gameRecorders );
-    }
-
-    /**
-     * 2022.01.14
-     * 게임기록자 저장
-     * @author 이성주
-     */
-    public void saveGameRecorders( SaveGameRecordersRequest request ) {
-        Long gameSeq                        = request.getGameSeq();
-        List<GameRecorderDTO> gameRecorders = request.getGameRecorders();
-
-        /** 게임참가팀의 팀원인지 확인 - 게임기록자가 되려면 게임에 참가한 팀의 팀원이어야 한다. */
-        List<GameJoinTeam> joinTeams = gameJoinTeamRepo.findAllGameJoinTeam( gameSeq );
-        if ( joinTeams.isEmpty() ) {
-            throw new CustomException(DomainErrorType.TEAM_NOT_FOUND);
-        }
-        Set<Long> teamSeqSet = joinTeams.stream()
-                                        .map( GameJoinTeam::getTeamSeq )
-                                        .collect( Collectors.toSet() );
-        if ( !isJoinedGameJoinTeamMember( teamSeqSet, gameRecorders ) ) {
-            throw new CustomException(DomainErrorType.NOT_FOUND_ASSIGNED_TEAM); // TODO 에러메세지 정보 수정
-        }
-
-        /** 기존 게임 기록권한 목록을 제거한다. - 게임생성자는 삭제대상에서 제외 */
-        gameRecordAuthRepository.deleteWriterAuth( gameSeq );
-
-        /** 게임참가팀의 팀원일 경우 게임기록자로 추가한다. */
-        for ( GameRecorderDTO gameRecorder : gameRecorders ) {
-            // 게임생성자를 제외하고 insert문을 실행한다.
-            if ( GameRecordAuthCode.CREATOR.getCode().equals( gameRecorder.getGameRecordAuthCode() ) ) {
-                continue;
-            }
-            TeamMember teamMemberParam = TeamMember.builder()
-                    .userSeq( gameRecorder.getUserSeq() )
-                    .teamSeq( gameRecorder.getTeamSeq() )
-                    .build();
-            TeamMember teamMember = Optional
-                    .ofNullable( teamMemberRepo.findTeamMemberByUserAndTeamSeq( teamMemberParam ) )
-                    .orElseThrow( () -> new CustomException(DomainErrorType.NOT_FOUND_ASSIGNED_TEAM));
-
-            GameRecordAuth newRecorder = GameRecordAuth.createOnlyWriter( gameSeq, teamMember.getTeamMemberSeq() );
-            /** TODO 기록자 중복 체크 - GameSeq와 TeamMemberSeq로 조회시 기존 데이터 존재하는지 체크 */
-            gameRecordAuthRepository.saveGameRecordAuth( newRecorder );
-        }
-    }
-
-    private boolean isJoinedGameJoinTeamMember( Set<Long> teamSeqSet, List<GameRecorderDTO> gameRecorders ) {
-        for ( GameRecorderDTO gameRecorder : gameRecorders ) {
-            boolean isJoinedTeamMember = teamSeqSet.contains( gameRecorder.getTeamSeq() );
-            if ( isJoinedTeamMember ) {
-                continue;
-            }
-            return false;
-        }
-        return true;
     }
 
     /**
@@ -574,7 +499,4 @@ public class GameRecordManagerService {
         }
         quarterTeamRecordsRepository.updateQuarterRecords( teamRecords );
     }
-
-
-
 }

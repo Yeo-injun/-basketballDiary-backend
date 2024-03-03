@@ -2,12 +2,29 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.threeNerds.basketballDiary.mvc.game.repository.GameRecordAuthRepository">
+    <sql id="GameAuthSelect">
+        SELECT GAME_RECORD_AUTH_SEQ
+             , GAME_SEQ
+             , TEAM_MEMBER_SEQ              /* TODO 팀원Seq 속성을 사용자Seq로 변경예정 */
+             , TEAM_MEMBER_SEQ AS USER_SEQ  /* TODO 팀원Seq에서 사용자Seq로 변경 예정 >> 경기권한은 팀에 속하지 않더라도 받을 수 있게끔 요건을 변경할 예정 */
+             , GAME_RECORD_AUTH_CODE
+             , REG_DATE
+         FROM GAME_RECORD_AUTH /* TODO GAME_AUTH 테이블로 변경 예정 */
+        WHERE 1=1
+    </sql>
 
-    <insert id="saveGameRecordAuth" parameterType="com.threeNerds.basketballDiary.mvc.game.domain.GameRecordAuth" useGeneratedKeys="true" keyProperty="gameRecordAuthSeq">
+
+    <select id="findAuthList" resultType="com.threeNerds.basketballDiary.mvc.game.domain.GameAuth" >
+        /* GameAuthRepository.findAuthList */
+        <include refid="GameAuthSelect"/>
+          AND TEAM_MEMBER_SEQ = #{userSeq}    /* TODO 팀원Seq에서 사용자Seq로 변경 예정 >> 경기권한은 팀에 속하지 않더라도 받을 수 있게끔 요건을 변경할 예정 */
+    </select>
+
+    <insert id="saveGameAuth" parameterType="com.threeNerds.basketballDiary.mvc.game.domain.GameAuth" useGeneratedKeys="true" keyProperty="gameRecordAuthSeq">
         <selectKey keyProperty="gameRecordAuthSeq" order="AFTER" resultType="java.lang.Long">
             SELECT LAST_INSERT_ID()
         </selectKey>
-        /* GameRecordAuthRepository.saveGameRecordAuth */
+        /* GameAuthRepository.saveGameAuth */
         INSERT INTO GAME_RECORD_AUTH (
                GAME_SEQ
              , TEAM_MEMBER_SEQ
@@ -16,17 +33,18 @@
         )
         VALUES (
                #{gameSeq}
-             , #{teamMemberSeq}
+             , #{userSeq} /* 팀회원Seq에서 사용자Seq로 대체 예정 - 컬럼생성요망 */
              , #{gameRecordAuthCode}
              , CURRENT_TIMESTAMP
         )
     </insert>
 
-    <delete id="deleteWriterAuth" parameterType="Long">
+    <delete id="deleteRecordAuth" parameterType="Long">
+        /* GameAuthRepository.deleteRecordAuth */
         DELETE
           FROM GAME_RECORD_AUTH
          WHERE 1=1
-           AND GAME_SEQ = #{gameSeq}
+           AND GAME_SEQ         = #{gameSeq}
            AND GAME_RECORD_AUTH_CODE = '02' /* 경기기록권한코드 - 경기기록자(02), 경기생성자(01) */
     </delete>
 </mapper>

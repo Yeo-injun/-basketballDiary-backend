@@ -1,4 +1,4 @@
-package com.threeNerds.basketballDiary.mvc.auth.dto;
+package com.threeNerds.basketballDiary.mvc.auth.service.dto;
 
 import lombok.Getter;
 
@@ -8,6 +8,7 @@ public class LoginUserDTO {
     private String userId;
     private String password;
 
+    private Long userSeq;
     public LoginUserDTO userId(String userId) {
         this.userId = userId;
         return this;
@@ -15,5 +16,12 @@ public class LoginUserDTO {
     public LoginUserDTO password(String password) {
         this.password = password;
         return this;
+    }
+
+    public static LoginUserDTO ofSuccess( String userId, Long userSeq ) {
+        LoginUserDTO loginUser = new LoginUserDTO();
+        loginUser.userId     = userId;
+        loginUser.userSeq    = userSeq;
+        return loginUser;
     }
 }

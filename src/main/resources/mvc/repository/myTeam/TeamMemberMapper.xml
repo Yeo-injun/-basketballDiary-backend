@@ -13,6 +13,16 @@
         , WITHDRAWAL_YN
     </sql>
 
+    <select id="findAllJoinTeamsByUserSeq" resultType="com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember">
+        /* TeamMemberRepository.findAllJoinTeamsByUserSeq */
+        SELECT
+        <include refid="AllProperties"/>
+          FROM TEAM_MEMBER
+         WHERE 1=1
+           AND USER_SEQ      = #{userSeq}
+           AND WITHDRAWAL_YN = 'N'
+    </select>
+
     <select id="findTeamMember" resultType="com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember">
         /* TeamMemberRepository.findTeamMember */
         SELECT
@@ -43,13 +53,6 @@
            AND USER_SEQ = #{userSeq}
            AND TEAM_SEQ = #{teamSeq}
            AND WITHDRAWAL_YN = 'N'
-    </select>
-
-    <select id="findMyTeamCount" resultType="long">
-        /* TeamMemberRepository.findMyTeamCount */
-        SELECT COUNT(*)
-          FROM TEAM_MEMBER
-         WHERE USER_SEQ = #{userSeq}
     </select>
 
     <select id="checkDuplicatedTeamMember" resultType="int">

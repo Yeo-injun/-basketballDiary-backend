@@ -1,7 +1,9 @@
 package com.threeNerds.basketballDiary.mvc.game.repository;
 
-import com.threeNerds.basketballDiary.mvc.game.domain.GameRecordAuth;
+import com.threeNerds.basketballDiary.mvc.game.domain.GameAuth;
 import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
 
 
 @Mapper
@@ -10,14 +12,15 @@ public interface GameRecordAuthRepository {
     /**********
      * SELECT
      **********/
+    List<GameAuth> findAuthList( Long userSeq );
 
     /**********
      * INSERT
      **********/
     /**
-     * 게임기록권한생성
+     * 경기기록 권한 생성
      */
-    int saveGameRecordAuth(GameRecordAuth gameRecordAuth);
+    int saveGameAuth( GameAuth gameAuth );
 
 
     /**********
@@ -31,6 +34,6 @@ public interface GameRecordAuthRepository {
     /**
      * 게임 기록자 권한목록만 삭제
      */
-    int deleteWriterAuth( Long gameSeq );
+    int deleteRecordAuth( Long gameSeq );
 }
 

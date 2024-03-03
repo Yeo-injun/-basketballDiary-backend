@@ -2,7 +2,7 @@ package com.threeNerds.basketballDiary.auth;
 
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.SystemErrorType;
-import com.threeNerds.basketballDiary.utils.SessionUtil;
+import com.threeNerds.basketballDiary.session.util.SessionUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.method.HandlerMethod;
