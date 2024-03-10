@@ -12,8 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Stream;
 
 
@@ -22,7 +21,7 @@ import java.util.stream.Stream;
 @Slf4j
 public class ImageUploader implements Uploader<ImageUploader.Path> {
 
-    private static final String[] allowedExtensions = { "png", "jpeg", "jpg", "gif", "svg" };
+    private static final Set<String> allowedExtensions = new HashSet<>( List.of( "png", "jpeg", "jpg", "gif", "svg" ) );
     private static final long MAX_SIZE_IN_BYTES = 1024 * 1024 * 3 / 2; // 1.5Mb로 반영. yml파일의 Multipart max-size보다 작게 반영 ( bytes > Kb > Mb > Gb > Tb ... )
 
     private final PathManager imagePathManager;
@@ -80,6 +79,7 @@ public class ImageUploader implements Uploader<ImageUploader.Path> {
     private boolean exceedMaxSizeInBytes( MultipartFile imageFile ) {
         return MAX_SIZE_IN_BYTES < imageFile.getSize();
     }
+
     /**
      * 확장자 추출
      */
@@ -93,16 +93,13 @@ public class ImageUploader implements Uploader<ImageUploader.Path> {
     }
 
     /**
-     * 업로드 가능한 파일 확장자
+     * 업로드 가능한 이미지 파일 확장자
      */
     private boolean isAllowedExtenstion( String fileExtension ) {
         if ( "".equals( fileExtension ) ) {
             return false;
         }
-
-        return Stream
-                .of( allowedExtensions )
-                .anyMatch( extension -> extension.equals( fileExtension ) );
+        return allowedExtensions.contains( fileExtension );
     }
 
     /**
