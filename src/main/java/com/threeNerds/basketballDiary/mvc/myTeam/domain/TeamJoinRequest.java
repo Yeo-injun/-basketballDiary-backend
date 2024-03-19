@@ -3,6 +3,7 @@ package com.threeNerds.basketballDiary.mvc.myTeam.domain;
 import com.threeNerds.basketballDiary.constant.code.type.JoinRequestStateCode;
 import com.threeNerds.basketballDiary.constant.code.type.JoinRequestTypeCode;
 import com.threeNerds.basketballDiary.mvc.authUser.dto.CmnLoginUserDTO;
+import com.threeNerds.basketballDiary.mvc.authUser.service.dto.JoinRequestCommandDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.CmnMyTeamDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -38,23 +39,21 @@ public class TeamJoinRequest {
     private LocalDate confirmationDate;
 
     /** 가입요청(사용자 -> 팀) 생성 */
-    public static TeamJoinRequest createJoinRequest (CmnLoginUserDTO loginUserDTO)
-    {
+    public static TeamJoinRequest createJoinRequest ( JoinRequestCommandDTO command ) {
         return TeamJoinRequest.builder()
-                .userSeq(loginUserDTO.getUserSeq())
-                .teamSeq(loginUserDTO.getTeamSeq())
-                .joinRequestTypeCode(JoinRequestTypeCode.JOIN_REQUEST.getCode())
-                .joinRequestStateCode(JoinRequestStateCode.WAITING.getCode())
+                .userSeq(               command.getUserSeq() )
+                .teamSeq(               command.getTeamSeq() )
+                .joinRequestTypeCode(   JoinRequestTypeCode.JOIN_REQUEST.getCode() )
+                .joinRequestStateCode(  JoinRequestStateCode.WAITING.getCode() )
                 .build();
     }
 
     /** 가입요청(사용자 -> 팀) 취소 */
-    public static TeamJoinRequest cancelJoinRequest (CmnLoginUserDTO loginUserDTO)
-    {
+    public static TeamJoinRequest cancelJoinRequest ( JoinRequestCommandDTO command ) {
         return TeamJoinRequest.builder()
-                .teamJoinRequestSeq(loginUserDTO.getTeamJoinRequestSeq())
-                .userSeq(loginUserDTO.getUserSeq())
-                .joinRequestStateCode(JoinRequestStateCode.CANCEL.getCode())
+                .teamJoinRequestSeq(    command.getTeamJoinRequestSeq() )
+                .userSeq(               command.getUserSeq() )
+                .joinRequestStateCode(  JoinRequestStateCode.CANCEL.getCode() )
                 .build();
     }
 
