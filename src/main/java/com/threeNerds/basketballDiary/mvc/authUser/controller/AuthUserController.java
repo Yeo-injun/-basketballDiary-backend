@@ -2,6 +2,9 @@ package com.threeNerds.basketballDiary.mvc.authUser.controller;
 
 import com.threeNerds.basketballDiary.auth.Auth;
 import com.threeNerds.basketballDiary.mvc.authUser.service.AuthUserService;
+import com.threeNerds.basketballDiary.mvc.authUser.service.TeamJoinService;
+import com.threeNerds.basketballDiary.mvc.authUser.service.dto.JoinRequestCommandDTO;
+import com.threeNerds.basketballDiary.mvc.authUser.service.dto.JoinRequestQueryDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.MyTeamAuthService;
 import com.threeNerds.basketballDiary.mvc.authUser.dto.CmnLoginUserDTO;
 import com.threeNerds.basketballDiary.mvc.authUser.dto.PasswordUpdateDTO;
@@ -32,6 +35,7 @@ public class AuthUserController {
     private final MyTeamAuthService myTeamAuthService;
 
     private final UserTeamManagerService userTeamManagerService;
+    private final TeamJoinService teamJoinService;
 
     /**
      *  API020 : 농구팀 가입요청 보내기
@@ -41,15 +45,25 @@ public class AuthUserController {
      **/
     @Auth
     @PostMapping("/joinRequestTo/{teamSeq}")
-    public ResponseEntity<Void> sendJoinRequestToTeam (
+    public ResponseEntity<Void> sendRequest (
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession,
             @PathVariable Long teamSeq
     ) {
-        CmnLoginUserDTO loginUserDTO = new CmnLoginUserDTO()
-                .teamSeq(teamSeq)
-                .userSeq(userSession.getUserSeq());
+        teamJoinService.sendRequest( JoinRequestCommandDTO.ofCreation( teamSeq, userSession.getUserSeq() ) );
+        return ResponseEntity.ok().build();
+    }
 
-        userTeamManagerService.sendJoinRequestToTeam(loginUserDTO);
+    /**
+     *  API023 : 팀 가입요청 취소
+     *  22.03.29 인준 : 권한어노테이션 추가
+     **/
+    @Auth
+    @DeleteMapping("/joinRequestsTo/{teamJoinRequestSeq}")
+    public ResponseEntity<?> cancelRequest (
+            @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession,
+            @PathVariable Long teamJoinRequestSeq
+    ) {
+        teamJoinService.cancelRequest( JoinRequestCommandDTO.ofCancel( teamJoinRequestSeq, userSession.getUserSeq() ) );
         return ResponseEntity.ok().build();
     }
 
@@ -61,36 +75,17 @@ public class AuthUserController {
      **/
     @Auth
     @GetMapping("/joinRequestsTo")
-    public ResponseEntity<?> getJoinRequestsTo (
+    public ResponseEntity<?> getJoinRequests (
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession
     ) {
-        CmnLoginUserDTO loginUserDTO = new CmnLoginUserDTO()
-                .userSeq( userSession.getUserSeq() );
-
-        List<JoinRequestDTO> result = userTeamManagerService.getJoinRequestsTo(loginUserDTO);
+        List<JoinRequestDTO> result = teamJoinService.getJoinRequests( JoinRequestQueryDTO.of( userSession.getUserSeq() ) );
         return ResponseEntity.ok().body(result);
     }
 
-    /**
-     *  API023 : 팀 가입요청 취소
-     *  22.03.29 인준 : 권한어노테이션 추가
-     **/
-    @Auth
-    @DeleteMapping("/joinRequestsTo/{teamJoinRequestSeq}")
-    public ResponseEntity<?> cancelJoinReqeust (
-            @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession,
-            @PathVariable Long teamJoinRequestSeq
-    ) {
-        CmnLoginUserDTO loginUserDTO = new CmnLoginUserDTO()
-                .teamJoinRequestSeq( teamJoinRequestSeq )
-                .userSeq( userSession.getUserSeq() );
 
-        userTeamManagerService.cancelJoinRequest( loginUserDTO );
-        // TODO 같은 서비스에서 호출해야 하는 것인지 아니면 컨트롤러에서 별도로 호출해야 하는것인지..
-        // 트랜잭션 관리를 어떻게 할 것인지가 관건으로 판단됨.
-        List<JoinRequestDTO> joinRequestDTOList = userTeamManagerService.getJoinRequestsTo(loginUserDTO);
-        return ResponseEntity.ok().body(joinRequestDTOList);
-    }
+    /**
+     *  TODO 이하 리팩토링 진행요망 ....
+     **/
 
     /**
      *  API024 : 팀 초대 승인
@@ -118,23 +113,6 @@ public class AuthUserController {
     }
 
     /**
-     *  API032 : 농구팀 초대 목록 조회
-     *  22.03.13 인준 : API022 세분화 - 가입요청 및 초대 목록을 하나의 API콜로 가져오는 것에서 API 2개를 콜해서 가져오는 구조로 변경
-     *  22.03.29 인준 : 권한어노테이션 추가
-     **/
-    @Auth
-    @GetMapping("/joinRequestsFrom")
-    public ResponseEntity<?> getJoinRequestsFrom(
-            @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession
-    ) {
-        CmnLoginUserDTO loginUserDTO = new CmnLoginUserDTO()
-                                            .userSeq( userSession.getUserSeq() );
-
-        List<JoinRequestDTO> result = userTeamManagerService.getJoinRequestsFrom(loginUserDTO);
-        return ResponseEntity.ok().body( result );
-    }
-
-    /**
      *  API033 : 농구팀 초대 거절
      *  22.03.29 인준 : 권한어노테이션 추가
      **/
@@ -152,6 +130,23 @@ public class AuthUserController {
         List<JoinRequestDTO> joinRequestDTOList = userTeamManagerService.getJoinRequestsFrom(loginUserDTO);
         return ResponseEntity.ok().body(joinRequestDTOList);
     }
+    /**
+     *  API032 : 농구팀 초대 목록 조회
+     *  22.03.13 인준 : API022 세분화 - 가입요청 및 초대 목록을 하나의 API콜로 가져오는 것에서 API 2개를 콜해서 가져오는 구조로 변경
+     *  22.03.29 인준 : 권한어노테이션 추가
+     **/
+    @Auth
+    @GetMapping("/joinRequestsFrom")
+    public ResponseEntity<?> getJoinRequestsFrom(
+            @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession
+    ) {
+        CmnLoginUserDTO loginUserDTO = new CmnLoginUserDTO()
+                                            .userSeq( userSession.getUserSeq() );
+
+        List<JoinRequestDTO> result = userTeamManagerService.getJoinRequestsFrom(loginUserDTO);
+        return ResponseEntity.ok().body( result );
+    }
+
 
     /**
      * API025 회원정보 수정데이터 조회
