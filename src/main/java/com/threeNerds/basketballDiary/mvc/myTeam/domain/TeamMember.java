@@ -32,8 +32,7 @@ public class TeamMember {
     /* 탈퇴여부 */
     private String withdrawalYn;
 
-    public TeamMember toManager()
-    {
+    public TeamMember toManager() {
         if (!TeamAuthCode.TEAM_MEMBER.getCode().equals(this.teamAuthCode)) {
             throw new CustomException(DomainErrorType.CANT_APPOINTMENT_MANAGER);
         }
@@ -41,8 +40,7 @@ public class TeamMember {
         return this;
     }
 
-    public TeamMember toMember()
-    {
+    public TeamMember toMember() {
         if (!TeamAuthCode.MANAGER.getCode().equals(this.teamAuthCode)) {
             throw new CustomException(DomainErrorType.CANT_DISMISSAL_MANAGER);
         }
@@ -50,20 +48,23 @@ public class TeamMember {
         return this;
     }
 
-    public static TeamMember create(TeamJoinRequest joinRequest) {
+    /**
+     * 가입요청에 따른 팀원 객체 생성
+     */
+    public static TeamMember of( TeamJoinRequest joinRequest ) {
         return TeamMember.create(joinRequest.getTeamSeq(), joinRequest.getUserSeq(), TeamAuthCode.TEAM_MEMBER.getCode());
     }
 
-    public static TeamMember create(Team team) {
-        return TeamMember.create(team.getTeamSeq(), team.getLeaderUserSeq(), TeamAuthCode.TEAM_MEMBER.getCode());
+    @Deprecated
+    public static TeamMember create(TeamJoinRequest joinRequest) {
+        return TeamMember.create(joinRequest.getTeamSeq(), joinRequest.getUserSeq(), TeamAuthCode.TEAM_MEMBER.getCode());
     }
 
     public static TeamMember createLeader(Team newTeam) {
         return TeamMember.create(newTeam.getTeamSeq(), newTeam.getLeaderUserSeq(), TeamAuthCode.LEADER.getCode());
     }
 
-    private static TeamMember create(Long teamSeq, Long userSeq, String teamAuthCode)
-    {
+    private static TeamMember create(Long teamSeq, Long userSeq, String teamAuthCode) {
         String currentYmd = LocalDate.now().toString().replace("-", "");
         return TeamMember.builder()
                 .teamSeq(teamSeq)

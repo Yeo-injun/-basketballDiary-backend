@@ -5,6 +5,7 @@ import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.mvc.authUser.dto.CmnLoginUserDTO;
 import com.threeNerds.basketballDiary.mvc.authUser.dto.JoinRequestDTO;
 import com.threeNerds.basketballDiary.mvc.authUser.repository.dto.UserTeamManagerRepository;
+import com.threeNerds.basketballDiary.mvc.authUser.service.dto.JoinInvitationCommandDTO;
 import com.threeNerds.basketballDiary.mvc.authUser.service.dto.JoinRequestCommandDTO;
 import com.threeNerds.basketballDiary.mvc.authUser.service.dto.JoinRequestQueryDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamJoinRequest;
@@ -43,7 +44,9 @@ public class TeamJoinService {
     private final TeamJoinRequestRepository teamJoinRequestRepository;
     private final UserTeamManagerRepository userTeamManagerRepository;
 
-    // 농구팀에 가입요청 보내기 ( 사용자 -> 농구팀 )
+    /**-------------------------------
+     * 사용자가 팀에 가입요청 보내기
+     **-------------------------------*/
     public void sendRequest( JoinRequestCommandDTO command ) {
         TeamJoinRequest joinRequestInfo = TeamJoinRequest.createJoinRequest( command );
         /** 초대-가입요청 존재여부 확인 : 대기중인 가입요청 혹은 초대가 있을 경우 중복가입요청 방지 */
@@ -67,17 +70,21 @@ public class TeamJoinService {
         teamJoinRequestRepository.createJoinRequest( joinRequestInfo );
     }
 
-    // 사용자가 가입요청한 건을 취소상태로 바꾸는 API (데이터를 삭제하지는 않음)
+    /**-------------------------------
+     * 사용자가 보낸 팀 가입요청 취소
+     **-------------------------------*/
     public void cancelRequest( JoinRequestCommandDTO command ) {
         TeamJoinRequest joinRequestCancel = TeamJoinRequest.cancelJoinRequest( command );
 
-        boolean isCancelSuccess = teamJoinRequestRepository.updateJoinRequestState(joinRequestCancel) == 1;
+        boolean isCancelSuccess = teamJoinRequestRepository.updateJoinRequestState(joinRequestCancel) > 0;
         if ( !isCancelSuccess ) {
             throw new CustomException(JOIN_REQUEST_NOT_FOUND);
         }
     }
 
-    // 사용자가 가입요청을 보낸 팀 목록을 조회
+    /**-------------------------------
+     * 사용자가 보낸 팀 가입요청 목록 조회
+     **-------------------------------*/
     public List<JoinRequestDTO> getJoinRequests( JoinRequestQueryDTO query ) {
         JoinRequestDTO joinRequestDTO = new JoinRequestDTO()
                                             .userSeq(               query.getUserSeq() )
@@ -89,7 +96,9 @@ public class TeamJoinService {
                                         .collect( Collectors.toList() );
     }
 
-    // 사용자가 초대 받은 팀 목록을 조회
+    /**-------------------------------
+     * 사용자가 받은 팀가입초대 목록 조회
+     **-------------------------------*/
     public List<JoinRequestDTO> getJoinRequestsFrom(CmnLoginUserDTO loginUserDTO) {
         JoinRequestDTO joinRequestDTO = new JoinRequestDTO()
                 .userSeq(loginUserDTO.getUserSeq())
@@ -104,29 +113,30 @@ public class TeamJoinService {
     }
 
 
-    // 사용자가 팀의 초대를 승인하는 API
-    public void approveInvitation(CmnLoginUserDTO loginUserDTO) {
+    /**-------------------------------
+     * 사용자가 팀가입초대 승인
+     **-------------------------------*/
+    public void approveInvitation( JoinInvitationCommandDTO command ) {
         /** 초대요청 상태 업데이트 하기 */
-        boolean isSuccess = teamJoinRequestRepository.updateJoinRequestState(TeamJoinRequest.approveInvitation(loginUserDTO)) == 1;
-        if (!isSuccess) {
-            throw new CustomException(JOIN_REQUEST_NOT_FOUND);
+        boolean isSuccessApprove = teamJoinRequestRepository.updateJoinRequestState( TeamJoinRequest.approveInvitation( command ) ) > 0;
+        if ( !isSuccessApprove ) {
+            throw new CustomException( JOIN_REQUEST_NOT_FOUND );
         }
 
         /** 팀원 추가 */
-        TeamJoinRequest joinInfo = teamJoinRequestRepository.findUserByTeamJoinRequestSeq(loginUserDTO.getTeamJoinRequestSeq());
-        TeamMember newTeamMember = TeamMember.create(joinInfo);
-        teamMemberRepository.saveTeamMember(newTeamMember);
+        TeamJoinRequest joinInfo = teamJoinRequestRepository.findBySeq( command.getTeamJoinRequestSeq() );
+        teamMemberRepository.saveTeamMember( TeamMember.of( joinInfo ) );
     }
 
-    // 팀 초대 거절 API
-    public void rejectInvitation(CmnLoginUserDTO loginUserDTO) {
-        TeamJoinRequest rejectInvitation = TeamJoinRequest.rejectInvitation(loginUserDTO);
 
-        boolean isSussess = teamJoinRequestRepository.updateJoinRequestState(rejectInvitation) == 1 ? true : false;
-        if (!isSussess)
-        {
-            throw new CustomException(INVITATION_NOT_FOUND);
+    /**-------------------------------
+     * 사용자가 팀가입초대 거절
+     **-------------------------------*/
+    public void rejectInvitation( JoinInvitationCommandDTO command ) {
+        TeamJoinRequest rejectInvitation = TeamJoinRequest.rejectInvitation( command );
+        boolean isSussessRejection = teamJoinRequestRepository.updateJoinRequestState(rejectInvitation) > 0;
+        if ( !isSussessRejection ) {
+            throw new CustomException( NOT_FOUND_REJECT_INVITATION );
         }
-
     }
 }
