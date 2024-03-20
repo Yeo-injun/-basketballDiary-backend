@@ -14,6 +14,14 @@
         , CONFIRMATION_DATE
     </sql>
 
+    <select id="findBySeq" resultType="com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamJoinRequest">
+        /* TeamJoinRequestRepository.findBySeq */
+        SELECT
+        <include refid="AllProperties"/>
+          FROM TEAM_JOIN_REQUEST
+         WHERE 1=1
+           AND TEAM_JOIN_REQUEST_SEQ = #{teamJoinRequestSeq}
+    </select>
 
     <select id="findUserByTeamJoinRequestSeq" resultType="com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamJoinRequest">
         /* TeamJoinRequestRepository.findUserByTeamJoinRequestSeq */
