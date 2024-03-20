@@ -48,20 +48,6 @@ public class UserTeamManagerService {
     private final TeamJoinRequestRepository teamJoinRequestRepository;
     private final UserTeamManagerRepository userTeamManagerRepository;
 
-    // 사용자가 가입요청을 보낸 팀 목록을 조회
-    public List<JoinRequestDTO> getJoinRequestsTo(CmnLoginUserDTO loginUserDTO) {
-        JoinRequestDTO joinRequestDTO = new JoinRequestDTO()
-                                            .userSeq(loginUserDTO.getUserSeq())
-                                            .joinRequestTypeCode(JoinRequestTypeCode.JOIN_REQUEST.getCode());
-
-        List<JoinRequestDTO> joinRequestDTOList
-                = userTeamManagerRepository.findJoinRequestsByType(joinRequestDTO)
-                    .stream().map(JoinRequestDTO::setCodeNameByInstanceCodeValue)
-                             .collect(Collectors.toList());
-
-        return joinRequestDTOList;
-    }
-
     // 사용자가 초대 받은 팀 목록을 조회
     public List<JoinRequestDTO> getJoinRequestsFrom(CmnLoginUserDTO loginUserDTO) {
         JoinRequestDTO joinRequestDTO = new JoinRequestDTO()
@@ -76,30 +62,4 @@ public class UserTeamManagerService {
         return joinRequestDTOList;
     }
 
-
-    // 사용자가 팀의 초대를 승인하는 API
-    public void approveInvitation(CmnLoginUserDTO loginUserDTO) {
-        /** 초대요청 상태 업데이트 하기 */
-        boolean isSuccess = teamJoinRequestRepository.updateJoinRequestState(TeamJoinRequest.approveInvitation(loginUserDTO)) == 1;
-        if (!isSuccess) {
-            throw new CustomException(JOIN_REQUEST_NOT_FOUND);
-        }
-
-        /** 팀원 추가 */
-        TeamJoinRequest joinInfo = teamJoinRequestRepository.findUserByTeamJoinRequestSeq(loginUserDTO.getTeamJoinRequestSeq());
-        TeamMember newTeamMember = TeamMember.create(joinInfo);
-        teamMemberRepository.saveTeamMember(newTeamMember);
-    }
-
-    // 팀 초대 거절 API
-    public void rejectInvitation(CmnLoginUserDTO loginUserDTO) {
-        TeamJoinRequest rejectInvitation = TeamJoinRequest.rejectInvitation(loginUserDTO);
-
-        boolean isSussess = teamJoinRequestRepository.updateJoinRequestState(rejectInvitation) == 1 ? true : false;
-        if (!isSussess)
-        {
-            throw new CustomException(INVITATION_NOT_FOUND);
-        }
-
-    }
 }
