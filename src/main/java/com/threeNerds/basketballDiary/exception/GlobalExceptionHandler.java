@@ -68,6 +68,7 @@ public class GlobalExceptionHandler { //extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = { NullPointerException.class, IllegalArgumentException.class })
     protected ResponseEntity<ErrorResponse> handleNullPointerException (NullPointerException ex) {
         log.error( "throw NullPointerException" );
+        log.error( ex.getMessage() );
         return SystemErrorResponse.toEntity( SystemErrorType.INTERNAL_ERROR );
     }
 
