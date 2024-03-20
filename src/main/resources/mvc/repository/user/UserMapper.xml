@@ -64,10 +64,10 @@
                                    AND TEAM_SEQ = #{teamSeq}
                                )
         <choose>
-            <when test='userName != "" and userName != null'>
+            <when test='userName != null and "".equals( userName )'>
            AND NAME LIKE '%${userName}%'
             </when>
-            <when test='email != "" and email != null'>
+            <when test='email != null and "".equals( email )'>
            AND EMAIL LIKE '%${email}%'
             </when>
         </choose>
