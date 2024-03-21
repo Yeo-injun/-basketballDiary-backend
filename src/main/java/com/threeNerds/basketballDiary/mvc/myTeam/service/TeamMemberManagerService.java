@@ -35,7 +35,7 @@ import static com.threeNerds.basketballDiary.exception.error.DomainErrorType.USE
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@Transactional // TODO 공부할 거리 - AOP적용한 어노테이션?!!!
+@Transactional
 public class TeamMemberManagerService {
 
     private final TeamJoinRequestRepository teamJoinRequestRepository;
