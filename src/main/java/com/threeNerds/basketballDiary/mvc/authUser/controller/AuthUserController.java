@@ -3,17 +3,16 @@ package com.threeNerds.basketballDiary.mvc.authUser.controller;
 import com.threeNerds.basketballDiary.auth.Auth;
 import com.threeNerds.basketballDiary.mvc.authUser.service.AuthUserService;
 import com.threeNerds.basketballDiary.mvc.authUser.service.TeamJoinService;
-import com.threeNerds.basketballDiary.mvc.authUser.service.dto.JoinInvitationCommandDTO;
-import com.threeNerds.basketballDiary.mvc.authUser.service.dto.JoinRequestCommandDTO;
-import com.threeNerds.basketballDiary.mvc.authUser.service.dto.JoinRequestQueryDTO;
+import com.threeNerds.basketballDiary.mvc.authUser.service.dto.TeamInvitationCommand;
+import com.threeNerds.basketballDiary.mvc.authUser.service.dto.JoinRequestCommand;
+import com.threeNerds.basketballDiary.mvc.authUser.service.dto.JoinRequestQuery;
+import com.threeNerds.basketballDiary.mvc.authUser.service.dto.TeamInvitationQuery;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.MyTeamAuthService;
-import com.threeNerds.basketballDiary.mvc.authUser.dto.CmnLoginUserDTO;
 import com.threeNerds.basketballDiary.mvc.authUser.dto.PasswordUpdateDTO;
 import com.threeNerds.basketballDiary.mvc.authUser.dto.JoinRequestDTO;
 import com.threeNerds.basketballDiary.mvc.authUser.dto.UpdateUserDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.TeamAuthDTO;
 import com.threeNerds.basketballDiary.mvc.user.dto.UserDTO;
-import com.threeNerds.basketballDiary.mvc.authUser.service.UserTeamManagerService;
 import com.threeNerds.basketballDiary.session.SessionUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +34,6 @@ public class AuthUserController {
 
     private final MyTeamAuthService myTeamAuthService;
 
-    private final UserTeamManagerService userTeamManagerService;
     private final TeamJoinService teamJoinService;
 
     /**
@@ -50,7 +48,7 @@ public class AuthUserController {
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession,
             @PathVariable Long teamSeq
     ) {
-        teamJoinService.sendRequest( JoinRequestCommandDTO.ofCreation( teamSeq, userSession.getUserSeq() ) );
+        teamJoinService.sendRequest( JoinRequestCommand.ofCreation( teamSeq, userSession.getUserSeq() ) );
         return ResponseEntity.ok().build();
     }
 
@@ -64,7 +62,7 @@ public class AuthUserController {
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession,
             @PathVariable Long teamJoinRequestSeq
     ) {
-        teamJoinService.cancelRequest( JoinRequestCommandDTO.ofCancel( teamJoinRequestSeq, userSession.getUserSeq() ) );
+        teamJoinService.cancelRequest( JoinRequestCommand.ofCancel( teamJoinRequestSeq, userSession.getUserSeq() ) );
         return ResponseEntity.ok().build();
     }
 
@@ -79,7 +77,7 @@ public class AuthUserController {
     public ResponseEntity<?> getJoinRequests (
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession
     ) {
-        List<JoinRequestDTO> result = teamJoinService.getJoinRequests( JoinRequestQueryDTO.of( userSession.getUserSeq() ) );
+        List<JoinRequestDTO> result = teamJoinService.getJoinRequests( JoinRequestQuery.of( userSession.getUserSeq() ) );
         return ResponseEntity.ok().body(result);
     }
 
@@ -89,11 +87,11 @@ public class AuthUserController {
      **/
     @Auth
     @PutMapping("/joinRequestsFrom/{teamJoinRequestSeq}/approval")
-    public ResponseEntity<?> approveInvitation (
+    public ResponseEntity<?> approveTeamInvitation (
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession,
             @PathVariable Long teamJoinRequestSeq
     ) {
-        teamJoinService.approveInvitation( JoinInvitationCommandDTO.ofApproval( teamJoinRequestSeq, userSession.getUserSeq() ) );
+        teamJoinService.approveInvitation( TeamInvitationCommand.ofApproval( teamJoinRequestSeq, userSession.getUserSeq() ) );
 
         /** 세션 팀 권한 정보 update */
         TeamAuthDTO teamAuthInfo = myTeamAuthService.getAllTeamAuthInfo( TeamAuthDTO.of( userSession.getUserSeq() ) );
@@ -108,18 +106,14 @@ public class AuthUserController {
      **/
     @Auth
     @PutMapping("/joinRequestsFrom/{teamJoinRequestSeq}/rejection")
-    public ResponseEntity<?> rejectInvitation (
+    public ResponseEntity<?> rejectTeamInvitation (
             @SessionAttribute(value=LOGIN_USER, required = false) SessionUser userSession,
             @PathVariable Long teamJoinRequestSeq
     ) {
-        teamJoinService.rejectInvitation( JoinInvitationCommandDTO.ofRejection( teamJoinRequestSeq, userSession.getUserSeq() ) );
+        teamJoinService.rejectInvitation( TeamInvitationCommand.ofRejection( teamJoinRequestSeq, userSession.getUserSeq() ) );
         return ResponseEntity.ok().build();
     }
 
-
-    /**
-     *  TODO 이하 리팩토링 진행요망 ....
-     **/
 
     /**
      *  API032 : 농구팀 초대 목록 조회
@@ -128,16 +122,17 @@ public class AuthUserController {
      **/
     @Auth
     @GetMapping("/joinRequestsFrom")
-    public ResponseEntity<?> getJoinRequestsFrom(
+    public ResponseEntity<?> getTeamInvitations(
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession
     ) {
-        CmnLoginUserDTO loginUserDTO = new CmnLoginUserDTO()
-                                            .userSeq( userSession.getUserSeq() );
-
-        List<JoinRequestDTO> result = userTeamManagerService.getJoinRequestsFrom(loginUserDTO);
+        List<JoinRequestDTO> result = teamJoinService.getTeamInvitations( TeamInvitationQuery.ofUser( userSession.getUserSeq() ) );
         return ResponseEntity.ok().body( result );
     }
 
+
+    /**
+     *  TODO 이하 리팩토링 진행요망 ....
+     **/
 
     /**
      * API025 회원정보 수정데이터 조회

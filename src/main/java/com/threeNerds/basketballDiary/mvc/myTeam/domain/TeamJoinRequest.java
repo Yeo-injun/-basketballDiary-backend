@@ -2,9 +2,8 @@ package com.threeNerds.basketballDiary.mvc.myTeam.domain;
 
 import com.threeNerds.basketballDiary.constant.code.type.JoinRequestStateCode;
 import com.threeNerds.basketballDiary.constant.code.type.JoinRequestTypeCode;
-import com.threeNerds.basketballDiary.mvc.authUser.dto.CmnLoginUserDTO;
-import com.threeNerds.basketballDiary.mvc.authUser.service.dto.JoinInvitationCommandDTO;
-import com.threeNerds.basketballDiary.mvc.authUser.service.dto.JoinRequestCommandDTO;
+import com.threeNerds.basketballDiary.mvc.authUser.service.dto.TeamInvitationCommand;
+import com.threeNerds.basketballDiary.mvc.authUser.service.dto.JoinRequestCommand;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.CmnMyTeamDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -40,7 +39,7 @@ public class TeamJoinRequest {
     private LocalDate confirmationDate;
 
     /** 가입요청(사용자 -> 팀) 생성 */
-    public static TeamJoinRequest createJoinRequest( JoinRequestCommandDTO command ) {
+    public static TeamJoinRequest createJoinRequest( JoinRequestCommand command ) {
         return TeamJoinRequest.builder()
                 .userSeq(               command.getUserSeq() )
                 .teamSeq(               command.getTeamSeq() )
@@ -50,7 +49,7 @@ public class TeamJoinRequest {
     }
 
     /** 가입요청(사용자 -> 팀) 취소 */
-    public static TeamJoinRequest cancelJoinRequest( JoinRequestCommandDTO command ) {
+    public static TeamJoinRequest cancelJoinRequest( JoinRequestCommand command ) {
         return TeamJoinRequest.builder()
                 .teamJoinRequestSeq(    command.getTeamJoinRequestSeq() )
                 .userSeq(               command.getUserSeq() )
@@ -87,7 +86,7 @@ public class TeamJoinRequest {
     }
 
     /** 초대 승낙처리 - 사용자가 팀의 초대를 */
-    public static TeamJoinRequest approveInvitation( JoinInvitationCommandDTO command ) {
+    public static TeamJoinRequest approveInvitation( TeamInvitationCommand command ) {
         return TeamJoinRequest.builder()
                 .teamJoinRequestSeq(    command.getTeamJoinRequestSeq() )
                 .userSeq(               command.getUserSeq() )
@@ -96,7 +95,7 @@ public class TeamJoinRequest {
     }
 
     /** 거절처리 - 팀이 사용자의 가입요청을 */
-    public static TeamJoinRequest rejectInvitation( JoinInvitationCommandDTO command ) {
+    public static TeamJoinRequest rejectInvitation( TeamInvitationCommand command ) {
         return TeamJoinRequest.builder()
                 .teamJoinRequestSeq(    command.getTeamJoinRequestSeq() )
                 .userSeq(               command.getUserSeq() )
