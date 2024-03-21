@@ -113,20 +113,21 @@
     </insert>
 
 
-    <update id="updateUser" parameterType="com.threeNerds.basketballDiary.mvc.authUser.dto.UpdateUserDTO">
-        /* UserRepository.updateUser */
+    <update id="updateProfile" parameterType="com.threeNerds.basketballDiary.mvc.user.domain.User">
+        /* UserRepository.updateProfile */
         UPDATE USER
-           SET NAME          = #{userName}
-             , EMAIL         = #{email}
+           SET NAME          = #{name}
+             , BIRTH_YMD     = #{birthYmd}
              , GENDER        = #{gender}
+             , EMAIL         = #{email}
              , HEIGHT        = #{height}
              , WEIGHT        = #{weight}
              , SIDO_CODE     = #{sidoCode}
              , SIGUNGU_CODE  = #{sigunguCode}
              , POSITION_CODE = #{positionCode}
              , ROADADDRESS   = #{roadAddress}
-        WHERE 1=1
-          AND USER_SEQ = #{userSeq}
+         WHERE 1=1
+           AND USER_SEQ = #{userSeq}
     </update>
 
     <update id="updatePassword" parameterType="com.threeNerds.basketballDiary.mvc.authUser.dto.PasswordUpdateDTO">

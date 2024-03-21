@@ -1,6 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.authUser.controller;
 
 import com.threeNerds.basketballDiary.auth.Auth;
+import com.threeNerds.basketballDiary.mvc.authUser.controller.request.UpdateProfileRequest;
 import com.threeNerds.basketballDiary.mvc.authUser.service.AuthUserService;
 import com.threeNerds.basketballDiary.mvc.authUser.service.TeamJoinService;
 import com.threeNerds.basketballDiary.mvc.authUser.service.dto.TeamInvitationCommand;
@@ -129,35 +130,35 @@ public class AuthUserController {
         return ResponseEntity.ok().body( result );
     }
 
+    /**
+     * API025 회원 프로필 조회
+     */
+    @Auth
+    @GetMapping("/profile")
+    public ResponseEntity<UserDTO> getProfile (
+            @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession
+    ) {
+        UserDTO userDto = authUserService.getProfile( userSession.getUserSeq() );
+        return ResponseEntity.ok().body(userDto);
+    }
+
+    /**
+     * API026 회원 프로필 수정
+     */
+    @Auth
+    @PostMapping("/profile")
+    public ResponseEntity<?> updateProfile(
+            @SessionAttribute(value = LOGIN_USER,required = false) SessionUser userSession,
+            @RequestBody @Valid UpdateProfileRequest request
+    ) {
+        authUserService.updateProfile( request.toCommand( userSession.getUserSeq() ) );
+        return ResponseEntity.ok().build();
+    }
 
     /**
      *  TODO 이하 리팩토링 진행요망 ....
      **/
 
-    /**
-     * API025 회원정보 수정데이터 조회
-     */
-    @Auth
-    @GetMapping("/profile")
-    public ResponseEntity<UserDTO> getUserProfileForUpdate (
-            @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession
-    ){
-        UserDTO userDto = authUserService.getUserProfileForUpdate( userSession.getUserSeq() );
-        return ResponseEntity.ok().body(userDto);
-    }
-
-    /**
-     * API026 회원수정 : update 를 수행한 후 update 된 객체를 리턴시켜주자 => 이래야 TEST CODE 작성시 정확히 update 가 되었는지 확인할 수 있다.
-     */
-    @Auth
-    @PostMapping("/profile")
-    public ResponseEntity<?> updateUserProfile (
-            @SessionAttribute(value = LOGIN_USER,required = false) SessionUser userSession,
-            @RequestBody @Valid UpdateUserDTO userDTO
-    ) {
-        authUserService.updateUserProfile( userDTO.userSeq( userSession.getUserSeq() ) );
-        return ResponseEntity.ok().body(userDTO);
-    }
 
     /**
      * API028 회원탈퇴 : 회원탈퇴기능은 verify로 deleteUser 메소드가 호출되었는지 확인하는 방법 말고는 존재하지 않는다.

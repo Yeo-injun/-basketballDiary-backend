@@ -2,6 +2,9 @@ package com.threeNerds.basketballDiary.mvc.authUser.service;
 
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
+import com.threeNerds.basketballDiary.exception.error.SystemErrorType;
+import com.threeNerds.basketballDiary.mvc.authUser.controller.request.UpdateProfileRequest;
+import com.threeNerds.basketballDiary.mvc.authUser.service.dto.ProfileCommand;
 import com.threeNerds.basketballDiary.mvc.user.domain.User;
 import com.threeNerds.basketballDiary.mvc.authUser.dto.PasswordUpdateDTO;
 import com.threeNerds.basketballDiary.mvc.authUser.dto.UpdateUserDTO;
@@ -23,25 +26,24 @@ public class AuthUserService {
 
     private final UserRepository userRepository;
 
-    @Transactional
-    public UserDTO getUserProfileForUpdate(Long userSeq)
-    {
-        User findUser = Optional.ofNullable(userRepository.findUser(userSeq))
-                .orElseThrow(()-> new CustomException(DomainErrorType.USER_NOT_FOUND));
+    public UserDTO getProfile( Long userSeq ) {
+        User findUser = Optional.ofNullable( userRepository.findUser( userSeq ) )
+                                .orElseThrow( ()-> new CustomException( DomainErrorType.USER_NOT_FOUND ) );
         return UserDTO.getInstance(findUser);
     }
 
-    @Transactional
-    public void updateUserProfile(UpdateUserDTO user){
-        userRepository.updateUser(user);
+
+    public void updateProfile( ProfileCommand profile ) {
+        boolean isSuccessUpdateProfile = userRepository.updateProfile( User.ofUpdate( profile ) ) == 1;
+        if ( !isSuccessUpdateProfile ) {
+            throw new CustomException( SystemErrorType.NOT_FOUND_USER_FOR_UPDATE );
+        }
     }
 
-    @Transactional
     public void deleteUser(String id) {
         userRepository.deleteUser(id);
     }
 
-    @Transactional
     public void updatePassword( PasswordUpdateDTO passwordUpdateDTO ) {
         User findUser = Optional.ofNullable(userRepository.findUser(passwordUpdateDTO.getUserSeq()))
                 .orElseThrow(()-> new CustomException(DomainErrorType.USER_NOT_FOUND));

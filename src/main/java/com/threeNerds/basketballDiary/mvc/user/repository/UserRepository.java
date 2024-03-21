@@ -28,7 +28,7 @@ public interface UserRepository {
     /**********
      * UPDATE
      **********/
-    int updateUser(UpdateUserDTO user);
+    int updateProfile( User profile );
     int updatePassword(PasswordUpdateDTO passwordUpdateDTO);
 
     /**********

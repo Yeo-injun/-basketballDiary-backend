@@ -3,6 +3,7 @@ package com.threeNerds.basketballDiary.mvc.user.domain;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import com.threeNerds.basketballDiary.mvc.auth.controller.request.CreateUserRequest;
+import com.threeNerds.basketballDiary.mvc.authUser.service.dto.ProfileCommand;
 import com.threeNerds.basketballDiary.utils.EncryptUtil;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -74,7 +75,23 @@ public class User {
                 .build();
     }
 
-    public boolean checkAuthentication ( String userId, String plainPassword ) {
+    public static User ofUpdate( ProfileCommand command ) {
+        return User.builder()
+                .userSeq(       command.getUserSeq() )
+                .name(          command.getUserName() )
+                .email(         command.getEmail() )
+                .gender(        command.getGender() )
+                .birthYmd(      command.getBirthYmd() )
+                .height(        command.getHeight() )
+                .weight(        command.getWeight() )
+                .updateDate(    LocalDate.now() )
+                .sidoCode(      command.getSidoCode() )
+                .sigunguCode(   command.getSigunguCode() )
+                .positionCode(  command.getPositionCode() )
+                .roadAddress(   command.getRoadAddress() )
+                .build();
+    }
+    public boolean checkAuthentication( String userId, String plainPassword ) {
         /** 평문비밀번호 null체크 */
         if (plainPassword == null || plainPassword.isEmpty()) {
             throw new CustomException( DomainErrorType.NO_EXIST_PASSWORD );
