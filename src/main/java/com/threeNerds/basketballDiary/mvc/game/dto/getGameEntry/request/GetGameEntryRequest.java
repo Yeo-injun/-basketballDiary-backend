@@ -5,6 +5,7 @@ import com.threeNerds.basketballDiary.constant.code.type.QuarterCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.SystemErrorType;
 import lombok.Getter;
+import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -12,9 +13,9 @@ import java.util.Objects;
 @Getter
 public class GetGameEntryRequest {
 
-    private Long gameSeq;
-    private String quarterCode;
-    private String homeAwayCode;
+    private final Long gameSeq;
+    private final String quarterCode;
+    private final String homeAwayCode;
 
     public GetGameEntryRequest ( Long gameSeq, String quarterCode, String homeAwayCode ) {
         this.gameSeq = gameSeq;
@@ -23,16 +24,16 @@ public class GetGameEntryRequest {
         this.validate();
     }
 
-    public boolean validate() {
+    private void validate() {
         // 필수값 체크
-        Object[] notNullValues = new Object[] { gameSeq, quarterCode, homeAwayCode };
+        Object[] notNullValues = new Object[] { gameSeq, quarterCode };
         if ( Arrays.stream(notNullValues).anyMatch( Objects::isNull ) ) {
             throw new CustomException( SystemErrorType.NOT_NULLALLBE_VALUE );
         }
-
         QuarterCode.checkDomain( quarterCode );
-        HomeAwayCode.checkDomain( homeAwayCode );
 
-        return true;
+        if ( StringUtils.hasText( homeAwayCode ) ) {
+            HomeAwayCode.checkDomain( homeAwayCode );
+        }
     }
 }

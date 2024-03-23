@@ -1,15 +1,19 @@
 package com.threeNerds.basketballDiary.mvc.authUser.controller;
 
 import com.threeNerds.basketballDiary.auth.Auth;
+import com.threeNerds.basketballDiary.mvc.authUser.controller.request.UpdateProfileRequest;
 import com.threeNerds.basketballDiary.mvc.authUser.service.AuthUserService;
+import com.threeNerds.basketballDiary.mvc.authUser.service.TeamJoinService;
+import com.threeNerds.basketballDiary.mvc.authUser.service.dto.TeamInvitationCommand;
+import com.threeNerds.basketballDiary.mvc.authUser.service.dto.JoinRequestCommand;
+import com.threeNerds.basketballDiary.mvc.authUser.service.dto.JoinRequestQuery;
+import com.threeNerds.basketballDiary.mvc.authUser.service.dto.TeamInvitationQuery;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.MyTeamAuthService;
-import com.threeNerds.basketballDiary.mvc.authUser.dto.CmnLoginUserDTO;
 import com.threeNerds.basketballDiary.mvc.authUser.dto.PasswordUpdateDTO;
 import com.threeNerds.basketballDiary.mvc.authUser.dto.JoinRequestDTO;
 import com.threeNerds.basketballDiary.mvc.authUser.dto.UpdateUserDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.TeamAuthDTO;
 import com.threeNerds.basketballDiary.mvc.user.dto.UserDTO;
-import com.threeNerds.basketballDiary.mvc.authUser.service.UserTeamManagerService;
 import com.threeNerds.basketballDiary.session.SessionUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +35,7 @@ public class AuthUserController {
 
     private final MyTeamAuthService myTeamAuthService;
 
-    private final UserTeamManagerService userTeamManagerService;
+    private final TeamJoinService teamJoinService;
 
     /**
      *  API020 : 농구팀 가입요청 보내기
@@ -41,15 +45,25 @@ public class AuthUserController {
      **/
     @Auth
     @PostMapping("/joinRequestTo/{teamSeq}")
-    public ResponseEntity<Void> sendJoinRequestToTeam (
+    public ResponseEntity<Void> sendRequest (
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession,
             @PathVariable Long teamSeq
     ) {
-        CmnLoginUserDTO loginUserDTO = new CmnLoginUserDTO()
-                .teamSeq(teamSeq)
-                .userSeq(userSession.getUserSeq());
+        teamJoinService.sendRequest( JoinRequestCommand.ofCreation( teamSeq, userSession.getUserSeq() ) );
+        return ResponseEntity.ok().build();
+    }
 
-        userTeamManagerService.sendJoinRequestToTeam(loginUserDTO);
+    /**
+     *  API023 : 팀 가입요청 취소
+     *  22.03.29 인준 : 권한어노테이션 추가
+     **/
+    @Auth
+    @DeleteMapping("/joinRequestsTo/{teamJoinRequestSeq}")
+    public ResponseEntity<?> cancelRequest (
+            @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession,
+            @PathVariable Long teamJoinRequestSeq
+    ) {
+        teamJoinService.cancelRequest( JoinRequestCommand.ofCancel( teamJoinRequestSeq, userSession.getUserSeq() ) );
         return ResponseEntity.ok().build();
     }
 
@@ -61,35 +75,11 @@ public class AuthUserController {
      **/
     @Auth
     @GetMapping("/joinRequestsTo")
-    public ResponseEntity<?> getJoinRequestsTo (
+    public ResponseEntity<?> getJoinRequests (
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession
     ) {
-        CmnLoginUserDTO loginUserDTO = new CmnLoginUserDTO()
-                .userSeq( userSession.getUserSeq() );
-
-        List<JoinRequestDTO> result = userTeamManagerService.getJoinRequestsTo(loginUserDTO);
+        List<JoinRequestDTO> result = teamJoinService.getJoinRequests( JoinRequestQuery.of( userSession.getUserSeq() ) );
         return ResponseEntity.ok().body(result);
-    }
-
-    /**
-     *  API023 : 팀 가입요청 취소
-     *  22.03.29 인준 : 권한어노테이션 추가
-     **/
-    @Auth
-    @DeleteMapping("/joinRequestsTo/{teamJoinRequestSeq}")
-    public ResponseEntity<?> cancelJoinReqeust (
-            @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession,
-            @PathVariable Long teamJoinRequestSeq
-    ) {
-        CmnLoginUserDTO loginUserDTO = new CmnLoginUserDTO()
-                .teamJoinRequestSeq( teamJoinRequestSeq )
-                .userSeq( userSession.getUserSeq() );
-
-        userTeamManagerService.cancelJoinRequest( loginUserDTO );
-        // TODO 같은 서비스에서 호출해야 하는 것인지 아니면 컨트롤러에서 별도로 호출해야 하는것인지..
-        // 트랜잭션 관리를 어떻게 할 것인지가 관건으로 판단됨.
-        List<JoinRequestDTO> joinRequestDTOList = userTeamManagerService.getJoinRequestsTo(loginUserDTO);
-        return ResponseEntity.ok().body(joinRequestDTOList);
     }
 
     /**
@@ -98,24 +88,33 @@ public class AuthUserController {
      **/
     @Auth
     @PutMapping("/joinRequestsFrom/{teamJoinRequestSeq}/approval")
-    public ResponseEntity<?> approveInvitation (
+    public ResponseEntity<?> approveTeamInvitation (
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession,
             @PathVariable Long teamJoinRequestSeq
     ) {
-        CmnLoginUserDTO loginUserDTO = new CmnLoginUserDTO()
-                .teamJoinRequestSeq( teamJoinRequestSeq )
-                .userSeq( userSession.getUserSeq() );
-
-        userTeamManagerService.approveInvitation(loginUserDTO);
+        teamJoinService.approveInvitation( TeamInvitationCommand.ofApproval( teamJoinRequestSeq, userSession.getUserSeq() ) );
 
         /** 세션 팀 권한 정보 update */
         TeamAuthDTO teamAuthInfo = myTeamAuthService.getAllTeamAuthInfo( TeamAuthDTO.of( userSession.getUserSeq() ) );
         userSession.setAuthTeams( teamAuthInfo.getAuthTeams() );
-
-        // TODO 컨트롤러에서 서비스 호출하는 방식을 허용할 것인지 -> 우선 트랜잭션 이슈 검토, 서비스레이어의 역할 및 책임에 대해서 다시 공부 검토
-        List<JoinRequestDTO> joinRequestDTOList = userTeamManagerService.getJoinRequestsFrom(loginUserDTO);
-        return ResponseEntity.ok().body(joinRequestDTOList);
+        return ResponseEntity.ok().build();
     }
+
+
+    /**
+     *  API033 : 농구팀 초대 거절
+     *  22.03.29 인준 : 권한어노테이션 추가
+     **/
+    @Auth
+    @PutMapping("/joinRequestsFrom/{teamJoinRequestSeq}/rejection")
+    public ResponseEntity<?> rejectTeamInvitation (
+            @SessionAttribute(value=LOGIN_USER, required = false) SessionUser userSession,
+            @PathVariable Long teamJoinRequestSeq
+    ) {
+        teamJoinService.rejectInvitation( TeamInvitationCommand.ofRejection( teamJoinRequestSeq, userSession.getUserSeq() ) );
+        return ResponseEntity.ok().build();
+    }
+
 
     /**
      *  API032 : 농구팀 초대 목록 조회
@@ -124,59 +123,42 @@ public class AuthUserController {
      **/
     @Auth
     @GetMapping("/joinRequestsFrom")
-    public ResponseEntity<?> getJoinRequestsFrom(
+    public ResponseEntity<?> getTeamInvitations(
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession
     ) {
-        CmnLoginUserDTO loginUserDTO = new CmnLoginUserDTO()
-                                            .userSeq( userSession.getUserSeq() );
-
-        List<JoinRequestDTO> result = userTeamManagerService.getJoinRequestsFrom(loginUserDTO);
+        List<JoinRequestDTO> result = teamJoinService.getTeamInvitations( TeamInvitationQuery.ofUser( userSession.getUserSeq() ) );
         return ResponseEntity.ok().body( result );
     }
 
     /**
-     *  API033 : 농구팀 초대 거절
-     *  22.03.29 인준 : 권한어노테이션 추가
-     **/
-    @Auth
-    @PutMapping("/joinRequestsFrom/{teamJoinRequestSeq}/rejection")
-    public ResponseEntity<?> rejectInvitation (
-            @SessionAttribute(value=LOGIN_USER, required = false) SessionUser userSession,
-            @PathVariable Long teamJoinRequestSeq
-    ) {
-        CmnLoginUserDTO loginUserDTO = new CmnLoginUserDTO()
-                .teamJoinRequestSeq( teamJoinRequestSeq )
-                .userSeq( userSession.getUserSeq() );
-
-        userTeamManagerService.rejectInvitation(loginUserDTO);
-        List<JoinRequestDTO> joinRequestDTOList = userTeamManagerService.getJoinRequestsFrom(loginUserDTO);
-        return ResponseEntity.ok().body(joinRequestDTOList);
-    }
-
-    /**
-     * API025 회원정보 수정데이터 조회
+     * API025 회원 프로필 조회
      */
     @Auth
     @GetMapping("/profile")
-    public ResponseEntity<UserDTO> getUserProfileForUpdate (
+    public ResponseEntity<UserDTO> getProfile (
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession
-    ){
-        UserDTO userDto = authUserService.getUserProfileForUpdate( userSession.getUserSeq() );
+    ) {
+        UserDTO userDto = authUserService.getProfile( userSession.getUserSeq() );
         return ResponseEntity.ok().body(userDto);
     }
 
     /**
-     * API026 회원수정 : update 를 수행한 후 update 된 객체를 리턴시켜주자 => 이래야 TEST CODE 작성시 정확히 update 가 되었는지 확인할 수 있다.
+     * API026 회원 프로필 수정
      */
     @Auth
     @PostMapping("/profile")
-    public ResponseEntity<?> updateUserProfile (
+    public ResponseEntity<?> updateProfile(
             @SessionAttribute(value = LOGIN_USER,required = false) SessionUser userSession,
-            @RequestBody @Valid UpdateUserDTO userDTO
+            @RequestBody @Valid UpdateProfileRequest request
     ) {
-        authUserService.updateUserProfile( userDTO.userSeq( userSession.getUserSeq() ) );
-        return ResponseEntity.ok().body(userDTO);
+        authUserService.updateProfile( request.toCommand( userSession.getUserSeq() ) );
+        return ResponseEntity.ok().build();
     }
+
+    /**
+     *  TODO 이하 리팩토링 진행요망 ....
+     **/
+
 
     /**
      * API028 회원탈퇴 : 회원탈퇴기능은 verify로 deleteUser 메소드가 호출되었는지 확인하는 방법 말고는 존재하지 않는다.

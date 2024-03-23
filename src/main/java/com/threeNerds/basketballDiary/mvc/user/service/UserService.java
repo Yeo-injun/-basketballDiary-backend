@@ -32,7 +32,7 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    public ResponseJsonBody searchUsersExcludingTeamMember( SearchUsersExcludingTeamMemberRequest reqBody ) {
+    public SearchUsersExcludingTeamMemberResponse searchUsersExcludingTeamMember( SearchUsersExcludingTeamMemberRequest reqBody ) {
 
         UserInqCondDTO inqCond = new UserInqCondDTO()
                                     .teamSeq( reqBody.getTeamSeq() )
@@ -42,7 +42,6 @@ public class UserService {
         // TODO 페이징 처리 추가
 
         List<UserDTO> users = userRepository.findAllUsersExcludingTeamMemberByUserNameOrEmail( inqCond );
-
         return new SearchUsersExcludingTeamMemberResponse( users );
     }
 }
