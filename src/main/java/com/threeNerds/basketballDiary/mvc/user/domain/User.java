@@ -91,15 +91,15 @@ public class User {
                 .roadAddress(   command.getRoadAddress() )
                 .build();
     }
-    public boolean checkAuthentication( String userId, String plainPassword ) {
+    public boolean checkAuthentication( String plainPassword ) {
         /** 평문비밀번호 null체크 */
-        if (plainPassword == null || plainPassword.isEmpty()) {
+        if ( plainPassword == null || plainPassword.isEmpty() ) {
             throw new CustomException( DomainErrorType.NO_EXIST_PASSWORD );
         }
 
         /** 비밀번호 암호화 : 평문비밀번호 + userId로 */
-        String cryptPassword = EncryptUtil.getEncrypt(plainPassword, userId);
-        log.info("cryptoPassword = {}", cryptPassword);
+        String cryptPassword = EncryptUtil.getEncrypt( plainPassword, this.userId );
+        log.debug( "cryptoPassword = {}", cryptPassword );
 
         return this.password.equals( cryptPassword );
     }

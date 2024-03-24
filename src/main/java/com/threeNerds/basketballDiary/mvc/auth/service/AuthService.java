@@ -66,7 +66,7 @@ public class AuthService {
         }
 
         /** 입력 ID와 비밀번호로 인증 수행 */
-        if ( !findUser.checkAuthentication( userId, plainPassword ) ) {
+        if ( !findUser.checkAuthentication( plainPassword ) ) {
             throw new CustomException( DomainErrorType.INCORRECT_LOGIN_INFO );
         }
         return LoginUserDTO.ofSuccess( findUser.getUserId(), findUser.getUserSeq() );

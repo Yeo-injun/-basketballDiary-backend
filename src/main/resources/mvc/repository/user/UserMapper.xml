@@ -143,7 +143,7 @@
         /* UserRepository.deleteUser */
         DELETE FROM USER
          WHERE 1=1
-           AND USER_ID = #{userId}
+           AND USER_SEQ = #{userSeq}
     </delete>
 
 

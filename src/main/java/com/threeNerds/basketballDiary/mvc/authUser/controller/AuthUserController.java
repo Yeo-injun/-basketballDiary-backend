@@ -4,14 +4,10 @@ import com.threeNerds.basketballDiary.auth.Auth;
 import com.threeNerds.basketballDiary.mvc.authUser.controller.request.UpdateProfileRequest;
 import com.threeNerds.basketballDiary.mvc.authUser.service.AuthUserService;
 import com.threeNerds.basketballDiary.mvc.authUser.service.TeamJoinService;
-import com.threeNerds.basketballDiary.mvc.authUser.service.dto.TeamInvitationCommand;
-import com.threeNerds.basketballDiary.mvc.authUser.service.dto.JoinRequestCommand;
-import com.threeNerds.basketballDiary.mvc.authUser.service.dto.JoinRequestQuery;
-import com.threeNerds.basketballDiary.mvc.authUser.service.dto.TeamInvitationQuery;
+import com.threeNerds.basketballDiary.mvc.authUser.service.dto.*;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.MyTeamAuthService;
 import com.threeNerds.basketballDiary.mvc.authUser.dto.PasswordUpdateDTO;
 import com.threeNerds.basketballDiary.mvc.authUser.dto.JoinRequestDTO;
-import com.threeNerds.basketballDiary.mvc.authUser.dto.UpdateUserDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.TeamAuthDTO;
 import com.threeNerds.basketballDiary.mvc.user.dto.UserDTO;
 import com.threeNerds.basketballDiary.session.SessionUser;
@@ -161,18 +157,18 @@ public class AuthUserController {
 
 
     /**
-     * API028 회원탈퇴 : 회원탈퇴기능은 verify로 deleteUser 메소드가 호출되었는지 확인하는 방법 말고는 존재하지 않는다.
-     *          만약 컬럼값 1개만 Y->N 으로 변경했더라면 객체간 비교를 해줄 수 있지만, 아에 테이블에서 삭제를 해버리는 이상 마땅한 방법이 없음
+     * API028 회원탈퇴
      */
     @Auth
-    @DeleteMapping("/profile")
-    public ResponseEntity<Void> deleteUser(
-            @SessionAttribute(value = LOGIN_USER,required = false) SessionUser userSession
-    ){
-
-        String id = userSession.getUserId();
-
-        authUserService.deleteUser(id);
+    @DeleteMapping("/profile")  // cf. 일반적인 HTTP spec에서는 DELETE 메소드는 RequestBody를 지원하지 않음. 이에 따라 Spring @DeleteMapping에서는 @RequestBody를 지원하지 않음.
+    public ResponseEntity<Void> withdrawalMembership(
+            @SessionAttribute( value = LOGIN_USER, required = false ) SessionUser userSession,
+            @RequestParam String password
+    ) {
+        authUserService.withdrawalMembership( MembershipCommand.builder()
+                                                .userSeq(       userSession.getUserSeq() )
+                                                .plainPassword( password )
+                                                .build() );
         return ResponseEntity.ok().build();
     }
 
