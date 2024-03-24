@@ -34,6 +34,6 @@ public interface UserRepository {
     /**********
      * DELETE
      **********/
-    int deleteUser(String id);
+    int deleteUser( Long userSeq );
 
 }
