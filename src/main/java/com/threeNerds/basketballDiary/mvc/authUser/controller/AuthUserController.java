@@ -7,7 +7,7 @@ import com.threeNerds.basketballDiary.mvc.authUser.service.AuthUserService;
 import com.threeNerds.basketballDiary.mvc.authUser.service.TeamJoinService;
 import com.threeNerds.basketballDiary.mvc.authUser.service.dto.*;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.MyTeamAuthService;
-import com.threeNerds.basketballDiary.mvc.authUser.dto.PasswordUpdateDTO;
+
 import com.threeNerds.basketballDiary.mvc.authUser.dto.JoinRequestDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.TeamAuthDTO;
 import com.threeNerds.basketballDiary.mvc.user.dto.UserDTO;
@@ -42,7 +42,7 @@ public class AuthUserController {
      **/
     @Auth
     @PostMapping("/joinRequestTo/{teamSeq}")
-    public ResponseEntity<Void> sendRequest (
+    public ResponseEntity<Void> sendRequest(
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession,
             @PathVariable Long teamSeq
     ) {
@@ -56,7 +56,7 @@ public class AuthUserController {
      **/
     @Auth
     @DeleteMapping("/joinRequestsTo/{teamJoinRequestSeq}")
-    public ResponseEntity<?> cancelRequest (
+    public ResponseEntity<?> cancelRequest(
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession,
             @PathVariable Long teamJoinRequestSeq
     ) {
@@ -72,7 +72,7 @@ public class AuthUserController {
      **/
     @Auth
     @GetMapping("/joinRequestsTo")
-    public ResponseEntity<?> getJoinRequests (
+    public ResponseEntity<?> getJoinRequests(
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession
     ) {
         List<JoinRequestDTO> result = teamJoinService.getJoinRequests( JoinRequestQuery.of( userSession.getUserSeq() ) );
@@ -85,7 +85,7 @@ public class AuthUserController {
      **/
     @Auth
     @PutMapping("/joinRequestsFrom/{teamJoinRequestSeq}/approval")
-    public ResponseEntity<?> approveTeamInvitation (
+    public ResponseEntity<?> approveTeamInvitation(
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession,
             @PathVariable Long teamJoinRequestSeq
     ) {
@@ -104,7 +104,7 @@ public class AuthUserController {
      **/
     @Auth
     @PutMapping("/joinRequestsFrom/{teamJoinRequestSeq}/rejection")
-    public ResponseEntity<?> rejectTeamInvitation (
+    public ResponseEntity<?> rejectTeamInvitation(
             @SessionAttribute(value=LOGIN_USER, required = false) SessionUser userSession,
             @PathVariable Long teamJoinRequestSeq
     ) {
@@ -132,7 +132,7 @@ public class AuthUserController {
      */
     @Auth
     @GetMapping("/profile")
-    public ResponseEntity<UserDTO> getProfile (
+    public ResponseEntity<UserDTO> getProfile(
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession
     ) {
         UserDTO userDto = authUserService.getProfile( userSession.getUserSeq() );
@@ -174,7 +174,7 @@ public class AuthUserController {
      */
     @Auth
     @PostMapping("/profile/password")
-    public ResponseEntity<Void> updatePassword (
+    public ResponseEntity<Void> updatePassword(
             @SessionAttribute(value = LOGIN_USER,required = false) SessionUser userSession,
             @RequestBody @Valid UpdatePasswordRequest request
     ) {
