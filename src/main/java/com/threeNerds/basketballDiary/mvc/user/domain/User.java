@@ -3,6 +3,7 @@ package com.threeNerds.basketballDiary.mvc.user.domain;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import com.threeNerds.basketballDiary.mvc.auth.controller.request.CreateUserRequest;
+import com.threeNerds.basketballDiary.mvc.authUser.service.dto.PasswordCommand;
 import com.threeNerds.basketballDiary.mvc.authUser.service.dto.ProfileCommand;
 import com.threeNerds.basketballDiary.utils.EncryptUtil;
 import lombok.AllArgsConstructor;
@@ -89,6 +90,13 @@ public class User {
                 .sigunguCode(   command.getSigunguCode() )
                 .positionCode(  command.getPositionCode() )
                 .roadAddress(   command.getRoadAddress() )
+                .build();
+    }
+    public static User ofUpdate( PasswordCommand command ) {
+        return User.builder()
+                .userSeq(       command.getUserSeq() )
+                .password(      EncryptUtil.getEncrypt( command.getNewPassword(), command.getUserId() ) )
+                .updateDate(    LocalDate.now() )
                 .build();
     }
     public boolean checkAuthentication( String plainPassword ) {
