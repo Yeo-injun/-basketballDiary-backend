@@ -68,7 +68,7 @@ public class AuthUserService {
             throw new CustomException( DomainErrorType.USER_NOT_FOUND );
         }
 
-        if ( findUser.checkAuthentication( command.getPrevPassword() ) ) {
+        if ( !findUser.checkAuthentication( command.getPrevPassword() ) ) {
             throw new CustomException( DomainErrorType.INCORRECT_PASSWORD );
         }
 
