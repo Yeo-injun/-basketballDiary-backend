@@ -28,8 +28,8 @@ public interface UserRepository {
     /**********
      * UPDATE
      **********/
-    int updateProfile( User profile );
-    int updatePassword(PasswordUpdateDTO passwordUpdateDTO);
+    int updateProfile( User profileUpdateUser );
+    int updatePassword( User passwordUpdateUser );
 
     /**********
      * DELETE

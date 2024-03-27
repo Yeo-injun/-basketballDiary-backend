@@ -1,6 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.authUser.controller;
 
 import com.threeNerds.basketballDiary.auth.Auth;
+import com.threeNerds.basketballDiary.mvc.authUser.controller.request.UpdatePasswordRequest;
 import com.threeNerds.basketballDiary.mvc.authUser.controller.request.UpdateProfileRequest;
 import com.threeNerds.basketballDiary.mvc.authUser.service.AuthUserService;
 import com.threeNerds.basketballDiary.mvc.authUser.service.TeamJoinService;
@@ -151,10 +152,6 @@ public class AuthUserController {
         return ResponseEntity.ok().build();
     }
 
-    /**
-     *  TODO 이하 리팩토링 진행요망 ....
-     **/
-
 
     /**
      * API028 회원탈퇴
@@ -179,10 +176,9 @@ public class AuthUserController {
     @PostMapping("/profile/password")
     public ResponseEntity<Void> updatePassword (
             @SessionAttribute(value = LOGIN_USER,required = false) SessionUser userSession,
-            @RequestBody @Valid PasswordUpdateDTO passwordUpdateDTO
+            @RequestBody @Valid UpdatePasswordRequest request
     ) {
-        passwordUpdateDTO.userSeq( userSession.getUserSeq() );
-        authUserService.updatePassword(passwordUpdateDTO);
+        authUserService.updatePassword( request.toCommand( userSession ) );
         return ResponseEntity.ok().build();
     }
 }

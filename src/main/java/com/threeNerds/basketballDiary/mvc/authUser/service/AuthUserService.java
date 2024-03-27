@@ -5,6 +5,7 @@ import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import com.threeNerds.basketballDiary.exception.error.SystemErrorType;
 import com.threeNerds.basketballDiary.mvc.authUser.controller.request.UpdateProfileRequest;
 import com.threeNerds.basketballDiary.mvc.authUser.service.dto.MembershipCommand;
+import com.threeNerds.basketballDiary.mvc.authUser.service.dto.PasswordCommand;
 import com.threeNerds.basketballDiary.mvc.authUser.service.dto.ProfileCommand;
 import com.threeNerds.basketballDiary.mvc.user.domain.User;
 import com.threeNerds.basketballDiary.mvc.authUser.dto.PasswordUpdateDTO;
@@ -60,16 +61,17 @@ public class AuthUserService {
         userRepository.deleteUser( userSeq );
     }
 
-    public void updatePassword( PasswordUpdateDTO passwordUpdateDTO ) {
-        User findUser = Optional.ofNullable(userRepository.findUser(passwordUpdateDTO.getUserSeq()))
-                .orElseThrow(()-> new CustomException(DomainErrorType.USER_NOT_FOUND));
+    public void updatePassword( PasswordCommand command ) {
+        User findUser = userRepository.findUser( command.getUserSeq() );
 
-        String prevPassword = Optional.ofNullable(passwordUpdateDTO.getPrevPassword())
-                .orElseThrow(()-> new CustomException( DomainErrorType.INCORRECT_PASSWORD ));
+        if ( null == findUser ) {
+            throw new CustomException( DomainErrorType.USER_NOT_FOUND );
+        }
 
-        if ( !prevPassword.equals( findUser.getPassword() ) ) {
+        if ( findUser.checkAuthentication( command.getPrevPassword() ) ) {
             throw new CustomException( DomainErrorType.INCORRECT_PASSWORD );
         }
-        userRepository.updatePassword(passwordUpdateDTO);
+
+        userRepository.updatePassword( User.ofUpdate( command ) );
     }
 }

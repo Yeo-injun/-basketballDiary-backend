@@ -130,10 +130,10 @@
            AND USER_SEQ = #{userSeq}
     </update>
 
-    <update id="updatePassword" parameterType="com.threeNerds.basketballDiary.mvc.authUser.dto.PasswordUpdateDTO">
+    <update id="updatePassword" parameterType="com.threeNerds.basketballDiary.mvc.user.domain.User">
         /* UserRepository.updatePassword */
         UPDATE USER
-           SET PWD      = #{newPassword}
+           SET PWD      = #{password}
          WHERE 1=1
            AND USER_SEQ = #{userSeq}
     </update>
