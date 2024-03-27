@@ -52,35 +52,6 @@ public class AuthController {
         return ResponseEntity.ok().body( userSession );
     }
 
-    /**
-     * API034 사용자ID 중복확인
-     * - 23.10.14 인준
-     *      : API마다 Request/Response 클래스를 만들어서 관리하는 패턴 유지.
-     *      : Service에서 Request/Response 클래스에 의존하지 않도록 변경. ( 파라미터 및 return 타입은 DTO 혹은 원시타입 )
-     *      : ResponseEntity 제네릭 안의 와일드카드를 없애고, Return되는 Response 타입을 명확하게 하기 위해 BooleanResponse타입의 인터페이스를 만들어서 적용
-     *      >> 기존 BooleanResult 클래스를 사용하지 않는 이유는 true or false 값을 return한다고 해도 API마다 속성명이 미묘하게 달라져야 의미가 더 명확하게 전달되기 때문
-     *          - success 속성은 중복여부 체크의 성공여부를 알려주는 뉘앙스로, 중복여부를 직접적으로 나타내는 의미를 전달하지 못함.
-     *          - 이에 따라 중복여부를 명확하게 드러내는 속성명을 적용하고, true/false를 return하는 API마다 맥락에 맞는 속성명을 정의해서 사용.
-     * - 23.11.02 목 / 회의 결과 Marker Interface 방식 적용은 보류
-     */
-    @PostMapping("/duplicationCheck")
-    public ResponseEntity<CheckDuplicationUserIdResponse> checkDuplicateUserId (
-            @RequestBody @Valid CheckDuplicateUserIdRequest reqBody
-    ) {
-        return ResponseEntity.ok()
-                .body( new CheckDuplicationUserIdResponse( authService.checkDuplicationUserId( reqBody.getUserId() ) ) );
-    }
-
-    /**
-     * API029 회원가입
-     */
-    @PostMapping("/registration")
-    public ResponseEntity<Void> createUser (
-            @RequestBody @Valid CreateUserRequest request
-    ) {
-        authService.createMember(request);
-        return ResponseEntity.ok().build();
-    }
 
     /**
      * API030 로그인
@@ -118,6 +89,7 @@ public class AuthController {
         return ResponseEntity.ok().body( sessionUser );
     }
 
+
     /**
      * API031 로그아웃
      */
@@ -128,4 +100,40 @@ public class AuthController {
         return ResponseEntity.ok().build();
     }
 
+
+    // TODO 해당 url UserController로 이전 필요
+    // >> UserController는 사용자 정보의 생성, 조회에 대한 역할 수행
+    // >> AuthController는 권한부여, 검증, 만료처리에 대한 역할 수행
+    // >> AuthUserController는 권한이 검증된 사용자(즉, 로그인한 사용자)가 본인의 정보를 수정/삭제하는 것에 대한 역할 수행
+    /**
+     * API034 사용자ID 중복확인
+     * - 23.10.14 인준
+     *      : API마다 Request/Response 클래스를 만들어서 관리하는 패턴 유지.
+     *      : Service에서 Request/Response 클래스에 의존하지 않도록 변경. ( 파라미터 및 return 타입은 DTO 혹은 원시타입 )
+     *      : ResponseEntity 제네릭 안의 와일드카드를 없애고, Return되는 Response 타입을 명확하게 하기 위해 BooleanResponse타입의 인터페이스를 만들어서 적용
+     *      >> 기존 BooleanResult 클래스를 사용하지 않는 이유는 true or false 값을 return한다고 해도 API마다 속성명이 미묘하게 달라져야 의미가 더 명확하게 전달되기 때문
+     *          - success 속성은 중복여부 체크의 성공여부를 알려주는 뉘앙스로, 중복여부를 직접적으로 나타내는 의미를 전달하지 못함.
+     *          - 이에 따라 중복여부를 명확하게 드러내는 속성명을 적용하고, true/false를 return하는 API마다 맥락에 맞는 속성명을 정의해서 사용.
+     * - 23.11.02 목 / 회의 결과 Marker Interface 방식 적용은 보류
+     */
+    @PostMapping("/duplicationCheck")
+    public ResponseEntity<CheckDuplicationUserIdResponse> checkDuplicateUserId (
+            @RequestBody @Valid CheckDuplicateUserIdRequest reqBody
+    ) {
+        // TODO 서비스도 UserService에서 구현 checkDuplication( UserQuery )
+        return ResponseEntity.ok()
+                .body( new CheckDuplicationUserIdResponse( authService.checkDuplicationUserId( reqBody.getUserId() ) ) );
+    }
+
+    /**
+     * API029 회원가입
+     */
+    @PostMapping("/registration")
+    public ResponseEntity<Void> createUser (
+            @RequestBody @Valid CreateUserRequest request
+    ) {
+        // TODO 서비스도 UserService에서 구현 createMember( UserCommand )
+        authService.createMember(request);
+        return ResponseEntity.ok().build();
+    }
 }
