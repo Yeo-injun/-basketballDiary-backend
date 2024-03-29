@@ -3,6 +3,7 @@ package com.threeNerds.basketballDiary.mvc.user.domain;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import com.threeNerds.basketballDiary.mvc.auth.controller.request.CreateUserRequest;
+import com.threeNerds.basketballDiary.mvc.authUser.service.dto.PasswordCommand;
 import com.threeNerds.basketballDiary.mvc.authUser.service.dto.ProfileCommand;
 import com.threeNerds.basketballDiary.utils.EncryptUtil;
 import lombok.AllArgsConstructor;
@@ -91,15 +92,22 @@ public class User {
                 .roadAddress(   command.getRoadAddress() )
                 .build();
     }
-    public boolean checkAuthentication( String userId, String plainPassword ) {
+    public static User ofUpdate( PasswordCommand command ) {
+        return User.builder()
+                .userSeq(       command.getUserSeq() )
+                .password(      EncryptUtil.getEncrypt( command.getNewPassword(), command.getUserId() ) )
+                .updateDate(    LocalDate.now() )
+                .build();
+    }
+    public boolean checkAuthentication( String plainPassword ) {
         /** 평문비밀번호 null체크 */
-        if (plainPassword == null || plainPassword.isEmpty()) {
+        if ( plainPassword == null || plainPassword.isEmpty() ) {
             throw new CustomException( DomainErrorType.NO_EXIST_PASSWORD );
         }
 
         /** 비밀번호 암호화 : 평문비밀번호 + userId로 */
-        String cryptPassword = EncryptUtil.getEncrypt(plainPassword, userId);
-        log.info("cryptoPassword = {}", cryptPassword);
+        String cryptPassword = EncryptUtil.getEncrypt( plainPassword, this.userId );
+        log.debug( "cryptoPassword = {}", cryptPassword );
 
         return this.password.equals( cryptPassword );
     }

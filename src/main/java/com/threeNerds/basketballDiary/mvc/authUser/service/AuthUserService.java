@@ -3,11 +3,10 @@ package com.threeNerds.basketballDiary.mvc.authUser.service;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import com.threeNerds.basketballDiary.exception.error.SystemErrorType;
-import com.threeNerds.basketballDiary.mvc.authUser.controller.request.UpdateProfileRequest;
+import com.threeNerds.basketballDiary.mvc.authUser.service.dto.MembershipCommand;
+import com.threeNerds.basketballDiary.mvc.authUser.service.dto.PasswordCommand;
 import com.threeNerds.basketballDiary.mvc.authUser.service.dto.ProfileCommand;
 import com.threeNerds.basketballDiary.mvc.user.domain.User;
-import com.threeNerds.basketballDiary.mvc.authUser.dto.PasswordUpdateDTO;
-import com.threeNerds.basketballDiary.mvc.authUser.dto.UpdateUserDTO;
 import com.threeNerds.basketballDiary.mvc.user.dto.UserDTO;
 import com.threeNerds.basketballDiary.mvc.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -40,20 +39,36 @@ public class AuthUserService {
         }
     }
 
-    public void deleteUser(String id) {
-        userRepository.deleteUser(id);
-    }
+    public void withdrawalMembership( MembershipCommand command ) {
+        // TODO 회원탈퇴한 사용자 정보 별도 테이블로 데이터 이전 ( 비식별화 처리하여 )
+        Long userSeq = command.getUserSeq();
 
-    public void updatePassword( PasswordUpdateDTO passwordUpdateDTO ) {
-        User findUser = Optional.ofNullable(userRepository.findUser(passwordUpdateDTO.getUserSeq()))
-                .orElseThrow(()-> new CustomException(DomainErrorType.USER_NOT_FOUND));
+        // 사용자 정보 조회
+        User membership = userRepository.findUser( userSeq );
+        if ( null == membership ) {
+            throw new CustomException( SystemErrorType.NOT_FOUND_USER_FOR_WITHDRAWAL );
+        }
 
-        String prevPassword = Optional.ofNullable(passwordUpdateDTO.getPrevPassword())
-                .orElseThrow(()-> new CustomException( DomainErrorType.INCORRECT_PASSWORD ));
-
-        if ( !prevPassword.equals( findUser.getPassword() ) ) {
+        // 비밀번호 일치여부 확인
+        if ( !membership.checkAuthentication( command.getPlainPassword() ) ) {
             throw new CustomException( DomainErrorType.INCORRECT_PASSWORD );
         }
-        userRepository.updatePassword(passwordUpdateDTO);
+
+        // USER테이블에서는 해당 row삭제
+        userRepository.deleteUser( userSeq );
+    }
+
+    public void updatePassword( PasswordCommand command ) {
+        User findUser = userRepository.findUser( command.getUserSeq() );
+
+        if ( null == findUser ) {
+            throw new CustomException( DomainErrorType.USER_NOT_FOUND );
+        }
+
+        if ( !findUser.checkAuthentication( command.getPrevPassword() ) ) {
+            throw new CustomException( DomainErrorType.INCORRECT_PASSWORD );
+        }
+
+        userRepository.updatePassword( User.ofUpdate( command ) );
     }
 }

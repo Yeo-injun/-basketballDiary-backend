@@ -30,6 +30,7 @@ public enum SystemErrorType implements ErrorMessageType {
     NOT_FOUND_IMAGE_FOR_URL( NOT_FOUND, "해당 URL에 이미지 파일이 존재하지 않습니다."),
     NOT_FOUND_VALID_VALUE( NOT_FOUND, "유효한 값을 찾지 못했습니다." ),
     NOT_FOUND_USER_FOR_UPDATE( NOT_FOUND, "프로필을 수정할 사용자정보가 없습니다." ),
+    NOT_FOUND_USER_FOR_WITHDRAWAL( NOT_FOUND, "탈퇴처리할 사용자정보가 존재하지 않습니다."),
 
     /** 500 INTERNAL_SERVER_ERROR : null point에러 등 */
     INTERNAL_ERROR( INTERNAL_SERVER_ERROR, "서버 내부에서 오류가 발생했습니다." ),
