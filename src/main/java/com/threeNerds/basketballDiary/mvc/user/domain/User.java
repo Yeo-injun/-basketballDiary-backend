@@ -44,7 +44,7 @@ public class User {
     private LocalDate regDate;
     /* 업데이트 일자 */
     private LocalDate updateDate;
-    /* 회원/비회원 */
+    /* /비회원 */
     private String userRegYn;
     /* 시도코드 */
     private String sidoCode;

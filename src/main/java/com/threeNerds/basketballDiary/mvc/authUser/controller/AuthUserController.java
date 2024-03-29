@@ -154,6 +154,7 @@ public class AuthUserController {
 
 
     /**
+     * TODO UserController에서 처리하는 것으로 변경
      * API028 회원탈퇴
      */
     @Auth

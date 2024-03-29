@@ -1,8 +1,12 @@
 package com.threeNerds.basketballDiary.mvc.user.controller;
 
 import com.threeNerds.basketballDiary.auth.Auth;
+import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.DomainErrorResponse;
+import com.threeNerds.basketballDiary.exception.error.SystemErrorType;
 import com.threeNerds.basketballDiary.http.ResponseJsonBody;
+import com.threeNerds.basketballDiary.mvc.auth.controller.request.CreateUserRequest;
+import com.threeNerds.basketballDiary.mvc.user.controller.response.CheckUserIdAvailableResponse;
 import com.threeNerds.basketballDiary.mvc.user.dto.SearchUsersExcludingTeamMember.request.SearchUsersExcludingTeamMemberRequest;
 import com.threeNerds.basketballDiary.mvc.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,16 +17,18 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
+
 /**
- * ... 수행하는 Controller
- * @author 책임자 작성
+ * 사용자 정보의 생성, 확인 및 조회, 삭제에 대한 역할 수행 Controller
  *
  * issue and history
  * <pre>
  * 2022.02.08 여인준 : 소스코드 생성
- * 2022.03.13 이성주 : LoginController 통합
  * </pre>
  */
 
@@ -54,6 +60,36 @@ public class UserController {
         SearchUsersExcludingTeamMemberRequest reqBody = new SearchUsersExcludingTeamMemberRequest( teamSeq, userName, email );
         ResponseJsonBody resBody = userService.searchUsersExcludingTeamMember( reqBody );
         return ResponseEntity.ok().body(resBody);
+    }
+
+
+    // >> AuthController는 권한부여, 검증, 만료처리에 대한 역할 수행
+    // >> AuthUserController는 권한이 검증된 사용자(즉, 로그인한 사용자)가 본인의 정보를 수정/삭제하는 것에 대한 역할 수행
+    /**
+     * TODO API설계서 최신화 반영 요망 24.03.29 일자 수정
+     * API034 사용자ID 사용가능여부 확인
+     */
+    @GetMapping("/available")
+    public ResponseEntity<?> checkUserIdAvailable (
+            @RequestParam @NotEmpty String userId
+    ) {
+        if ( !StringUtils.hasText( userId ) ) {
+            throw new CustomException( SystemErrorType.NOT_NULLABLE_VALUE );
+        }
+        return ResponseEntity.ok()
+                .body( new CheckUserIdAvailableResponse( userService.checkUserIdAvailable( userId ) ) );
+    }
+
+    /**
+     * TODO 리팩토링 대상
+     * API029 회원가입
+     */
+    @PostMapping("/signUp")
+    public ResponseEntity<Void> signUp (
+            @RequestBody @Valid CreateUserRequest request
+    ) {
+        userService.createMembership( request );
+        return ResponseEntity.ok().build();
     }
 
 }
