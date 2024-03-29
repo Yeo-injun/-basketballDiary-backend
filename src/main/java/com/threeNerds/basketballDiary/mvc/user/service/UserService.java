@@ -1,6 +1,10 @@
 package com.threeNerds.basketballDiary.mvc.user.service;
 
+import com.threeNerds.basketballDiary.exception.CustomException;
+import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import com.threeNerds.basketballDiary.http.ResponseJsonBody;
+import com.threeNerds.basketballDiary.mvc.auth.controller.request.CreateUserRequest;
+import com.threeNerds.basketballDiary.mvc.user.domain.User;
 import com.threeNerds.basketballDiary.mvc.user.dto.CmnUserDTO;
 import com.threeNerds.basketballDiary.mvc.user.dto.SearchUsersExcludingTeamMember.request.SearchUsersExcludingTeamMemberRequest;
 import com.threeNerds.basketballDiary.mvc.user.dto.SearchUsersExcludingTeamMember.response.SearchUsersExcludingTeamMemberResponse;
@@ -38,10 +42,27 @@ public class UserService {
                                     .teamSeq( reqBody.getTeamSeq() )
                                     .userName( reqBody.getUserName() )
                                     .email( reqBody.getEmail() );
-
         // TODO 페이징 처리 추가
-
         List<UserDTO> users = userRepository.findAllUsersExcludingTeamMemberByUserNameOrEmail( inqCond );
         return new SearchUsersExcludingTeamMemberResponse( users );
     }
+
+
+    public boolean checkUserIdAvailable( String userId ) {
+        return isUserIdAvailable( userId );
+    }
+
+    private boolean isUserIdAvailable( String userId ) {
+        return null == userRepository.findUserByUserId( userId );
+    }
+
+    public void createMembership( CreateUserRequest request ) {
+        if ( !isUserIdAvailable( request.getUserId() ) ) {
+            throw new CustomException( DomainErrorType.NOT_AVAILABLE_USER_ID );
+        }
+        User user = User.createForRegistration( request );
+        userRepository.saveUser( user );
+    }
+
+
 }

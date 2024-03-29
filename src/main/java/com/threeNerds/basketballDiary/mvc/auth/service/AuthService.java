@@ -32,24 +32,6 @@ public class AuthService {
 
     private final UserRepository userRepository;
 
-    public boolean checkDuplicationUserId( String userId ) {
-        return !isUserIdAvailable( userId );
-    }
-
-    public void createMember( CreateUserRequest request ) {
-        if ( isUserIdAvailable( request.getUserId() ) ) {
-            User user = User.createForRegistration( request );
-            userRepository.saveUser( user );
-            return;
-        }
-
-        throw new CustomException( DomainErrorType.NOT_AVAILABLE_USER_ID );
-    }
-
-    private boolean isUserIdAvailable( String userId ) {
-        return null == userRepository.findUserByUserId( userId );
-    }
-
     /**
      * 입력정보로 로그인 정보 조회 및 return
      * @throw DomainErrorType.INCORRECT_LOGIN_INFO 로그인 정보가 일치하지 않을 경우 해당 오류메세지 throw

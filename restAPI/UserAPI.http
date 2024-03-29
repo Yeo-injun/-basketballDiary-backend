@@ -9,3 +9,8 @@ Content-Type: application/json
   "password" : "1234"
 }
 
+
+###  API034 사용자ID 사용가능여부 확인
+GET http://localhost:8080/api/users/available?userId
+Content-Type: application/json
+

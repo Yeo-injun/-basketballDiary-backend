@@ -11,7 +11,7 @@ import static org.springframework.http.HttpStatus.*;
 public enum SystemErrorType implements ErrorMessageType {
 
     /** 400 BAD_REQUEST : 잘못된 요청 */
-    NOT_NULLALLBE_VALUE( BAD_REQUEST, "필수값이 존재하지 않습니다." ),
+    NOT_NULLABLE_VALUE( BAD_REQUEST, "필수값이 존재하지 않습니다." ),
     NOT_ALLOWED_FILE_EXTENSTION( BAD_REQUEST, "허용되지 않는 파일 확장자입니다." ),
     MISSING_REQUIRED_PARAMETERS( BAD_REQUEST, "필수 파라미터값이 누락되었습니다." ),
     EXCEED_MAX_FILE_SIZE( BAD_REQUEST, "파일 업로드 최대크기를 초과하였습니다." ),
