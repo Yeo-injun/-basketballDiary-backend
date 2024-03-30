@@ -5,10 +5,13 @@ import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.DomainErrorResponse;
 import com.threeNerds.basketballDiary.exception.error.SystemErrorType;
 import com.threeNerds.basketballDiary.http.ResponseJsonBody;
+import com.threeNerds.basketballDiary.mvc.authUser.service.dto.MembershipCommand;
 import com.threeNerds.basketballDiary.mvc.user.controller.request.SignUpRequest;
 import com.threeNerds.basketballDiary.mvc.user.controller.response.CheckUserIdAvailableResponse;
 import com.threeNerds.basketballDiary.mvc.user.dto.SearchUsersExcludingTeamMember.request.SearchUsersExcludingTeamMemberRequest;
 import com.threeNerds.basketballDiary.mvc.user.service.UserService;
+import com.threeNerds.basketballDiary.session.SessionUser;
+import com.threeNerds.basketballDiary.session.util.SessionUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -22,6 +25,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
+
+import static com.threeNerds.basketballDiary.session.util.SessionUtil.LOGIN_USER;
 
 /**
  * 사용자 정보의 생성, 확인 및 조회, 삭제에 대한 역할 수행 Controller
@@ -91,4 +96,23 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * TODO API설계서 반영요망 24.03.30
+     * API028 회원탈퇴
+     */
+    @Auth
+    @DeleteMapping  // cf. 일반적인 HTTP spec에서는 DELETE 메소드는 RequestBody를 지원하지 않음. 이에 따라 Spring @DeleteMapping에서는 @RequestBody를 지원하지 않음.
+    public ResponseEntity<Void> withdrawalMembership(
+            @SessionAttribute( value = LOGIN_USER, required = false ) SessionUser userSession,
+            @RequestParam String password
+    ) {
+        userService.withdrawalMembership( MembershipCommand.builder()
+                .userSeq(       userSession.getUserSeq() )
+                .plainPassword( password )
+                .build() );
+
+        // 로그아웃 처리
+        SessionUtil.invalidate();
+        return ResponseEntity.ok().build();
+    }
 }

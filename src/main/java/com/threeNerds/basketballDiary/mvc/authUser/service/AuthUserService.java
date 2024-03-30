@@ -39,24 +39,24 @@ public class AuthUserService {
         }
     }
 
-    public void withdrawalMembership( MembershipCommand command ) {
-        // TODO 회원탈퇴한 사용자 정보 별도 테이블로 데이터 이전 ( 비식별화 처리하여 )
-        Long userSeq = command.getUserSeq();
-
-        // 사용자 정보 조회
-        User membership = userRepository.findUser( userSeq );
-        if ( null == membership ) {
-            throw new CustomException( SystemErrorType.NOT_FOUND_USER_FOR_WITHDRAWAL );
-        }
-
-        // 비밀번호 일치여부 확인
-        if ( !membership.checkAuthentication( command.getPlainPassword() ) ) {
-            throw new CustomException( DomainErrorType.INCORRECT_PASSWORD );
-        }
-
-        // USER테이블에서는 해당 row삭제
-        userRepository.deleteUser( userSeq );
-    }
+//    public void withdrawalMembership( MembershipCommand command ) {
+//        // TODO 회원탈퇴한 사용자 정보 별도 테이블로 데이터 이전 ( 비식별화 처리하여 )
+//        Long userSeq = command.getUserSeq();
+//
+//        // 사용자 정보 조회
+//        User membership = userRepository.findUser( userSeq );
+//        if ( null == membership ) {
+//            throw new CustomException( SystemErrorType.NOT_FOUND_USER_FOR_WITHDRAWAL );
+//        }
+//
+//        // 비밀번호 일치여부 확인
+//        if ( !membership.checkAuthentication( command.getPlainPassword() ) ) {
+//            throw new CustomException( DomainErrorType.INCORRECT_PASSWORD );
+//        }
+//
+//        // USER테이블에서는 해당 row삭제
+//        userRepository.deleteUser( userSeq );
+//    }
 
     public void updatePassword( PasswordCommand command ) {
         User findUser = userRepository.findUser( command.getUserSeq() );
