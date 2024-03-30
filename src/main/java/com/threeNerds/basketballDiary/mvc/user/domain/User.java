@@ -2,9 +2,9 @@ package com.threeNerds.basketballDiary.mvc.user.domain;
 
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
-import com.threeNerds.basketballDiary.mvc.auth.controller.request.CreateUserRequest;
 import com.threeNerds.basketballDiary.mvc.authUser.service.dto.PasswordCommand;
 import com.threeNerds.basketballDiary.mvc.authUser.service.dto.ProfileCommand;
+import com.threeNerds.basketballDiary.mvc.user.service.dto.MembershipCommand;
 import com.threeNerds.basketballDiary.utils.EncryptUtil;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -53,26 +53,28 @@ public class User {
     /* 도로명주소 */
     private String roadAddress;
 
-    public static User createForRegistration( CreateUserRequest userInfo ){
-        /** 비밀번호 암호화 */
-        String cryptPassword = EncryptUtil.getEncrypt(userInfo.getPassword(), userInfo.getUserId());
+    public static User ofCreate( MembershipCommand userInfo ) {
+        String userId               = userInfo.getUserId();
+        String plainPassword        = userInfo.getPlainPassword();
+        LocalDate nowDate           = LocalDate.now();
+        String encryptedPassword    = EncryptUtil.getEncrypt( plainPassword, userId );
 
         return User.builder()
-                .userId(userInfo.getUserId())
-                .password(cryptPassword)
-                .name(userInfo.getName())
-                .email(userInfo.getEmail())
-                .gender(userInfo.getGender())
-                .birthYmd(userInfo.getBirthYmd())
-                .height(userInfo.getHeight())
-                .weight(userInfo.getWeight())
-                .regDate(LocalDate.now())
-                .updateDate(LocalDate.now())
-                .userRegYn("Y")
-                .sidoCode(userInfo.getSidoCode())
-                .sigunguCode(userInfo.getSigunguCode())
-                .positionCode(userInfo.getPositionCode())
-                .roadAddress(userInfo.getRoadAddress())
+                .userId(        userId )
+                .password(      encryptedPassword )
+                .name(          userInfo.getName() )
+                .email(         userInfo.getEmail() )
+                .gender(        userInfo.getGender() )
+                .birthYmd(      userInfo.getBirthYmd() )
+                .height(        userInfo.getHeight() )
+                .weight(        userInfo.getWeight() )
+                .regDate(       nowDate )
+                .updateDate(    nowDate )
+                .userRegYn(     "Y" )
+                .sidoCode(      userInfo.getSidoCode() )
+                .sigunguCode(   userInfo.getSigunguCode() )
+                .positionCode(  userInfo.getPositionCode() )
+                .roadAddress(   userInfo.getRoadAddress() )
                 .build();
     }
 

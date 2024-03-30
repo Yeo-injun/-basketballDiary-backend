@@ -1,5 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.user.controller.request;
 
+import com.threeNerds.basketballDiary.mvc.user.service.dto.MembershipCommand;
 import lombok.Getter;
 
 import javax.validation.constraints.Email;
@@ -7,7 +8,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 @Getter
-public class CreateMembershipRequest {
+public class SignUpRequest {
     /** 아이디 **/
     @NotEmpty(message = "사용자ID는 필수 입력값입니다.")
     private String userId;
@@ -30,14 +31,30 @@ public class CreateMembershipRequest {
     private Double height;
     /** 몸무게 **/
     private Double weight;
+    /** 포지션 코드 **/
+    private String positionCode;
+
     /** 시도코드 **/
     private String sidoCode;
     /** 시군구코드 **/
     private String sigunguCode;
-    /** 포지션 코드 **/
-    private String positionCode;
-
+    /** 도로명전체주소 */
     private String roadAddress;
 
-
+    public MembershipCommand toCommand() {
+        return MembershipCommand.builder()
+                .userId(        this.userId )
+                .plainPassword( this.password )
+                .name(          this.name )
+                .email(         this.email )
+                .gender(        this.gender )
+                .birthYmd(      this.birthYmd )
+                .height(        this.height )
+                .weight(        this.weight )
+                .positionCode(  this.positionCode )
+                .sidoCode(      this.sidoCode )
+                .sigunguCode(   this.sigunguCode )
+                .roadAddress(   this.roadAddress )
+                .build();
+    }
 }

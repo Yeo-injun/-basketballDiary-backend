@@ -2,15 +2,13 @@ package com.threeNerds.basketballDiary.mvc.user.service;
 
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
-import com.threeNerds.basketballDiary.http.ResponseJsonBody;
-import com.threeNerds.basketballDiary.mvc.auth.controller.request.CreateUserRequest;
 import com.threeNerds.basketballDiary.mvc.user.domain.User;
-import com.threeNerds.basketballDiary.mvc.user.dto.CmnUserDTO;
 import com.threeNerds.basketballDiary.mvc.user.dto.SearchUsersExcludingTeamMember.request.SearchUsersExcludingTeamMemberRequest;
 import com.threeNerds.basketballDiary.mvc.user.dto.SearchUsersExcludingTeamMember.response.SearchUsersExcludingTeamMemberResponse;
 import com.threeNerds.basketballDiary.mvc.user.dto.UserDTO;
 import com.threeNerds.basketballDiary.mvc.user.dto.UserInqCondDTO;
 import com.threeNerds.basketballDiary.mvc.user.repository.UserRepository;
+import com.threeNerds.basketballDiary.mvc.user.service.dto.MembershipCommand;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -56,12 +54,11 @@ public class UserService {
         return null == userRepository.findUserByUserId( userId );
     }
 
-    public void createMembership( CreateUserRequest request ) {
-        if ( !isUserIdAvailable( request.getUserId() ) ) {
+    public void createMembership( MembershipCommand command ) {
+        if ( !isUserIdAvailable( command.getUserId() ) ) {
             throw new CustomException( DomainErrorType.NOT_AVAILABLE_USER_ID );
         }
-        User user = User.createForRegistration( request );
-        userRepository.saveUser( user );
+        userRepository.saveUser( User.ofCreate( command ) );
     }
 
 
