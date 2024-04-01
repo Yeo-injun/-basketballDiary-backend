@@ -5,7 +5,7 @@ import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.DomainErrorResponse;
 import com.threeNerds.basketballDiary.exception.error.SystemErrorType;
 import com.threeNerds.basketballDiary.http.ResponseJsonBody;
-import com.threeNerds.basketballDiary.mvc.authUser.controller.request.UpdateMyProfileRequest;
+import com.threeNerds.basketballDiary.mvc.user.controller.request.UpdateMyProfileRequest;
 import com.threeNerds.basketballDiary.mvc.authUser.service.dto.MembershipCommand;
 import com.threeNerds.basketballDiary.mvc.user.controller.request.SignUpRequest;
 import com.threeNerds.basketballDiary.mvc.user.controller.response.CheckUserIdAvailableResponse;

@@ -1,4 +1,4 @@
-package com.threeNerds.basketballDiary.mvc.authUser.controller.request;
+package com.threeNerds.basketballDiary.mvc.user.controller.request;
 
 import com.threeNerds.basketballDiary.mvc.authUser.service.dto.PasswordCommand;
 import com.threeNerds.basketballDiary.session.SessionUser;

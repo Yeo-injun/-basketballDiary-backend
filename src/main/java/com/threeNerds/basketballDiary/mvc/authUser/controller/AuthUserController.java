@@ -1,7 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.authUser.controller;
 
 import com.threeNerds.basketballDiary.auth.Auth;
-import com.threeNerds.basketballDiary.mvc.authUser.controller.request.UpdatePasswordRequest;
+import com.threeNerds.basketballDiary.mvc.user.controller.request.UpdatePasswordRequest;
 import com.threeNerds.basketballDiary.mvc.authUser.service.AuthUserService;
 import com.threeNerds.basketballDiary.mvc.authUser.service.TeamJoinService;
 import com.threeNerds.basketballDiary.mvc.authUser.service.dto.*;
