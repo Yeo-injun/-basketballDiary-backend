@@ -5,6 +5,7 @@ import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.DomainErrorResponse;
 import com.threeNerds.basketballDiary.exception.error.SystemErrorType;
 import com.threeNerds.basketballDiary.http.ResponseJsonBody;
+import com.threeNerds.basketballDiary.mvc.authUser.controller.request.UpdateMyProfileRequest;
 import com.threeNerds.basketballDiary.mvc.authUser.service.dto.MembershipCommand;
 import com.threeNerds.basketballDiary.mvc.user.controller.request.SignUpRequest;
 import com.threeNerds.basketballDiary.mvc.user.controller.response.CheckUserIdAvailableResponse;
@@ -120,6 +121,7 @@ public class UserController {
 
 
     /**
+     * TODO API설계서 반영요망 24.04.01
      * API025 회원 프로필 조회
      */
     @Auth
@@ -130,5 +132,19 @@ public class UserController {
         return ResponseEntity.ok().body(
             new GetMyProfileResponse( userService.getMyProfile( userSession.getUserSeq() ) )
         );
+    }
+
+    /**
+     * TODO API설계서 반영요망 24.04.01
+     * API026 회원 프로필 수정
+     */
+    @Auth
+    @PostMapping("/profile")
+    public ResponseEntity<?> updateMyProfile(
+            @SessionAttribute(value = LOGIN_USER,required = false) SessionUser userSession,
+            @RequestBody @Valid UpdateMyProfileRequest request
+    ) {
+        userService.updateMyProfile( request.toCommand( userSession.getUserSeq() ) );
+        return ResponseEntity.ok().build();
     }
 }

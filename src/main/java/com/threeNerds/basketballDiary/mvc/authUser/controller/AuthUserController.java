@@ -2,7 +2,6 @@ package com.threeNerds.basketballDiary.mvc.authUser.controller;
 
 import com.threeNerds.basketballDiary.auth.Auth;
 import com.threeNerds.basketballDiary.mvc.authUser.controller.request.UpdatePasswordRequest;
-import com.threeNerds.basketballDiary.mvc.authUser.controller.request.UpdateProfileRequest;
 import com.threeNerds.basketballDiary.mvc.authUser.service.AuthUserService;
 import com.threeNerds.basketballDiary.mvc.authUser.service.TeamJoinService;
 import com.threeNerds.basketballDiary.mvc.authUser.service.dto.*;
@@ -10,7 +9,6 @@ import com.threeNerds.basketballDiary.mvc.myTeam.service.MyTeamAuthService;
 
 import com.threeNerds.basketballDiary.mvc.authUser.dto.JoinRequestDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.TeamAuthDTO;
-import com.threeNerds.basketballDiary.mvc.user.dto.UserDTO;
 import com.threeNerds.basketballDiary.session.SessionUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -125,20 +123,6 @@ public class AuthUserController {
     ) {
         List<JoinRequestDTO> result = teamJoinService.getTeamInvitations( TeamInvitationQuery.ofUser( userSession.getUserSeq() ) );
         return ResponseEntity.ok().body( result );
-    }
-
-    /**
-     * TODO USERController로 이동
-     * API026 회원 프로필 수정
-     */
-    @Auth
-    @PostMapping("/profile")
-    public ResponseEntity<?> updateProfile(
-            @SessionAttribute(value = LOGIN_USER,required = false) SessionUser userSession,
-            @RequestBody @Valid UpdateProfileRequest request
-    ) {
-        authUserService.updateProfile( request.toCommand( userSession.getUserSeq() ) );
-        return ResponseEntity.ok().build();
     }
 
     /**

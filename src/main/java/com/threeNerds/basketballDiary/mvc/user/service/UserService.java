@@ -3,6 +3,7 @@ package com.threeNerds.basketballDiary.mvc.user.service;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import com.threeNerds.basketballDiary.exception.error.SystemErrorType;
+import com.threeNerds.basketballDiary.mvc.authUser.service.dto.ProfileCommand;
 import com.threeNerds.basketballDiary.mvc.user.domain.User;
 
 import com.threeNerds.basketballDiary.mvc.user.dto.MyProfileDTO;
@@ -19,7 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
+
 
 /**
  * 소속팀에서 팀원관리 및 소속팀정보 관리 등의 업무를 수행하는 Service
@@ -54,7 +55,6 @@ public class UserService {
         List<UserDTO> users = userRepository.findAllUsersExcludingTeamMemberByUserNameOrEmail( inqCond );
         return new SearchUsersExcludingTeamMemberResponse( users );
     }
-
 
     /**
      * 회원 가입처리
@@ -110,6 +110,17 @@ public class UserService {
             throw new CustomException( DomainErrorType.USER_NOT_FOUND );
         }
         return profile;
+    }
+
+
+    /**
+     * 프로필 수정
+     */
+    public void updateMyProfile( ProfileCommand profile ) {
+        boolean isSuccessUpdateProfile = userRepository.updateProfile( User.ofUpdate( profile ) ) == 1;
+        if ( !isSuccessUpdateProfile ) {
+            throw new CustomException( SystemErrorType.NOT_FOUND_USER_FOR_UPDATE );
+        }
     }
 
 }
