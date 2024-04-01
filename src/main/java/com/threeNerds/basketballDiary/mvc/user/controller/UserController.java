@@ -5,7 +5,7 @@ import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.DomainErrorResponse;
 import com.threeNerds.basketballDiary.exception.error.SystemErrorType;
 import com.threeNerds.basketballDiary.http.ResponseJsonBody;
-import com.threeNerds.basketballDiary.mvc.auth.controller.request.CreateUserRequest;
+import com.threeNerds.basketballDiary.mvc.user.controller.request.SignUpRequest;
 import com.threeNerds.basketballDiary.mvc.user.controller.response.CheckUserIdAvailableResponse;
 import com.threeNerds.basketballDiary.mvc.user.dto.SearchUsersExcludingTeamMember.request.SearchUsersExcludingTeamMemberRequest;
 import com.threeNerds.basketballDiary.mvc.user.service.UserService;
@@ -81,14 +81,13 @@ public class UserController {
     }
 
     /**
-     * TODO 리팩토링 대상
      * API029 회원가입
      */
     @PostMapping("/signUp")
     public ResponseEntity<Void> signUp (
-            @RequestBody @Valid CreateUserRequest request
+            @RequestBody @Valid SignUpRequest request
     ) {
-        userService.createMembership( request );
+        userService.createMembership( request.toCommand() );
         return ResponseEntity.ok().build();
     }
 
