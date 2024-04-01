@@ -128,18 +128,7 @@ public class AuthUserController {
     }
 
     /**
-     * API025 회원 프로필 조회
-     */
-    @Auth
-    @GetMapping("/profile")
-    public ResponseEntity<UserDTO> getProfile(
-            @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession
-    ) {
-        UserDTO userDto = authUserService.getProfile( userSession.getUserSeq() );
-        return ResponseEntity.ok().body(userDto);
-    }
-
-    /**
+     * TODO USERController로 이동
      * API026 회원 프로필 수정
      */
     @Auth
@@ -153,6 +142,7 @@ public class AuthUserController {
     }
 
     /**
+     * TODO USERController로 이동
      * API027 비밀번호 변경
      */
     @Auth
