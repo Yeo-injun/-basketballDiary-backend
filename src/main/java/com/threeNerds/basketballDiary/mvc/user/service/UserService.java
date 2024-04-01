@@ -4,11 +4,14 @@ import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import com.threeNerds.basketballDiary.exception.error.SystemErrorType;
 import com.threeNerds.basketballDiary.mvc.user.domain.User;
+
+import com.threeNerds.basketballDiary.mvc.user.dto.MyProfileDTO;
 import com.threeNerds.basketballDiary.mvc.user.dto.SearchUsersExcludingTeamMember.request.SearchUsersExcludingTeamMemberRequest;
 import com.threeNerds.basketballDiary.mvc.user.dto.SearchUsersExcludingTeamMember.response.SearchUsersExcludingTeamMemberResponse;
 import com.threeNerds.basketballDiary.mvc.user.dto.UserDTO;
 import com.threeNerds.basketballDiary.mvc.user.dto.UserInqCondDTO;
 import com.threeNerds.basketballDiary.mvc.user.repository.UserRepository;
+import com.threeNerds.basketballDiary.mvc.user.repository.dto.ProfileRepository;
 import com.threeNerds.basketballDiary.mvc.user.service.dto.MembershipCommand;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 소속팀에서 팀원관리 및 소속팀정보 관리 등의 업무를 수행하는 Service
@@ -34,6 +38,7 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final ProfileRepository profileRepository;
 
     /**
      * 회원 조회
@@ -94,5 +99,17 @@ public class UserService {
         return null == userRepository.findUserByUserId( userId );
     }
 
+
+    /**
+     * 프로필 조회
+     */
+    public MyProfileDTO getMyProfile( Long userSeq ) {
+        MyProfileDTO profile = profileRepository.findMyProfile( userSeq );
+
+        if ( null == profile ) {
+            throw new CustomException( DomainErrorType.USER_NOT_FOUND );
+        }
+        return profile;
+    }
 
 }

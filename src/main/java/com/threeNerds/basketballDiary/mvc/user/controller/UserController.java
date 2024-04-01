@@ -8,6 +8,8 @@ import com.threeNerds.basketballDiary.http.ResponseJsonBody;
 import com.threeNerds.basketballDiary.mvc.authUser.service.dto.MembershipCommand;
 import com.threeNerds.basketballDiary.mvc.user.controller.request.SignUpRequest;
 import com.threeNerds.basketballDiary.mvc.user.controller.response.CheckUserIdAvailableResponse;
+
+import com.threeNerds.basketballDiary.mvc.user.controller.response.GetMyProfileResponse;
 import com.threeNerds.basketballDiary.mvc.user.dto.SearchUsersExcludingTeamMember.request.SearchUsersExcludingTeamMemberRequest;
 import com.threeNerds.basketballDiary.mvc.user.service.UserService;
 import com.threeNerds.basketballDiary.session.SessionUser;
@@ -29,7 +31,7 @@ import javax.validation.constraints.NotEmpty;
 import static com.threeNerds.basketballDiary.session.util.SessionUtil.LOGIN_USER;
 
 /**
- * 사용자 정보의 생성, 확인 및 조회, 삭제에 대한 역할 수행 Controller
+ * 사용자 정보의 생성, 확인 및 조회, 변경, 삭제에 대한 서비스를 제공하는 Controller
  *
  * issue and history
  * <pre>
@@ -114,5 +116,19 @@ public class UserController {
         // 로그아웃 처리
         SessionUtil.invalidate();
         return ResponseEntity.ok().build();
+    }
+
+
+    /**
+     * API025 회원 프로필 조회
+     */
+    @Auth
+    @GetMapping("/profile")
+    public ResponseEntity<GetMyProfileResponse> getMyProfile(
+            @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession
+    ) {
+        return ResponseEntity.ok().body(
+            new GetMyProfileResponse( userService.getMyProfile( userSession.getUserSeq() ) )
+        );
     }
 }
