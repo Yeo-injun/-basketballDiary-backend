@@ -128,18 +128,7 @@ public class AuthUserController {
     }
 
     /**
-     * API025 회원 프로필 조회
-     */
-    @Auth
-    @GetMapping("/profile")
-    public ResponseEntity<UserDTO> getProfile(
-            @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession
-    ) {
-        UserDTO userDto = authUserService.getProfile( userSession.getUserSeq() );
-        return ResponseEntity.ok().body(userDto);
-    }
-
-    /**
+     * TODO USERController로 이동
      * API026 회원 프로필 수정
      */
     @Auth
@@ -152,25 +141,8 @@ public class AuthUserController {
         return ResponseEntity.ok().build();
     }
 
-
     /**
-     * TODO UserController에서 처리하는 것으로 변경
-     * API028 회원탈퇴
-     */
-    @Auth
-    @DeleteMapping("/profile")  // cf. 일반적인 HTTP spec에서는 DELETE 메소드는 RequestBody를 지원하지 않음. 이에 따라 Spring @DeleteMapping에서는 @RequestBody를 지원하지 않음.
-    public ResponseEntity<Void> withdrawalMembership(
-            @SessionAttribute( value = LOGIN_USER, required = false ) SessionUser userSession,
-            @RequestParam String password
-    ) {
-        authUserService.withdrawalMembership( MembershipCommand.builder()
-                                                .userSeq(       userSession.getUserSeq() )
-                                                .plainPassword( password )
-                                                .build() );
-        return ResponseEntity.ok().build();
-    }
-
-    /**
+     * TODO USERController로 이동
      * API027 비밀번호 변경
      */
     @Auth
