@@ -6,8 +6,9 @@ import com.threeNerds.basketballDiary.exception.error.DomainErrorResponse;
 import com.threeNerds.basketballDiary.exception.error.SystemErrorType;
 import com.threeNerds.basketballDiary.http.ResponseJsonBody;
 import com.threeNerds.basketballDiary.mvc.user.controller.request.UpdateMyProfileRequest;
-import com.threeNerds.basketballDiary.mvc.authUser.service.dto.MembershipCommand;
+import com.threeNerds.basketballDiary.mvc.user.service.dto.MembershipCommand;
 import com.threeNerds.basketballDiary.mvc.user.controller.request.SignUpRequest;
+import com.threeNerds.basketballDiary.mvc.user.controller.request.UpdatePasswordRequest;
 import com.threeNerds.basketballDiary.mvc.user.controller.response.CheckUserIdAvailableResponse;
 
 import com.threeNerds.basketballDiary.mvc.user.controller.response.GetMyProfileResponse;
@@ -145,6 +146,20 @@ public class UserController {
             @RequestBody @Valid UpdateMyProfileRequest request
     ) {
         userService.updateMyProfile( request.toCommand( userSession.getUserSeq() ) );
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * TODO API설계서 반영요망 24.04.01
+     * API027 비밀번호 변경
+     */
+    @Auth
+    @PostMapping("/password")
+    public ResponseEntity<Void> updatePassword(
+            @SessionAttribute(value = LOGIN_USER,required = false) SessionUser userSession,
+            @RequestBody @Valid UpdatePasswordRequest request
+    ) {
+        userService.updatePassword( request.toCommand( userSession ) );
         return ResponseEntity.ok().build();
     }
 }

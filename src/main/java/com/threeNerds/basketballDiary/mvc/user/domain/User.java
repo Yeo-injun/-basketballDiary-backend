@@ -2,8 +2,8 @@ package com.threeNerds.basketballDiary.mvc.user.domain;
 
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
-import com.threeNerds.basketballDiary.mvc.authUser.service.dto.PasswordCommand;
-import com.threeNerds.basketballDiary.mvc.authUser.service.dto.ProfileCommand;
+import com.threeNerds.basketballDiary.mvc.user.service.dto.PasswordCommand;
+import com.threeNerds.basketballDiary.mvc.user.service.dto.ProfileCommand;
 import com.threeNerds.basketballDiary.mvc.user.service.dto.MembershipCommand;
 import com.threeNerds.basketballDiary.utils.EncryptUtil;
 import lombok.AllArgsConstructor;

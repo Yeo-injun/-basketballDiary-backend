@@ -3,7 +3,8 @@ package com.threeNerds.basketballDiary.mvc.user.service;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import com.threeNerds.basketballDiary.exception.error.SystemErrorType;
-import com.threeNerds.basketballDiary.mvc.authUser.service.dto.ProfileCommand;
+import com.threeNerds.basketballDiary.mvc.user.service.dto.PasswordCommand;
+import com.threeNerds.basketballDiary.mvc.user.service.dto.ProfileCommand;
 import com.threeNerds.basketballDiary.mvc.user.domain.User;
 
 import com.threeNerds.basketballDiary.mvc.user.dto.MyProfileDTO;
@@ -76,7 +77,7 @@ public class UserService {
     /**
      * 회원 탈퇴처리
      */
-    public void withdrawalMembership( com.threeNerds.basketballDiary.mvc.authUser.service.dto.MembershipCommand command ) {
+    public void withdrawalMembership( MembershipCommand command ) {
         // TODO 회원탈퇴한 사용자 정보 별도 테이블로 데이터 이전 ( 비식별화 처리하여 )
         Long userSeq = command.getUserSeq();
 
@@ -123,4 +124,20 @@ public class UserService {
         }
     }
 
+    /**
+     * 비밀번호 변경
+     */
+    public void updatePassword( PasswordCommand command ) {
+        User findUser = userRepository.findUser( command.getUserSeq() );
+
+        if ( null == findUser ) {
+            throw new CustomException( DomainErrorType.USER_NOT_FOUND );
+        }
+
+        if ( !findUser.checkAuthentication( command.getPrevPassword() ) ) {
+            throw new CustomException( DomainErrorType.INCORRECT_PASSWORD );
+        }
+
+        userRepository.updatePassword( User.ofUpdate( command ) );
+    }
 }

@@ -1,8 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.authUser.controller;
 
 import com.threeNerds.basketballDiary.auth.Auth;
-import com.threeNerds.basketballDiary.mvc.user.controller.request.UpdatePasswordRequest;
-import com.threeNerds.basketballDiary.mvc.authUser.service.AuthUserService;
 import com.threeNerds.basketballDiary.mvc.authUser.service.TeamJoinService;
 import com.threeNerds.basketballDiary.mvc.authUser.service.dto.*;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.MyTeamAuthService;
@@ -15,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 
 import static com.threeNerds.basketballDiary.session.util.SessionUtil.LOGIN_USER;
@@ -25,8 +22,6 @@ import static com.threeNerds.basketballDiary.session.util.SessionUtil.LOGIN_USER
 @RequiredArgsConstructor
 @RequestMapping("/api/loginUser")
 public class AuthUserController {
-
-    private final AuthUserService authUserService;
 
     private final MyTeamAuthService myTeamAuthService;
 
@@ -125,17 +120,4 @@ public class AuthUserController {
         return ResponseEntity.ok().body( result );
     }
 
-    /**
-     * TODO USERController로 이동
-     * API027 비밀번호 변경
-     */
-    @Auth
-    @PostMapping("/profile/password")
-    public ResponseEntity<Void> updatePassword(
-            @SessionAttribute(value = LOGIN_USER,required = false) SessionUser userSession,
-            @RequestBody @Valid UpdatePasswordRequest request
-    ) {
-        authUserService.updatePassword( request.toCommand( userSession ) );
-        return ResponseEntity.ok().build();
-    }
 }

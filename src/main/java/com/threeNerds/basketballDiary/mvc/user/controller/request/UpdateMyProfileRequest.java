@@ -1,6 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.user.controller.request;
 
-import com.threeNerds.basketballDiary.mvc.authUser.service.dto.ProfileCommand;
+import com.threeNerds.basketballDiary.mvc.user.service.dto.ProfileCommand;
 import lombok.Getter;
 
 import javax.validation.constraints.Email;
