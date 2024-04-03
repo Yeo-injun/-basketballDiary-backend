@@ -14,6 +14,7 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MembershipCommand {
+    private Long userSeq;
     private String userId;
     private String plainPassword;
     /** 이름 **/

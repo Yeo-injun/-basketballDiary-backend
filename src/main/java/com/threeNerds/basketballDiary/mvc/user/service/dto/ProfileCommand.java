@@ -1,4 +1,4 @@
-package com.threeNerds.basketballDiary.mvc.authUser.service.dto;
+package com.threeNerds.basketballDiary.mvc.user.service.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

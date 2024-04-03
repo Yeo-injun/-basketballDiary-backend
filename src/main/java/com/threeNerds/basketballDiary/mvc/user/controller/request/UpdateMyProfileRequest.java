@@ -1,6 +1,6 @@
-package com.threeNerds.basketballDiary.mvc.authUser.controller.request;
+package com.threeNerds.basketballDiary.mvc.user.controller.request;
 
-import com.threeNerds.basketballDiary.mvc.authUser.service.dto.ProfileCommand;
+import com.threeNerds.basketballDiary.mvc.user.service.dto.ProfileCommand;
 import lombok.Getter;
 
 import javax.validation.constraints.Email;
@@ -8,7 +8,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 @Getter
-public class UpdateProfileRequest {
+public class UpdateMyProfileRequest {
 
     @NotEmpty
     private String userName;
