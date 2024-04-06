@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.threeNerds.basketballDiary.mvc.user.repository.dto.UserQueryRepository">
+
+    <select id="findAllPagingUsersExcludingTeamMembers" resultType="com.threeNerds.basketballDiary.mvc.user.dto.UserDTO">
+        /* UserQueryRepository.findAllPagingUsersExcludingTeamMembers */
+        SELECT USER_SEQ
+             , USER_ID
+             , EMAIL
+             , NAME AS USERNAME
+             , USER_REG_YN
+             , POSITION_CODE
+             , GENDER
+             , BIRTH_YMD
+             , HEIGHT
+             , WEIGHT
+             , ROADADDRESS AS ROAD_ADDRESS
+             , SIDO_CODE
+             , SIGUNGU_CODE
+          FROM USER
+         WHERE 1=1
+           AND USER_SEQ NOT IN (
+                                SELECT USER_SEQ
+                                  FROM TEAM_MEMBER
+                                 WHERE 1=1
+                                   AND TEAM_SEQ = #{teamSeq}
+                               )
+        <choose>
+            <when test='userName != null and !"".equals( userName )'>
+           AND NAME LIKE '%${userName}%'
+            </when>
+            <when test='email != null and !"".equals( email )'>
+           AND EMAIL LIKE '%${email}%'
+            </when>
+        </choose>
+    </select>
+
+
+</mapper>
