@@ -3,6 +3,8 @@ package com.threeNerds.basketballDiary.mvc.user.service;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import com.threeNerds.basketballDiary.exception.error.SystemErrorType;
+import com.threeNerds.basketballDiary.mvc.user.dto.UserQueryCondDTO;
+import com.threeNerds.basketballDiary.mvc.user.repository.dto.UserQueryRepository;
 import com.threeNerds.basketballDiary.mvc.user.service.dto.PasswordCommand;
 import com.threeNerds.basketballDiary.mvc.user.service.dto.ProfileCommand;
 import com.threeNerds.basketballDiary.mvc.user.domain.User;
@@ -15,6 +17,7 @@ import com.threeNerds.basketballDiary.mvc.user.dto.UserInqCondDTO;
 import com.threeNerds.basketballDiary.mvc.user.repository.UserRepository;
 import com.threeNerds.basketballDiary.mvc.user.repository.dto.ProfileRepository;
 import com.threeNerds.basketballDiary.mvc.user.service.dto.MembershipCommand;
+import com.threeNerds.basketballDiary.mvc.user.service.dto.UserQuery;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -39,7 +42,11 @@ import java.util.List;
 @Transactional
 public class UserService {
 
+    /** 도메인 레포지토리 */
     private final UserRepository userRepository;
+
+    /** 조회용 레포지토리 */
+    private final UserQueryRepository userQueryRepository;
     private final ProfileRepository profileRepository;
 
     /**
@@ -55,6 +62,15 @@ public class UserService {
         // TODO 페이징 처리 추가
         List<UserDTO> users = userRepository.findAllUsersExcludingTeamMemberByUserNameOrEmail( inqCond );
         return new SearchUsersExcludingTeamMemberResponse( users );
+    }
+    public List<UserDTO> getUsersExcludingTeamMembers( UserQuery query ) {
+        // TODO 페이징 처리 추가
+        UserQueryCondDTO inqCond = new UserQueryCondDTO()
+                .teamSeq(   query.getTeamSeq() )
+                .userName(  query.getUserName() )
+                .email(     query.getEmail() );
+        List<UserDTO> users = userQueryRepository.findAllPagingUsersExcludingTeamMembers( inqCond );
+        return users;
     }
 
     /**

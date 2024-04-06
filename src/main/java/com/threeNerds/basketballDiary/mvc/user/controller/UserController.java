@@ -6,6 +6,8 @@ import com.threeNerds.basketballDiary.exception.error.DomainErrorResponse;
 import com.threeNerds.basketballDiary.exception.error.SystemErrorType;
 import com.threeNerds.basketballDiary.http.ResponseJsonBody;
 import com.threeNerds.basketballDiary.mvc.user.controller.request.UpdateMyProfileRequest;
+import com.threeNerds.basketballDiary.mvc.user.controller.response.GetUsersExcludingTeamMembersResponse;
+import com.threeNerds.basketballDiary.mvc.user.dto.UserDTO;
 import com.threeNerds.basketballDiary.mvc.user.service.dto.MembershipCommand;
 import com.threeNerds.basketballDiary.mvc.user.controller.request.SignUpRequest;
 import com.threeNerds.basketballDiary.mvc.user.controller.request.UpdatePasswordRequest;
@@ -14,6 +16,7 @@ import com.threeNerds.basketballDiary.mvc.user.controller.response.CheckUserIdAv
 import com.threeNerds.basketballDiary.mvc.user.controller.response.GetMyProfileResponse;
 import com.threeNerds.basketballDiary.mvc.user.dto.SearchUsersExcludingTeamMember.request.SearchUsersExcludingTeamMemberRequest;
 import com.threeNerds.basketballDiary.mvc.user.service.UserService;
+import com.threeNerds.basketballDiary.mvc.user.service.dto.UserQuery;
 import com.threeNerds.basketballDiary.session.SessionUser;
 import com.threeNerds.basketballDiary.session.util.SessionUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,6 +32,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
+
+import java.util.List;
 
 import static com.threeNerds.basketballDiary.session.util.SessionUtil.LOGIN_USER;
 
@@ -51,6 +56,7 @@ public class UserController {
     private final UserService userService;
 
     /**
+     * TODO URL 및 파라미터 타입 재설계 
      * API006 사용자 검색
      * 23.05.07 여인준 : 팀원 제외하고 조회되게끔 변경
      */
@@ -71,6 +77,34 @@ public class UserController {
         return ResponseEntity.ok().body(resBody);
     }
 
+    /**
+     * TODO URL 및 파라미터 타입 재설계
+     * API006 사용자 검색
+     * 23.05.07 여인준 : 팀원 제외하고 조회되게끔 변경
+     */
+    @Auth
+    @Operation(
+        summary = "사용자 검색 API",description = "사용자 검색",
+        responses = {
+                @ApiResponse(responseCode = "200"),
+                @ApiResponse(responseCode = "404", description = "팀원을 찾지 못하였습니다.",content = @Content(schema = @Schema(implementation = DomainErrorResponse.class)))
+        }
+    )
+    @GetMapping("/excludeTeam/{teamSeq}")
+    public ResponseEntity<?> getUsersExcludingTeamMembers  (
+            @PathVariable Long teamSeq,
+            @RequestParam( required = false ) String userName,
+            @RequestParam( required = false ) String email
+    ){
+        List<UserDTO> users = userService.getUsersExcludingTeamMembers(
+                                        UserQuery.builder()
+                                                .teamSeq(   teamSeq )
+                                                .userName(  userName )
+                                                .email(     email )
+                                                .build()
+                                        );
+        return ResponseEntity.ok().body( new GetUsersExcludingTeamMembersResponse( users ) );
+    }
 
     // >> AuthController는 권한부여, 검증, 만료처리에 대한 역할 수행
     // >> AuthUserController는 권한이 검증된 사용자(즉, 로그인한 사용자)가 본인의 정보를 수정/삭제하는 것에 대한 역할 수행
