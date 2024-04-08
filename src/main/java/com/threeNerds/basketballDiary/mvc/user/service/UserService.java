@@ -4,18 +4,15 @@ import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import com.threeNerds.basketballDiary.exception.error.SystemErrorType;
 import com.threeNerds.basketballDiary.mvc.user.dto.UserQueryCondDTO;
+import com.threeNerds.basketballDiary.mvc.user.repository.dto.ProfileQueryRepository;
 import com.threeNerds.basketballDiary.mvc.user.repository.dto.UserQueryRepository;
 import com.threeNerds.basketballDiary.mvc.user.service.dto.PasswordCommand;
 import com.threeNerds.basketballDiary.mvc.user.service.dto.ProfileCommand;
 import com.threeNerds.basketballDiary.mvc.user.domain.User;
 
 import com.threeNerds.basketballDiary.mvc.user.dto.MyProfileDTO;
-import com.threeNerds.basketballDiary.mvc.user.dto.SearchUsersExcludingTeamMember.request.SearchUsersExcludingTeamMemberRequest;
-import com.threeNerds.basketballDiary.mvc.user.dto.SearchUsersExcludingTeamMember.response.SearchUsersExcludingTeamMemberResponse;
 import com.threeNerds.basketballDiary.mvc.user.dto.UserDTO;
-import com.threeNerds.basketballDiary.mvc.user.dto.UserInqCondDTO;
 import com.threeNerds.basketballDiary.mvc.user.repository.UserRepository;
-import com.threeNerds.basketballDiary.mvc.user.repository.dto.ProfileRepository;
 import com.threeNerds.basketballDiary.mvc.user.service.dto.MembershipCommand;
 import com.threeNerds.basketballDiary.mvc.user.service.dto.UserQuery;
 import lombok.RequiredArgsConstructor;
@@ -47,22 +44,12 @@ public class UserService {
 
     /** 조회용 레포지토리 */
     private final UserQueryRepository userQueryRepository;
-    private final ProfileRepository profileRepository;
+    private final ProfileQueryRepository profileQueryRepository;
 
     /**
      * 회원 조회
      * - 소속 팀에 속하지 않은 회원
      */
-    public SearchUsersExcludingTeamMemberResponse searchUsersExcludingTeamMember( SearchUsersExcludingTeamMemberRequest reqBody ) {
-
-        UserInqCondDTO inqCond = new UserInqCondDTO()
-                                    .teamSeq( reqBody.getTeamSeq() )
-                                    .userName( reqBody.getUserName() )
-                                    .email( reqBody.getEmail() );
-        // TODO 페이징 처리 추가
-        List<UserDTO> users = userRepository.findAllUsersExcludingTeamMemberByUserNameOrEmail( inqCond );
-        return new SearchUsersExcludingTeamMemberResponse( users );
-    }
     public List<UserDTO> getUsersExcludingTeamMembers( UserQuery query ) {
         // TODO 페이징 처리 추가
         UserQueryCondDTO inqCond = new UserQueryCondDTO()
@@ -121,7 +108,7 @@ public class UserService {
      * 프로필 조회
      */
     public MyProfileDTO getMyProfile( Long userSeq ) {
-        MyProfileDTO profile = profileRepository.findMyProfile( userSeq );
+        MyProfileDTO profile = profileQueryRepository.findMyProfile( userSeq );
 
         if ( null == profile ) {
             throw new CustomException( DomainErrorType.USER_NOT_FOUND );

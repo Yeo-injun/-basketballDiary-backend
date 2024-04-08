@@ -41,39 +41,6 @@
     </select>
 
 
-    <select id="findAllUsersExcludingTeamMemberByUserNameOrEmail" resultType="com.threeNerds.basketballDiary.mvc.user.dto.UserDTO">
-        /* UserRepository.findAllUsersExcludingTeamMemberByUserNameOrEmail */
-        /* TODO 쿼리속성 변경 필요 */
-        SELECT USER_SEQ
-             , USER_ID
-             , NAME AS USERNAME
-             , EMAIL
-             , USER_REG_YN
-             , GENDER
-             , HEIGHT
-             , WEIGHT
-             , SIDO_CODE
-             , SIGUNGU_CODE
-             , POSITION_CODE
-          FROM USER
-         WHERE 1=1
-           AND USER_SEQ NOT IN (
-                                SELECT USER_SEQ
-                                  FROM TEAM_MEMBER
-                                 WHERE 1=1
-                                   AND TEAM_SEQ = #{teamSeq}
-                               )
-        <choose>
-            <when test='userName != null and !"".equals( userName )'>
-           AND NAME LIKE '%${userName}%'
-            </when>
-            <when test='email != null and !"".equals( email )'>
-           AND EMAIL LIKE '%${email}%'
-            </when>
-        </choose>
-    </select>
-
-
     <insert id="saveUser" parameterType="com.threeNerds.basketballDiary.mvc.user.domain.User" useGeneratedKeys="true" keyProperty="userId">
         /* UserRepository.saveUser */
         INSERT INTO

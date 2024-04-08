@@ -1,8 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.user.repository.dto;
 
-import com.threeNerds.basketballDiary.mvc.user.domain.User;
 import com.threeNerds.basketballDiary.mvc.user.dto.UserDTO;
-import com.threeNerds.basketballDiary.mvc.user.dto.UserInqCondDTO;
+
 import com.threeNerds.basketballDiary.mvc.user.dto.UserQueryCondDTO;
 import org.apache.ibatis.annotations.Mapper;
 
