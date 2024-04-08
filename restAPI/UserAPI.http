@@ -14,3 +14,6 @@ Content-Type: application/json
 GET http://localhost:8080/api/users/available?userId
 Content-Type: application/json
 
+## 뉴스 테스트
+GET https://rest.news1.kr/archive/list
+Content-Type: application/json

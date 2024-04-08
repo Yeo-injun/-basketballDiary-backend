@@ -1,8 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.user.repository;
 
 import com.threeNerds.basketballDiary.mvc.user.domain.User;
-import com.threeNerds.basketballDiary.mvc.user.dto.UserDTO;
-import com.threeNerds.basketballDiary.mvc.user.dto.UserInqCondDTO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -14,7 +12,6 @@ public interface UserRepository {
      **********/
     User findUser(Long userSeq);
     User findUserByUserId(String userId);
-    List<UserDTO> findAllUsersExcludingTeamMemberByUserNameOrEmail(UserInqCondDTO inqCond);
 
     /**********
      * INSERT
