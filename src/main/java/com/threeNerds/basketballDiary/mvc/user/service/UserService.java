@@ -1,18 +1,27 @@
 package com.threeNerds.basketballDiary.mvc.user.service;
 
-import com.threeNerds.basketballDiary.http.ResponseJsonBody;
-import com.threeNerds.basketballDiary.mvc.user.dto.CmnUserDTO;
-import com.threeNerds.basketballDiary.mvc.user.dto.SearchUsersExcludingTeamMember.request.SearchUsersExcludingTeamMemberRequest;
-import com.threeNerds.basketballDiary.mvc.user.dto.SearchUsersExcludingTeamMember.response.SearchUsersExcludingTeamMemberResponse;
+import com.threeNerds.basketballDiary.exception.CustomException;
+import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
+import com.threeNerds.basketballDiary.exception.error.SystemErrorType;
+import com.threeNerds.basketballDiary.mvc.user.dto.UserQueryCondDTO;
+import com.threeNerds.basketballDiary.mvc.user.repository.dto.ProfileQueryRepository;
+import com.threeNerds.basketballDiary.mvc.user.repository.dto.UserQueryRepository;
+import com.threeNerds.basketballDiary.mvc.user.service.dto.PasswordCommand;
+import com.threeNerds.basketballDiary.mvc.user.service.dto.ProfileCommand;
+import com.threeNerds.basketballDiary.mvc.user.domain.User;
+
+import com.threeNerds.basketballDiary.mvc.user.dto.MyProfileDTO;
 import com.threeNerds.basketballDiary.mvc.user.dto.UserDTO;
-import com.threeNerds.basketballDiary.mvc.user.dto.UserInqCondDTO;
 import com.threeNerds.basketballDiary.mvc.user.repository.UserRepository;
+import com.threeNerds.basketballDiary.mvc.user.service.dto.MembershipCommand;
+import com.threeNerds.basketballDiary.mvc.user.service.dto.UserQuery;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
 
 /**
  * 소속팀에서 팀원관리 및 소속팀정보 관리 등의 업무를 수행하는 Service
@@ -30,18 +39,108 @@ import java.util.List;
 @Transactional
 public class UserService {
 
+    /** 도메인 레포지토리 */
     private final UserRepository userRepository;
 
-    public SearchUsersExcludingTeamMemberResponse searchUsersExcludingTeamMember( SearchUsersExcludingTeamMemberRequest reqBody ) {
+    /** 조회용 레포지토리 */
+    private final UserQueryRepository userQueryRepository;
+    private final ProfileQueryRepository profileQueryRepository;
 
-        UserInqCondDTO inqCond = new UserInqCondDTO()
-                                    .teamSeq( reqBody.getTeamSeq() )
-                                    .userName( reqBody.getUserName() )
-                                    .email( reqBody.getEmail() );
-
+    /**
+     * 회원 조회
+     * - 소속 팀에 속하지 않은 회원
+     */
+    public List<UserDTO> getUsersExcludingTeamMembers( UserQuery query ) {
         // TODO 페이징 처리 추가
+        UserQueryCondDTO inqCond = new UserQueryCondDTO()
+                .teamSeq(   query.getTeamSeq() )
+                .userName(  query.getUserName() )
+                .email(     query.getEmail() );
+        List<UserDTO> users = userQueryRepository.findAllPagingUsersExcludingTeamMembers( inqCond );
+        return users;
+    }
 
-        List<UserDTO> users = userRepository.findAllUsersExcludingTeamMemberByUserNameOrEmail( inqCond );
-        return new SearchUsersExcludingTeamMemberResponse( users );
+    /**
+     * 회원 가입처리
+     */
+    public boolean checkUserIdAvailable( String userId ) {
+        return isUserIdAvailable( userId );
+    }
+
+    /**
+     * 회원 가입처리
+     */
+    public void createMembership( MembershipCommand command ) {
+        if ( !isUserIdAvailable( command.getUserId() ) ) {
+            throw new CustomException( DomainErrorType.NOT_AVAILABLE_USER_ID );
+        }
+        userRepository.saveUser( User.ofCreate( command ) );
+    }
+
+    /**
+     * 회원 탈퇴처리
+     */
+    public void withdrawalMembership( MembershipCommand command ) {
+        // TODO 회원탈퇴한 사용자 정보 별도 테이블로 데이터 이전 ( 비식별화 처리하여 )
+        Long userSeq = command.getUserSeq();
+
+        // 사용자 정보 조회
+        User membership = userRepository.findUser( userSeq );
+        if ( null == membership ) {
+            throw new CustomException( SystemErrorType.NOT_FOUND_USER_FOR_WITHDRAWAL );
+        }
+
+        // 비밀번호 일치여부 확인
+        if ( !membership.checkAuthentication( command.getPlainPassword() ) ) {
+            throw new CustomException( DomainErrorType.INCORRECT_PASSWORD );
+        }
+
+        // USER테이블에서는 해당 row삭제
+        userRepository.deleteUser( userSeq );
+    }
+
+    private boolean isUserIdAvailable( String userId ) {
+        return null == userRepository.findUserByUserId( userId );
+    }
+
+
+    /**
+     * 프로필 조회
+     */
+    public MyProfileDTO getMyProfile( Long userSeq ) {
+        MyProfileDTO profile = profileQueryRepository.findMyProfile( userSeq );
+
+        if ( null == profile ) {
+            throw new CustomException( DomainErrorType.USER_NOT_FOUND );
+        }
+        return profile;
+    }
+
+
+    /**
+     * 프로필 수정
+     */
+    public void updateMyProfile( ProfileCommand profile ) {
+        boolean isSuccessUpdateProfile = userRepository.updateProfile( User.ofUpdate( profile ) ) == 1;
+        if ( !isSuccessUpdateProfile ) {
+            throw new CustomException( SystemErrorType.NOT_FOUND_USER_FOR_UPDATE );
+        }
+    }
+
+    /**
+     * 비밀번호 변경
+     */
+    public void updatePassword( PasswordCommand command ) {
+        User findUser = userRepository.findUser( command.getUserSeq() );
+
+        if ( null == findUser ) {
+            throw new CustomException( DomainErrorType.USER_NOT_FOUND );
+        }
+
+        if ( !findUser.checkAuthentication( command.getPrevPassword() ) ) {
+            throw new CustomException( DomainErrorType.INCORRECT_PASSWORD );
+        }
+
+        userRepository.updatePassword( User.ofUpdate( command ) );
     }
 }

@@ -1,23 +1,18 @@
 package com.threeNerds.basketballDiary.mvc.authUser.controller;
 
 import com.threeNerds.basketballDiary.auth.Auth;
-import com.threeNerds.basketballDiary.mvc.authUser.controller.request.UpdatePasswordRequest;
-import com.threeNerds.basketballDiary.mvc.authUser.controller.request.UpdateProfileRequest;
-import com.threeNerds.basketballDiary.mvc.authUser.service.AuthUserService;
 import com.threeNerds.basketballDiary.mvc.authUser.service.TeamJoinService;
 import com.threeNerds.basketballDiary.mvc.authUser.service.dto.*;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.MyTeamAuthService;
 
 import com.threeNerds.basketballDiary.mvc.authUser.dto.JoinRequestDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.TeamAuthDTO;
-import com.threeNerds.basketballDiary.mvc.user.dto.UserDTO;
 import com.threeNerds.basketballDiary.session.SessionUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 
 import static com.threeNerds.basketballDiary.session.util.SessionUtil.LOGIN_USER;
@@ -27,8 +22,6 @@ import static com.threeNerds.basketballDiary.session.util.SessionUtil.LOGIN_USER
 @RequiredArgsConstructor
 @RequestMapping("/api/loginUser")
 public class AuthUserController {
-
-    private final AuthUserService authUserService;
 
     private final MyTeamAuthService myTeamAuthService;
 
@@ -127,58 +120,4 @@ public class AuthUserController {
         return ResponseEntity.ok().body( result );
     }
 
-    /**
-     * API025 회원 프로필 조회
-     */
-    @Auth
-    @GetMapping("/profile")
-    public ResponseEntity<UserDTO> getProfile(
-            @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession
-    ) {
-        UserDTO userDto = authUserService.getProfile( userSession.getUserSeq() );
-        return ResponseEntity.ok().body(userDto);
-    }
-
-    /**
-     * API026 회원 프로필 수정
-     */
-    @Auth
-    @PostMapping("/profile")
-    public ResponseEntity<?> updateProfile(
-            @SessionAttribute(value = LOGIN_USER,required = false) SessionUser userSession,
-            @RequestBody @Valid UpdateProfileRequest request
-    ) {
-        authUserService.updateProfile( request.toCommand( userSession.getUserSeq() ) );
-        return ResponseEntity.ok().build();
-    }
-
-
-    /**
-     * API028 회원탈퇴
-     */
-    @Auth
-    @DeleteMapping("/profile")  // cf. 일반적인 HTTP spec에서는 DELETE 메소드는 RequestBody를 지원하지 않음. 이에 따라 Spring @DeleteMapping에서는 @RequestBody를 지원하지 않음.
-    public ResponseEntity<Void> withdrawalMembership(
-            @SessionAttribute( value = LOGIN_USER, required = false ) SessionUser userSession,
-            @RequestParam String password
-    ) {
-        authUserService.withdrawalMembership( MembershipCommand.builder()
-                                                .userSeq(       userSession.getUserSeq() )
-                                                .plainPassword( password )
-                                                .build() );
-        return ResponseEntity.ok().build();
-    }
-
-    /**
-     * API027 비밀번호 변경
-     */
-    @Auth
-    @PostMapping("/profile/password")
-    public ResponseEntity<Void> updatePassword(
-            @SessionAttribute(value = LOGIN_USER,required = false) SessionUser userSession,
-            @RequestBody @Valid UpdatePasswordRequest request
-    ) {
-        authUserService.updatePassword( request.toCommand( userSession ) );
-        return ResponseEntity.ok().build();
-    }
 }

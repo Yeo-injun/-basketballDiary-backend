@@ -28,7 +28,7 @@ public class GetGameEntryRequest {
         // 필수값 체크
         Object[] notNullValues = new Object[] { gameSeq, quarterCode };
         if ( Arrays.stream(notNullValues).anyMatch( Objects::isNull ) ) {
-            throw new CustomException( SystemErrorType.NOT_NULLALLBE_VALUE );
+            throw new CustomException( SystemErrorType.NOT_NULLABLE_VALUE );
         }
         QuarterCode.checkDomain( quarterCode );
 

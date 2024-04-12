@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.threeNerds.basketballDiary.mvc.user.repository.dto.ProfileQueryRepository">
+
+    <select id="findMyProfile" resultType="com.threeNerds.basketballDiary.mvc.user.dto.MyProfileDTO">
+        /* ProfileQueryRepository.findMyProfile */
+        SELECT
+               USER_SEQ
+             , USER_ID
+             , NAME AS USER_NAME
+             , EMAIL
+             , BIRTH_YMD
+             , GENDER
+             , HEIGHT
+             , WEIGHT
+             , POSITION_CODE
+             , SIDO_CODE
+             , SIGUNGU_CODE
+             , ROADADDRESS AS ROAD_ADDRESS
+             , USER_IMAGE_PATH
+          FROM USER
+         WHERE 1=1
+           AND USER_SEQ = #{userSeq}
+    </select>
+
+</mapper>

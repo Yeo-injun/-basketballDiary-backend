@@ -9,3 +9,11 @@ Content-Type: application/json
   "password" : "1234"
 }
 
+
+###  API034 사용자ID 사용가능여부 확인
+GET http://localhost:8080/api/users/available?userId
+Content-Type: application/json
+
+## 뉴스 테스트
+GET https://rest.news1.kr/archive/list
+Content-Type: application/json

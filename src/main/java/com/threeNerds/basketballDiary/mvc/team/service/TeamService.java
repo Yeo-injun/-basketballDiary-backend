@@ -7,15 +7,13 @@ import com.threeNerds.basketballDiary.mvc.team.controller.response.SearchTeamsRe
 import com.threeNerds.basketballDiary.mvc.team.domain.Team;
 import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember;
 import com.threeNerds.basketballDiary.mvc.team.domain.TeamRegularExercise;
-import com.threeNerds.basketballDiary.mvc.user.domain.User;
-import com.threeNerds.basketballDiary.mvc.team.dto.TeamAuthDTO;
+
 import com.threeNerds.basketballDiary.mvc.team.dto.SearchTeamDTO;
 import com.threeNerds.basketballDiary.mvc.team.dto.TeamDTO;
 import com.threeNerds.basketballDiary.mvc.team.dto.TeamRegularExerciseDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.repository.TeamMemberRepository;
 import com.threeNerds.basketballDiary.mvc.team.repository.TeamRegularExerciseRepository;
 import com.threeNerds.basketballDiary.mvc.team.repository.TeamRepository;
-import com.threeNerds.basketballDiary.mvc.user.repository.UserRepository;
 import com.threeNerds.basketballDiary.pagination.Pagination;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -55,7 +53,6 @@ public class TeamService {
     private final TeamRepository teamRepository;
     private final TeamRegularExerciseRepository teamRegularExerciseRepository;
     private final TeamMemberRepository teamMemberRepository;
-    private final UserRepository userRepository;
 
     /**
      * 팀 목록 조회

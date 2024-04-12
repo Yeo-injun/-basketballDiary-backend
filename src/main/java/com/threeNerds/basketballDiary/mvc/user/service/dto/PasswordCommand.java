@@ -1,4 +1,4 @@
-package com.threeNerds.basketballDiary.mvc.authUser.service.dto;
+package com.threeNerds.basketballDiary.mvc.user.service.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class MembershipCommand {
+public class PasswordCommand {
     private Long userSeq;
-    private String plainPassword;
+    private String userId;
+    private String prevPassword;
+    private String newPassword;
 }

@@ -3,7 +3,7 @@ package com.threeNerds.basketballDiary.mvc.user.dto;
 import lombok.Getter;
 
 @Getter
-public class UserInqCondDTO {
+public class UserQueryCondDTO {
     /** 팀Seq **/
     private Long teamSeq;
     /** 사용자명 **/
@@ -11,17 +11,17 @@ public class UserInqCondDTO {
     /** 이메일 **/
     private String email;
 
-    public UserInqCondDTO teamSeq( Long teamSeq ) {
+    public UserQueryCondDTO teamSeq(Long teamSeq ) {
         this.teamSeq = teamSeq;
         return this;
     }
 
-    public UserInqCondDTO userName( String userName ) {
+    public UserQueryCondDTO userName(String userName ) {
         this.userName = userName;
         return this;
     }
 
-    public UserInqCondDTO email( String email ) {
+    public UserQueryCondDTO email(String email ) {
         this.email = email;
         return this;
     }

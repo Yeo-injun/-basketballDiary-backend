@@ -290,7 +290,7 @@ public class MyTeamController {
 
 
     /**
-     * API013 소속팀 탈퇴
+     * API013 소속팀
      * TODO 테스트 필요 FrontEnd에서 호출 하지 않음.
      */
     @Auth( level = AuthLevel.TEAM_MEMBER )

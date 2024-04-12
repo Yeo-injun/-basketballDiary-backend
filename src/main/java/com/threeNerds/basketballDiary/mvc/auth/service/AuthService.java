@@ -2,7 +2,6 @@ package com.threeNerds.basketballDiary.mvc.auth.service;
 
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
-import com.threeNerds.basketballDiary.mvc.auth.controller.request.CreateUserRequest;
 import com.threeNerds.basketballDiary.mvc.user.domain.User;
 
 import com.threeNerds.basketballDiary.mvc.auth.service.dto.LoginUserDTO;
@@ -31,24 +30,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuthService {
 
     private final UserRepository userRepository;
-
-    public boolean checkDuplicationUserId( String userId ) {
-        return !isUserIdAvailable( userId );
-    }
-
-    public void createMember( CreateUserRequest request ) {
-        if ( isUserIdAvailable( request.getUserId() ) ) {
-            User user = User.createForRegistration( request );
-            userRepository.saveUser( user );
-            return;
-        }
-
-        throw new CustomException( DomainErrorType.NOT_AVAILABLE_USER_ID );
-    }
-
-    private boolean isUserIdAvailable( String userId ) {
-        return null == userRepository.findUserByUserId( userId );
-    }
 
     /**
      * 입력정보로 로그인 정보 조회 및 return
