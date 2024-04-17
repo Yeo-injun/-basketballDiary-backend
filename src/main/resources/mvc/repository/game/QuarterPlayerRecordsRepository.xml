@@ -2,12 +2,13 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.threeNerds.basketballDiary.mvc.game.repository.QuarterPlayerRecordsRepository">
-    <sql id="SelectDomainProperties" >
-        SELECT QUARTER_PLAYER_RECORDS_SEQ
+    <sql id="DomainProperties" >
+               QUARTER_PLAYER_RECORDS_SEQ
              , GAME_SEQ
-             , GAME_JOIN_PLAYER_SEQ
-             , GAME_JOIN_TEAM_SEQ
+             , HOME_AWAY_CODE
              , QUARTER_CODE
+             , GAME_JOIN_TEAM_SEQ
+             , GAME_JOIN_PLAYER_SEQ
              , IN_GAME_YN
              , TRY_FREE_THROW
              , FREE_THROW
@@ -15,26 +16,41 @@
              , TWO_POINT
              , TRY_THREE_POINT
              , THREE_POINT
+             , ASSIST
              , REBOUND
              , STEAL
              , BLOCK
              , TURNOVER
              , FOUL
-          FROM QUARTER_PLAYER_RECORDS
-         WHERE 1=1
     </sql>
 
     <select id="findAllInGame" resultType="com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords">
         /* QuarterPlayerRecordsRepository.findAllInGame */
-        <include refid="SelectDomainProperties" />
+        SELECT
+        <include refid="DomainProperties" />
+          FROM QUARTER_PLAYER_RECORDS
+         WHERE 1=1
            AND GAME_SEQ = #{gameSeq}
     </select>
 
     <select id="findOneTeamQuarterRecord" resultType="com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords">
         /* QuarterPlayerRecordsRepository.findOneTeamQuarterRecord */
-        <include refid="SelectDomainProperties" />
+        SELECT
+        <include refid="DomainProperties" />
+          FROM QUARTER_PLAYER_RECORDS
+         WHERE 1=1
            AND GAME_SEQ         = #{gameSeq}
            AND HOME_AWAY_CODE   = #{homeAwayCode}
+           AND QUARTER_CODE     = #{quarterCode}
+    </select>
+
+    <select id="findAllPlayerQuarterRecords" resultType="com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords">
+        /* QuarterPlayerRecordsRepository.findAllPlayerQuarterRecords */
+        SELECT
+        <include refid="DomainProperties" />
+          FROM QUARTER_PLAYER_RECORDS
+         WHERE 1=1
+           AND GAME_SEQ         = #{gameSeq}
            AND QUARTER_CODE     = #{quarterCode}
     </select>
 

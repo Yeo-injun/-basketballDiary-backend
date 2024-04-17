@@ -5,6 +5,7 @@ import com.threeNerds.basketballDiary.auth.constant.AuthType;
 import com.threeNerds.basketballDiary.constant.code.type.HomeAwayCode;
 import com.threeNerds.basketballDiary.http.ResponseJsonBody;
 import com.threeNerds.basketballDiary.auth.Auth;
+import com.threeNerds.basketballDiary.mvc.game.controller.request.SaveQuarterRecordRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.confirmGameJoinTeam.request.ConfirmGameJoinTeamRequest;
 import com.threeNerds.basketballDiary.mvc.game.controller.request.CreateGameRequest;
 import com.threeNerds.basketballDiary.mvc.game.controller.request.RegisterGameJoinPlayersRequest;
@@ -25,7 +26,6 @@ import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.respons
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameRecorders.request.GetGameRecordersRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameRecorders.response.GetGameRecordersResponse;
 import com.threeNerds.basketballDiary.mvc.game.dto.saveGameRecorder.request.SaveGameRecordersRequest;
-import com.threeNerds.basketballDiary.mvc.game.dto.saveQuarterRecords.request.SaveQuarterRecordsRequest;
 import com.threeNerds.basketballDiary.mvc.game.service.GameAuthService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameJoinManagerService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameRecordManagerService;
@@ -115,16 +115,12 @@ public class GameController {
     @ApiDocs038
     @Auth
     @PutMapping("/{gameSeq}/quarters/{quarterCode}")
-    public ResponseEntity<Void> saveQuarterRecords(
+    public ResponseEntity<Void> saveQuarterRecord(
             @PathVariable(name = "gameSeq") Long gameSeq,
             @PathVariable(name = "quarterCode") String quarterCode,
-            @RequestBody @Valid SaveQuarterRecordsRequest requestMessage
+            @RequestBody @Valid SaveQuarterRecordRequest request
     ) {
-        gameRecordManagerService.saveQuarterRecord( new SaveQuarterRecordsRequest(
-                gameSeq,
-                quarterCode,
-                requestMessage
-        ) );
+        gameRecordManagerService.saveQuarterRecord( request.toCommand( gameSeq, quarterCode ) );
         return ResponseEntity.ok().build();
     }
 
