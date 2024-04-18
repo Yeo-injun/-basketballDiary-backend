@@ -1,12 +1,10 @@
 package com.threeNerds.basketballDiary.mvc.game.controller.request;
 
-import com.threeNerds.basketballDiary.mvc.game.dto.saveQuarterRecords.request.SavePlayerRecordDTO;
+import com.threeNerds.basketballDiary.mvc.game.dto.SavePlayerRecordDTO;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.QuarterRecordCommand;
-import com.threeNerds.basketballDiary.mvc.user.service.dto.MembershipCommand;
 import lombok.Getter;
 
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 
