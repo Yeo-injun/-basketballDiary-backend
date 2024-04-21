@@ -19,7 +19,4 @@ public interface GameJoinManagerRepository {
     List<GameJoinTeamInfoDTO> findGameJoinTeams( SearchGameJoinTeamDTO searchGameJoinTeamDTO );
 
     List<PlayerInfoDTO> findAllGameJoinPlayers( SearchPlayersDTO searchDTO );
-
-    /** 경기에 참여한 팀원 조회 */
-    List<GameJoinTeamMemberDTO> findAllGameJoinTeamMembers( SearchGameJoinTeamMemberDTO searchCond );
 }

@@ -20,7 +20,6 @@ import com.threeNerds.basketballDiary.mvc.game.dto.getGameEntry.response.GetGame
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayerRecordsByQuarter.request.GetGameJoinPlayerRecordsByQuarterRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayers.request.GetGameJoinPlayersRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayers.response.GetGameJoinPlayersResponse;
-import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinTeamMembers.request.GetGameJoinTeamMembersRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.request.GetGameQuarterRecordsRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.response.GetGameQuarterRecordsResponse;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameRecorders.request.GetGameRecordersRequest;
@@ -30,6 +29,7 @@ import com.threeNerds.basketballDiary.mvc.game.service.GameAuthService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameJoinManagerService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameRecordManagerService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameService;
+import com.threeNerds.basketballDiary.mvc.game.service.dto.GameRecorderCandidatesQuery;
 import com.threeNerds.basketballDiary.session.SessionUser;
 import com.threeNerds.basketballDiary.swagger.docs.game.ApiDocs035;
 import com.threeNerds.basketballDiary.swagger.docs.game.ApiDocs038;
@@ -72,6 +72,33 @@ import static com.threeNerds.basketballDiary.session.util.SessionUtil.LOGIN_USER
 /** swagger 관련 참고 자료 : https://devocean.sk.com/experts/techBoardDetail.do?ID=164919 */
 public class GameController {
 
+    /**
+     * TODO Service 경계 재설계
+     * - 기능 등장인물 정리
+     * - 등장인물에 따른 역할과 책임 구분
+     *  >> 게임정보
+     *  >> 게임에 참가한 팀
+     *  >> 게임에 참가한 선수
+     *  >> 게임을 뛰고 있는 선수
+     *  >> 팀과 선수들의 기록
+     *  >> 게임은 여러개의 쿼터로 이뤄진다.
+     *      >> 게임참가팀은 경기에 의존적이고
+     *      >> 게임참가선수는 경기와 경기참가팀에 의존적이다.
+     *      >> 경기기록은 경기, 팀, 선수에 의존적이다.
+     *
+     *  >> 경기기록을 입력하기 위한 전체 업무 흐름
+     *      1. 경기를 생성한다.
+     *          - 경기유형을 선택한다.
+     *          - 유형에 따라 상대 팀을 선정한다.
+     *      + 상대팀이 존재할 경우 상대팀의 승낙이 필요하다. ( 추가해야 하는 기능 )
+     *      2. 경기에 참여할 선수들을 선택/입력한다. ( 경기참가선수 등록 )
+     *      3. 쿼터 정보를 생성한다.
+     *      -----------------------------------------
+     *      경기를 기록한다.
+     *      1. 경기에 뛸 선수들을 선택/수정한다. ( 경기기록입력 선수 등록 )
+     *      2. 경기기록을 팀별, 선수별로 입력한다.
+     *      3. 입력중인 경기기록을 조회한다.
+     */
     private final GameService gameService;
     private final GameJoinManagerService gameJoinManagerService;
     private final GameRecordManagerService gameRecordManagerService;
@@ -319,7 +346,7 @@ public class GameController {
      * API055 게임기록자 조회
      */
     @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_RECORDER )
-    @GetMapping("/{gameSeq}/gameRecorders")
+    @GetMapping("/{gameSeq}/gameRecorders") // TODO url 패턴 /game/{gameSeq}/recorders로 변경
     public ResponseEntity<?> getGameRecorders(
             @PathVariable("gameSeq") Long gameSeq
     ) {
@@ -332,7 +359,7 @@ public class GameController {
      * API056 게임기록자 목록 저장
      */
     @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_CREATOR )
-    @PostMapping("/{gameSeq}/gameRecorders")
+    @PostMapping("/{gameSeq}/gameRecorders")    // TODO url 패턴 /game/{gameSeq}/recorders로 변경
     public ResponseEntity<?> saveGameRecorders(
             @PathVariable("gameSeq") Long gameSeq,
             @RequestBody @Valid SaveGameRecordersRequest request
@@ -343,19 +370,24 @@ public class GameController {
     }
 
     /**
-     * API057 게임참가팀 팀원조회
-     * 23.01.28(토)
-     * @author 강창기
+     * @since 24.04.21 (일)
+     * @author injun
+     * API057 경기기록원 후보 조회 ( TODO API명칭 변경 사항 반영 요망 )
+     *  - 경기기록 권한을 부여할 수 있는 후보군 조회
      */
     @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_RECORDER )
-    @GetMapping("/{gameSeq}/teamMembers")
-    public ResponseEntity<?> getGameJoinTeamMembers(
+    @GetMapping("/{gameSeq}/recorders/candidates")
+    public ResponseEntity<?> getGameRecorderCandidates(
             @PathVariable(name = "gameSeq") Long gameSeq,
             @RequestParam(name = "homeAwayCode", required = false) String homeAwayCode
     ) {
-        GetGameJoinTeamMembersRequest reqBody = new GetGameJoinTeamMembersRequest( gameSeq, homeAwayCode );
-        ResponseJsonBody resBody = gameJoinManagerService.getGameJoinTeamMembers( reqBody );
-        return ResponseEntity.ok( resBody );
+        List<GameRecorderCandidateDTO> candidates = gameAuthService.getGameRecorderCandidates(
+                                                        GameRecorderCandidatesQuery.builder()
+                                                            .gameSeq( gameSeq )
+                                                            .homeAwayCode( homeAwayCode )
+                                                            .build()
+                                                    );
+        return ResponseEntity.ok( new GetGameRecorderCandidatesResponse( candidates ) );
     }
 
     /**
@@ -368,7 +400,7 @@ public class GameController {
             @PathVariable(name = "gameSeq") Long gameSeq,
             @RequestBody @Valid SaveQuarterEntryInfoRequest reqBody
     ) {
-        // TODO SaveQuarterEntryInfoRequset로 변경하기
+        // TODO Command 패턴으로 변경하기
         QuarterEntryInfoDTO qeiDTO = new QuarterEntryInfoDTO()
                                         .gameSeq(gameSeq)
                                         .gameJoinTeamSeq(reqBody.getGameJoinTeamSeq())

@@ -22,7 +22,7 @@ import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayerRecordsByQua
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.request.GetGameQuarterRecordsRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.response.GetGameQuarterRecordsResponse;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.response.TeamQuarterRecordsDTO;
-import com.threeNerds.basketballDiary.mvc.game.dto.saveQuarterRecords.request.SavePlayerRecordDTO;
+import com.threeNerds.basketballDiary.mvc.game.dto.SavePlayerRecordDTO;
 import com.threeNerds.basketballDiary.mvc.game.repository.*;
 import com.threeNerds.basketballDiary.mvc.game.repository.dto.GameRecordManagerRepository;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.QuarterRecordCommand;

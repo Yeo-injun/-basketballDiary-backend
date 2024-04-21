@@ -4,6 +4,7 @@ import com.threeNerds.basketballDiary.auth.constant.AuthLevel;
 import com.threeNerds.basketballDiary.auth.constant.AuthType;
 import com.threeNerds.basketballDiary.constant.code.type.GameRecordAuthCode;
 import com.threeNerds.basketballDiary.mvc.game.domain.*;
+import com.threeNerds.basketballDiary.mvc.game.dto.GameRecorderCandidateDTO;
 import com.threeNerds.basketballDiary.mvc.game.dto.SearchGameDTO;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameRecorders.request.GetGameRecordersRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameRecorders.response.GameRecorderDTO;
@@ -11,7 +12,9 @@ import com.threeNerds.basketballDiary.mvc.game.dto.getGameRecorders.response.Get
 import com.threeNerds.basketballDiary.mvc.game.dto.saveGameRecorder.request.SaveGameRecordersRequest;
 import com.threeNerds.basketballDiary.mvc.game.repository.*;
 import com.threeNerds.basketballDiary.mvc.game.repository.dto.GameRecordManagerRepository;
+import com.threeNerds.basketballDiary.mvc.game.repository.dto.GameRecorderCandidateRepository;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.GameAuthDTO;
+import com.threeNerds.basketballDiary.mvc.game.service.dto.GameRecorderCandidatesQuery;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,6 +31,7 @@ public class GameAuthService {
 
     private final GameRecordManagerRepository gameRecordManagerRepo;
     private final GameRecordAuthRepository gameRecordAuthRepo;
+    private final GameRecorderCandidateRepository gameRecorderCandidateRepo;
 
  /**
      * 2022.01.04
@@ -96,4 +100,20 @@ public class GameAuthService {
                 );
     }
 
+
+    /**
+     * 경기기록원 후보 조회
+     * - 경기 기록권한을 부여받을 수 있는 대상을 조회한다.
+     * - 경기 기록원은 다음 요건을 충족해야 한다.
+     *   1) 서비스 회원이어야 한다.
+     *   2) 경기에 참가한 선수여야 한다.
+     */
+    public List<GameRecorderCandidateDTO> getGameRecorderCandidates( GameRecorderCandidatesQuery query ) {
+
+        GameRecorderCandidateDTO searchCond = new GameRecorderCandidateDTO()
+                .gameSeq(       query.getGameSeq() )
+                .homeAwayCode(  query.getHomeAwayCode() );
+
+        return gameRecorderCandidateRepo.findAllCandidates(searchCond);
+    }
 }
