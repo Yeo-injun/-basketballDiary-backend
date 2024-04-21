@@ -20,7 +20,6 @@ import com.threeNerds.basketballDiary.mvc.game.dto.getGameEntry.response.GetGame
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayerRecordsByQuarter.request.GetGameJoinPlayerRecordsByQuarterRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayers.request.GetGameJoinPlayersRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayers.response.GetGameJoinPlayersResponse;
-import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinTeamMembers.request.GetGameJoinTeamMembersRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.request.GetGameQuarterRecordsRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.response.GetGameQuarterRecordsResponse;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameRecorders.request.GetGameRecordersRequest;
@@ -389,17 +388,6 @@ public class GameController {
                                                             .build()
                                                     );
         return ResponseEntity.ok( new GetGameRecorderCandidatesResponse( candidates ) );
-    }
-    @Deprecated
-    @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_RECORDER )
-    @GetMapping("/{gameSeq}/teamMembers")
-    public ResponseEntity<?> getGameJoinTeamMembers(
-            @PathVariable(name = "gameSeq") Long gameSeq,
-            @RequestParam(name = "homeAwayCode", required = false) String homeAwayCode
-    ) {
-        GetGameJoinTeamMembersRequest reqBody = new GetGameJoinTeamMembersRequest( gameSeq, homeAwayCode );
-        ResponseJsonBody resBody = gameJoinManagerService.getGameJoinTeamMembers( reqBody );
-        return ResponseEntity.ok( resBody );
     }
 
     /**
