@@ -412,6 +412,7 @@ public class GameJoinManagerService {
      * @author 강창기
      * @update 여인준 / 소스코드 이전 ( 기존 GameRecordManagerService에서 )
      */
+    @Deprecated
     public ResponseJsonBody getGameJoinTeamMembers( GetGameJoinTeamMembersRequest reqBody ) {
 
         SearchGameJoinTeamMemberDTO searchCond = new SearchGameJoinTeamMemberDTO()
