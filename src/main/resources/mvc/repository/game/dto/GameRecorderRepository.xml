@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.threeNerds.basketballDiary.mvc.game.repository.dto.GameRecorderRepository">
+
+    <select id="findAllCandidates" resultType="com.threeNerds.basketballDiary.mvc.game.dto.GameRecorderCandidateDTO">
+        /* GameRecorderRepository.findAllCandidates */
+        SELECT GJP.GAME_JOIN_PLAYER_SEQ
+             , GJT.GAME_SEQ
+             , GJT.HOME_AWAY_CODE
+             , GJT.TEAM_SEQ
+             , GJP.USER_SEQ
+             , GJT.TEAM_NAME
+             , GJP.NAME AS USER_NAME
+             , GJP.PLAYER_TYPE_CODE
+             , GJP.POSITION_CODE
+             , GJP.EMAIL
+             , GJP.BACK_NUMBER
+          FROM GAME_JOIN_TEAM GJT          /* 경기참가팀 */
+         INNER JOIN GAME_JOIN_PLAYER GJP   /* 경기참가선수 */
+            ON GJT.GAME_SEQ       = GJP.GAME_SEQ
+           AND GJT.HOME_AWAY_CODE = GJP.HOME_AWAY_CODE
+         WHERE 1=1
+           AND GJT.GAME_SEQ         = #{gameSeq}
+           AND GJP.PLAYER_TYPE_CODE != '03' /* 선수유형코드 : 비회원 게스트(03)는 제외 */
+        <if test='homeAwayCode != null and homeAwayCode != ""'>
+           AND GJT.HOME_AWAY_CODE = #{homeAwayCode}
+        </if>
+    </select>
+
+
+    <select id="findAllRecorders" resultType="com.threeNerds.basketballDiary.mvc.game.dto.GameRecorderDTO">
+        /* GameRecorderRepository.findAllRecorders */
+        SELECT GRA.GAME_RECORD_AUTH_SEQ
+             , (
+                SELECT TEAM_NAME
+                  FROM GAME_JOIN_TEAM
+                 WHERE 1=1
+                   AND GAME_SEQ = GJP.GAME_SEQ
+                   AND HOME_AWAY_CODE = GJP.HOME_AWAY_CODE
+                ) AS TEAM_NAME
+             , U.USER_SEQ
+             , GRA.GAME_RECORD_AUTH_CODE
+             , U.NAME AS USER_NAME
+             , U.POSITION_CODE
+             , GJP.BACK_NUMBER
+             , U.EMAIL
+             , U.USER_ID
+          FROM GAME_RECORD_AUTH  GRA
+         INNER JOIN GAME_JOIN_PLAYER GJP
+            ON GRA.GAME_SEQ = GJP.GAME_SEQ
+           AND GRA.TEAM_MEMBER_SEQ = GJP.USER_SEQ /* TEAM_MEMBER_SEQ를 USER_SEQ로 변경예정 */
+         INNER JOIN USER  U
+            ON GRA.TEAM_MEMBER_SEQ = U.USER_SEQ /* TEAM_MEMBER_SEQ를 USER_SEQ로 변경예정 */
+         WHERE 1=1
+           AND GRA.GAME_SEQ = #{gameSeq}
+    </select>
+</mapper>

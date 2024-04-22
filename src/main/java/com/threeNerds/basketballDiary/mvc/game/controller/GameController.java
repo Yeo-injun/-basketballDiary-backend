@@ -343,10 +343,10 @@ public class GameController {
 
 
     /**
-     * API055 게임기록자 조회
+     * API055 경기기록원 조회
      */
     @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_RECORDER )
-    @GetMapping("/{gameSeq}/gameRecorders") // TODO url 패턴 /game/{gameSeq}/recorders로 변경
+    @GetMapping("/{gameSeq}/recorders") // TODO url 패턴 /game/{gameSeq}/recorders로 변경
     public ResponseEntity<?> getGameRecorders(
             @PathVariable("gameSeq") Long gameSeq
     ) {
@@ -356,10 +356,10 @@ public class GameController {
     }
 
     /**
-     * API056 게임기록자 목록 저장
+     * API056 경기기록원 목록 저장
      */
     @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_CREATOR )
-    @PostMapping("/{gameSeq}/gameRecorders")    // TODO url 패턴 /game/{gameSeq}/recorders로 변경
+    @PostMapping("/{gameSeq}/recorders")
     public ResponseEntity<?> saveGameRecorders(
             @PathVariable("gameSeq") Long gameSeq,
             @RequestBody @Valid SaveGameRecordersRequest request
