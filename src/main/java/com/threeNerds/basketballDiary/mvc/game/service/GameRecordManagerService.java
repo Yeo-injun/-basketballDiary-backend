@@ -1,6 +1,5 @@
 package com.threeNerds.basketballDiary.mvc.game.service;
 
-import com.threeNerds.basketballDiary.constant.code.type.GameRecordAuthCode;
 import com.threeNerds.basketballDiary.constant.code.type.GameRecordStateCode;
 import com.threeNerds.basketballDiary.constant.code.type.HomeAwayCode;
 import com.threeNerds.basketballDiary.constant.code.type.QuarterCode;
@@ -23,14 +22,10 @@ import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayerRecordsByQua
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.request.GetGameQuarterRecordsRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.response.GetGameQuarterRecordsResponse;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.response.TeamQuarterRecordsDTO;
-import com.threeNerds.basketballDiary.mvc.game.dto.getGameRecorders.request.GetGameRecordersRequest;
-import com.threeNerds.basketballDiary.mvc.game.dto.getGameRecorders.response.GameRecorderDTO;
-import com.threeNerds.basketballDiary.mvc.game.dto.getGameRecorders.response.GetGameRecordersResponse;
-import com.threeNerds.basketballDiary.mvc.game.dto.saveGameRecorder.request.SaveGameRecordersRequest;
-import com.threeNerds.basketballDiary.mvc.game.dto.saveQuarterRecords.request.SavePlayerRecordDTO;
-import com.threeNerds.basketballDiary.mvc.game.dto.saveQuarterRecords.request.SaveQuarterRecordsRequest;
+import com.threeNerds.basketballDiary.mvc.game.dto.SavePlayerRecordDTO;
 import com.threeNerds.basketballDiary.mvc.game.repository.*;
 import com.threeNerds.basketballDiary.mvc.game.repository.dto.GameRecordManagerRepository;
+import com.threeNerds.basketballDiary.mvc.game.service.dto.QuarterRecordCommand;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.SearchMyTeamGamesRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.SearchMyTeamGamesResponse;
 import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember;
@@ -428,75 +423,55 @@ public class GameRecordManagerService {
      *      - 해당 서비스의 전제 조건 : QuarterTeamRecords와 QuarterPlayerRecords에 데이터가 이미 존재해야 한다.
      * @author 여인준
      */
-    public void saveQuarterRecord(SaveQuarterRecordsRequest requestMessage) {
-        Long gameSeq = requestMessage.getGameSeq();
-        String quarterCode = requestMessage.getQuarterCode();
-        String quarterTime = requestMessage.getQuarterTime();
-        QuarterTeamRecords inqCondQuarterTeamRecords = QuarterTeamRecords.builder()
-                .gameSeq( gameSeq )
-                .quarterCode( quarterCode )
-                .build();
+    public void saveQuarterRecord( QuarterRecordCommand command ) {
 
+        Long gameSeq        = command.getGameSeq();
+        String quarterCode  = command.getQuarterCode();
+        String quarterTime  = command.getQuarterTime();
         /** 경기의 쿼터 시간 update */
         gameRepository.updateQuarterTime( new Game( gameSeq, QuarterCode.getType( quarterCode ), quarterTime ) );
 
-        /** 경기에 참가한 팀의 쿼터기록 조회 */
-        List<QuarterTeamRecords> allTeamRecords = quarterTeamRecordsRepository.findAllGameJoinTeam( inqCondQuarterTeamRecords );
+        /** 출전선수(inGamePlayer)의 쿼터기록(스탯) 저장 */
+        saveInGamePlayerStat( command.getHomeTeamPlayerRecords() );
+        saveInGamePlayerStat( command.getAwayTeamPlayerRecords() );
 
-        /** 홈팀 경기기록 입력 */
-        recordQuarterStat(
-                filterGameJoinTeamByHomeAwayCode( allTeamRecords, HomeAwayCode.HOME_TEAM),
-                requestMessage.getHomeTeamPlayerRecords()
-        );
+        /** 모든 선수들의 쿼터기록 전체 조회 */
+        QuarterPlayerRecords inqCondAllPlayerQuarterRecords = QuarterPlayerRecords.builder()
+                                                                    .gameSeq( gameSeq )
+                                                                    .quarterCode( quarterCode )
+                                                                    .build();
+        List<QuarterPlayerRecords> allPlayerQuarterRecords = quarterPlayerRecordsRepository.findAllPlayerQuarterRecords( inqCondAllPlayerQuarterRecords );
 
-        /** 어웨이팀 경기기록 입력 */
-        recordQuarterStat(
-                filterGameJoinTeamByHomeAwayCode( allTeamRecords, HomeAwayCode.AWAY_TEAM),
-                requestMessage.getAwayTeamPlayerRecords()
-        );
-
+        /**
+         * 모든 선수들의 쿼터기록을 팀기록으로 합산하여 팀기록 update
+         *  - 화면의 팀기록과 DB에 저장한 팀별 선수들의 쿼터기록 합산 비교로직은 반영하지 않음.
+         *    DB에서 관리하고 있는 값을 기준으로 데이터를 관리하는 것이 맞고, 저장한 팀 쿼터기록과 화면에 입력된 데이터가 상이할 경우 그떄 조치하기
+         **/
+        quarterTeamRecordsRepository.updateQuarterRecords( QuarterTeamRecords.ofHome( gameSeq, QuarterCode.getType( quarterCode ), allPlayerQuarterRecords ) );
+        quarterTeamRecordsRepository.updateQuarterRecords( QuarterTeamRecords.ofAway( gameSeq, QuarterCode.getType( quarterCode ), allPlayerQuarterRecords ) );
     }
 
-    private QuarterTeamRecords filterGameJoinTeamByHomeAwayCode(List<QuarterTeamRecords> joinTeams, HomeAwayCode homeAwayCode)
-    {
-        /** 참가팀 구분 - 홈/어웨이팀 */
-        return joinTeams.stream()
-                .filter(t -> homeAwayCode.getCode().equals(t.getHomeAwayCode()))
-                .findFirst()
-                // TODO 에러메세지 동적으로 처리하기 homeAwayCode.getName();
-                .orElseThrow(() -> new CustomException(DomainErrorType.NOT_FOUND_HOME_TEAM));
-    }
-
-
-
-    private void recordQuarterStat( QuarterTeamRecords teamRecords, List<SavePlayerRecordDTO> playerRecords )
-    {
-        /** 팀기록 초기화 - 선수들의 기록 합으로 반영 */
-        teamRecords.initRecords();
-        for ( SavePlayerRecordDTO playerRecord : playerRecords )
-        {
+    private void saveInGamePlayerStat( List<SavePlayerRecordDTO> inGamePlayerRecords ) {
+        for ( SavePlayerRecordDTO playerRecord : inGamePlayerRecords ) {
             QuarterPlayerRecords quarterPlayerRecords = QuarterPlayerRecords.builder()
-                    .quarterPlayerRecordsSeq( playerRecord.getQuarterPlayerRecordsSeq() )
-                    .gameSeq( playerRecord.getGameSeq() )
-                    .homeAwayCode( playerRecord.getHomeAwayCode() )
-                    .quarterCode( playerRecord.getQuarterCode() )
-                    .tryFreeThrow( playerRecord.getTryFreeThrow() )
-                    .tryTwoPoint( playerRecord.getTryTwoPoint() )
-                    .tryThreePoint( playerRecord.getTryThreePoint() )
-                    .freeThrow( playerRecord.getFreeThrow() )
-                    .twoPoint( playerRecord.getTwoPoint() )
-                    .threePoint( playerRecord.getThreePoint() )
-                    .rebound( playerRecord.getRebound() )
-                    .assist( playerRecord.getAssist() )
-                    .steal( playerRecord.getSteal() )
-                    .block( playerRecord.getBlock() )
-                    .turnover( playerRecord.getTurnover() )
-                    .foul( playerRecord.getFoul() )
+                    .quarterPlayerRecordsSeq(   playerRecord.getQuarterPlayerRecordsSeq() )
+                    .gameSeq(                   playerRecord.getGameSeq() )
+                    .homeAwayCode(              playerRecord.getHomeAwayCode() )
+                    .quarterCode(               playerRecord.getQuarterCode() )
+                    .tryFreeThrow(              playerRecord.getTryFreeThrow() )
+                    .tryTwoPoint(               playerRecord.getTryTwoPoint() )
+                    .tryThreePoint(             playerRecord.getTryThreePoint() )
+                    .freeThrow(                 playerRecord.getFreeThrow() )
+                    .twoPoint(                  playerRecord.getTwoPoint() )
+                    .threePoint(                playerRecord.getThreePoint() )
+                    .rebound(                   playerRecord.getRebound() )
+                    .assist(                    playerRecord.getAssist() )
+                    .steal(                     playerRecord.getSteal() )
+                    .block(                     playerRecord.getBlock() )
+                    .turnover(                  playerRecord.getTurnover() )
+                    .foul(                      playerRecord.getFoul() )
                     .build();
-
             quarterPlayerRecordsRepository.updateQuarterRecords( quarterPlayerRecords );
-            teamRecords.addPlayerRecordsStat( quarterPlayerRecords );
         }
-        quarterTeamRecordsRepository.updateQuarterRecords( teamRecords );
     }
 }

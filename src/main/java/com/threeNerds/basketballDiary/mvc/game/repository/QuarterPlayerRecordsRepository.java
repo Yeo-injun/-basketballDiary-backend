@@ -12,6 +12,9 @@ public interface QuarterPlayerRecordsRepository {
      **********/
     List<QuarterPlayerRecords> findAllInGame(Long gameSeq);
     List<QuarterPlayerRecords> findOneTeamQuarterRecord( QuarterPlayerRecords params );
+    List<QuarterPlayerRecords> findAllPlayerQuarterRecords( QuarterPlayerRecords params );
+
+
 
     /**********
      * INSERT

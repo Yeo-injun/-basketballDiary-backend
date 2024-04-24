@@ -1,9 +1,14 @@
 package com.threeNerds.basketballDiary.mvc.game.domain;
 
+import com.threeNerds.basketballDiary.constant.code.CodeTypeUtil;
+import com.threeNerds.basketballDiary.constant.code.type.HomeAwayCode;
+import com.threeNerds.basketballDiary.constant.code.type.QuarterCode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Getter
 @Builder
@@ -21,7 +26,7 @@ public class QuarterTeamRecords {
     private Long gameJoinTeamSeq;       // 게임참가팀Seq
 
     private String quarterCode;         // 쿼터코드
-    private String quarterTime;         // 쿼터시간
+    private String quarterTime;         // 쿼터시간 TODO 제거할 속성.. 게임테이블에서 관리할 예정
 
     private int score;
     private int freeThrow;
@@ -34,6 +39,60 @@ public class QuarterTeamRecords {
     private int turnover;
     private int foul;
 
+    /** 홈팀 기록 생성 ( 선수기록을 팀기록으로 합산 처리 ) */
+    public static QuarterTeamRecords ofHome( Long gameSeq, QuarterCode quarterCode, List<QuarterPlayerRecords> playerRecords ) {
+        return QuarterTeamRecords.of( gameSeq, quarterCode, HomeAwayCode.HOME_TEAM, playerRecords );
+    }
+
+    /** 어웨이팀 기록 생성 ( 선수기록을 팀기록으로 합산 처리 ) */
+    public static QuarterTeamRecords ofAway( Long gameSeq, QuarterCode quarterCode, List<QuarterPlayerRecords> playerRecords ) {
+        return QuarterTeamRecords.of( gameSeq, quarterCode, HomeAwayCode.AWAY_TEAM, playerRecords );
+    }
+
+    private static QuarterTeamRecords of( Long gameSeq, QuarterCode quarterCode, HomeAwayCode homeAwayCode, List<QuarterPlayerRecords> playerRecords ) {
+        QuarterTeamRecords teamRecords = QuarterTeamRecords.builder()
+                .gameSeq(       gameSeq )
+                .quarterCode(   quarterCode.getCode() )
+                .homeAwayCode(  homeAwayCode.getCode() )
+                .build();
+        teamRecords.sumRecordsByHomeAwayCode( playerRecords );
+        return teamRecords;
+    }
+
+    /** 선수들의 쿼터기록을 팀기록으로 합산 */
+    private void sumRecordsByHomeAwayCode( List<QuarterPlayerRecords> playerRecords ) {
+        playerRecords.stream()
+            .filter( player ->
+                      this.gameSeq == player.getGameSeq().longValue()
+                   && this.quarterCode.equals( player.getQuarterCode() )
+                   && this.homeAwayCode.equals( player.getHomeAwayCode() )
+            )
+            .forEach( player -> {
+                /** 선수 기록을 팀기록에 반영 */
+                this.freeThrow      += player.getFreeThrow();
+                this.twoPoint       += player.getTwoPoint();
+                this.threePoint     += player.getThreePoint();
+                this.assist         += player.getAssist();
+                this.rebound        += player.getRebound();
+                this.steal          += player.getSteal();
+                this.block          += player.getBlock();
+                this.turnover       += player.getTurnover();
+                this.foul           += player.getFoul();
+
+                /** 팀의 총득점 계산 */
+                calculateQuarterTotalScore();
+            });
+    }
+    /** 한 쿼터 동안 팀의 총 득점 계산 */
+    public void calculateQuarterTotalScore() {
+        int freeThrowScore  = this.freeThrow * SCORE_ONE;
+        int twoPointScore   = this.twoPoint * SCORE_TWO;
+        int threePointScore = this.threePoint * SCORE_THREE;
+
+        // 현재 쿼터의 총 득점 계산
+        this.score = freeThrowScore + twoPointScore + threePointScore;
+    }
+
     /** 쿼터팀레코드 초기화 */
     public QuarterTeamRecords( Long gameSeq, String homeAwayCode, Long gameJoinTeamSeq, String quarterCode ) {
         this.gameSeq = gameSeq;
@@ -41,57 +100,5 @@ public class QuarterTeamRecords {
         this.gameJoinTeamSeq = gameJoinTeamSeq;
         this.quarterCode = quarterCode;
         this.quarterTime = "0000";
-    }
-
-    /** 한 쿼터 동안 팀의 모든 Stat 초기화 */
-    public void initRecords()
-    {
-        this.score = 0;
-        this.freeThrow = 0;
-        this.twoPoint = 0;
-        this.threePoint = 0;
-        this.assist = 0;
-        this.rebound = 0;
-        this.steal = 0;
-        this.block = 0;
-        this.turnover = 0;
-        this.foul = 0;
-    }
-
-    /** 한 쿼터 동안 팀의 총 득점 계산 */
-    public void calculateQuarterTotalScore()
-    {
-        int freeThrowScore  = this.freeThrow * SCORE_ONE;
-        int twoPointScore   = this.twoPoint * SCORE_TWO;
-        int threePointScore = this.threePoint * SCORE_THREE;
-        
-        // 현재 쿼터의 총 득점 계산
-        this.score = freeThrowScore + twoPointScore + threePointScore;
-    }
-
-    /** 플레이어 기록을 팀기록에 합산 */
-    public void addPlayerRecordsStat(QuarterPlayerRecords quarterPlayerRecords) {
-        /** 선수가 해당팀 소속인지 확인 */
-        boolean isTeamMemebr = ( this.gameSeq.longValue() == quarterPlayerRecords.getGameSeq()
-                                && this.homeAwayCode.equals( quarterPlayerRecords.getHomeAwayCode() ) );
-
-        if ( !isTeamMemebr ) {
-            // TODO 팀멤버가 아닌 경우 로그를 찍고 메소드 종료
-            return;
-        }
-
-        /** 선수 기록을 팀기록에 반영 */
-        this.freeThrow += quarterPlayerRecords.getFreeThrow();
-        this.twoPoint += quarterPlayerRecords.getTwoPoint();
-        this.threePoint += quarterPlayerRecords.getThreePoint();
-        this.assist += quarterPlayerRecords.getAssist();
-        this.rebound += quarterPlayerRecords.getRebound();
-        this.steal += quarterPlayerRecords.getSteal();
-        this.block += quarterPlayerRecords.getBlock();
-        this.turnover += quarterPlayerRecords.getTurnover();
-        this.foul += quarterPlayerRecords.getFoul();
-
-        /** 팀의 총득점 계산 */
-        calculateQuarterTotalScore();
     }
 }

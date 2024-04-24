@@ -7,7 +7,6 @@ import com.threeNerds.basketballDiary.constant.code.type.PlayerTypeCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import com.threeNerds.basketballDiary.exception.error.SystemErrorType;
-import com.threeNerds.basketballDiary.http.ResponseJsonBody;
 import com.threeNerds.basketballDiary.mvc.game.controller.request.RegisterGameJoinPlayersRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameEntry.response.GetGameEntryResponse;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameEntry.request.GetGameEntryRequest;
@@ -15,8 +14,6 @@ import com.threeNerds.basketballDiary.mvc.game.dto.getGameEntry.response.Quarter
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayers.response.GetGameJoinPlayersResponse;
 import com.threeNerds.basketballDiary.mvc.game.domain.Game;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayers.request.GetGameJoinPlayersRequest;
-import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinTeamMembers.request.GetGameJoinTeamMembersRequest;
-import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinTeamMembers.response.GetGameJoinTeamMembersResponse;
 import com.threeNerds.basketballDiary.mvc.team.domain.Team;
 import com.threeNerds.basketballDiary.mvc.user.domain.User;
 import com.threeNerds.basketballDiary.mvc.game.domain.GameJoinPlayer;
@@ -403,23 +400,5 @@ public class GameJoinManagerService {
                     .teamName( gameJoinTeam.getTeamName() )
                     .homeAwayCode( homeAwayCode )
                     .entry( entry );
-    }
-
-    /**
-     * 23.01.28
-     * 게임참가팀 팀원조회
-     * 게임 입력권한을 부여하기 위해 경기에 참여한 팀원을 조회한다.
-     * @author 강창기
-     * @update 여인준 / 소스코드 이전 ( 기존 GameRecordManagerService에서 )
-     */
-    public ResponseJsonBody getGameJoinTeamMembers( GetGameJoinTeamMembersRequest reqBody ) {
-
-        SearchGameJoinTeamMemberDTO searchCond = new SearchGameJoinTeamMemberDTO()
-                                        .gameSeq( reqBody.getGameSeq() )
-                                        .homeAwayCode( reqBody.getHomeAwayCode() );
-
-        List<GameJoinTeamMemberDTO> gameJoinPlayers = gameJoinManagerRepo.findAllGameJoinTeamMembers( searchCond );
-
-        return new GetGameJoinTeamMembersResponse( gameJoinPlayers );
     }
 }

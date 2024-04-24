@@ -4,14 +4,16 @@ import com.threeNerds.basketballDiary.auth.constant.AuthLevel;
 import com.threeNerds.basketballDiary.auth.constant.AuthType;
 import com.threeNerds.basketballDiary.constant.code.type.GameRecordAuthCode;
 import com.threeNerds.basketballDiary.mvc.game.domain.*;
+import com.threeNerds.basketballDiary.mvc.game.dto.GameRecorderCandidateDTO;
 import com.threeNerds.basketballDiary.mvc.game.dto.SearchGameDTO;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameRecorders.request.GetGameRecordersRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameRecorders.response.GameRecorderDTO;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameRecorders.response.GetGameRecordersResponse;
 import com.threeNerds.basketballDiary.mvc.game.dto.saveGameRecorder.request.SaveGameRecordersRequest;
 import com.threeNerds.basketballDiary.mvc.game.repository.*;
-import com.threeNerds.basketballDiary.mvc.game.repository.dto.GameRecordManagerRepository;
+import com.threeNerds.basketballDiary.mvc.game.repository.dto.GameRecorderRepository;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.GameAuthDTO;
+import com.threeNerds.basketballDiary.mvc.game.service.dto.GameRecorderCandidatesQuery;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,28 +22,31 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * 경기권한과 관련된 서비스를 제공한다.
+ * - 경기권한은 생성자(Creator)와 기록원(Recorder)으로 구분한다.
+ * - 경기생성자는 기록원의 권한을 포함하며 경기를 생성/삭제하고, 경기정보를 수정하고, 경기기록 등 경기와 관련된 모든 행위를 할 수 있다.
+ * - 경기기록원은 경기기록을 입력/수정만 가능하다.
+ */
 @Service
 @Slf4j
 @RequiredArgsConstructor
 @Transactional
 public class GameAuthService {
 
-    private final GameRecordManagerRepository gameRecordManagerRepo;
     private final GameRecordAuthRepository gameRecordAuthRepo;
+    private final GameRecorderRepository gameRecorderRepo;
 
- /**
+    /**
      * 2022.01.04
-     * 경기 관리자 조회 ( 경기 생성자, 경기 기록자 등 )
+     * 경기 관리자 조회 ( 경기 생성자, 경기 기록원 등 )
      * @author 이성주
      */
     public GetGameRecordersResponse getGameManagers( GetGameRecordersRequest request ) {
-        // TODO 경기기록 권한자의 요건 최종 검토
-        // 1. 게임에 참가하는 팀에 소속되어 있어야 한다.
-        // 2, 게임에 참가선수로 등록되지 않아도 된다.
-        // 이에따른 조회 쿼리 및 조회 내용 정립
+        // 1. 경기기록원은 서비스 회원이어야 한다.
+        // 2. 경기기록원은 경기참가선수로 등록되어 있어야 한다.
         Long gameSeq = request.getGameSeq();
-        SearchGameDTO gameCond = new SearchGameDTO().gameSeq( gameSeq );
-        List<GameRecorderDTO> gameRecorders = gameRecordManagerRepo.findAllGameRecorders( gameCond );
+        List<GameRecorderDTO> gameRecorders = gameRecorderRepo.findAllRecorders( gameSeq );
 
         // TODO 자체전일 경우 TeamName에 prifix 붙여주기 ( HOME_ or AWAY_ )
         return new GetGameRecordersResponse( gameRecorders );
@@ -50,6 +55,7 @@ public class GameAuthService {
     /**
      * 2022.01.14
      * 경기기록 권한 일괄 부여
+     * // TODO 생성자 권한은 어디서 부여되는것인지 확인하기 ( 해당 API를 현위치에다가 구현하기 )
      * @author 이성주
      */
     public void saveGameRecorders( SaveGameRecordersRequest request ) {
@@ -96,4 +102,20 @@ public class GameAuthService {
                 );
     }
 
+
+    /**
+     * 경기기록원 후보 조회
+     * - 경기 기록권한을 부여받을 수 있는 대상을 조회한다.
+     * - 경기 기록원은 다음 요건을 충족해야 한다.
+     *   1) 서비스 회원이어야 한다.
+     *   2) 경기에 참가한 선수여야 한다.
+     */
+    public List<GameRecorderCandidateDTO> getGameRecorderCandidates( GameRecorderCandidatesQuery query ) {
+
+        GameRecorderCandidateDTO searchCond = new GameRecorderCandidateDTO()
+                .gameSeq(       query.getGameSeq() )
+                .homeAwayCode(  query.getHomeAwayCode() );
+
+        return gameRecorderRepo.findAllCandidates(searchCond);
+    }
 }

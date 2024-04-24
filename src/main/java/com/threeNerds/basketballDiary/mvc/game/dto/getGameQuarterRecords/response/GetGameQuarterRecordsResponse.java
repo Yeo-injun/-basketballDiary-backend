@@ -16,14 +16,14 @@ public class GetGameQuarterRecordsResponse {
     private String quarterCodeName;
     private String quarterTime;
 
-    private TeamQuarterRecordsDTO homeTeamRecords;
-    private TeamQuarterRecordsDTO awayTeamRecords;
+    private TeamQuarterRecordsDTO homeTeamRecord;
+    private TeamQuarterRecordsDTO awayTeamRecord;
 
     public GetGameQuarterRecordsResponse(
             Game gameInfo,
             String quarterCode,
-            TeamQuarterRecordsDTO homeTeamRecords,
-            TeamQuarterRecordsDTO awayTeamRecords
+            TeamQuarterRecordsDTO homeTeamRecord,
+            TeamQuarterRecordsDTO awayTeamRecord
     ) {
         this.gameSeq = gameInfo.getGameSeq();
         this.gameYmd = gameInfo.getGameYmd();
@@ -34,7 +34,7 @@ public class GetGameQuarterRecordsResponse {
         this.quarterCodeName    = QuarterCode.nameOf( quarterCode );
         this.quarterTime        = gameInfo.getQuarterTime( QuarterCode.getType( quarterCode ) );
 
-        this.homeTeamRecords = homeTeamRecords;
-        this.awayTeamRecords = awayTeamRecords;
+        this.homeTeamRecord = homeTeamRecord;
+        this.awayTeamRecord = awayTeamRecord;
     }
 }

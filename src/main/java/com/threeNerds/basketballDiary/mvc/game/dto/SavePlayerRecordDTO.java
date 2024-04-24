@@ -1,4 +1,4 @@
-package com.threeNerds.basketballDiary.mvc.game.dto.saveQuarterRecords.request;
+package com.threeNerds.basketballDiary.mvc.game.dto;
 
 import lombok.Getter;
 
