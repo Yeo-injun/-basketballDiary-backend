@@ -18,15 +18,7 @@ public class GameAuth {
     private String gameRecordAuthCode;  /* 게임기록권한코드 */
     private String regDate;             /* 등록일자 */
 
-    public static GameAuth createCreatorAuth( Long gameSeq, Long userSeq ) {
-        return GameAuth.builder()
-                .gameSeq( gameSeq )
-                .userSeq( userSeq )
-                .gameRecordAuthCode( GameRecordAuthCode.CREATOR.getCode() )
-                .build();
-    }
-
-    public static GameAuth createRecordAuth( Long gameSeq, Long userSeq ) {
+    public static GameAuth ofRecorder( Long gameSeq, Long userSeq ) {
         return GameAuth.builder()
                 .gameSeq( gameSeq )
                 .userSeq( userSeq )
