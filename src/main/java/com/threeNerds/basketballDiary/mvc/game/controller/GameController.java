@@ -30,6 +30,7 @@ import com.threeNerds.basketballDiary.mvc.game.service.GameJoinManagerService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameRecordManagerService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameService;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.GameRecorderCandidatesQuery;
+import com.threeNerds.basketballDiary.mvc.game.service.dto.GameRecorderCommand;
 import com.threeNerds.basketballDiary.session.SessionUser;
 import com.threeNerds.basketballDiary.swagger.docs.game.ApiDocs035;
 import com.threeNerds.basketballDiary.swagger.docs.game.ApiDocs038;
@@ -346,7 +347,7 @@ public class GameController {
      * API055 경기기록원 조회
      */
     @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_RECORDER )
-    @GetMapping("/{gameSeq}/recorders") // TODO url 패턴 /game/{gameSeq}/recorders로 변경
+    @GetMapping("/{gameSeq}/recorders")
     public ResponseEntity<?> getGameRecorders(
             @PathVariable("gameSeq") Long gameSeq
     ) {
@@ -364,8 +365,12 @@ public class GameController {
             @PathVariable("gameSeq") Long gameSeq,
             @RequestBody @Valid SaveGameRecordersRequest request
     ) {
-        request.gameSeq( gameSeq );
-        gameAuthService.saveGameRecorders( request );
+        gameAuthService.saveGameRecorders(
+                GameRecorderCommand.builder()
+                    .gameSeq( gameSeq )
+                    .gameRecorders( request.getGameRecorders() )
+                    .build()
+        );
         return RESPONSE_OK;
     }
 
