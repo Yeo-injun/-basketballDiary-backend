@@ -29,6 +29,13 @@ public enum HomeAwayCode implements CodeType {
         return CodeTypeUtil.getCodeName( values(), code );
     }
 
+    /**--------------------------------------
+     * code값으로 enum객체 가져오기
+     *---------------------------------------*/
+    public static HomeAwayCode typeOf( String code ) {
+        return CodeTypeUtil.getEnumType( values(), code );
+    }
+
     /**---------------------------------------------
      * 코드 도메인에 속하는 값인지 확인하는 메소드
      * - 코드 도메인에 해당하지 않으면 Exception Throw
