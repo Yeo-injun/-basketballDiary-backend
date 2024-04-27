@@ -1,7 +1,8 @@
 package com.threeNerds.basketballDiary.mvc.team.domain;
 
+import com.threeNerds.basketballDiary.constant.code.type.HomeAwayCode;
+import com.threeNerds.basketballDiary.mvc.game.domain.GameJoinTeam;
 import com.threeNerds.basketballDiary.mvc.team.controller.request.RegisterTeamRequest;
-import com.threeNerds.basketballDiary.mvc.team.dto.TeamDTO;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -57,5 +58,23 @@ public class Team {
                     .regDate(       now )
                     .updateDate(    now )
                     .build();
+    }
+
+    public GameJoinTeam joinGameAsHome( Long gameSeq ) {
+        return GameJoinTeam.builder()
+                .gameSeq(       gameSeq )
+                .teamSeq(       this.teamSeq )
+                .teamName(      this.teamName )
+                .homeAwayCode(  HomeAwayCode.HOME_TEAM.getCode() )
+                .build();
+    }
+
+    public GameJoinTeam joinGameAsAway( Long gameSeq ) {
+        return GameJoinTeam.builder()
+                .gameSeq(       gameSeq )
+                .teamSeq(       this.teamSeq )
+                .teamName(      this.teamName )
+                .homeAwayCode(  HomeAwayCode.AWAY_TEAM.getCode() )
+                .build();
     }
 }
