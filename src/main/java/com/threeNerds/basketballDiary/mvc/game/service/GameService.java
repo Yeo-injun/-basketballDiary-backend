@@ -3,10 +3,10 @@ package com.threeNerds.basketballDiary.mvc.game.service;
 import com.threeNerds.basketballDiary.constant.code.type.GameRecordStateCode;
 import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import com.threeNerds.basketballDiary.exception.CustomException;
-import com.threeNerds.basketballDiary.mvc.game.controller.response.GetGameBasicInfoResponse;
 import com.threeNerds.basketballDiary.mvc.game.domain.Game;
 import com.threeNerds.basketballDiary.mvc.game.domain.GameAuth;
 import com.threeNerds.basketballDiary.mvc.game.domain.GameJoinTeam;
+import com.threeNerds.basketballDiary.mvc.game.dto.GameDetailDTO;
 import com.threeNerds.basketballDiary.mvc.game.repository.GameJoinTeamRepository;
 import com.threeNerds.basketballDiary.mvc.game.repository.GameRecordAuthRepository;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.GameCreationCommand;
@@ -90,11 +90,12 @@ public class GameService {
      * 게임기록 상세조회
      * @author 이성주
      */
-    public GetGameBasicInfoResponse getGameInfo( Long gameSeq ) {
+    public GameDetailDTO getGameDetailInfo( Long gameSeq ) {
         Game game = Optional
-                        .ofNullable( gameRepository.findGame( gameSeq ) )
-                        .orElseThrow( () -> new CustomException( DomainErrorType.NOT_FOUND_GAME ) );
-        return new GetGameBasicInfoResponse( game );
+                .ofNullable( gameRepository.findGame( gameSeq ) )
+                .orElseThrow( () -> new CustomException( DomainErrorType.NOT_FOUND_GAME ) );
+
+        return GameDetailDTO.of( game );
     }
 
     /**

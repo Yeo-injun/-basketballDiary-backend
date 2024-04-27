@@ -44,6 +44,7 @@ public class GameAuthService {
     public GetGameRecordersResponse getGameManagers( GetGameRecordersRequest request ) {
         // 1. 경기기록원은 서비스 회원이어야 한다.
         // 2. 경기기록원은 경기참가선수로 등록되어 있어야 한다.
+        // TODO 조회속성 재검토 요망
         Long gameSeq = request.getGameSeq();
         List<GameRecorderDTO> gameRecorders = gameRecorderRepo.findAllRecorders( gameSeq );
         return new GetGameRecordersResponse( gameRecorders );
