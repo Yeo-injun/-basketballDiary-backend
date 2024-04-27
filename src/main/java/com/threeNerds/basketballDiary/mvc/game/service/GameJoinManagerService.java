@@ -54,6 +54,7 @@ public class GameJoinManagerService {
 
 
     /** 게임참가팀 확정  */
+    // TODO 해당 교류전인데 자체전으로 생성되는 오류 잡기
     public void confirmJoinTeam(GameJoinTeamCreationDTO joinTeamCreationDTO) {
         final Long gameSeq          = joinTeamCreationDTO.getGameSeq();
         final String gameTypeCode   = joinTeamCreationDTO.getGameTypeCode();
@@ -94,15 +95,17 @@ public class GameJoinManagerService {
 
     private GameJoinTeam generateAwayTeamByGameType( Long gameSeq, String gameTypeCode, Long opponentTeamSeq ) {
         if (GameTypeCode.SELF_GAME.getCode().equals(gameTypeCode)) {
-            Team gameCreatorTeam = gameJoinManagerRepo.findGameCreatorTeam(gameSeq);
-            return GameJoinTeam.createAwayTeamForSelfGame(gameSeq, gameCreatorTeam);
+            Team gameCreatorTeam = gameJoinManagerRepo.findGameCreatorTeam( gameSeq );
+            GameJoinTeam awayTeam = gameCreatorTeam.joinGameAsAway( gameSeq );
+            awayTeam.inSelfGame();
+            return awayTeam;
         }
 
         if (GameTypeCode.MATCH_UP_GAME.getCode().equals(gameTypeCode)) {
             Team opponentTeam = Optional
                     .ofNullable(teamRepository.findByTeamSeq(opponentTeamSeq))
                     .orElseThrow(()-> new CustomException(DomainErrorType.TEAM_NOT_FOUND));
-            return GameJoinTeam.create(gameSeq, HomeAwayCode.AWAY_TEAM, opponentTeam);
+            return opponentTeam.joinGameAsAway( gameSeq );
         }
 
         return new GameJoinTeam(); // TODO SQL INSERT 오류나지 않도록 임시처리 ( null을 반환하거나 throw Error를 던지거나... )
@@ -144,7 +147,10 @@ public class GameJoinManagerService {
         List<GameJoinPlayerDTO> gameJoinPlayers   = reqBody.getGameJoinPlayers();
 
         /** 게임참가팀이 존재하는지 확인 */
-        GameJoinTeam joinTeamParam = GameJoinTeam.createInqCond( gameSeq, homeAwayCode );
+        GameJoinTeam joinTeamParam = GameJoinTeam.builder()
+                                        .gameSeq( gameSeq )
+                                        .homeAwayCode( homeAwayCode )
+                                        .build();
         GameJoinTeam gameJoinTeam = Optional
                                         .ofNullable( gameJoinTeamRepository.findGameJoinTeam( joinTeamParam ) )
                                         .orElseThrow( () -> new CustomException( DomainErrorType.NOT_FOUND_GAME_JOIN_TEAM ) );

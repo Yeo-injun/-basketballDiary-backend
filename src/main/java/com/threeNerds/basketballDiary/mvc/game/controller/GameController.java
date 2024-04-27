@@ -323,23 +323,18 @@ public class GameController {
      * - 생성한 게임 정보를 반환
      * 22.12.15(목) @ReauestBody부분 Request클래스로 대체
      */
-    @Auth // TODO 게임기록권한자
+    @Auth
     @PostMapping
-    public ResponseEntity<?> createGame (
+    public ResponseEntity<CreateGameResponse> createGame (
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,
-            @RequestBody CreateGameRequest reqBody
+            @RequestBody CreateGameRequest request
     ) {
-        GameCreationDTO gameCreationInfo = reqBody.getGameCreationInfo();
-
-        Long userSeq = sessionUser.getUserSeq();
-        gameCreationInfo.userSeq(userSeq);
-
-        GameCreationDTO result = gameService.createGame(gameCreationInfo);
+        Long newGameSeq = gameService.createGame( request.ofCommand( sessionUser.getUserSeq() ) );
 
         // TODO 경기 권한정보 생성 및 Session에 할당 처리 추가
         // gameAuthService.createGameCreatorAuth( userSeq, gameSeq );
         // sessionUser.setAuthGames( gameAuthService.get
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok( new CreateGameResponse( newGameSeq ) );
     }
 
 

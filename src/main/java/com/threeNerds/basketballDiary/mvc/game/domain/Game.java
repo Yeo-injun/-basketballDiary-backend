@@ -5,7 +5,7 @@ import com.threeNerds.basketballDiary.constant.code.type.GameTypeCode;
 import com.threeNerds.basketballDiary.constant.code.type.QuarterCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.SystemErrorType;
-import com.threeNerds.basketballDiary.mvc.game.dto.GameCreationDTO;
+import com.threeNerds.basketballDiary.mvc.game.service.dto.GameCreationCommand;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -44,22 +44,20 @@ public class Game {
      * - 게임기록상태코드 기본값 : 게임생성(01)
      * - 게임유형코드 기본값 : 자체전(01)
      **/
-    public static Game createDefault(GameCreationDTO gcDTO)
-    {
-        // TODO dto에 있는 값들 null체크하기
-        LocalDate now = LocalDate.now(ZoneId.of("Asia/Seoul"));
+    public static Game of( Long teamMemberSeq, GameCreationCommand command ) {
+        LocalDate NOW_DATE = LocalDate.now(ZoneId.of("Asia/Seoul"));
         return Game.builder()
-                .creatorTeamMemberSeq(gcDTO.getCreatorTeamMemberSeq())
-                .gameRecordStateCode(GameRecordStateCode.CREATION.getCode())
-                .gameTypeCode(GameTypeCode.SELF_GAME.getCode())
-                .gameYmd(gcDTO.getGameYmd())
-                .gameStartTime(gcDTO.getGameStartTime())
-                .gameEndTime(gcDTO.getGameEndTime())
-                .gamePlaceAddress(gcDTO.getGamePlaceAddress())
-                .gamePlaceName(gcDTO.getGamePlaceName())
-                .sidoCode(gcDTO.getSidoCode())
-                .sigunguCode(gcDTO.getSigunguCode())
-                .regDate(now)
+                .creatorTeamMemberSeq(  teamMemberSeq )
+                .gameRecordStateCode(   GameRecordStateCode.CREATION.getCode() )
+                .gameTypeCode(          GameTypeCode.SELF_GAME.getCode() )
+                .gameYmd(               command.getGameYmd() )
+                .gameStartTime(         command.getGameStartTime() )
+                .gameEndTime(           command.getGameEndTime() )
+                .gamePlaceAddress(      command.getGamePlaceAddress() )
+                .gamePlaceName(         command.getGamePlaceName() )
+                .sidoCode(              command.getSidoCode() )
+                .sigunguCode(           command.getSigunguCode() )
+                .regDate(               NOW_DATE )
                 .build();
     }
 
