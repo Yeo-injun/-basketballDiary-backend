@@ -4,17 +4,12 @@ import com.threeNerds.basketballDiary.constant.code.type.GameRecordStateCode;
 import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.mvc.game.domain.Game;
-import com.threeNerds.basketballDiary.mvc.game.domain.GameAuth;
-import com.threeNerds.basketballDiary.mvc.game.domain.GameJoinTeam;
+
 import com.threeNerds.basketballDiary.mvc.game.dto.GameDetailDTO;
-import com.threeNerds.basketballDiary.mvc.game.repository.GameJoinTeamRepository;
-import com.threeNerds.basketballDiary.mvc.game.repository.GameRecordAuthRepository;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.GameCreationCommand;
 import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember;
 import com.threeNerds.basketballDiary.mvc.game.repository.GameRepository;
 import com.threeNerds.basketballDiary.mvc.myTeam.repository.TeamMemberRepository;
-import com.threeNerds.basketballDiary.mvc.team.domain.Team;
-import com.threeNerds.basketballDiary.mvc.team.repository.TeamRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,20 +23,8 @@ import java.util.Optional;
 @Transactional
 public class GameService {
 
-    private final TeamRepository teamRepository;
-    private final TeamMemberRepository teamMemberRepository;
-
     private final GameRepository gameRepository;
-    private final GameJoinTeamRepository gameJoinTeamRepository;
-    private final GameRecordAuthRepository gameRecordAuthRepo;
-
-    public void deleteGame( Long gameSeq ) {
-        boolean isDeleteGame = gameRepository.deleteGame(gameSeq) > 0;
-        if ( !isDeleteGame ) {
-            throw new CustomException( DomainErrorType.NOT_FOUND_GAME_FOR_DELETE );
-        }
-        // TODO 게임참가팀, 게임참가선수, 쿼터기록, 게임기록권한 테이블도 다 삭제해줘야 함....
-    }
+    private final TeamMemberRepository teamMemberRepository;
 
     /** 22.10.31
      * 게임 생성
@@ -63,26 +46,15 @@ public class GameService {
         /** 게임 생성 */
         Game newGame = Game.of( tm.getTeamMemberSeq(), command );
         gameRepository.saveGame( newGame );
-        Long newGameSeq = newGame.getGameSeq();
+        return newGame.getGameSeq();
+    }
 
-        /** 게임참가팀 - HOME팀 생성 */
-        Team team = Optional
-                        .ofNullable( teamRepository.findByTeamSeq( teamSeq ) )
-                        .orElseThrow( ()-> new CustomException( DomainErrorType.TEAM_NOT_FOUND ) );
-        GameJoinTeam homeTeam = team.joinGameAsHome( newGameSeq );
-        homeTeam.inSelfGame();
-        gameJoinTeamRepository.saveGameJoinTeam( homeTeam );
-
-        // TODO 경기참가선수로 반영
-        Long gameJoinPlayerSeq = 0L; // TODO 임시로 반영
-
-        /** 경기기록 권한 부여 - 생성자로 */
-        // TODO 해당 메소드의 서비스위치 판단
-        GameAuth gameCreator = GameAuth.ofCreator( newGameSeq, userSeq, gameJoinPlayerSeq );
-        gameRecordAuthRepo.saveGameAuth( gameCreator );
-
-        /** 생성된 게임Seq 반환 */
-        return newGameSeq;
+    public void deleteGame( Long gameSeq ) {
+        boolean isDeleteGame = gameRepository.deleteGame(gameSeq) > 0;
+        if ( !isDeleteGame ) {
+            throw new CustomException( DomainErrorType.NOT_FOUND_GAME_FOR_DELETE );
+        }
+        // TODO 게임참가팀, 게임참가선수, 쿼터기록, 게임기록권한 테이블도 다 삭제해줘야 함....
     }
 
     /**

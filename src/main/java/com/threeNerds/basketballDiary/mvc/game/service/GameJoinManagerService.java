@@ -14,6 +14,9 @@ import com.threeNerds.basketballDiary.mvc.game.dto.getGameEntry.response.Quarter
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayers.response.GetGameJoinPlayersResponse;
 import com.threeNerds.basketballDiary.mvc.game.domain.Game;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayers.request.GetGameJoinPlayersRequest;
+import com.threeNerds.basketballDiary.mvc.game.service.dto.GameJoinCommand;
+import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember;
+import com.threeNerds.basketballDiary.mvc.myTeam.repository.TeamMemberRepository;
 import com.threeNerds.basketballDiary.mvc.team.domain.Team;
 import com.threeNerds.basketballDiary.mvc.user.domain.User;
 import com.threeNerds.basketballDiary.mvc.game.domain.GameJoinPlayer;
@@ -27,6 +30,7 @@ import com.threeNerds.basketballDiary.mvc.game.repository.QuarterPlayerRecordsRe
 import com.threeNerds.basketballDiary.mvc.game.repository.dto.GameJoinManagerRepository;
 import com.threeNerds.basketballDiary.mvc.team.repository.TeamRepository;
 import com.threeNerds.basketballDiary.mvc.user.repository.UserRepository;
+
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,7 +47,8 @@ import java.util.stream.Collectors;
 @Transactional
 public class GameJoinManagerService {
 
-    private final UserRepository userRepository;
+    private final UserRepository userRepo;
+    private final TeamMemberRepository teamMemberRepo;
     private final TeamRepository teamRepository;
     private final GameRepository gameRepository;
     private final GameJoinTeamRepository gameJoinTeamRepository;
@@ -52,6 +57,36 @@ public class GameJoinManagerService {
 
     private final GameJoinManagerRepository gameJoinManagerRepo;
 
+    /**
+     * 경기 생성시 최초 경기 참가정보 생성
+     * - 홈팀 및 경기생성자의 팀/선수정보 생성
+     */
+    public Long createGameJoin( GameJoinCommand command ) {
+        Long gameSeq = command.getGameSeq();
+        Long teamSeq = command.getTeamSeq();
+        Long userSeq = command.getUserSeq();
+
+        /** 경기참가팀 생성 - HOME팀 */
+        Team team = Optional
+                        .ofNullable( teamRepository.findByTeamSeq( teamSeq ) )
+                        .orElseThrow( ()-> new CustomException( DomainErrorType.TEAM_NOT_FOUND ) );
+        GameJoinTeam homeTeam = team.joinGameAsHome( gameSeq );
+        homeTeam.inSelfGame();
+        gameJoinTeamRepository.saveGameJoinTeam( homeTeam );
+
+        TeamMember tmParam = TeamMember.builder()
+                                .teamSeq( teamSeq )
+                                .userSeq( userSeq ).build();
+        /** 경기참가선수 생성 - 경기생성자 */
+        GameJoinPlayer creatorPlayer = GameJoinPlayer.ofCreator(
+                                            gameSeq,
+                                            homeTeam.getGameJoinTeamSeq(),
+                                            userRepo.findUser( userSeq ),
+                                            teamMemberRepo.findTeamMember( tmParam )
+                                        );
+        gameJoinPlayerRepository.save( creatorPlayer );
+        return creatorPlayer.getGameJoinPlayerSeq();
+    }
 
     /** 게임참가팀 확정  */
     // TODO 해당 교류전인데 자체전으로 생성되는 오류 잡기
@@ -199,7 +234,7 @@ public class GameJoinManagerService {
 
             /** 회원인 선수는 User테이블에서 데이터를 조회하여 insert */
             String backNumber = joinPlayerDTO.getBackNumber();
-            User user = userRepository.findUser(joinPlayerDTO.getUserSeq());
+            User user = userRepo.findUser(joinPlayerDTO.getUserSeq());
             GameJoinPlayer authJoinPlayer = GameJoinPlayer.createAuthPlayer( gameJoinTeam, playerTypeCode, backNumber, user);
             gameJoinPlayerRepository.save(authJoinPlayer);
         }

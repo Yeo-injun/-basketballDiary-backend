@@ -15,7 +15,7 @@ public class CreateGameRequest {
     private String sidoCode;            /* 시도코드 */
     private String sigunguCode;         /* 시군구코드 */
 
-    public GameCreationCommand ofCommand( Long userSeq ) {
+    public GameCreationCommand toCommand( Long userSeq ) {
         return GameCreationCommand.builder()
                 .userSeq(       userSeq )
                 .teamSeq(       this.teamSeq )
