@@ -110,6 +110,7 @@ public class GameController {
      * API035 게임참가 선수등록하기
      * 22.12.15(목) @ReauestBody부분 Request클래스로 대체
      */
+    // TODO Command 패턴 적용 / Service의 Request-Response클래스참조 걷어내기
 
     @ApiDocs035
     @Auth
@@ -158,6 +159,7 @@ public class GameController {
      * 참고자료 : https://brunch.co.kr/@kd4/158
      * 23.02.19(일) 인준 - API url 수정 (gameJoinTeamSeq를 화면에서 계속 가지고 있는 것이 번거롭기 때문)
      */
+    // TODO Query 패턴 적용 / Service의 Request-Response클래스참조 걷어내기
     @ApiDocs040
     @Auth
     @GetMapping("/{gameSeq}/quarters/{quarterCode}/entry")
@@ -177,7 +179,7 @@ public class GameController {
      * @auth    게임기록권한자인 경우
      * @param   gameSeq
      * @param   quarterCode
-     * @return
+     * // TODO Command 패턴 적용 / Service의 Request-Response클래스참조 걷어내기
      */
     @Auth
     @DeleteMapping("/{gameSeq}/quarters/{quarterCode}")
@@ -199,6 +201,7 @@ public class GameController {
      * @result 특정쿼터의 선수별 기록조회
      * @author 강창기
      */
+    // TODO Command 패턴 적용 / Service의 Request-Response클래스참조 걷어내기
     @Auth
     @GetMapping("/{gameSeq}/quarters/{quarterCode}/players")
     public ResponseEntity<?> getGameJoinPlayerRecordsByQuarter(
@@ -221,6 +224,8 @@ public class GameController {
     /**
      * API044 상대팀 목록 조회
      */
+    // TODO Command 패턴 적용 / Service의 Request-Response클래스참조 걷어내기
+    // 페이징 처리하기
     @ApiDocs044
     @Auth
     @GetMapping("/opponents")
@@ -247,12 +252,14 @@ public class GameController {
     public ResponseEntity<GetGameBasicInfoResponse> getGameBasicInfo(
             @PathVariable(name = "gameSeq") Long gameSeq
     ) {
-        return ResponseEntity.ok( gameService.getGameInfo( gameSeq ) );
+        GameDetailDTO gameDetail = gameService.getGameDetailInfo( gameSeq );
+        return ResponseEntity.ok( new GetGameBasicInfoResponse( gameDetail ) );
     }
 
     /**
      * API047 경기 참가팀 조회
      */
+    // TODO Command 패턴 적용 / Service의 Request-Response클래스참조 걷어내기
     @Auth
     @GetMapping("{gameSeq}/teams")
     public ResponseEntity<?> getGameJoinTeamsInfo(
@@ -278,6 +285,8 @@ public class GameController {
      * @result 특정쿼터의 선수별 기록조회
      * @author 강창기
      */
+    // TODO Command 패턴 적용 / Service의 Request-Response클래스참조 걷어내기
+
     @Auth
     @GetMapping("/{gameSeq}/quarters/{quarterCode}")
     public ResponseEntity<?> getGameQuarterRecords(
@@ -309,6 +318,8 @@ public class GameController {
     /**
      * API051 게임 삭제
      */
+    // TODO 데이터 삭제 로직 Service에 추가
+
     @Auth // TODO 게임기록권한자
     @DeleteMapping("/{gameSeq}")
     public ResponseEntity<?> deleteGame(
@@ -323,29 +334,26 @@ public class GameController {
      * - 생성한 게임 정보를 반환
      * 22.12.15(목) @ReauestBody부분 Request클래스로 대체
      */
-    @Auth // TODO 게임기록권한자
+    // TODO 세션에 권한정보 할당 추가
+    @Auth
     @PostMapping
-    public ResponseEntity<?> createGame (
+    public ResponseEntity<CreateGameResponse> createGame (
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,
-            @RequestBody CreateGameRequest reqBody
+            @RequestBody CreateGameRequest request
     ) {
-        GameCreationDTO gameCreationInfo = reqBody.getGameCreationInfo();
-
-        Long userSeq = sessionUser.getUserSeq();
-        gameCreationInfo.userSeq(userSeq);
-
-        GameCreationDTO result = gameService.createGame(gameCreationInfo);
+        Long newGameSeq = gameService.createGame( request.ofCommand( sessionUser.getUserSeq() ) );
 
         // TODO 경기 권한정보 생성 및 Session에 할당 처리 추가
         // gameAuthService.createGameCreatorAuth( userSeq, gameSeq );
         // sessionUser.setAuthGames( gameAuthService.get
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok( new CreateGameResponse( newGameSeq ) );
     }
 
 
     /**
      * API055 경기기록원 조회
      */
+    // TODO Query 패턴 적용 / Service의 Request-Response클래스참조 걷어내기
     @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_RECORDER )
     @GetMapping("/{gameSeq}/recorders")
     public ResponseEntity<?> getGameRecorders(
@@ -365,12 +373,7 @@ public class GameController {
             @PathVariable("gameSeq") Long gameSeq,
             @RequestBody @Valid SaveGameRecordersRequest request
     ) {
-        gameAuthService.saveGameRecorders(
-                GameRecorderCommand.builder()
-                    .gameSeq( gameSeq )
-                    .gameRecorders( request.getGameRecorders() )
-                    .build()
-        );
+        gameAuthService.saveGameRecorders( request.toCommand( gameSeq ) );
         return RESPONSE_OK;
     }
 
@@ -420,6 +423,7 @@ public class GameController {
     /**
      * API061 경기참가선수 조회
      */
+    // TODO Query 패턴 적용 / Service의 Request-Response클래스참조 걷어내기
     @Auth
     @GetMapping("/{gameSeq}/players")
     public ResponseEntity<?> getGameJoinPlayers(
@@ -440,6 +444,7 @@ public class GameController {
      * 22.12.15(목) @ReauestBody부분 Request클래스로 대체
      * 23.01.11(수) 누락된 로직 추가 - 게임기록상태코드 업데이트
      */
+    // TODO Command 패턴 적용
     @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_CREATOR )
     @PostMapping("/{gameSeq}/gameJoinTeams")
     public ResponseEntity<?> confirmGameJoinTeam (
@@ -461,6 +466,7 @@ public class GameController {
      * @author 강창기
      * 23.01.25(수) 여인준 - API Body 수정
      */
+    // TODO Query 패턴 적용 / Service의 Request-Response클래스참조 걷어내기
     @Auth
     @GetMapping("/{gameSeq}/quarters")
     public ResponseEntity<?> getGameAllQuartersRecords (
@@ -478,6 +484,7 @@ public class GameController {
      * @since 23.03.10(금)
      * @author 여인준
      */
+    // TODO Command 패턴 적용 / Service의 Request-Response클래스참조 걷어내기
     @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_RECORDER )
     @PostMapping("/{gameSeq}/quarters/{quarterCode}")
     public ResponseEntity< Void > createGameQuarterBasicInfo (
