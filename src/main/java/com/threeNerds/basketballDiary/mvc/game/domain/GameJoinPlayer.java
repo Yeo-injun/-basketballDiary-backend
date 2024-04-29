@@ -1,6 +1,8 @@
 package com.threeNerds.basketballDiary.mvc.game.domain;
 
+import com.threeNerds.basketballDiary.constant.code.type.HomeAwayCode;
 import com.threeNerds.basketballDiary.constant.code.type.PlayerTypeCode;
+import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember;
 import com.threeNerds.basketballDiary.mvc.user.domain.User;
 import com.threeNerds.basketballDiary.mvc.game.dto.GameJoinPlayerDTO;
 import lombok.AllArgsConstructor;
@@ -24,6 +26,23 @@ public class GameJoinPlayer {
     private String backNumber;          // 등번호
     private String positionCode;        // 포지션코드
     private String email;               // 이메일
+
+    public static GameJoinPlayer ofCreator(
+        Long gameSeq, Long gameJoinTeamSeq,
+        User user, TeamMember teamMember
+    ) {
+        return GameJoinPlayer.builder()
+                .gameSeq(gameSeq)
+                .homeAwayCode(HomeAwayCode.HOME_TEAM.getCode())
+                .gameJoinTeamSeq( gameJoinTeamSeq )
+                .playerTypeCode(PlayerTypeCode.TEAM_MEMBER.getCode())
+                .userSeq(user.getUserSeq())
+                .name(user.getName())
+                .backNumber( teamMember.getBackNumber() )
+                .positionCode( user.getPositionCode() )
+                .email( user.getEmail() )
+                .build();
+    }
 
     public static GameJoinPlayer createInqParam( Long gameSeq, String homeAwayCode ) {
         return GameJoinPlayer.builder()

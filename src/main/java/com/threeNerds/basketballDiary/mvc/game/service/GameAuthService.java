@@ -10,6 +10,7 @@ import com.threeNerds.basketballDiary.mvc.game.dto.getGameRecorders.response.Gam
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameRecorders.response.GetGameRecordersResponse;
 import com.threeNerds.basketballDiary.mvc.game.repository.*;
 import com.threeNerds.basketballDiary.mvc.game.repository.dto.GameRecorderRepository;
+import com.threeNerds.basketballDiary.mvc.game.service.dto.GameAuthCommand;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.GameAuthDTO;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.GameRecorderCandidatesQuery;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.GameRecorderCommand;
@@ -71,6 +72,11 @@ public class GameAuthService {
                 .forEach(   gameRecordAuthRepo::saveGameAuth );
     }
 
+    public void createCreatorAuth( GameAuthCommand command ) {
+        /** 경기기록 권한 부여 - 생성자로 */
+        GameAuth gameCreator = GameAuth.ofCreator( command.getGameSeq(), command.getUserSeq(), command.getGameJoinPlayerSeq() );
+        gameRecordAuthRepo.saveGameAuth( gameCreator );
+    }
 
     /**
      * 2024.02.24

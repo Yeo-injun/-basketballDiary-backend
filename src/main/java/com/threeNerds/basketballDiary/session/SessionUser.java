@@ -59,4 +59,8 @@ public class SessionUser {
         this.authTeams = convertAuthLevelToInt( authTeams );
     }
 
+    public void addGameCreatorAuth( Long gameSeq ) {
+        this.authGames.put( gameSeq, AuthLevel.GAME_CREATOR.getLevel() );
+    }
+
 }

@@ -29,8 +29,9 @@ import com.threeNerds.basketballDiary.mvc.game.service.GameAuthService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameJoinManagerService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameRecordManagerService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameService;
+import com.threeNerds.basketballDiary.mvc.game.service.dto.GameAuthCommand;
+import com.threeNerds.basketballDiary.mvc.game.service.dto.GameJoinCommand;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.GameRecorderCandidatesQuery;
-import com.threeNerds.basketballDiary.mvc.game.service.dto.GameRecorderCommand;
 import com.threeNerds.basketballDiary.session.SessionUser;
 import com.threeNerds.basketballDiary.swagger.docs.game.ApiDocs035;
 import com.threeNerds.basketballDiary.swagger.docs.game.ApiDocs038;
@@ -333,19 +334,33 @@ public class GameController {
      * API053 게임 생성
      * - 생성한 게임 정보를 반환
      * 22.12.15(목) @ReauestBody부분 Request클래스로 대체
+     * TODO 여러개의 분할된 서비스를 하나의 트랜잭션으로 묶을 수 있도록 ServiceTransactionBroker를 만들어서 관리하기
+     * TODO cf. 현재는 개별 서비스가 독립된 트랜잭션...
      */
-    // TODO 세션에 권한정보 할당 추가
     @Auth
     @PostMapping
     public ResponseEntity<CreateGameResponse> createGame (
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,
             @RequestBody CreateGameRequest request
     ) {
-        Long newGameSeq = gameService.createGame( request.ofCommand( sessionUser.getUserSeq() ) );
+        Long userSeq            = sessionUser.getUserSeq();
+        Long newGameSeq         = gameService.createGame( request.toCommand( userSeq ) );
+        Long gameJoinPlayerSeq  = gameJoinManagerService.createGameJoin(
+                                      GameJoinCommand.builder()
+                                          .gameSeq( newGameSeq )
+                                          .teamSeq( request.getTeamSeq() )
+                                          .userSeq( userSeq )
+                                          .build()
+                                  );
+        gameAuthService.createCreatorAuth(
+            GameAuthCommand.builder()
+                .gameSeq( newGameSeq )
+                .userSeq( userSeq )
+                .gameJoinPlayerSeq( gameJoinPlayerSeq )
+                .build()
+        );
 
-        // TODO 경기 권한정보 생성 및 Session에 할당 처리 추가
-        // gameAuthService.createGameCreatorAuth( userSeq, gameSeq );
-        // sessionUser.setAuthGames( gameAuthService.get
+        sessionUser.addGameCreatorAuth( newGameSeq );
         return ResponseEntity.ok( new CreateGameResponse( newGameSeq ) );
     }
 
