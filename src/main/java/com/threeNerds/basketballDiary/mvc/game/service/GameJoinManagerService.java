@@ -15,6 +15,7 @@ import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayers.response.G
 import com.threeNerds.basketballDiary.mvc.game.domain.Game;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayers.request.GetGameJoinPlayersRequest;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.GameJoinCommand;
+import com.threeNerds.basketballDiary.mvc.game.service.dto.GameJoinPlayerCommand;
 import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember;
 import com.threeNerds.basketballDiary.mvc.myTeam.repository.TeamMemberRepository;
 import com.threeNerds.basketballDiary.mvc.team.domain.Team;
@@ -175,11 +176,11 @@ public class GameJoinManagerService {
     /**
      * 게임참가선수 등록
      **/
-    public void registerGameJoinPlayers( RegisterGameJoinPlayersRequest reqBody ) {
+    public void registerGameJoinPlayers( GameJoinPlayerCommand command ) {
 
-        Long gameSeq                              = reqBody.getGameSeq();
-        String homeAwayCode                       = reqBody.getHomeAwayCode();
-        List<GameJoinPlayerDTO> gameJoinPlayers   = reqBody.getGameJoinPlayers();
+        Long gameSeq                              = command.getGameSeq();
+        String homeAwayCode                       = command.getHomeAwayCode();
+        List<GameJoinPlayerDTO> gameJoinPlayers   = command.getGameJoinPlayers();
 
         /** 게임참가팀이 존재하는지 확인 */
         GameJoinTeam joinTeamParam = GameJoinTeam.builder()

@@ -108,25 +108,18 @@ public class GameController {
 
 
     /**
-     * API035 게임참가 선수등록하기
+     * API035 경기참가선수 등록하기
      * 22.12.15(목) @ReauestBody부분 Request클래스로 대체
      */
-    // TODO Command 패턴 적용 / Service의 Request-Response클래스참조 걷어내기
-
     @ApiDocs035
     @Auth
     @PostMapping("/{gameSeq}/homeAwayCode/{homeAwayCode}/players")
     public ResponseEntity<URI> registerGameJoinPlayers(
             @PathVariable(name = "gameSeq") Long gameSeq,
             @PathVariable(name = "homeAwayCode") String homeAwayCode,
-            @RequestBody @Valid RegisterGameJoinPlayersRequest reqBody
+            @RequestBody @Valid RegisterGameJoinPlayersRequest request
     ) {
-         reqBody = new RegisterGameJoinPlayersRequest(
-                                                        gameSeq,
-                                                        homeAwayCode,
-                                                        reqBody.getGameJoinPlayers()
-                                                      );
-        gameJoinManagerService.registerGameJoinPlayers(reqBody);
+        gameJoinManagerService.registerGameJoinPlayers( request.toCommand( gameSeq, homeAwayCode ) );
         /**--------------------------------------------------------------------------------------
          * API061 게임참가선수 조회 URL을 리턴.
          * cf. created 상태코드는 return시 Location Header속성에 생성된 자원을 조회할 수 있는 URL를 표기함.
