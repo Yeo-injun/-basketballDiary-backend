@@ -15,6 +15,7 @@ import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayers.response.G
 import com.threeNerds.basketballDiary.mvc.game.domain.Game;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayers.request.GetGameJoinPlayersRequest;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.GameJoinCommand;
+import com.threeNerds.basketballDiary.mvc.game.service.dto.GameJoinPlayerCommand;
 import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember;
 import com.threeNerds.basketballDiary.mvc.myTeam.repository.TeamMemberRepository;
 import com.threeNerds.basketballDiary.mvc.team.domain.Team;
@@ -175,11 +176,11 @@ public class GameJoinManagerService {
     /**
      * 게임참가선수 등록
      **/
-    public void registerGameJoinPlayers( RegisterGameJoinPlayersRequest reqBody ) {
+    public void registerGameJoinPlayers( GameJoinPlayerCommand command ) {
 
-        Long gameSeq                              = reqBody.getGameSeq();
-        String homeAwayCode                       = reqBody.getHomeAwayCode();
-        List<GameJoinPlayerDTO> gameJoinPlayers   = reqBody.getGameJoinPlayers();
+        Long gameSeq                              = command.getGameSeq();
+        String homeAwayCode                       = command.getHomeAwayCode();
+        List<GameJoinPlayerDTO> gameJoinPlayers   = command.getGameJoinPlayers();
 
         /** 게임참가팀이 존재하는지 확인 */
         GameJoinTeam joinTeamParam = GameJoinTeam.builder()
@@ -191,7 +192,8 @@ public class GameJoinManagerService {
                                         .orElseThrow( () -> new CustomException( DomainErrorType.NOT_FOUND_GAME_JOIN_TEAM ) );
         /** 게임기록상태 확인 */
         Game game = gameRepository.findGame( gameSeq );
-        if ( !game.isPossibleRecordUpdate() ) {
+        if ( !game.canUpdateRecord() ) {
+
             throw new CustomException( DomainErrorType.CANT_ADD_GAME_JOIN_PLAYER );
         }
 
@@ -203,7 +205,10 @@ public class GameJoinManagerService {
         }
 
         /** 게임참가선수 데이터 존재여부 확인 - 기존 데이터 존재시 삭제 */
-        GameJoinPlayer joinPlayerParam = GameJoinPlayer.createInqParam( gameSeq, homeAwayCode );
+        GameJoinPlayer joinPlayerParam = GameJoinPlayer.builder()
+                                            .gameSeq( gameSeq )
+                                            .homeAwayCode( homeAwayCode )
+                                            .build();
         List<GameJoinPlayer> registeredJoinPlayers = gameJoinPlayerRepository.findAllPlayersOnOneSideTeam( joinPlayerParam );
         boolean hasJoinPlayers = !registeredJoinPlayers.isEmpty();
         if (hasJoinPlayers) {

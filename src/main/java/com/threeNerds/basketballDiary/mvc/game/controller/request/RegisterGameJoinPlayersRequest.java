@@ -1,6 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.game.controller.request;
 
 import com.threeNerds.basketballDiary.mvc.game.dto.GameJoinPlayerDTO;
+import com.threeNerds.basketballDiary.mvc.game.service.dto.GameJoinPlayerCommand;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -12,14 +13,14 @@ import java.util.List;
 @NoArgsConstructor
 public class RegisterGameJoinPlayersRequest {
 
-    private Long gameSeq;
-    private String homeAwayCode;
     @NotNull
     private List<GameJoinPlayerDTO> gameJoinPlayers;
 
-    public RegisterGameJoinPlayersRequest( Long gameSeq, String homeAwayCode, List<GameJoinPlayerDTO> gameJoinPlayers ) {
-        this.gameSeq = gameSeq;
-        this.homeAwayCode = homeAwayCode;
-        this.gameJoinPlayers = gameJoinPlayers;
+    public GameJoinPlayerCommand toCommand( Long gameSeq, String homeAwayCode ) {
+        return GameJoinPlayerCommand.builder()
+                .gameSeq(           gameSeq )
+                .homeAwayCode(      homeAwayCode )
+                .gameJoinPlayers(   this.getGameJoinPlayers() )
+                .build();
     }
 }
