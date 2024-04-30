@@ -192,7 +192,8 @@ public class GameJoinManagerService {
                                         .orElseThrow( () -> new CustomException( DomainErrorType.NOT_FOUND_GAME_JOIN_TEAM ) );
         /** 게임기록상태 확인 */
         Game game = gameRepository.findGame( gameSeq );
-        if ( !game.isPossibleRecordUpdate() ) {
+        if ( !game.canUpdateRecord() ) {
+
             throw new CustomException( DomainErrorType.CANT_ADD_GAME_JOIN_PLAYER );
         }
 
@@ -204,7 +205,10 @@ public class GameJoinManagerService {
         }
 
         /** 게임참가선수 데이터 존재여부 확인 - 기존 데이터 존재시 삭제 */
-        GameJoinPlayer joinPlayerParam = GameJoinPlayer.createInqParam( gameSeq, homeAwayCode );
+        GameJoinPlayer joinPlayerParam = GameJoinPlayer.builder()
+                                            .gameSeq( gameSeq )
+                                            .homeAwayCode( homeAwayCode )
+                                            .build();
         List<GameJoinPlayer> registeredJoinPlayers = gameJoinPlayerRepository.findAllPlayersOnOneSideTeam( joinPlayerParam );
         boolean hasJoinPlayers = !registeredJoinPlayers.isEmpty();
         if (hasJoinPlayers) {

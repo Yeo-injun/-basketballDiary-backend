@@ -44,12 +44,6 @@ public class GameJoinPlayer {
                 .build();
     }
 
-    public static GameJoinPlayer createInqParam( Long gameSeq, String homeAwayCode ) {
-        return GameJoinPlayer.builder()
-                .gameSeq( gameSeq )
-                .homeAwayCode( homeAwayCode )
-                .build();
-    }
     public static GameJoinPlayer createUnauthPlayer(
             GameJoinTeam gameJoinTeam,
             GameJoinPlayerDTO joinPlayerDTO
