@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class GameQuarterCreationCommand {
+public class GameQuarterCommand {
     private Long gameSeq;               /* 경기Seq */
     private String quarterCode;         /* 쿼터 코드 */
 }

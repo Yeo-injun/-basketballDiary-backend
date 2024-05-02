@@ -9,8 +9,6 @@ import com.threeNerds.basketballDiary.http.ResponseJsonBody;
 import com.threeNerds.basketballDiary.mvc.game.domain.*;
 
 import com.threeNerds.basketballDiary.mvc.game.dto.*;
-import com.threeNerds.basketballDiary.mvc.game.dto.createGameQuarterBasicInfo.request.CreateGameQuarterBasicInfoRequest;
-import com.threeNerds.basketballDiary.mvc.game.dto.deleteGameQuarter.request.DeleteGameQuarterRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameAllQuartersRecords.GetGameAllQuartersRecordsResponse;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameAllQuartersRecords.QuarterAllTeamsRecordsDTO;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameAllQuartersRecords.QuarterTeamRecordsDTO;
@@ -25,7 +23,7 @@ import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.respons
 import com.threeNerds.basketballDiary.mvc.game.dto.SavePlayerRecordDTO;
 import com.threeNerds.basketballDiary.mvc.game.repository.*;
 import com.threeNerds.basketballDiary.mvc.game.repository.dto.GameRecordManagerRepository;
-import com.threeNerds.basketballDiary.mvc.game.service.dto.GameQuarterCreationCommand;
+import com.threeNerds.basketballDiary.mvc.game.service.dto.GameQuarterCommand;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.QuarterRecordCommand;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.SearchMyTeamGamesRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.SearchMyTeamGamesResponse;
@@ -330,9 +328,9 @@ public class GameRecordManagerService {
      * 쿼터 삭제
      * @author 이성주
      */
-    public void deleteGameQuarter(DeleteGameQuarterRequest request) {
-        Long gameSeq        = request.getGameSeq();
-        String quarterCode  = request.getQuarterCode();
+    public void deleteGameQuarter( GameQuarterCommand command ) {
+        Long gameSeq        = command.getGameSeq();
+        String quarterCode  = command.getQuarterCode();
         quarterTeamRecordsRepository.deleteGameQuarter( QuarterTeamRecords.builder()
                                                             .gameSeq(gameSeq)
                                                             .quarterCode(quarterCode)
@@ -365,7 +363,7 @@ public class GameRecordManagerService {
      *      - quarterCode로 팀의 쿼터 기록 테이블을 insert친다
      * @author 여인준
      */
-    public void createGameQuarterBasicInfo( GameQuarterCreationCommand command ) {
+    public void createGameQuarterBasicInfo( GameQuarterCommand command ) {
 
         Long gameSeq        = command.getGameSeq();
         String quarterCode  = command.getQuarterCode();

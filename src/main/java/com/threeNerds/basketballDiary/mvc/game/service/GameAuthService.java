@@ -37,6 +37,8 @@ public class GameAuthService {
      * 경기 관리자 조회 ( 경기 생성자, 경기 기록원 등 )
      * @author 이성주
      */
+    // TODO 경기권한 테이블을 참조하지 않고 경기참가선수 테이블에 경기권한 컬럼을 추가하여 경기기록원을 조회
+    // TODO 현재 양쪽팀 모두에 경기참가선수 반영이 가능하여 기록권한을 부여하면 기록원이 2명으로 조회되는 오류 존재. 해당 오류를 해결하기 위해 테이블의 컬럼속성으로 기록원 관리하도록 변경 예정
     public List<GameRecorderDTO> getGameRecorders( GameRecorderQuery query ) {
         return gameRecorderRepo.findAllRecorders( query.getGameSeq() );
     }
@@ -48,9 +50,11 @@ public class GameAuthService {
      * - 화면에서 전달받은 기록원 목록 정보 insert
      * @author 여인준
      */
+    // TODO 경기권한 테이블을 참조하지 않고 경기참가선수 테이블에 경기권한 컬럼을 추가하여 경기기록원 임명하도록 수정
     public void saveGameRecorders( GameRecorderCommand command ) {
         Long gameSeq                        = command.getGameSeq();
         List<GameRecorderDTO> gameRecorders = command.getGameRecorders();
+
 
         /** 기존 경기기록원 권한을 전체 제거 - 경기생성자는 삭제 대상에서 제외 */
         gameRecordAuthRepo.deleteRecordAuth( gameSeq );
