@@ -22,8 +22,6 @@ import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayers.request.Ge
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayers.response.GetGameJoinPlayersResponse;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.request.GetGameQuarterRecordsRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.response.GetGameQuarterRecordsResponse;
-import com.threeNerds.basketballDiary.mvc.game.dto.getGameRecorders.request.GetGameRecordersRequest;
-import com.threeNerds.basketballDiary.mvc.game.dto.getGameRecorders.response.GetGameRecordersResponse;
 import com.threeNerds.basketballDiary.mvc.game.dto.saveGameRecorder.request.SaveGameRecordersRequest;
 import com.threeNerds.basketballDiary.mvc.game.service.GameAuthService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameJoinManagerService;
@@ -32,6 +30,7 @@ import com.threeNerds.basketballDiary.mvc.game.service.GameService;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.GameAuthCommand;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.GameJoinCommand;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.GameRecorderCandidatesQuery;
+import com.threeNerds.basketballDiary.mvc.game.service.dto.GameRecorderQuery;
 import com.threeNerds.basketballDiary.session.SessionUser;
 import com.threeNerds.basketballDiary.swagger.docs.game.ApiDocs035;
 import com.threeNerds.basketballDiary.swagger.docs.game.ApiDocs038;
@@ -361,15 +360,17 @@ public class GameController {
     /**
      * API055 경기기록원 조회
      */
-    // TODO Query 패턴 적용 / Service의 Request-Response클래스참조 걷어내기
     @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_RECORDER )
     @GetMapping("/{gameSeq}/recorders")
     public ResponseEntity<?> getGameRecorders(
             @PathVariable("gameSeq") Long gameSeq
     ) {
-        GetGameRecordersRequest reqBody = new GetGameRecordersRequest( gameSeq );
-        GetGameRecordersResponse resBody = gameAuthService.getGameManagers( reqBody );
-        return ResponseEntity.ok( resBody );
+        List<GameRecorderDTO> gameRecorders = gameAuthService.getGameRecorders(
+                                                GameRecorderQuery.builder()
+                                                    .gameSeq( gameSeq )
+                                                    .build()
+                                            );
+        return ResponseEntity.ok( new GetGameRecordersResponse( gameRecorders ) );
     }
 
     /**

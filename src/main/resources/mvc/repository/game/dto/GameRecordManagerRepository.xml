@@ -154,7 +154,7 @@
     </select>
 
 
-    <select id="findAllGameRecorders" resultType="com.threeNerds.basketballDiary.mvc.game.dto.getGameRecorders.response.GameRecorderDTO">
+    <select id="findAllGameRecorders" resultType="com.threeNerds.basketballDiary.mvc.game.dto.GameRecorderDTO">
         /* GameRecordManagerRepository.findAllGameRecorders */
         SELECT GRA.GAME_RECORD_AUTH_SEQ
              , TM.TEAM_SEQ

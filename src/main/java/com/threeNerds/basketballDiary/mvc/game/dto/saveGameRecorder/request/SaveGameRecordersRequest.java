@@ -1,6 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.game.dto.saveGameRecorder.request;
 
-import com.threeNerds.basketballDiary.mvc.game.dto.getGameRecorders.response.GameRecorderDTO;
+import com.threeNerds.basketballDiary.mvc.game.dto.GameRecorderDTO;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.GameRecorderCommand;
 import lombok.Getter;
 
