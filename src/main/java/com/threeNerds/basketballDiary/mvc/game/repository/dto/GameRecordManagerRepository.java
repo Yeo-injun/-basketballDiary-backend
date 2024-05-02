@@ -32,6 +32,4 @@ public interface GameRecordManagerRepository {
     /** 게임참가팀의 팀원조회 (이미 입력권한을 부여받은 선수는 제외한다) */
     List<PlayerInfoDTO> findTeamMembersByGameSeq(SearchGameDTO searchGameDTO);
 
-    /** 경기기록 권한자 목록 조회 */
-    List<GameRecorderDTO> findAllGameRecorders( SearchGameDTO  searchGameDTO );
 }
