@@ -27,10 +27,7 @@ import com.threeNerds.basketballDiary.mvc.game.service.GameAuthService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameJoinManagerService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameRecordManagerService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameService;
-import com.threeNerds.basketballDiary.mvc.game.service.dto.GameAuthCommand;
-import com.threeNerds.basketballDiary.mvc.game.service.dto.GameJoinCommand;
-import com.threeNerds.basketballDiary.mvc.game.service.dto.GameRecorderCandidatesQuery;
-import com.threeNerds.basketballDiary.mvc.game.service.dto.GameRecorderQuery;
+import com.threeNerds.basketballDiary.mvc.game.service.dto.*;
 import com.threeNerds.basketballDiary.session.SessionUser;
 import com.threeNerds.basketballDiary.swagger.docs.game.ApiDocs035;
 import com.threeNerds.basketballDiary.swagger.docs.game.ApiDocs038;
@@ -476,6 +473,7 @@ public class GameController {
      * 23.01.25(수) 여인준 - API Body 수정
      */
     // TODO Query 패턴 적용 / Service의 Request-Response클래스참조 걷어내기
+    // TODO 난이도 상
     @Auth
     @GetMapping("/{gameSeq}/quarters")
     public ResponseEntity<?> getGameAllQuartersRecords (
@@ -493,16 +491,18 @@ public class GameController {
      * @since 23.03.10(금)
      * @author 여인준
      */
-    // TODO Command 패턴 적용 / Service의 Request-Response클래스참조 걷어내기
     @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_RECORDER )
     @PostMapping("/{gameSeq}/quarters/{quarterCode}")
     public ResponseEntity< Void > createGameQuarterBasicInfo (
             @PathVariable(name = "gameSeq") Long gameSeq,
             @PathVariable(name = "quarterCode") String quarterCode
     ) {
-        gameRecordManagerService.createGameQuarterBasicInfo( new CreateGameQuarterBasicInfoRequest()
-                .gameSeq( gameSeq )
-                .quarterCode( quarterCode ) );
+        gameRecordManagerService.createGameQuarterBasicInfo(
+            GameQuarterCreationCommand.builder()
+                .gameSeq(       gameSeq )
+                .quarterCode(   quarterCode )
+                .build()
+        );
         return ResponseEntity.ok().build();
     }
 }
