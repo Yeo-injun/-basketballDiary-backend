@@ -49,9 +49,9 @@
           FROM GAME_RECORD_AUTH  GRA
          INNER JOIN GAME_JOIN_PLAYER GJP
             ON GRA.GAME_SEQ = GJP.GAME_SEQ
-           AND GRA.TEAM_MEMBER_SEQ = GJP.USER_SEQ /* TEAM_MEMBER_SEQ를 USER_SEQ로 변경예정 */
+           AND GRA.USER_SEQ = GJP.USER_SEQ
          INNER JOIN USER  U
-            ON GRA.TEAM_MEMBER_SEQ = U.USER_SEQ /* TEAM_MEMBER_SEQ를 USER_SEQ로 변경예정 */
+            ON GRA.USER_SEQ = U.USER_SEQ
          WHERE 1=1
            AND GRA.GAME_SEQ = #{gameSeq}
     </select>

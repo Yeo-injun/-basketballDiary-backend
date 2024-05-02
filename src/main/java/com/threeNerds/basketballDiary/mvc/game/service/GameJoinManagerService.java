@@ -193,7 +193,6 @@ public class GameJoinManagerService {
         /** 게임기록상태 확인 */
         Game game = gameRepository.findGame( gameSeq );
         if ( !game.canUpdateRecord() ) {
-
             throw new CustomException( DomainErrorType.CANT_ADD_GAME_JOIN_PLAYER );
         }
 
@@ -204,7 +203,7 @@ public class GameJoinManagerService {
             throw new CustomException( DomainErrorType.INVALID_REGISTER_PLAYERS_FOR_ALREADY_HAS_RECORDS );
         }
 
-        /** 게임참가선수 데이터 존재여부 확인 - 기존 데이터 존재시 삭제 */
+        /** 게임참가선수 데이터 존재여부 확인 - 기존 데이터 존재시 삭제 TODO 경기생성자는 삭제에서 제외시켜야 함 / 상대팀에 등록되어 있는지 확인 */
         GameJoinPlayer joinPlayerParam = GameJoinPlayer.builder()
                                             .gameSeq( gameSeq )
                                             .homeAwayCode( homeAwayCode )

@@ -5,15 +5,10 @@ import com.threeNerds.basketballDiary.auth.constant.AuthType;
 import com.threeNerds.basketballDiary.constant.code.type.GameRecordAuthCode;
 import com.threeNerds.basketballDiary.mvc.game.domain.*;
 import com.threeNerds.basketballDiary.mvc.game.dto.GameRecorderCandidateDTO;
-import com.threeNerds.basketballDiary.mvc.game.dto.getGameRecorders.request.GetGameRecordersRequest;
-import com.threeNerds.basketballDiary.mvc.game.dto.getGameRecorders.response.GameRecorderDTO;
-import com.threeNerds.basketballDiary.mvc.game.dto.getGameRecorders.response.GetGameRecordersResponse;
+import com.threeNerds.basketballDiary.mvc.game.dto.GameRecorderDTO;
 import com.threeNerds.basketballDiary.mvc.game.repository.*;
 import com.threeNerds.basketballDiary.mvc.game.repository.dto.GameRecorderRepository;
-import com.threeNerds.basketballDiary.mvc.game.service.dto.GameAuthCommand;
-import com.threeNerds.basketballDiary.mvc.game.service.dto.GameAuthDTO;
-import com.threeNerds.basketballDiary.mvc.game.service.dto.GameRecorderCandidatesQuery;
-import com.threeNerds.basketballDiary.mvc.game.service.dto.GameRecorderCommand;
+import com.threeNerds.basketballDiary.mvc.game.service.dto.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -42,13 +37,8 @@ public class GameAuthService {
      * 경기 관리자 조회 ( 경기 생성자, 경기 기록원 등 )
      * @author 이성주
      */
-    public GetGameRecordersResponse getGameManagers( GetGameRecordersRequest request ) {
-        // 1. 경기기록원은 서비스 회원이어야 한다.
-        // 2. 경기기록원은 경기참가선수로 등록되어 있어야 한다.
-        // TODO 조회속성 재검토 요망
-        Long gameSeq = request.getGameSeq();
-        List<GameRecorderDTO> gameRecorders = gameRecorderRepo.findAllRecorders( gameSeq );
-        return new GetGameRecordersResponse( gameRecorders );
+    public List<GameRecorderDTO> getGameRecorders( GameRecorderQuery query ) {
+        return gameRecorderRepo.findAllRecorders( query.getGameSeq() );
     }
 
     /**
