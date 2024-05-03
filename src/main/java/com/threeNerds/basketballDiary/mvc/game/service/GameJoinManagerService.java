@@ -7,13 +7,11 @@ import com.threeNerds.basketballDiary.constant.code.type.PlayerTypeCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import com.threeNerds.basketballDiary.exception.error.SystemErrorType;
-import com.threeNerds.basketballDiary.mvc.game.controller.request.RegisterGameJoinPlayersRequest;
-import com.threeNerds.basketballDiary.mvc.game.dto.getGameEntry.response.GetGameEntryResponse;
-import com.threeNerds.basketballDiary.mvc.game.dto.getGameEntry.request.GetGameEntryRequest;
-import com.threeNerds.basketballDiary.mvc.game.dto.getGameEntry.response.QuarterTeamEntryDTO;
+import com.threeNerds.basketballDiary.mvc.game.dto.QuarterTeamEntryDTO;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayers.response.GetGameJoinPlayersResponse;
 import com.threeNerds.basketballDiary.mvc.game.domain.Game;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayers.request.GetGameJoinPlayersRequest;
+import com.threeNerds.basketballDiary.mvc.game.service.dto.GameEntryQuery;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.GameJoinCommand;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.GameJoinPlayerCommand;
 import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember;
@@ -390,40 +388,37 @@ public class GameJoinManagerService {
 
     /**
      * 게임엔트리 조회하기
-     * @param request
+     * @param query
      * @return GetGameEntryResponse
      */
-    public GetGameEntryResponse getGameEntry(GetGameEntryRequest request) {
-        String HOME_TEAM_CODE = HomeAwayCode.HOME_TEAM.getCode();
-        String AWAY_TEAM_CODE = HomeAwayCode.AWAY_TEAM.getCode();
-
+    public Map< HomeAwayCode, QuarterTeamEntryDTO > getGameEntry( GameEntryQuery query ) {
         /** 한 게임의 모든 게임참가팀 조회 */
-        List<GameJoinTeam> gameJoinTeams = gameJoinTeamRepository.findAllGameJoinTeam( request.getGameSeq() );
+        List<GameJoinTeam> gameJoinTeams = gameJoinTeamRepository.findAllGameJoinTeam( query.getGameSeq() );
 
-        String quarterCode  = request.getQuarterCode();
-        String homeAwayCode = request.getHomeAwayCode();
+        String quarterCode  = query.getQuarterCode();
+        String homeAwayCode = query.getHomeAwayCode();
 
         /** 홈어웨이코드 존재 여부확인 - 코드값이 존재하면 팀의 엔트리만 조회 */
-        boolean isOnlyOneTeamInquery = StringUtils.hasText(homeAwayCode);
-        if ( isOnlyOneTeamInquery ) {
-            if ( HOME_TEAM_CODE.equals( homeAwayCode ) ) {
-                return new GetGameEntryResponse()
-                                .homeTeamEntry( getQuarterTeamEntryInfo( quarterCode, HOME_TEAM_CODE, gameJoinTeams ) );
-            }
-            if ( AWAY_TEAM_CODE.equals( homeAwayCode ) ) {
-                 return new GetGameEntryResponse()
-                               .awayTeamEntry( getQuarterTeamEntryInfo( quarterCode, AWAY_TEAM_CODE, gameJoinTeams ) );
-            }
-            throw new CustomException( SystemErrorType.INVALID_CODE_DOMAIN_FOR_HOME_AWAY_CODE );
+        Map< HomeAwayCode, QuarterTeamEntryDTO > result = new EnumMap<>( HomeAwayCode.class );
+
+        boolean isAllTeamEntryInq = !StringUtils.hasText( homeAwayCode );
+        if ( isAllTeamEntryInq ) {
+            /** 홈/어웨이팀 전체 엔트리 조회 */
+            result.put( HomeAwayCode.HOME_TEAM, getQuarterTeamEntryInfo( quarterCode, HomeAwayCode.HOME_TEAM.getCode(), gameJoinTeams ) );
+            result.put( HomeAwayCode.AWAY_TEAM, getQuarterTeamEntryInfo( quarterCode, HomeAwayCode.AWAY_TEAM.getCode(), gameJoinTeams ) );
+            return result;
         }
 
-        /** 홈/어웨이팀 전체 엔트리 조회 */
-        QuarterTeamEntryDTO homeTeamEntryInfo = getQuarterTeamEntryInfo( quarterCode, HOME_TEAM_CODE, gameJoinTeams );
-        QuarterTeamEntryDTO awayTeamEntryInfo = getQuarterTeamEntryInfo( quarterCode, AWAY_TEAM_CODE, gameJoinTeams );
-
-        return new GetGameEntryResponse()
-                .homeTeamEntry( homeTeamEntryInfo )
-                .awayTeamEntry( awayTeamEntryInfo );
+        switch ( HomeAwayCode.typeOf( homeAwayCode ) ) {
+            case HOME_TEAM:
+                result.put( HomeAwayCode.HOME_TEAM, getQuarterTeamEntryInfo( quarterCode, homeAwayCode, gameJoinTeams ) );
+                return result;
+            case AWAY_TEAM:
+                result.put( HomeAwayCode.AWAY_TEAM, getQuarterTeamEntryInfo( quarterCode, homeAwayCode, gameJoinTeams ) );
+                return result;
+            default:
+                throw new CustomException( SystemErrorType.INVALID_CODE_DOMAIN_FOR_HOME_AWAY_CODE );
+        }
     }
 
     private QuarterTeamEntryDTO getQuarterTeamEntryInfo(

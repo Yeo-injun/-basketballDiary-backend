@@ -13,8 +13,8 @@ import com.threeNerds.basketballDiary.mvc.game.controller.request.SaveQuarterEnt
 import com.threeNerds.basketballDiary.mvc.game.controller.response.*;
 import com.threeNerds.basketballDiary.mvc.game.dto.*;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameAllQuartersRecords.GetGameAllQuartersRecordsResponse;
-import com.threeNerds.basketballDiary.mvc.game.dto.getGameEntry.request.GetGameEntryRequest;
-import com.threeNerds.basketballDiary.mvc.game.dto.getGameEntry.response.GetGameEntryResponse;
+import com.threeNerds.basketballDiary.mvc.game.controller.response.GetGameEntryResponse;
+import com.threeNerds.basketballDiary.mvc.game.dto.QuarterTeamEntryDTO;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayerRecordsByQuarter.request.GetGameJoinPlayerRecordsByQuarterRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayers.request.GetGameJoinPlayersRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayers.response.GetGameJoinPlayersResponse;
@@ -147,7 +147,6 @@ public class GameController {
      * 참고자료 : https://brunch.co.kr/@kd4/158
      * 23.02.19(일) 인준 - API url 수정 (gameJoinTeamSeq를 화면에서 계속 가지고 있는 것이 번거롭기 때문)
      */
-    // TODO Query 패턴 적용 / Service의 Request-Response클래스참조 걷어내기
     @ApiDocs040
     @Auth
     @GetMapping("/{gameSeq}/quarters/{quarterCode}/entry")
@@ -156,9 +155,18 @@ public class GameController {
             @PathVariable("quarterCode") String quarterCode,
             @RequestParam(name = "homeAwayCode", required = false) String homeAwayCode
     ) {
-        GetGameEntryRequest request = new GetGameEntryRequest( gameSeq, quarterCode, homeAwayCode );
-        GetGameEntryResponse resBody = gameJoinManagerService.getGameEntry(request);
-        return ResponseEntity.ok(resBody);
+        Map< HomeAwayCode, QuarterTeamEntryDTO > gameEntrys = gameJoinManagerService.getGameEntry(
+                                                                  GameEntryQuery.builder()
+                                                                      .gameSeq( gameSeq )
+                                                                      .quarterCode( quarterCode )
+                                                                      .homeAwayCode( homeAwayCode )
+                                                                      .build()
+                                                              );
+        GetGameEntryResponse response = new GetGameEntryResponse(
+            gameEntrys.get( HomeAwayCode.HOME_TEAM ),
+            gameEntrys.get( HomeAwayCode.AWAY_TEAM )
+        );
+        return ResponseEntity.ok( response );
     }
 
 
