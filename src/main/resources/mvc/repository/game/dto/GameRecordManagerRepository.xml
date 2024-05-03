@@ -56,7 +56,7 @@
            AND g.GAME_SEQ = #{gameSeq}
     </select>
 
-    <select id="findAllPlayerRecordsByQuarter" resultType="com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayerRecordsByQuarter.response.PlayerQuarterRecordDTO">
+    <select id="findAllPlayerRecordsByQuarter" resultType="com.threeNerds.basketballDiary.mvc.game.dto.PlayerQuarterRecordDTO">
         /** GameRecordManagerRepository.findAllPlayerRecordsByQuarter */
         SELECT QPR.QUARTER_PLAYER_RECORDS_SEQ
              , GJT.GAME_SEQ

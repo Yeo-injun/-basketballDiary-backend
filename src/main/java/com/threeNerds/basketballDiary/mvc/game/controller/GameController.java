@@ -3,7 +3,6 @@ package com.threeNerds.basketballDiary.mvc.game.controller;
 import com.threeNerds.basketballDiary.auth.constant.AuthLevel;
 import com.threeNerds.basketballDiary.auth.constant.AuthType;
 import com.threeNerds.basketballDiary.constant.code.type.HomeAwayCode;
-import com.threeNerds.basketballDiary.http.ResponseJsonBody;
 import com.threeNerds.basketballDiary.auth.Auth;
 import com.threeNerds.basketballDiary.mvc.game.controller.request.SaveQuarterRecordRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.confirmGameJoinTeam.request.ConfirmGameJoinTeamRequest;
@@ -15,7 +14,8 @@ import com.threeNerds.basketballDiary.mvc.game.dto.*;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameAllQuartersRecords.GetGameAllQuartersRecordsResponse;
 import com.threeNerds.basketballDiary.mvc.game.controller.response.GetGameEntryResponse;
 import com.threeNerds.basketballDiary.mvc.game.dto.QuarterTeamEntryDTO;
-import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayerRecordsByQuarter.request.GetGameJoinPlayerRecordsByQuarterRequest;
+import com.threeNerds.basketballDiary.mvc.game.controller.response.GetGameJoinPlayerQuarterRecordsResponse;
+import com.threeNerds.basketballDiary.mvc.game.dto.PlayerQuarterRecordDTO;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayers.request.GetGameJoinPlayersRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayers.response.GetGameJoinPlayersResponse;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.request.GetGameQuarterRecordsRequest;
@@ -108,7 +108,7 @@ public class GameController {
     @ApiDocs035
     @Auth
     @PostMapping("/{gameSeq}/homeAwayCode/{homeAwayCode}/players")
-    public ResponseEntity<URI> registerGameJoinPlayers(
+    public ResponseEntity< URI > registerGameJoinPlayers(
             @PathVariable(name = "gameSeq") Long gameSeq,
             @PathVariable(name = "homeAwayCode") String homeAwayCode,
             @RequestBody @Valid RegisterGameJoinPlayersRequest request
@@ -132,7 +132,7 @@ public class GameController {
     @ApiDocs038
     @Auth
     @PutMapping("/{gameSeq}/quarters/{quarterCode}")
-    public ResponseEntity<Void> saveQuarterRecord(
+    public ResponseEntity< Void > saveQuarterRecord(
             @PathVariable(name = "gameSeq") Long gameSeq,
             @PathVariable(name = "quarterCode") String quarterCode,
             @RequestBody @Valid SaveQuarterRecordRequest request
@@ -198,7 +198,7 @@ public class GameController {
      **/
     @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_CREATOR )
     @DeleteMapping("/{gameSeq}/quarters/{quarterCode}")
-    public ResponseEntity<Void> deleteGameQuarter(
+    public ResponseEntity< Void > deleteGameQuarter(
             @PathVariable("gameSeq") Long gameSeq,
             @PathVariable("quarterCode") String quarterCode
     ) {
@@ -218,24 +218,26 @@ public class GameController {
      * @result 특정쿼터의 선수별 기록조회
      * @author 강창기
      */
-    // TODO Command 패턴 적용 / Service의 Request-Response클래스참조 걷어내기
     @Auth
     @GetMapping("/{gameSeq}/quarters/{quarterCode}/players")
-    public ResponseEntity<?> getGameJoinPlayerRecordsByQuarter(
+    public ResponseEntity<?> getGameJoinPlayerQuarterRecords(
         @PathVariable(name = "gameSeq") Long gameSeq,
         @PathVariable(name = "quarterCode") String quarterCode,
         @RequestParam(name = "homeAwayCode", required = false) String homeAwayCode
     ) {
         // TODO 설계구조상 pagination data를 받지 않음.
-
-        GetGameJoinPlayerRecordsByQuarterRequest request = new GetGameJoinPlayerRecordsByQuarterRequest()
-                                                        .gameSeq(gameSeq)
-                                                        .quarterCode(quarterCode)
-                                                        .homeAwayCode(homeAwayCode);
-
-        ResponseJsonBody response = gameRecordManagerService.getGameJoinPlayerRecordsByQuarter( request );
-
-        return ResponseEntity.ok( response );
+        Map< HomeAwayCode, List<PlayerQuarterRecordDTO> > playerQuarterRecords = gameRecordManagerService.getGameJoinPlayerQuarterRecords(
+            GameJoinPlayerRecordQuery.builder()
+                .gameSeq(       gameSeq )
+                .quarterCode(   quarterCode )
+                .homeAwayCode(  homeAwayCode )
+                .build()
+        );
+        return ResponseEntity.ok( new GetGameJoinPlayerQuarterRecordsResponse(
+                gameSeq, quarterCode,
+                playerQuarterRecords.get( HomeAwayCode.HOME_TEAM ),
+                playerQuarterRecords.get( HomeAwayCode.AWAY_TEAM )
+        ) );
     }
 
     /**

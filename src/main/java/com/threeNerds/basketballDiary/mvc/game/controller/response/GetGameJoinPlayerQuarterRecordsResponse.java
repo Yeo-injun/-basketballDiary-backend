@@ -1,13 +1,13 @@
-package com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayerRecordsByQuarter.response;
+package com.threeNerds.basketballDiary.mvc.game.controller.response;
 
 import com.threeNerds.basketballDiary.constant.code.type.QuarterCode;
-import com.threeNerds.basketballDiary.http.ResponseJsonBody;
+import com.threeNerds.basketballDiary.mvc.game.dto.PlayerQuarterRecordDTO;
 import lombok.Getter;
 
 import java.util.List;
 
 @Getter
-public class GetGameJoinPlayerRecordsByQuarterResponse extends ResponseJsonBody {
+public class GetGameJoinPlayerQuarterRecordsResponse {
 
     private Long gameSeq;
     private String quarterCode;
@@ -16,9 +16,8 @@ public class GetGameJoinPlayerRecordsByQuarterResponse extends ResponseJsonBody 
     private List<PlayerQuarterRecordDTO> homeTeamPlayers;
     private List<PlayerQuarterRecordDTO> awayTeamPlayers;
 
-    public GetGameJoinPlayerRecordsByQuarterResponse (
-            Long gameSeq,
-            String quarterCode,
+    public GetGameJoinPlayerQuarterRecordsResponse (
+            Long gameSeq, String quarterCode,
             List<PlayerQuarterRecordDTO> homeTeamPlayers,
             List<PlayerQuarterRecordDTO> awayTeamPlayers
     ) {

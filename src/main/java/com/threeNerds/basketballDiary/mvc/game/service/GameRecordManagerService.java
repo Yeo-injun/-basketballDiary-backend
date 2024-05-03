@@ -5,7 +5,6 @@ import com.threeNerds.basketballDiary.constant.code.type.HomeAwayCode;
 import com.threeNerds.basketballDiary.constant.code.type.QuarterCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
-import com.threeNerds.basketballDiary.http.ResponseJsonBody;
 import com.threeNerds.basketballDiary.mvc.game.domain.*;
 
 import com.threeNerds.basketballDiary.mvc.game.dto.*;
@@ -14,15 +13,14 @@ import com.threeNerds.basketballDiary.mvc.game.dto.getGameAllQuartersRecords.Qua
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameAllQuartersRecords.QuarterTeamRecordsDTO;
 
 
-import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayerRecordsByQuarter.request.GetGameJoinPlayerRecordsByQuarterRequest;
-import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayerRecordsByQuarter.response.GetGameJoinPlayerRecordsByQuarterResponse;
-import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayerRecordsByQuarter.response.PlayerQuarterRecordDTO;
+import com.threeNerds.basketballDiary.mvc.game.dto.PlayerQuarterRecordDTO;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.request.GetGameQuarterRecordsRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.response.GetGameQuarterRecordsResponse;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.response.TeamQuarterRecordsDTO;
 import com.threeNerds.basketballDiary.mvc.game.dto.SavePlayerRecordDTO;
 import com.threeNerds.basketballDiary.mvc.game.repository.*;
 import com.threeNerds.basketballDiary.mvc.game.repository.dto.GameRecordManagerRepository;
+import com.threeNerds.basketballDiary.mvc.game.service.dto.GameJoinPlayerRecordQuery;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.GameQuarterCommand;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.QuarterRecordCommand;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.SearchMyTeamGamesRequest;
@@ -55,7 +53,6 @@ public class GameRecordManagerService {
     private final QuarterPlayerRecordsRepository quarterPlayerRecordsRepository;
 
     private final GameRecordManagerRepository gameRecordManagerRepository;
-    private final GameRecordAuthRepository gameRecordAuthRepo;
 
     private final TeamMemberRepository teamMemberRepo;
 
@@ -71,10 +68,10 @@ public class GameRecordManagerService {
      * @author 강창기
      * @update 여인준 23.04.08 : 파라미터 및 조회 데이터 변경
      */
-    public ResponseJsonBody getGameJoinPlayerRecordsByQuarter( GetGameJoinPlayerRecordsByQuarterRequest reqBody ) {
-        Long gameSeq = reqBody.getGameSeq();
-        String homeAwayCode = reqBody.getHomeAwayCode();
-        String quarterCode = reqBody.getQuarterCode();
+    public Map< HomeAwayCode, List<PlayerQuarterRecordDTO> > getGameJoinPlayerQuarterRecords( GameJoinPlayerRecordQuery query ) {
+        Long gameSeq        = query.getGameSeq();
+        String homeAwayCode = query.getHomeAwayCode();
+        String quarterCode  = query.getQuarterCode();
 
         /** gameSeq에 해당하는 게임내역이 존재하는지 확인. */
         boolean isExistGame = !ObjectUtils.isEmpty( gameRepository.findGame( gameSeq ) );
@@ -82,19 +79,17 @@ public class GameRecordManagerService {
             throw new CustomException(DomainErrorType.NOT_FOUND_GAME);
         }
 
-        SearchGameDTO searchPlayerRecordsParam = new SearchGameDTO()
+        SearchGameDTO searchParams = new SearchGameDTO()
                 .gameSeq( gameSeq )
                 .homeAwayCode( homeAwayCode )
                 .quarterCode( quarterCode );
 
-        List<PlayerQuarterRecordDTO> players = gameRecordManagerRepository.findAllPlayerRecordsByQuarter( searchPlayerRecordsParam );
+        List<PlayerQuarterRecordDTO> players = gameRecordManagerRepository.findAllPlayerRecordsByQuarter( searchParams );
 
-        return new GetGameJoinPlayerRecordsByQuarterResponse(
-                gameSeq,
-                quarterCode,
-                filterPlayersByHomeAwayCode( players, HomeAwayCode.HOME_TEAM ),
-                filterPlayersByHomeAwayCode( players, HomeAwayCode.AWAY_TEAM )
-        );
+        Map< HomeAwayCode, List<PlayerQuarterRecordDTO> > result = new EnumMap<>( HomeAwayCode.class );
+        result.put( HomeAwayCode.HOME_TEAM, filterPlayersByHomeAwayCode( players, HomeAwayCode.HOME_TEAM ) );
+        result.put( HomeAwayCode.AWAY_TEAM, filterPlayersByHomeAwayCode( players, HomeAwayCode.AWAY_TEAM ) );
+        return result;
     }
 
     private List<PlayerQuarterRecordDTO> filterPlayersByHomeAwayCode( List<PlayerQuarterRecordDTO> targetPlayers, HomeAwayCode filterCode )
