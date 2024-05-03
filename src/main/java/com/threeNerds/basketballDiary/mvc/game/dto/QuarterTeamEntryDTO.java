@@ -1,7 +1,6 @@
-package com.threeNerds.basketballDiary.mvc.game.dto.getGameEntry.response;
+package com.threeNerds.basketballDiary.mvc.game.dto;
 
 import com.threeNerds.basketballDiary.constant.code.type.HomeAwayCode;
-import com.threeNerds.basketballDiary.mvc.game.dto.QuarterPlayerRecordDTO;
 import lombok.Getter;
 
 import java.util.List;
