@@ -41,11 +41,15 @@ public enum DomainErrorType implements ErrorMessageType {
     CANT_ADD_GAME_JOIN_PLAYER( FORBIDDEN, "경기기록이 확정된 상태입니다. 경기참가선수를 변경할 수 없습니다."),
     ALREADY_GAME_CONFIRMED( FORBIDDEN, "해당 경기는 이미 확정된 상태입니다."),
     CANT_UPDATE_GAME_CONFIRMATION( FORBIDDEN, "경기기록을 확정 상태로 바꿀 수 없습니다. 경기기록 상태를 확인해주시기 바랍니다."),
+    CANT_REMOVE_PLAYER_FOR_RECORDER( FORBIDDEN, "경기기록 권한을 가지고 있는 선수는 삭제할 수 없습니다."),
     INSUFFICIENT_GAME_JOIN_TEAMS( FORBIDDEN, "게임참가팀의 수가 부족합니다."),
     INVALID_REGISTER_PLAYERS_FOR_ALREADY_HAS_RECORDS(FORBIDDEN, "이미 쿼터기록이 입력되고 있어 선수 추가가 불가합니다."),
 
     /** 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재 */
     DUPLICATE_BACK_NUMBER(CONFLICT, "중복된 등번호가 존재합니다."),
+    DUPLICATE_EMAIL( CONFLICT, "이메일은 중복될 수 없습니다." ),
+    ALREADY_EXIST_JOIN_PLAYER( CONFLICT, "이미 존재하는 참가선수입니다." ),
+
     NOT_AVAILABLE_USER_ID(CONFLICT, "동일한 회원ID가 존재합니다."),
     ALREADY_EXIST_TEAM_MEMBER(CONFLICT, "이미 팀원으로 존재합니다"),
     ALREADY_EXIST_JOIN_REQUEST(CONFLICT, "아직 처리 대기중인 가입요청이 존재합니다."),

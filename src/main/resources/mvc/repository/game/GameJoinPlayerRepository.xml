@@ -89,4 +89,12 @@
         </choose>
     </delete>
 
+    <delete id="deletePlayer" parameterType="com.threeNerds.basketballDiary.mvc.game.domain.GameJoinPlayer">
+        /* GameJoinPlayerRepository.deletePlayer */
+        DELETE
+          FROM GAME_JOIN_PLAYER
+         WHERE 1=1
+           AND GAME_JOIN_PLAYER_SEQ = ${gameJoinPlayerSeq}
+    </delete>
+
 </mapper>
