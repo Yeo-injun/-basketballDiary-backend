@@ -1,13 +1,14 @@
 package com.threeNerds.basketballDiary.mvc.game.dto;
 
+import com.threeNerds.basketballDiary.pagination.Pagination;
 import lombok.Getter;
 
 @Getter
-public class
-SearchPlayersDTO {
+public class SearchPlayersDTO {
 
     private Long gameSeq;
     private String homeAwayCode;
+    private Pagination pagination;
 
     public SearchPlayersDTO gameSeq(Long gameSeq) {
         this.gameSeq = gameSeq;
@@ -19,4 +20,8 @@ SearchPlayersDTO {
         return this;
     }
 
+    public SearchPlayersDTO pagination( Pagination pagination ) {
+        this.pagination = pagination;
+        return this;
+    }
 }

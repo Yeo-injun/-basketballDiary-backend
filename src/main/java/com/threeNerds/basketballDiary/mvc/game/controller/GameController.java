@@ -4,11 +4,8 @@ import com.threeNerds.basketballDiary.auth.constant.AuthLevel;
 import com.threeNerds.basketballDiary.auth.constant.AuthType;
 import com.threeNerds.basketballDiary.constant.code.type.HomeAwayCode;
 import com.threeNerds.basketballDiary.auth.Auth;
-import com.threeNerds.basketballDiary.mvc.game.controller.request.SaveQuarterRecordRequest;
+import com.threeNerds.basketballDiary.mvc.game.controller.request.*;
 import com.threeNerds.basketballDiary.mvc.game.dto.confirmGameJoinTeam.request.ConfirmGameJoinTeamRequest;
-import com.threeNerds.basketballDiary.mvc.game.controller.request.CreateGameRequest;
-import com.threeNerds.basketballDiary.mvc.game.controller.request.RegisterGameJoinPlayersRequest;
-import com.threeNerds.basketballDiary.mvc.game.controller.request.SaveQuarterEntryInfoRequest;
 import com.threeNerds.basketballDiary.mvc.game.controller.response.*;
 import com.threeNerds.basketballDiary.mvc.game.dto.*;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameAllQuartersRecords.GetGameAllQuartersRecordsResponse;
@@ -16,8 +13,8 @@ import com.threeNerds.basketballDiary.mvc.game.controller.response.GetGameEntryR
 import com.threeNerds.basketballDiary.mvc.game.dto.QuarterTeamEntryDTO;
 import com.threeNerds.basketballDiary.mvc.game.controller.response.GetGameJoinPlayerQuarterRecordsResponse;
 import com.threeNerds.basketballDiary.mvc.game.dto.PlayerQuarterRecordDTO;
-import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayers.request.GetGameJoinPlayersRequest;
-import com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayers.response.GetGameJoinPlayersResponse;
+
+import com.threeNerds.basketballDiary.mvc.game.controller.response.GetGameJoinPlayersResponse;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.request.GetGameQuarterRecordsRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.response.GetGameQuarterRecordsResponse;
 import com.threeNerds.basketballDiary.mvc.game.dto.saveGameRecorder.request.SaveGameRecordersRequest;
@@ -122,6 +119,48 @@ public class GameController {
         return ResponseEntity.created( createdURL ).build();
     }
 
+
+    /**
+     * API067 경기참가선수 추가 ( 단건 )
+     * @since 23.05.06(월)
+     * @author 여인준
+     */
+    @Auth
+    @PostMapping("/{gameSeq}/homeAwayCode/{homeAwayCode}/player")
+    public ResponseEntity< URI > addGameJoinPlayer(
+            @PathVariable(name = "gameSeq") Long gameSeq,
+            @PathVariable(name = "homeAwayCode") String homeAwayCode,
+            @RequestBody @Valid AddGameJoinPlayerRequest request
+    ) {
+        gameJoinManagerService.addGameJoinPlayer( request.toCommand( gameSeq, homeAwayCode ) );
+        /**--------------------------------------------------------------------------------------
+         * API061 경기참가선수 조회 URL을 리턴.
+         * cf. created 상태코드는 return시 Location Header속성에 생성된 자원을 조회할 수 있는 URL를 표기함.
+         **--------------------------------------------------------------------------------------*/
+        URI createdURL = URI.create( "/api/games/" + gameSeq + "/players?homeAwayCode=" + homeAwayCode );
+        return ResponseEntity.created( createdURL ).build();
+    }
+
+    /**
+     * API068 경기참가선수 삭제 ( 단건 )
+     * @since 23.05.06(월)
+     * @author 여인준
+     */
+    @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_RECORDER )
+    @DeleteMapping("/{gameSeq}/homeAwayCode/{homeAwayCode}/players/{gameJoinPlayerSeq}")
+    public ResponseEntity< Void > deleteGameJoinPlayers(
+            @PathVariable(name = "gameSeq" ) Long gameSeq,
+            @PathVariable(name = "homeAwayCode" ) String homeAwayCode,
+            @PathVariable(name = "gameJoinPlayerSeq" ) Long gameJoinPlayerSeq
+    ) {
+        gameJoinManagerService.deleteGameJoinPlayer( GameJoinPlayerCommand.builder()
+                .gameSeq( gameSeq )
+                .homeAwayCode( homeAwayCode )
+                .gameJoinPlayerSeq( gameJoinPlayerSeq )
+                .build()
+        );
+        return ResponseEntity.ok().build();
+    }
 
     /**
      * API038 경기 쿼터기록 수정하기
@@ -457,22 +496,50 @@ public class GameController {
     }
 
     /**
-     * API061 경기참가선수 조회
+     * API061 경기 전체참가선수 조회
      */
-    // TODO Query 패턴 적용 / Service의 Request-Response클래스참조 걷어내기
     @Auth
     @GetMapping("/{gameSeq}/players")
-    public ResponseEntity<?> getGameJoinPlayers(
+    public ResponseEntity<?> getAllGameJoinPlayers(
             @PathVariable(name = "gameSeq") Long gameSeq,
-            @RequestParam(name = "homeAwayCode", required = false) String homeAwayCode
+            @RequestParam(name = "homeAwayCode" , required = false) String homeAwayCode,
+            @RequestParam(name = "pageNo"       , defaultValue = "0") Integer pageNo
     ) {
-        GetGameJoinPlayersRequest request = new GetGameJoinPlayersRequest()
-                                            .gameSeq(gameSeq)
-                                            .homeAwayCode(homeAwayCode);
-
-        GetGameJoinPlayersResponse resBody = gameJoinManagerService.getGameJoinPlayers(request);
+        GetAllGameJoinPlayersResponse resBody = gameJoinManagerService.getAllGameJoinPlayers(
+            GameJoinPlayerQuery.builder()
+                    .gameSeq(       gameSeq )
+                    .homeAwayCode(  homeAwayCode )
+                    .pageNo(        pageNo )
+                    .build()
+        );
 
         return ResponseEntity.ok(resBody);
+    }
+
+    /**
+     * API066 경기참가선수 조회 ( 팀별 조회 )
+     */
+    @Auth
+    @GetMapping("/{gameSeq}/homeAwayCode/{homeAwayCode}/players")
+    public ResponseEntity< GetGameJoinPlayersResponse > getGameJoinPlayers(
+            @PathVariable(name = "gameSeq")         Long gameSeq,
+            @PathVariable(name = "homeAwayCode")    String homeAwayCode,
+            @RequestParam(name = "pageNo" , defaultValue = "0") Integer pageNo
+    ) {
+        GameJoinPlayerResult result = gameJoinManagerService.getGameJoinPlayers(
+                GameJoinPlayerQuery.builder()
+                        .gameSeq(       gameSeq )
+                        .homeAwayCode(  homeAwayCode )
+                        .pageNo(        pageNo )
+                        .build()
+        );
+        return ResponseEntity.ok( new GetGameJoinPlayersResponse(
+                gameSeq,
+                homeAwayCode,
+                result.getTeamSeq(),
+                result.getPagination(),
+                result.getPlayers()
+        ) );
     }
 
     /**
