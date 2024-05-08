@@ -21,5 +21,6 @@ public interface GameJoinManagerRepository {
     List<PlayerInfoDTO> findAllGameJoinPlayers( SearchPlayersDTO searchDTO );
 
     List<PlayerInfoDTO> findPaginationGameJoinPlayers( SearchPlayersDTO searchDTO );
+    List<PlayerInfoDTO> findGameJoinPlayers( SearchPlayersDTO searchDTO );
     int findTotalCountGameJoinPlayers( SearchPlayersDTO searchDTO );
 }

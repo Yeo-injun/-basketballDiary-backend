@@ -169,7 +169,7 @@
        </if>
     </select>
 
-    <sql id="findGameJoinPlayers">
+    <sql id="sqlFindGameJoinPlayers">
         SELECT GJP.GAME_SEQ
              , GJP.GAME_JOIN_PLAYER_SEQ
              , GJP.PLAYER_TYPE_CODE
@@ -194,16 +194,21 @@
         /* GameJoinManagerRepository.findPaginationGameJoinPlayers */
         SELECT *
           FROM (
-        <include refid="findGameJoinPlayers" />
+        <include refid="sqlFindGameJoinPlayers" />
           ) AS MAIN
          LIMIT #{pagination.rowCount} OFFSET #{pagination.offset}
+    </select>
+
+    <select id="findGameJoinPlayers" resultType="com.threeNerds.basketballDiary.mvc.game.dto.PlayerInfoDTO" >
+        /* GameJoinManagerRepository.findGameJoinPlayers */
+        <include refid="sqlFindGameJoinPlayers" />
     </select>
 
     <select id="findTotalCountGameJoinPlayers" resultType="int" >
         /* GameJoinManagerRepository.findTotalCountGameJoinPlayers */
         SELECT COUNT( 1 )
           FROM (
-        <include refid="findGameJoinPlayers" />
+        <include refid="sqlFindGameJoinPlayers" />
           ) AS MAIN
     </select>
 
