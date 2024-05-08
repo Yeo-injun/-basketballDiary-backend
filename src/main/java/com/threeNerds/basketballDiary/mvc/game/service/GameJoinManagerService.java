@@ -355,14 +355,27 @@ public class GameJoinManagerService {
                 .homeAwayCode(  homeAwayCode )
                 .build()
         );
+        Long teamSeq = gameJoinTeam.getTeamSeq();
         Pagination pagination = Pagination.of( pageNo, 5 );
+        boolean isNoPagination = 0 == pageNo;
+        if ( isNoPagination ) {
+            SearchPlayersDTO searchCond = new SearchPlayersDTO()
+                    .gameSeq(       gameSeq )
+                    .homeAwayCode(  homeAwayCode );
+            return GameJoinPlayerResult.builder()
+                    .gameSeq(       gameSeq )
+                    .teamSeq(       teamSeq )
+                    .pagination(    pagination.getPages( gameJoinManagerRepo.findTotalCountGameJoinPlayers( searchCond ) ) )
+                    .players(       gameJoinManagerRepo.findGameJoinPlayers( searchCond ) )
+                    .build();
+        }
         SearchPlayersDTO searchCond = new SearchPlayersDTO()
                 .gameSeq(       gameSeq )
                 .homeAwayCode(  homeAwayCode )
                 .pagination(    pagination );
         return GameJoinPlayerResult.builder()
                 .gameSeq(       gameSeq )
-                .teamSeq(       gameJoinTeam.getTeamSeq() )
+                .teamSeq(       teamSeq )
                 .pagination(    pagination.getPages( gameJoinManagerRepo.findTotalCountGameJoinPlayers( searchCond ) ) )
                 .players(       gameJoinManagerRepo.findPaginationGameJoinPlayers( searchCond ) )
                 .build();
