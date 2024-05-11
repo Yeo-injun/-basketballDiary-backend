@@ -164,9 +164,6 @@
           ON GJT.GAME_JOIN_TEAM_SEQ = GJP.GAME_JOIN_TEAM_SEQ
        WHERE 1=1
          AND GJT.GAME_SEQ = #{gameSeq}
-       <if test='homeAwayCode != null and homeAwayCode != ""'>
-         AND GJT.HOME_AWAY_CODE = #{homeAwayCode}
-       </if>
     </select>
 
     <sql id="sqlFindGameJoinPlayers">

@@ -505,15 +505,23 @@ public class GameController {
             @RequestParam(name = "homeAwayCode" , required = false) String homeAwayCode,
             @RequestParam(name = "pageNo"       , defaultValue = "0") Integer pageNo
     ) {
-        GetAllGameJoinPlayersResponse resBody = gameJoinManagerService.getAllGameJoinPlayers(
+        GameJoinPlayerResult homeResult = gameJoinManagerService.getGameJoinPlayers(
             GameJoinPlayerQuery.builder()
                     .gameSeq(       gameSeq )
-                    .homeAwayCode(  homeAwayCode )
+                    .homeAwayCode(  HomeAwayCode.HOME_TEAM.getCode() )
                     .pageNo(        pageNo )
                     .build()
         );
-
-        return ResponseEntity.ok(resBody);
+        GameJoinPlayerResult awayResult = gameJoinManagerService.getGameJoinPlayers(
+            GameJoinPlayerQuery.builder()
+                    .gameSeq(       gameSeq )
+                    .homeAwayCode(  HomeAwayCode.AWAY_TEAM.getCode() )
+                    .pageNo(        pageNo )
+                    .build()
+        );
+        return ResponseEntity.ok(
+            new GetAllGameJoinPlayersResponse( gameSeq, homeResult.getPlayers(), awayResult.getPlayers() )
+        );
     }
 
     /**
@@ -527,11 +535,11 @@ public class GameController {
             @RequestParam(name = "pageNo" , defaultValue = "0") Integer pageNo
     ) {
         GameJoinPlayerResult result = gameJoinManagerService.getGameJoinPlayers(
-                GameJoinPlayerQuery.builder()
-                        .gameSeq(       gameSeq )
-                        .homeAwayCode(  homeAwayCode )
-                        .pageNo(        pageNo )
-                        .build()
+            GameJoinPlayerQuery.builder()
+                    .gameSeq(       gameSeq )
+                    .homeAwayCode(  homeAwayCode )
+                    .pageNo(        pageNo )
+                    .build()
         );
         return ResponseEntity.ok( new GetGameJoinPlayersResponse(
                 gameSeq,
