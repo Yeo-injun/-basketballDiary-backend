@@ -11,12 +11,12 @@ import java.util.List;
 @Getter
 public class GetAllGameJoinPlayersResponse {
     private Long gameSeq;
-    private GameJoinTeamDTO homeTeam;
-    private GameJoinTeamDTO awayTeam;
+    private List<PlayerInfoDTO> homePlayers;
+    private List<PlayerInfoDTO> awayPlayers;
 
-    public GetAllGameJoinPlayersResponse ( Long gameSeq, GameJoinTeamDTO homeTeam, GameJoinTeamDTO awayTeam ) {
+    public GetAllGameJoinPlayersResponse ( Long gameSeq, List<PlayerInfoDTO> homePlayers, List<PlayerInfoDTO> awayPlayers ) {
         this.gameSeq = gameSeq;
-        this.homeTeam = homeTeam;
-        this.awayTeam = awayTeam;
+        this.homePlayers = homePlayers;
+        this.awayPlayers = awayPlayers;
     }
 }

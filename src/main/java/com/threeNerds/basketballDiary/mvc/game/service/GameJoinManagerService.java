@@ -319,30 +319,7 @@ public class GameJoinManagerService {
         gameJoinPlayerRepository.deletePlayer( deletePlayer );
     }
 
-    /**
-     * 22.12.18
-     * 경기참가선수 조회
-     * @author 이성주
-     * @updator 여인준
-     * - homeAwayCode가 없을때는 홈,어웨이 모두 조회
-     * - homeAwayCode가 있을때는 해당하는 팀의 팀원 조회
-     * @return enum을 key값으로 사용하여 홈/어웨이팀 구분
-     */
-    public GetAllGameJoinPlayersResponse getAllGameJoinPlayers(GameJoinPlayerQuery query ) {
-        /** 게임에 참가한 팀 및 팀원을 모두 조회해서 필터링 */
-        final Long gameSeq = query.getGameSeq();
-        List<GameJoinTeam> allGameJoinTeams = gameJoinTeamRepository.findAllGameJoinTeam(gameSeq);
 
-        SearchPlayersDTO searchCond = new SearchPlayersDTO()
-                                            .gameSeq(gameSeq);
-        List<PlayerInfoDTO> allGameJoinPlayers = gameJoinManagerRepo.findAllGameJoinPlayers(searchCond);
-        /** 양팀 선수 조회일 경우 */
-        return new GetAllGameJoinPlayersResponse(
-                gameSeq,
-                createTeamWithPlayers(HomeAwayCode.HOME_TEAM, allGameJoinTeams, allGameJoinPlayers),
-                createTeamWithPlayers(HomeAwayCode.AWAY_TEAM, allGameJoinTeams, allGameJoinPlayers)
-        );
-    }
     public GameJoinPlayerResult getGameJoinPlayers( GameJoinPlayerQuery query ) {
         /** 게임에 참가한 팀 및 팀원을 모두 조회해서 필터링 */
         final Long gameSeq          = query.getGameSeq();
@@ -356,8 +333,9 @@ public class GameJoinManagerService {
                 .build()
         );
         Long teamSeq = gameJoinTeam.getTeamSeq();
-        Pagination pagination = Pagination.of( pageNo, 5 );
-        boolean isNoPagination = 0 == pageNo;
+
+        Pagination pagination   = Pagination.of( pageNo, 5 );
+        boolean isNoPagination  = 0 == pageNo;
         if ( isNoPagination ) {
             SearchPlayersDTO searchCond = new SearchPlayersDTO()
                     .gameSeq(       gameSeq )
@@ -379,26 +357,6 @@ public class GameJoinManagerService {
                 .pagination(    pagination.getPages( gameJoinManagerRepo.findTotalCountGameJoinPlayers( searchCond ) ) )
                 .players(       gameJoinManagerRepo.findPaginationGameJoinPlayers( searchCond ) )
                 .build();
-    }
-    private GameJoinTeamDTO createTeamWithPlayers(HomeAwayCode code, List<GameJoinTeam> gameJoinTeams, List<PlayerInfoDTO> players) {
-        // TODO 에러메세지 채워넣기
-        GameJoinTeam filteredTeam = gameJoinTeams.stream()
-                                                .filter(p -> p.getHomeAwayCode().equals(code.getCode()))
-                                                .findAny()
-                                                .orElseThrow();
-        
-        List<PlayerInfoDTO> filteredPlayers = players.stream()
-                                                .filter(p -> p.getHomeAwayCode().equals(code.getCode()))
-                                                .collect(Collectors.toList());
-
-        GameJoinTeamDTO gameJoinTeam = new GameJoinTeamDTO()
-                .gameJoinTeamSeq(filteredTeam.getGameJoinTeamSeq())
-                .teamSeq(filteredTeam.getTeamSeq())
-                .homeAwayCode(code.getCode())
-                .homeAwayCodeName(code.getName())
-                .players(filteredPlayers);
-
-        return gameJoinTeam;
     }
 
     /**
