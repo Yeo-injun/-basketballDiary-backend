@@ -56,7 +56,7 @@
            AND g.GAME_SEQ = #{gameSeq}
     </select>
 
-    <select id="findAllPlayerRecordsByQuarter" resultType="com.threeNerds.basketballDiary.mvc.game.dto.getGameJoinPlayerRecordsByQuarter.response.PlayerQuarterRecordDTO">
+    <select id="findAllPlayerRecordsByQuarter" resultType="com.threeNerds.basketballDiary.mvc.game.dto.PlayerQuarterRecordDTO">
         /** GameRecordManagerRepository.findAllPlayerRecordsByQuarter */
         SELECT QPR.QUARTER_PLAYER_RECORDS_SEQ
              , GJT.GAME_SEQ
@@ -153,29 +153,4 @@
             ) -- 권한을 이미 부여받은 선수는 제외
     </select>
 
-
-    <select id="findAllGameRecorders" resultType="com.threeNerds.basketballDiary.mvc.game.dto.getGameRecorders.response.GameRecorderDTO">
-        /* GameRecordManagerRepository.findAllGameRecorders */
-        SELECT GRA.GAME_RECORD_AUTH_SEQ
-             , TM.TEAM_SEQ
-             , (
-                SELECT TEAM_NAME
-                  FROM TEAM
-                 WHERE 1=1
-                   AND TEAM_SEQ = TM.TEAM_SEQ
-               ) AS TEAM_NAME
-             , U.USER_SEQ
-             , GRA.GAME_RECORD_AUTH_CODE
-             , U.NAME AS USER_NAME
-             , U.POSITION_CODE
-             , TM.BACK_NUMBER
-             , U.EMAIL
-          FROM GAME_RECORD_AUTH  GRA
-         INNER JOIN TEAM_MEMBER  TM
-            ON GRA.TEAM_MEMBER_SEQ = TM.TEAM_MEMBER_SEQ
-         INNER JOIN USER  U
-            ON TM.USER_SEQ = U.USER_SEQ
-         WHERE 1=1
-           AND GRA.GAME_SEQ = #{gameSeq}
-    </select>
 </mapper>

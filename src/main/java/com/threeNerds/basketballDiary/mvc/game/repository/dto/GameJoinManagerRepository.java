@@ -18,5 +18,9 @@ public interface GameJoinManagerRepository {
 
     List<GameJoinTeamInfoDTO> findGameJoinTeams( SearchGameJoinTeamDTO searchGameJoinTeamDTO );
 
-    List<PlayerInfoDTO> findAllGameJoinPlayers( SearchPlayersDTO searchDTO );
+    List<PlayerInfoDTO> findAllGameJoinPlayers( Long gameSeq );
+
+    List<PlayerInfoDTO> findPaginationGameJoinPlayers( SearchPlayersDTO searchDTO );
+    List<PlayerInfoDTO> findGameJoinPlayers( SearchPlayersDTO searchDTO );
+    int findTotalCountGameJoinPlayers( SearchPlayersDTO searchDTO );
 }

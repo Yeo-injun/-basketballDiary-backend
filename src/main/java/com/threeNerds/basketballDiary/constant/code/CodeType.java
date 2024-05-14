@@ -1,7 +1,8 @@
 package com.threeNerds.basketballDiary.constant.code;
 
-public interface CodeType {
+public interface CodeType <T> {
 
-    public String getCode();
-    public String getName();
+    String getCode();
+    String getName();
+
 }

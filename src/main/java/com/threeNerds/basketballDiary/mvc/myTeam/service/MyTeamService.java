@@ -115,6 +115,7 @@ public class MyTeamService {
     }
 
     public SearchAllTeamMembersResponse searchAllTeamMembers( SearchAllTeamMembersRequest reqBody ) {
+        // TODO 화면에서 페이징 처리가 안되어 있음.
         Pagination pagination = Pagination.of( reqBody.getPageNo() );
         MemberDTO searchMemebrCond = new MemberDTO()
                                         .teamSeq(       reqBody.getTeamSeq() )

@@ -5,8 +5,8 @@
     <sql id="GameAuthSelect">
         SELECT GAME_RECORD_AUTH_SEQ
              , GAME_SEQ
-             , TEAM_MEMBER_SEQ              /* TODO 팀원Seq 속성을 사용자Seq로 변경예정 */
-             , TEAM_MEMBER_SEQ AS USER_SEQ  /* TODO 팀원Seq에서 사용자Seq로 변경 예정 >> 경기권한은 팀에 속하지 않더라도 받을 수 있게끔 요건을 변경할 예정 */
+             , USER_SEQ                 /* 사용자Seq */
+             , GAME_JOIN_PLAYER_SEQ     /* 경기참가선수Seq */
              , GAME_RECORD_AUTH_CODE
              , REG_DATE
          FROM GAME_RECORD_AUTH /* TODO GAME_AUTH 테이블로 변경 예정 */
@@ -17,7 +17,7 @@
     <select id="findAuthList" resultType="com.threeNerds.basketballDiary.mvc.game.domain.GameAuth" >
         /* GameAuthRepository.findAuthList */
         <include refid="GameAuthSelect"/>
-          AND TEAM_MEMBER_SEQ = #{userSeq}    /* TODO 팀원Seq에서 사용자Seq로 변경 예정 >> 경기권한은 팀에 속하지 않더라도 받을 수 있게끔 요건을 변경할 예정 */
+          AND USER_SEQ = #{userSeq}    /* 사용자Seq */
     </select>
 
     <insert id="saveGameAuth" parameterType="com.threeNerds.basketballDiary.mvc.game.domain.GameAuth" useGeneratedKeys="true" keyProperty="gameRecordAuthSeq">
@@ -27,13 +27,15 @@
         /* GameAuthRepository.saveGameAuth */
         INSERT INTO GAME_RECORD_AUTH (
                GAME_SEQ
-             , TEAM_MEMBER_SEQ
+             , USER_SEQ
+             , GAME_JOIN_PLAYER_SEQ
              , GAME_RECORD_AUTH_CODE
              , REG_DATE
         )
         VALUES (
                #{gameSeq}
-             , #{userSeq} /* 팀회원Seq에서 사용자Seq로 대체 예정 - 컬럼생성요망 */
+             , #{userSeq}               /* 사용자Seq */
+             , #{gameJoinPlayerSeq}     /* 경기참가선수Seq */
              , #{gameRecordAuthCode}
              , CURRENT_TIMESTAMP
         )
@@ -44,7 +46,7 @@
         DELETE
           FROM GAME_RECORD_AUTH
          WHERE 1=1
-           AND GAME_SEQ         = #{gameSeq}
-           AND GAME_RECORD_AUTH_CODE = '02' /* 경기기록권한코드 - 경기기록자(02), 경기생성자(01) */
+           AND GAME_SEQ                 = #{gameSeq}
+           AND GAME_RECORD_AUTH_CODE    = '02' /* 경기기록권한코드 - 경기기록자(02), 경기생성자(01) */
     </delete>
 </mapper>

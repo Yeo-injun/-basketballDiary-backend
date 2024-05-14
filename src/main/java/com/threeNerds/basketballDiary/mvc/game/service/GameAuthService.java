@@ -5,15 +5,10 @@ import com.threeNerds.basketballDiary.auth.constant.AuthType;
 import com.threeNerds.basketballDiary.constant.code.type.GameRecordAuthCode;
 import com.threeNerds.basketballDiary.mvc.game.domain.*;
 import com.threeNerds.basketballDiary.mvc.game.dto.GameRecorderCandidateDTO;
-import com.threeNerds.basketballDiary.mvc.game.dto.SearchGameDTO;
-import com.threeNerds.basketballDiary.mvc.game.dto.getGameRecorders.request.GetGameRecordersRequest;
-import com.threeNerds.basketballDiary.mvc.game.dto.getGameRecorders.response.GameRecorderDTO;
-import com.threeNerds.basketballDiary.mvc.game.dto.getGameRecorders.response.GetGameRecordersResponse;
-import com.threeNerds.basketballDiary.mvc.game.dto.saveGameRecorder.request.SaveGameRecordersRequest;
+import com.threeNerds.basketballDiary.mvc.game.dto.GameRecorderDTO;
 import com.threeNerds.basketballDiary.mvc.game.repository.*;
 import com.threeNerds.basketballDiary.mvc.game.repository.dto.GameRecorderRepository;
-import com.threeNerds.basketballDiary.mvc.game.service.dto.GameAuthDTO;
-import com.threeNerds.basketballDiary.mvc.game.service.dto.GameRecorderCandidatesQuery;
+import com.threeNerds.basketballDiary.mvc.game.service.dto.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -42,43 +37,40 @@ public class GameAuthService {
      * 경기 관리자 조회 ( 경기 생성자, 경기 기록원 등 )
      * @author 이성주
      */
-    public GetGameRecordersResponse getGameManagers( GetGameRecordersRequest request ) {
-        // 1. 경기기록원은 서비스 회원이어야 한다.
-        // 2. 경기기록원은 경기참가선수로 등록되어 있어야 한다.
-        Long gameSeq = request.getGameSeq();
-        List<GameRecorderDTO> gameRecorders = gameRecorderRepo.findAllRecorders( gameSeq );
-
-        // TODO 자체전일 경우 TeamName에 prifix 붙여주기 ( HOME_ or AWAY_ )
-        return new GetGameRecordersResponse( gameRecorders );
+    // TODO 경기권한 테이블을 참조하지 않고 경기참가선수 테이블에 경기권한 컬럼을 추가하여 경기기록원을 조회
+    // TODO 현재 양쪽팀 모두에 경기참가선수 반영이 가능하여 기록권한을 부여하면 기록원이 2명으로 조회되는 오류 존재. 해당 오류를 해결하기 위해 테이블의 컬럼속성으로 기록원 관리하도록 변경 예정
+    public List<GameRecorderDTO> getGameRecorders( GameRecorderQuery query ) {
+        return gameRecorderRepo.findAllRecorders( query.getGameSeq() );
     }
 
     /**
-     * 2022.01.14
-     * 경기기록 권한 일괄 부여
-     * // TODO 생성자 권한은 어디서 부여되는것인지 확인하기 ( 해당 API를 현위치에다가 구현하기 )
-     * @author 이성주
+     * 2022.04.25
+     * 경기 기록원으로 권한 부여
+     * - 기존 경기기록원 권한 정보 전체 삭제
+     * - 화면에서 전달받은 기록원 목록 정보 insert
+     * @author 여인준
      */
-    public void saveGameRecorders( SaveGameRecordersRequest request ) {
-        Long gameSeq                        = request.getGameSeq();
-        List<GameRecorderDTO> gameRecorders = request.getGameRecorders();
+    // TODO 경기권한 테이블을 참조하지 않고 경기참가선수 테이블에 경기권한 컬럼을 추가하여 경기기록원 임명하도록 수정
+    public void saveGameRecorders( GameRecorderCommand command ) {
+        Long gameSeq                        = command.getGameSeq();
+        List<GameRecorderDTO> gameRecorders = command.getGameRecorders();
 
-        /** 기존 경기 권한을 제거하고, 새롭게 생성한다. - 경기생성자는 삭제대상에서 제외 */
+
+        /** 기존 경기기록원 권한을 전체 제거 - 경기생성자는 삭제 대상에서 제외 */
         gameRecordAuthRepo.deleteRecordAuth( gameSeq );
 
-        /** 화면에서 받은 대상을 게임기록자로 추가한다. */
-        for ( GameRecorderDTO gameRecorder : gameRecorders ) {
-            // 게임생성자를 제외하고 insert문을 실행한다.
-            if ( GameRecordAuthCode.CREATOR.getCode().equals( gameRecorder.getGameRecordAuthCode() ) ) {
-                continue;
-            }
-
-            /** TODO 기록자 중복 체크 - GameSeq와 TeamMemberSeq로 조회시 기존 데이터 존재하는지 체크 */
-
-            GameAuth recordAuth = GameAuth.createRecordAuth( gameSeq, gameRecorder.getUserSeq() );
-            gameRecordAuthRepo.saveGameAuth( recordAuth );
-        }
+        /** 화면에서 받은 대상을 경기 기록원으로 추가한다. */
+        gameRecorders.stream()
+                .filter(    i -> GameRecordAuthCode.RECORDER.getCode().equals( i.getGameRecordAuthCode() ) )
+                .map(       i -> GameAuth.ofRecorder( gameSeq, i.getUserSeq() ) )
+                .forEach(   gameRecordAuthRepo::saveGameAuth );
     }
 
+    public void createCreatorAuth( GameAuthCommand command ) {
+        /** 경기기록 권한 부여 - 생성자로 */
+        GameAuth gameCreator = GameAuth.ofCreator( command.getGameSeq(), command.getUserSeq(), command.getGameJoinPlayerSeq() );
+        gameRecordAuthRepo.saveGameAuth( gameCreator );
+    }
 
     /**
      * 2024.02.24

@@ -1,5 +1,9 @@
 package com.threeNerds.basketballDiary.constant.code;
 
+import com.threeNerds.basketballDiary.constant.code.type.HomeAwayCode;
+import com.threeNerds.basketballDiary.exception.CustomException;
+import com.threeNerds.basketballDiary.exception.error.SystemErrorType;
+
 import java.util.Arrays;
 
 public class CodeTypeUtil {
@@ -14,4 +18,13 @@ public class CodeTypeUtil {
                 .findAny()
                 .orElse("");
     }
+
+
+    public static < T extends CodeType > T getEnumType( T[] codeTypes, String code ) {
+        return Arrays.stream( codeTypes )
+                .filter( item -> item.getCode().equals( code ) )
+                .findAny()
+                .orElseThrow(() -> new CustomException(SystemErrorType.NOT_FOUND_VALID_VALUE ) ); // TODO 에러메세지 친절하게 처리...
+    }
+
 }

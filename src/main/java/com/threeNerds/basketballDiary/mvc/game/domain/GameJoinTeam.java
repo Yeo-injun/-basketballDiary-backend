@@ -1,7 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.game.domain;
 
 import com.threeNerds.basketballDiary.constant.code.type.HomeAwayCode;
-import com.threeNerds.basketballDiary.mvc.team.domain.Team;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,36 +18,18 @@ public class GameJoinTeam {
     private String teamName;        // 팀명
     private String homeAwayCode;    // 홈/어웨이 코드
 
-    public static GameJoinTeam createInqCond( Long gameSeq, String homeAwayCode ) {
-        return GameJoinTeam.builder()
-                .gameSeq( gameSeq )
-                .homeAwayCode( homeAwayCode )
-                .build();
+    private static final String HOME_CODE = HomeAwayCode.HOME_TEAM.getCode();
+    private static final String AWAY_CODE = HomeAwayCode.AWAY_TEAM.getCode();
+
+    private static final String HOME_NAME_PREFIX = "HOME_";
+    private static final String AWAY_NAME_PREFIX = "AWAY_";
+
+    public void inSelfGame() {
+        switch ( HomeAwayCode.typeOf( this.homeAwayCode ) ) {
+            case HOME_TEAM : this.teamName = HOME_NAME_PREFIX + this.teamName; break;
+            case AWAY_TEAM : this.teamName = AWAY_NAME_PREFIX + this.teamName; break;
+        }
     }
 
-    public static GameJoinTeam create(Long gameSeq, HomeAwayCode homeAwayCode, Team team) {
-        return createJoinTeam(gameSeq, team.getTeamSeq(), team.getTeamName(), homeAwayCode.getCode());
-    }
 
-    public static GameJoinTeam createHomeTeamForSelfGame(Long gameSeq, Team gameCreatorTeam)
-    {
-        String homeTeamNameInSelfGame = "HOME_" + gameCreatorTeam.getTeamName();
-        return createJoinTeam(gameSeq, gameCreatorTeam.getTeamSeq(), homeTeamNameInSelfGame, HomeAwayCode.HOME_TEAM.getCode());
-    }
-
-    public static GameJoinTeam createAwayTeamForSelfGame(Long gameSeq, Team gameCreatorTeam)
-    {
-        String awayTeamNameInSelfGame = "AWAY_" + gameCreatorTeam.getTeamName();
-        return createJoinTeam(gameSeq, gameCreatorTeam.getTeamSeq(), awayTeamNameInSelfGame, HomeAwayCode.AWAY_TEAM.getCode());
-    }
-
-    private static GameJoinTeam createJoinTeam(Long gameSeq, Long teamSeq, String teamName, String homeAwayCode)
-    {
-        return new GameJoinTeam().builder()
-                .gameSeq(gameSeq)
-                .teamSeq(teamSeq)
-                .teamName(teamName)
-                .homeAwayCode(homeAwayCode)
-                .build();
-    }
 }

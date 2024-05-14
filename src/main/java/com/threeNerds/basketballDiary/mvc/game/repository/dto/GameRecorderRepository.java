@@ -1,7 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.game.repository.dto;
 
 import com.threeNerds.basketballDiary.mvc.game.dto.GameRecorderCandidateDTO;
-import com.threeNerds.basketballDiary.mvc.game.dto.getGameRecorders.response.GameRecorderDTO;
+import com.threeNerds.basketballDiary.mvc.game.dto.GameRecorderDTO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -12,6 +12,6 @@ public interface GameRecorderRepository {
 
     List<GameRecorderCandidateDTO> findAllCandidates( GameRecorderCandidateDTO query );
 
-    List<GameRecorderDTO> findAllRecorders( Long gameSeq );
+    List<GameRecorderDTO> findAllRecorders(Long gameSeq );
 }
 
