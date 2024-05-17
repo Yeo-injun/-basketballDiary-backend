@@ -1,5 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.game.dto;
 
+import com.threeNerds.basketballDiary.pagination.Pagination;
 import lombok.Getter;
 
 import java.time.LocalDate;
@@ -13,16 +14,23 @@ public class SearchOppenentsDTO {
 
     String leaderName;  /*리더이름*/
 
-    public SearchOppenentsDTO sidoCode(String sidoCode){
+    Pagination pagination; /* 페이징 처리 객체 */
+
+    public SearchOppenentsDTO sidoCode(String sidoCode) {
         this.sidoCode = sidoCode;
         return this;
     }
-    public SearchOppenentsDTO teamName(String teamName){
+    public SearchOppenentsDTO teamName(String teamName) {
         this.teamName = teamName;
         return this;
     }
-    public SearchOppenentsDTO leaderName(String leaderName){
+    public SearchOppenentsDTO leaderName(String leaderName) {
         this.leaderName = leaderName;
+        return this;
+    }
+
+    public SearchOppenentsDTO pagination(Pagination pagination ) {
+        this.pagination = pagination;
         return this;
     }
 }

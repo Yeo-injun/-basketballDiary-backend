@@ -290,16 +290,18 @@ public class GameController {
     public ResponseEntity<?> searchOpponents(
             @RequestParam(name = "sidoCode", required = false) String sidoCode,
             @RequestParam(name = "teamName", required = false) String teamName,
-            @RequestParam(name = "leaderName", required = false) String leaderName
+            @RequestParam(name = "leaderName", required = false) String leaderName,
+            @RequestParam(name = "pageNo", defaultValue = "0" ) Integer pageNo
     ){
-        SearchOppenentsDTO searchCond = new SearchOppenentsDTO()
-                .sidoCode(sidoCode)
-                .teamName(teamName)
-                .leaderName(leaderName);
-        List<GameOpponentDTO> opponents = gameJoinManagerService.searchOpponents(searchCond);
-        SearchOpponentsResponse resBody = new SearchOpponentsResponse()
-                .opponents(opponents);
-        return ResponseEntity.ok(resBody);
+        List<GameOpponentDTO> opponents = gameJoinManagerService.searchOpponents(
+                OppenentTeamQuery.builder()
+                    .sidoCode(      sidoCode )
+                    .teamName(      teamName )
+                    .leaderName(    leaderName )
+                    .pageNo(        pageNo )
+                    .build()
+        );
+        return ResponseEntity.ok( new SearchOpponentsResponse( opponents ) );
     }
 
     /**
