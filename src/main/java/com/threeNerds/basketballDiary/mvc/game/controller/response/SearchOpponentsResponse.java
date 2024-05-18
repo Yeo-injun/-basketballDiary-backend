@@ -10,8 +10,7 @@ public class SearchOpponentsResponse {
 
     private List<GameOpponentDTO> opponents;
 
-    public SearchOpponentsResponse opponents(List<GameOpponentDTO> opponents) {
+    public SearchOpponentsResponse( List<GameOpponentDTO> opponents ) {
         this.opponents = opponents;
-        return this;
     }
 }
