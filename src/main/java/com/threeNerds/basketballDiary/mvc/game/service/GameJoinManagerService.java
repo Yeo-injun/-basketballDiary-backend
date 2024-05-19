@@ -147,12 +147,13 @@ public class GameJoinManagerService {
         
         Pagination pagination = Pagination.of( query.getPageNo() );
         
-        // TODO 상대팀 목록 조회 - 페이징 처리 / 검색조건 >> Like조건
-        List<GameOpponentDTO> pagingOppoents = gameJoinManagerRepo.findOpponents( new SearchOppenentsDTO()
-                .sidoCode(      query.getSidoCode() )
-                .teamName(      query.getLeaderName() )
-                .leaderName(    query.getLeaderName() )
-                .pagination(    pagination )   
+        // TODO 상대팀 목록 조회 - 페이징 처리
+        List<GameOpponentDTO> pagingOppoents = gameJoinManagerRepo.findOpponents(
+                new SearchOppenentsDTO()
+                    .sidoCode(      query.getSidoCode() )
+                    .teamName(      query.getTeamName() )
+                    .leaderName(    query.getLeaderName() )
+                    .pagination(    pagination )
         );
         // TODO 전체 건수 조회 ( 어떤 타입으로 리턴해줄 것인가 )
         
