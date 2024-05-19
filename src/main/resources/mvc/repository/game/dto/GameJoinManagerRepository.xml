@@ -73,14 +73,14 @@
          INNER JOIN USER U
             ON T.LEADER_USER_SEQ = U.USER_SEQ
          WHERE 1=1
-        <if test='sidoCode != null and sidoCode != ""'>
+        <if test='sidoCode != null and !"".equals( sidoCode ) '>
            AND T.SIDO_CODE = #{sidoCode}
         </if>
-        <if test='teamName != null and teamName != ""'>
-           AND T.TEAM_NAME = #{teamName}
+        <if test='teamName != null and !"".equals( teamName )'>
+           AND T.TEAM_NAME LIKE CONCAT( '%', #{teamName}, '%' )
         </if>
-        <if test='leaderName != null and leaderName != ""'>
-           AND U.NAME = #{leaderName}
+        <if test='leaderName != null and !"".equals( leaderName )'>
+           AND U.NAME LIKE CONCAT( '%', #{leaderName}, '%' )
         </if>
     </select>
 
