@@ -2,19 +2,10 @@ package com.threeNerds.basketballDiary.mvc.game.dto;
 
 import com.threeNerds.basketballDiary.constant.code.type.GameRecordStateCode;
 import com.threeNerds.basketballDiary.constant.code.type.GameTypeCode;
-import com.threeNerds.basketballDiary.constant.code.type.QuarterCode;
-import com.threeNerds.basketballDiary.exception.CustomException;
-import com.threeNerds.basketballDiary.exception.error.SystemErrorType;
 import com.threeNerds.basketballDiary.mvc.game.domain.Game;
-import com.threeNerds.basketballDiary.mvc.game.service.dto.GameCreationCommand;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Optional;
+import lombok.Getter;
+
 
 @Getter
 public class GameDetailDTO {

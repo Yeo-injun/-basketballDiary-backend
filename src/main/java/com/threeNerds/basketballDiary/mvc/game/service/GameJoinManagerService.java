@@ -143,21 +143,20 @@ public class GameJoinManagerService {
         return new GameJoinTeam(); // TODO SQL INSERT 오류나지 않도록 임시처리 ( null을 반환하거나 throw Error를 던지거나... )
     }
 
-    public List<GameOpponentDTO> searchOpponents( OppenentTeamQuery query ) {
+    public OppenentTeamQuery.Result searchOpponents( OppenentTeamQuery query ) {
         
         Pagination pagination = Pagination.of( query.getPageNo() );
         
-        // TODO 상대팀 목록 조회 - 페이징 처리
-        List<GameOpponentDTO> pagingOppoents = gameJoinManagerRepo.findOpponents(
-                new SearchOppenentsDTO()
-                    .sidoCode(      query.getSidoCode() )
-                    .teamName(      query.getTeamName() )
-                    .leaderName(    query.getLeaderName() )
-                    .pagination(    pagination )
+        SearchOppenentsDTO searchParams = new SearchOppenentsDTO()
+                .sidoCode(      query.getSidoCode() )
+                .teamName(      query.getTeamName() )
+                .leaderName(    query.getLeaderName() )
+                .pagination(    pagination );
+
+        return query.setResult(
+            pagination.getPages( gameJoinManagerRepo.findTotalCountOpponents( searchParams ) ),
+            gameJoinManagerRepo.findPaginationOpponents( searchParams )
         );
-        // TODO 전체 건수 조회 ( 어떤 타입으로 리턴해줄 것인가 )
-        
-        return pagingOppoents;
     }
 
     public Map<HomeAwayCode, GameJoinTeamInfoDTO> getGameJoinTeams(SearchGameJoinTeamDTO searchParam) {

@@ -14,6 +14,9 @@ public interface GameJoinManagerRepository {
     /** 엔트리 조회 - 한팀의 엔트리 조회 */
     List<QuarterPlayerRecordDTO> findOneTeamEntry( SearchEntryDTO searchCond );
 
+    /** 상대팀 목록 조회 - 페이징 처리 */
+    List<GameOpponentDTO> findPaginationOpponents( SearchOppenentsDTO searchOppenentsDTO );
+    int findTotalCountOpponents( SearchOppenentsDTO searchOppenentsDTO );
     List<GameOpponentDTO> findOpponents( SearchOppenentsDTO searchOppenentsDTO );
 
     List<GameJoinTeamInfoDTO> findGameJoinTeams( SearchGameJoinTeamDTO searchGameJoinTeamDTO );

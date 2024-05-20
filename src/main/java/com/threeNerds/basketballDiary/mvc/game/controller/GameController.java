@@ -282,8 +282,6 @@ public class GameController {
     /**
      * API044 상대팀 목록 조회
      */
-    // TODO Command 패턴 적용 / Service의 Request-Response클래스참조 걷어내기
-    // 페이징 처리하기
     @ApiDocs044
     @Auth
     @GetMapping("/opponents")
@@ -292,8 +290,8 @@ public class GameController {
             @RequestParam(name = "teamName", required = false) String teamName,
             @RequestParam(name = "leaderName", required = false) String leaderName,
             @RequestParam(name = "pageNo", defaultValue = "0" ) Integer pageNo
-    ){
-        List<GameOpponentDTO> opponents = gameJoinManagerService.searchOpponents(
+    ) {
+        OppenentTeamQuery.Result queryResult = gameJoinManagerService.searchOpponents(
                 OppenentTeamQuery.builder()
                     .sidoCode(      sidoCode )
                     .teamName(      teamName )
@@ -301,7 +299,7 @@ public class GameController {
                     .pageNo(        pageNo )
                     .build()
         );
-        return ResponseEntity.ok( new SearchOpponentsResponse( opponents ) );
+        return ResponseEntity.ok( new SearchOpponentsResponse( queryResult ) );
     }
 
     /**

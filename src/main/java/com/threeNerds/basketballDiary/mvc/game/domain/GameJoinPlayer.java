@@ -46,7 +46,7 @@ public class GameJoinPlayer {
     public boolean isAppendable( List<GameJoinPlayer> registeredPlayers ) {
         /** 중복된 등번호가 있는지 체크하기 */
         for ( GameJoinPlayer player : registeredPlayers ) {
-            if ( player.getBackNumber().equals(this.backNumber ) ) {
+            if ( player.getBackNumber().equals( this.backNumber ) ) {
                 throw new CustomException( DomainErrorType.DUPLICATE_BACK_NUMBER );
             }
             if ( player.getEmail().equals( this.email ) ) {
