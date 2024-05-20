@@ -5,7 +5,6 @@ import com.threeNerds.basketballDiary.mvc.game.service.dto.GameJoinPlayerCommand
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
