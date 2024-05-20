@@ -62,8 +62,7 @@
            AND GAME_SEQ = #{gameSeq}
     </select>
 
-    <select id="findOpponents" resultType="com.threeNerds.basketballDiary.mvc.game.dto.GameOpponentDTO">
-        /* GameJoinManagerRepository.findOpponents */
+    <sql id="sqlFindOpponents" >
         SELECT T.TEAM_SEQ
              , T.TEAM_NAME
              , T.FOUNDATION_YMD
@@ -82,7 +81,30 @@
         <if test='leaderName != null and !"".equals( leaderName )'>
            AND U.NAME LIKE CONCAT( '%', #{leaderName}, '%' )
         </if>
+    </sql>
+
+    <select id="findPaginationOpponents" resultType="com.threeNerds.basketballDiary.mvc.game.dto.GameOpponentDTO">
+        /* GameJoinManagerRepository.findPaginationOpponents */
+        SELECT *
+          FROM (
+        <include refid="sqlFindOpponents" />
+          ) AS MAIN
+         LIMIT #{pagination.rowCount} OFFSET #{pagination.offset}
     </select>
+
+    <select id="findTotalCountOpponents" resultType="int">
+        /* GameJoinManagerRepository.findTotalCountOpponents */
+        SELECT COUNT( 1 )
+          FROM (
+        <include refid="sqlFindOpponents" />
+          ) AS MAIN
+    </select>
+
+    <select id="findOpponents" resultType="com.threeNerds.basketballDiary.mvc.game.dto.GameOpponentDTO">
+        /* GameJoinManagerRepository.findOpponents */
+        <include refid="sqlFindOpponents" />
+    </select>
+
 
     <select id="findGamesByTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.myTeam.dto.GameRecordDTO">
         /* GameJoinManagerRepository.findGamesByTeamSeq */
