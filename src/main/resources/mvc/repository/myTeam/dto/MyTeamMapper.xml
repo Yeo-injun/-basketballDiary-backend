@@ -211,6 +211,7 @@
                      , TM.BACK_NUMBER
                      , TM.JOIN_YMD
                      , IFNULL(GJP.TOT_MATCH, 0) TOT_GAME
+                     , "01" AS PLAYER_TYPE_CODE             /* 선수유형코드 - 팀원( 01 ) */
                   FROM TEAM_MEMBER TM
                  INNER JOIN USER U
                     ON TM.USER_SEQ = U.USER_SEQ
