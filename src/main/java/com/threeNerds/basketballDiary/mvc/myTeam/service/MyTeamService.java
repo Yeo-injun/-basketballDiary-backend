@@ -5,6 +5,7 @@ import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import com.threeNerds.basketballDiary.file.ImageUploader;
 import com.threeNerds.basketballDiary.file.Uploader;
+import com.threeNerds.basketballDiary.mvc.game.service.dto.TeamMemberQuery;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.GetMyTeamsRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.ModifyMyTeamInfoRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.GetMyTeamsResponse;
@@ -77,13 +78,7 @@ public class MyTeamService {
         // 조회내역이 존재하지 않으면 200 처리후 메시지를 전달한다.
 
         Long teamSeq = reqBody.getTeamSeq();
-        List<MemberDTO> resultManagerList
-                = myTeamRepository.findAllManagerByTeamSeq(teamSeq);
-
-        resultManagerList = resultManagerList.stream()
-                .map(MemberDTO::setAllCodeName)
-                .collect(Collectors.toList());
-
+        List<MemberDTO> resultManagerList = myTeamRepository.findAllManagerByTeamSeq( teamSeq );
         return new GetManagersResponse(resultManagerList);
     }
 
@@ -100,41 +95,30 @@ public class MyTeamService {
                 .pagination( pagination );
 
         // 소속팀은 팀장과 운영진을 제외하므로, 팀원 정보가 존재하지 않더라도 404 처리하지 않는다.
-        List<MemberDTO> resultMembers = myTeamRepository.findPagingMemberByTeamSeq(searchMemebrCond);
+        List<MemberDTO> resultMembers = myTeamRepository.findPagingMemberByTeamSeq( searchMemebrCond );
 
         /** 페이징DTO에 조회 결과 세팅 */
-        if(resultMembers.isEmpty()) {
+        if ( resultMembers.isEmpty() ) {
             return new GetTeamMembersResponse( pagination.empty(), Collections.emptyList());
         }
-
-        resultMembers.stream()
-                .map(MemberDTO::setAllCodeName)
-                .collect(Collectors.toList());
-
         return new GetTeamMembersResponse( pagination.getPages( resultMembers.get(0).getTotalCount() ), resultMembers);
     }
 
-    public SearchAllTeamMembersResponse searchAllTeamMembers( SearchAllTeamMembersRequest reqBody ) {
+    public TeamMemberQuery.Result searchAllTeamMembers( TeamMemberQuery query ) {
         // TODO 화면에서 페이징 처리가 안되어 있음.
-        Pagination pagination = Pagination.of( reqBody.getPageNo() );
-        MemberDTO searchMemebrCond = new MemberDTO()
-                                        .teamSeq(       reqBody.getTeamSeq() )
+        Pagination pagination = Pagination.of( query.getPageNo() );
+        MemberDTO searchMemberCond = new MemberDTO()
+                                        .teamSeq(       query.getTeamSeq() )
                                         .pagination(    pagination )
-                                        .userName(      reqBody.getPlayerName() );
+                                        .userName(      query.getPlayerName() );
 
-        List<MemberDTO> resultMembers = myTeamRepository.findAllTeamMemberPaging(searchMemebrCond);
+        List<MemberDTO> resultMembers = myTeamRepository.findAllTeamMemberPaging( searchMemberCond );
 
         /** 페이징DTO에 조회 결과 세팅 */
-        if(resultMembers.isEmpty()) {
-            return new SearchAllTeamMembersResponse( pagination.empty(), Collections.emptyList());
+        if ( resultMembers.isEmpty() ) {
+            return query.buildResult( pagination.empty(), Collections.emptyList() );
         }
-
-        resultMembers.stream()
-                .map(MemberDTO::setAllCodeName)
-                .map( m -> m.setPlayerType(PlayerTypeCode.TEAM_MEMBER))
-                .collect(Collectors.toList());
-
-        return new SearchAllTeamMembersResponse( pagination.getPages( resultMembers.get(0).getTotalCount() ), resultMembers );
+        return query.buildResult( pagination.getPages( resultMembers.get(0).getTotalCount() ), resultMembers );
     }
 
     /**

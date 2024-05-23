@@ -32,6 +32,7 @@ public class MemberDTO {
     /* 팀 pk */
     private Long teamSeq;
     /* 팀권한코드 */
+    // TODO DBResult를 매핑할때 @으로 해당 속성의 @Code( 코드Enum )을 참조하여 값 설정해주도록 AOP구현하기
     private String teamAuthCode;
     private String teamAuthCodeName;
     /* 포지션코드 */
@@ -54,94 +55,37 @@ public class MemberDTO {
     /* 경기참여횟수 */
     private Integer totGame;
 
-    public MemberDTO setPlayerType(PlayerTypeCode codeEnum) {
-        this.playerTypeCode = codeEnum.getCode();
-        this.playerTypeCodeName = codeEnum.getName();
+
+    public MemberDTO setPositionCode( String positionCode ) {
+        this.positionCode       = positionCode;
+        this.positionCodeName   = PositionCode.nameOf( this.positionCode );
+        return this;
+    }
+    public MemberDTO setPlayerTypeCode( String playerTypeCode ) {
+        this.playerTypeCode     = playerTypeCode;
+        this.playerTypeCodeName = PlayerTypeCode.nameOf( this.playerTypeCode );
+        return this;
+    }
+    public MemberDTO setTeamAuthCode( String teamAuthCode ) {
+        this.teamAuthCode       = teamAuthCode;
+        this.teamAuthCodeName   = TeamAuthCode.nameOf( this.teamAuthCode );
         return this;
     }
 
-    public MemberDTO userSeq (Long userSeq) {
-        this.userSeq = userSeq;
-        return this;
-    }
 
-    public MemberDTO teamMemberSeq (Long teamMemberSeq) {
-        this.teamMemberSeq = teamMemberSeq;
-        return this;
-    }
-
-    public MemberDTO teamSeq (Long teamSeq) {
-        this.teamSeq = teamSeq;
-        return this;
-    }
-
-    public MemberDTO teamAuthCode (String teamAuthCode) {
-        this.teamAuthCode = teamAuthCode;
-        return this;
-    }
-
-    public MemberDTO teamAuthCodeName () {
-        this.teamAuthCodeName = TeamAuthCode.nameOf(this.teamAuthCode);
-        return this;
-    }
-
-    public MemberDTO positionCode (String positionCode) {
-        this.positionCode = positionCode;
-        return this;
-    }
-
-    public MemberDTO positionCodeName () {
-        this.positionCodeName = PositionCode.nameOf(this.positionCode);
-        return this;
-    }
-
-    public MemberDTO userName (String userName) {
-        this.userName = userName;
-        return this;
-    }
-
-    public MemberDTO teamName(String teamName){
-        this.teamName = teamName;
-        return this;
-    }
-
-    public MemberDTO birthYmd (String birthYmd) {
-        this.birthYmd = birthYmd;
-        return this;
-    }
-
-    public MemberDTO height (String height) {
-        this.height = height;
-        return this;
-    }
-
-    public MemberDTO weight (String weight) {
-        this.weight = weight;
-        return this;
-    }
-
-    public MemberDTO backNumber (String backNumber) {
-        this.backNumber = backNumber;
-        return this;
-    }
-
-    public MemberDTO joinYmd (String joinYmd) {
-        this.joinYmd = joinYmd;
-        return this;
-    }
-
-    public MemberDTO totGame (Integer totGame) {
-        this.totGame = totGame;
-        return this;
-    }
+    /**
+     * 조회조건 파라미터
+     */
     public MemberDTO pagination( Pagination pagination ) {
         this.pagination = pagination;
         return this;
     }
-
-    public MemberDTO setAllCodeName() {
-        teamAuthCodeName();
-        positionCodeName();
+    public MemberDTO teamSeq( Long teamSeq ) {
+        this.teamSeq = teamSeq;
+        return this;
+    }
+    public MemberDTO userName( String userName ) {
+        this.userName = userName;
         return this;
     }
 
