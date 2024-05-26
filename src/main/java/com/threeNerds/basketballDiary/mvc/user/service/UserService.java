@@ -15,6 +15,7 @@ import com.threeNerds.basketballDiary.mvc.user.dto.UserDTO;
 import com.threeNerds.basketballDiary.mvc.user.repository.UserRepository;
 import com.threeNerds.basketballDiary.mvc.user.service.dto.MembershipCommand;
 import com.threeNerds.basketballDiary.mvc.user.service.dto.UserQuery;
+import com.threeNerds.basketballDiary.pagination.Pagination;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -50,14 +51,26 @@ public class UserService {
      * 회원 조회
      * - 소속 팀에 속하지 않은 회원
      */
-    public List<UserDTO> getUsersExcludingTeamMembers( UserQuery query ) {
-        // TODO 페이징 처리 추가
+    public UserQuery.Result getUsersExcludingTeamMembers( UserQuery query ) {
+        Pagination pagination = Pagination.of( query.getPageNo(), 5 );
+
         UserQueryCondDTO inqCond = new UserQueryCondDTO()
+                .pagination( pagination )
                 .teamSeq(   query.getTeamSeq() )
                 .userName(  query.getUserName() )
                 .email(     query.getEmail() );
-        List<UserDTO> users = userQueryRepository.findAllPagingUsersExcludingTeamMembers( inqCond );
-        return users;
+
+        List<UserDTO> usersWithoutTeamMember = userQueryRepository.findPaginationUsersWithoutTeamMembers( inqCond );
+        if ( usersWithoutTeamMember.isEmpty() ) {
+            return query.buildResult(
+                pagination.getPages( 0 ),
+                usersWithoutTeamMember
+            );
+        }
+        return query.buildResult(
+            pagination.getPages( userQueryRepository.findTotalCountUsersWithoutTeamMembers( inqCond ) ),
+            usersWithoutTeamMember
+        );
     }
 
     /**
