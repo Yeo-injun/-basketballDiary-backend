@@ -55,7 +55,7 @@ public class UserController {
 
     /**
      * TODO URL 및 파라미터 타입 재설계
-     * API006 사용자 검색
+     * API006 사용자 검색 ( 팀원 제외 )
      * 23.05.07 여인준 : 팀원 제외하고 조회되게끔 변경
      */
     @Auth
@@ -70,16 +70,18 @@ public class UserController {
     public ResponseEntity<?> getUsersExcludingTeamMembers  (
             @PathVariable Long teamSeq,
             @RequestParam( required = false ) String userName,
-            @RequestParam( required = false ) String email
-    ){
-        List<UserDTO> users = userService.getUsersExcludingTeamMembers(
+            @RequestParam( required = false ) String email,
+            @RequestParam( defaultValue = "0" ) Integer pageNo
+    ) {
+        UserQuery.Result result = userService.getUsersExcludingTeamMembers(
                                         UserQuery.builder()
+                                                .pageNo(    pageNo )
                                                 .teamSeq(   teamSeq )
                                                 .userName(  userName )
                                                 .email(     email )
                                                 .build()
                                         );
-        return ResponseEntity.ok().body( new GetUsersExcludingTeamMembersResponse( users ) );
+        return ResponseEntity.ok().body( new GetUsersExcludingTeamMembersResponse( result ) );
     }
 
     // >> AuthController는 권한부여, 검증, 만료처리에 대한 역할 수행

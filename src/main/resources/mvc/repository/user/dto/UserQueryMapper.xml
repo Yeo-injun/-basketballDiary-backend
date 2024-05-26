@@ -3,8 +3,7 @@
 
 <mapper namespace="com.threeNerds.basketballDiary.mvc.user.repository.dto.UserQueryRepository">
 
-    <select id="findAllPagingUsersExcludingTeamMembers" resultType="com.threeNerds.basketballDiary.mvc.user.dto.UserDTO">
-        /* UserQueryRepository.findAllPagingUsersExcludingTeamMembers */
+    <sql id="sqlFindAllUsersWithoutTeamMembers" >
         SELECT USER_SEQ
              , USER_ID
              , EMAIL
@@ -34,7 +33,23 @@
            AND EMAIL LIKE '%${email}%'
             </when>
         </choose>
+    </sql>
+
+    <select id="findPaginationUsersWithoutTeamMembers" resultType="com.threeNerds.basketballDiary.mvc.user.dto.UserDTO" >
+        /* UserQueryRepository.findPaginationUsersWithoutTeamMembers */
+        SELECT *
+          FROM (
+        <include refid="sqlFindAllUsersWithoutTeamMembers" />
+          ) AS MAIN
+         LIMIT #{pagination.rowCount} OFFSET #{pagination.offset}
     </select>
 
+    <select id="findTotalCountUsersWithoutTeamMembers" resultType="int" >
+        /* UserQueryRepository.findTotalCountUsersWithoutTeamMembers */
+        SELECT COUNT( 1 )
+          FROM (
+        <include refid="sqlFindAllUsersWithoutTeamMembers" />
+          ) AS MAIN
+    </select>
 
 </mapper>
