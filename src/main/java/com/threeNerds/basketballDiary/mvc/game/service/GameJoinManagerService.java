@@ -159,24 +159,25 @@ public class GameJoinManagerService {
         );
     }
 
-    public Map<HomeAwayCode, GameJoinTeamInfoDTO> getGameJoinTeams(SearchGameJoinTeamDTO searchParam) {
-        List<GameJoinTeamInfoDTO> joinTeams = gameJoinManagerRepo.findGameJoinTeams(searchParam);
 
-        Map<HomeAwayCode, GameJoinTeamInfoDTO> joinTeamsMap = new HashMap<>();
+    /**
+     * 경기참가팀 조회
+     **/
+    public GameJoinTeamQuery.Result getGameJoinTeams( GameJoinTeamQuery query ) {
 
-        // TODO home / away 중 한팀만 존재할 수 있음. 따라서 Null일 경우를 허용해야함!! Optional 처리를 어떻게 할 것인지 고민 필요
+        List<GameJoinTeamInfoDTO> joinTeams = gameJoinManagerRepo.findGameJoinTeams( new SearchGameJoinTeamDTO()
+                                                                                        .gameSeq( query.getGameSeq() )
+                                                                                        .homeAwayCode( query.getHomeAwayCode() ) );
+
         GameJoinTeamInfoDTO homeTeam = joinTeams.stream()
-                .filter( team -> { return HomeAwayCode.HOME_TEAM.getCode().equals(team.getHomeAwayCode()); })
+                .filter( team -> HomeAwayCode.HOME_TEAM.getCode().equals( team.getHomeAwayCode() ) )
                 .findFirst().orElseGet(() -> null);
 
         GameJoinTeamInfoDTO awayTeam = joinTeams.stream()
-                .filter( team -> { return HomeAwayCode.AWAY_TEAM.getCode().equals(team.getHomeAwayCode()); })
+                .filter( team -> HomeAwayCode.AWAY_TEAM.getCode().equals( team.getHomeAwayCode() ) )
                 .findFirst().orElseGet(() -> null);
 
-
-        joinTeamsMap.put(HomeAwayCode.HOME_TEAM, homeTeam);
-        joinTeamsMap.put(HomeAwayCode.AWAY_TEAM, awayTeam);
-        return joinTeamsMap;
+        return query.buildResult( homeTeam, awayTeam );
     }
 
     /**

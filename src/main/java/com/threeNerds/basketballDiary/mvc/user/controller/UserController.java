@@ -6,7 +6,6 @@ import com.threeNerds.basketballDiary.exception.error.DomainErrorResponse;
 import com.threeNerds.basketballDiary.exception.error.SystemErrorType;
 import com.threeNerds.basketballDiary.mvc.user.controller.request.UpdateMyProfileRequest;
 import com.threeNerds.basketballDiary.mvc.user.controller.response.GetUsersExcludingTeamMembersResponse;
-import com.threeNerds.basketballDiary.mvc.user.dto.UserDTO;
 import com.threeNerds.basketballDiary.mvc.user.service.dto.MembershipCommand;
 import com.threeNerds.basketballDiary.mvc.user.controller.request.SignUpRequest;
 import com.threeNerds.basketballDiary.mvc.user.controller.request.UpdatePasswordRequest;
@@ -30,8 +29,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
-
-import java.util.List;
 
 import static com.threeNerds.basketballDiary.session.util.SessionUtil.LOGIN_USER;
 

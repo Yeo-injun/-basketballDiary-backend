@@ -317,23 +317,19 @@ public class GameController {
     /**
      * API047 경기 참가팀 조회
      */
-    // TODO Command 패턴 적용 / Service의 Request-Response클래스참조 걷어내기
     @Auth
     @GetMapping("{gameSeq}/teams")
     public ResponseEntity<?> getGameJoinTeamsInfo(
             @PathVariable(name = "gameSeq") Long gameSeq,
             @RequestParam(name = "homeAwayCode", required = false) String homeAwayCode
-    ){
-        SearchGameJoinTeamDTO searchGameHomeAwayDTO = new SearchGameJoinTeamDTO()
-                .gameSeq(gameSeq)
-                .homeAwayCode(homeAwayCode);
-
-        Map<HomeAwayCode, GameJoinTeamInfoDTO> joinTeamsInfo = gameJoinManagerService.getGameJoinTeams(searchGameHomeAwayDTO);
-
-        GetGameJoinTeamsResponse resBody = new GetGameJoinTeamsResponse()
-                .homeTeamInfo(joinTeamsInfo.get(HomeAwayCode.HOME_TEAM))
-                .awayTeamInfo(joinTeamsInfo.get(HomeAwayCode.AWAY_TEAM));
-        return ResponseEntity.ok(resBody);
+    ) {
+        GameJoinTeamQuery.Result result = gameJoinManagerService.getGameJoinTeams(
+                                                        GameJoinTeamQuery.builder()
+                                                                .gameSeq( gameSeq )
+                                                                .homeAwayCode( homeAwayCode )
+                                                                .build()
+                                                    );
+        return ResponseEntity.ok( new GetGameJoinTeamsResponse( result ) );
     }
 
     /**
