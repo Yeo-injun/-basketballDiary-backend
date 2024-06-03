@@ -1,4 +1,4 @@
-package com.threeNerds.basketballDiary.mvc.game.dto.saveGameRecorder.request;
+package com.threeNerds.basketballDiary.mvc.game.controller.request;
 
 import com.threeNerds.basketballDiary.mvc.game.dto.GameRecorderDTO;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.GameRecorderCommand;

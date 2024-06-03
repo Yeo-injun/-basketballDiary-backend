@@ -17,7 +17,6 @@ import com.threeNerds.basketballDiary.mvc.game.dto.PlayerQuarterRecordDTO;
 import com.threeNerds.basketballDiary.mvc.game.controller.response.GetGameJoinPlayersResponse;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.request.GetGameQuarterRecordsRequest;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.response.GetGameQuarterRecordsResponse;
-import com.threeNerds.basketballDiary.mvc.game.dto.saveGameRecorder.request.SaveGameRecordersRequest;
 import com.threeNerds.basketballDiary.mvc.game.service.GameAuthService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameJoinManagerService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameRecordManagerService;
@@ -194,6 +193,7 @@ public class GameController {
             @PathVariable("quarterCode") String quarterCode,
             @RequestParam(name = "homeAwayCode", required = false) String homeAwayCode
     ) {
+        // TODO Query Inner클래스 활용
         Map< HomeAwayCode, QuarterTeamEntryDTO > gameEntrys = gameJoinManagerService.getGameEntry(
                                                                   GameEntryQuery.builder()
                                                                       .gameSeq( gameSeq )
@@ -265,6 +265,7 @@ public class GameController {
         @RequestParam(name = "homeAwayCode", required = false) String homeAwayCode
     ) {
         // TODO 설계구조상 pagination data를 받지 않음.
+        // TODO Query Inner클래스 활용
         Map< HomeAwayCode, List<PlayerQuarterRecordDTO> > playerQuarterRecords = gameRecordManagerService.getGameJoinPlayerQuarterRecords(
             GameJoinPlayerRecordQuery.builder()
                 .gameSeq(       gameSeq )
@@ -310,6 +311,7 @@ public class GameController {
     public ResponseEntity<GetGameBasicInfoResponse> getGameBasicInfo(
             @PathVariable(name = "gameSeq") Long gameSeq
     ) {
+        // TODO Query Inner클래스 활용
         GameDetailDTO gameDetail = gameService.getGameDetailInfo( gameSeq );
         return ResponseEntity.ok( new GetGameBasicInfoResponse( gameDetail ) );
     }
@@ -339,14 +341,14 @@ public class GameController {
      * @result 특정쿼터의 선수별 기록조회
      * @author 강창기
      */
-    // TODO Query 패턴 적용 / Service의 Request-Response클래스참조 걷어내기
-
     @Auth
     @GetMapping("/{gameSeq}/quarters/{quarterCode}")
     public ResponseEntity<?> getGameQuarterRecords(
             @PathVariable(name = "gameSeq") Long gameSeq,
             @PathVariable(name = "quarterCode") String quarterCode
     ) {
+
+        // TODO Query 패턴 적용 / Service의 Request-Response클래스참조 걷어내기
         GetGameQuarterRecordsRequest reqBody = new GetGameQuarterRecordsRequest()
                 .gameSeq(gameSeq)
                 .quarterCode(quarterCode);
@@ -358,7 +360,7 @@ public class GameController {
 
 
     /**
-     * API053 게임 생성
+     * API053 경기 생성
      * - 생성한 게임 정보를 반환
      * 22.12.15(목) @ReauestBody부분 Request클래스로 대체
      * TODO 여러개의 분할된 서비스를 하나의 트랜잭션으로 묶을 수 있도록 ServiceTransactionBroker를 만들어서 관리하기
@@ -425,6 +427,7 @@ public class GameController {
     public ResponseEntity<?> getGameRecorders(
             @PathVariable("gameSeq") Long gameSeq
     ) {
+        // TODO 패턴 개선 GameRecorderQuery inner 클래스로 Result 생성
         List<GameRecorderDTO> gameRecorders = gameAuthService.getGameRecorders(
                                                 GameRecorderQuery.builder()
                                                     .gameSeq( gameSeq )
@@ -444,6 +447,7 @@ public class GameController {
             @PathVariable("gameSeq") Long gameSeq,
             @RequestBody @Valid SaveGameRecordersRequest request
     ) {
+        // TODO Request클래스 분리 요망
         gameAuthService.saveGameRecorders( request.toCommand( gameSeq ) );
         return RESPONSE_OK;
     }
@@ -460,6 +464,7 @@ public class GameController {
             @PathVariable(name = "gameSeq") Long gameSeq,
             @RequestParam(name = "homeAwayCode", required = false) String homeAwayCode
     ) {
+        // TODO 패턴 개선 GameRecorderCandidatesQuery inner 클래스로 Result 생성
         List<GameRecorderCandidateDTO> candidates = gameAuthService.getGameRecorderCandidates(
                                                         GameRecorderCandidatesQuery.builder()
                                                             .gameSeq( gameSeq )
@@ -501,6 +506,7 @@ public class GameController {
             @RequestParam(name = "homeAwayCode" , required = false) String homeAwayCode,
             @RequestParam(name = "pageNo"       , defaultValue = "0") Integer pageNo
     ) {
+        // TODO 코드 개선 Query클래스 내에 Inner 클래스 활용
         GameJoinPlayerResult homeResult = gameJoinManagerService.getGameJoinPlayers(
             GameJoinPlayerQuery.builder()
                     .gameSeq(       gameSeq )
@@ -530,6 +536,7 @@ public class GameController {
             @PathVariable(name = "homeAwayCode")    String homeAwayCode,
             @RequestParam(name = "pageNo" , defaultValue = "0") Integer pageNo
     ) {
+        // TODO 패턴 개선 GameJoinPlayerQuery inner 클래스로 Result 생성
         GameJoinPlayerResult result = gameJoinManagerService.getGameJoinPlayers(
             GameJoinPlayerQuery.builder()
                     .gameSeq(       gameSeq )
@@ -547,24 +554,18 @@ public class GameController {
     }
 
     /**
-     * API062 게임참가팀 확정
+     * API062 경기참가팀 확정
      * 22.12.15(목) @ReauestBody부분 Request클래스로 대체
      * 23.01.11(수) 누락된 로직 추가 - 게임기록상태코드 업데이트
      */
-    // TODO Command 패턴 적용
     @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_CREATOR )
     @PostMapping("/{gameSeq}/gameJoinTeams")
-    public ResponseEntity<?> confirmGameJoinTeam (
+    public ResponseEntity< Void > confirmGameJoinTeam (
             @PathVariable(name = "gameSeq") Long gameSeq,
-            @RequestBody @Valid ConfirmGameJoinTeamRequest reqBody
+            @RequestBody @Valid ConfirmGameJoinTeamRequest request
     ) {
-        GameJoinTeamCreationDTO joinTeamCreation = new GameJoinTeamCreationDTO()
-                                        .gameSeq(gameSeq)
-                                        .gameTypeCode(reqBody.getGameTypeCode())
-                                        .opponentTeamSeq(reqBody.getOpponentTeamSeq());
-
-        gameJoinManagerService.confirmJoinTeam(joinTeamCreation);
-        return RESPONSE_OK;
+        gameJoinManagerService.confirmJoinTeam( request.toCommand( gameSeq ) );
+        return ResponseEntity.ok().build();
     }
 
     /**

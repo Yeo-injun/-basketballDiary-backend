@@ -1,6 +1,8 @@
 package com.threeNerds.basketballDiary.mvc.game.domain;
 
 import com.threeNerds.basketballDiary.constant.code.type.HomeAwayCode;
+import com.threeNerds.basketballDiary.exception.CustomException;
+import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,12 +26,35 @@ public class GameJoinTeam {
     private static final String HOME_NAME_PREFIX = "HOME_";
     private static final String AWAY_NAME_PREFIX = "AWAY_";
 
-    public void inSelfGame() {
+    public void joinInSelfGame() {
+        this.teamName = getTeamNamePrefixByHomeAway() + this.teamName;
+    }
+
+    public void joinInMatchGame() {
+        this.teamName = this.teamName.replace( this.getTeamNamePrefixByHomeAway() , "" );
+    }
+
+    private String getTeamNamePrefixByHomeAway() {
         switch ( HomeAwayCode.typeOf( this.homeAwayCode ) ) {
-            case HOME_TEAM : this.teamName = HOME_NAME_PREFIX + this.teamName; break;
-            case AWAY_TEAM : this.teamName = AWAY_NAME_PREFIX + this.teamName; break;
+            case HOME_TEAM : return HOME_NAME_PREFIX;
+            case AWAY_TEAM : return AWAY_NAME_PREFIX;
+            default:
+                throw new CustomException( DomainErrorType.INVALID_HOME_AWAY_CODE );
         }
     }
+
+    public GameJoinTeam toAwayInSelfGameType() {
+        if ( HomeAwayCode.HOME_TEAM != HomeAwayCode.typeOf( this.homeAwayCode ) ) {
+            throw new CustomException( DomainErrorType.INVALID_HOME_AWAY_CODE );
+        }
+        return GameJoinTeam.builder()
+                .gameSeq( this.gameSeq )
+                .teamSeq( this.teamSeq )
+                .teamName( AWAY_NAME_PREFIX + this.teamName )
+                .homeAwayCode( HomeAwayCode.AWAY_TEAM.getCode() )
+                .build();
+    }
+
 
 
 }

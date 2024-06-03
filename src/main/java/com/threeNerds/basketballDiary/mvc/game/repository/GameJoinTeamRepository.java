@@ -22,11 +22,13 @@ public interface GameJoinTeamRepository {
      * INSERT
      **********/
     /** 게임참가팀저장 */
-    int saveGameJoinTeam( GameJoinTeam homeTeamInSelfGame );
+    int saveGameJoinTeam( GameJoinTeam gameJoinTeam );
 
     /**********
      * UPDATE
      **********/
+    /** 게임참가팀저장 */
+    int updateTeamName( GameJoinTeam gameJoinTeam );
 
     /**********
      * DELETE
