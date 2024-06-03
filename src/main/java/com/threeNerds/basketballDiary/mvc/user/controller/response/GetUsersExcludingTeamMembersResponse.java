@@ -12,8 +12,7 @@ public class GetUsersExcludingTeamMembersResponse {
 
     private Pagination pagination;
     private List<UserDTO> users;
-    public GetUsersExcludingTeamMembersResponse(    UserQuery.Result result ) {
-
+    public GetUsersExcludingTeamMembersResponse( UserQuery.Result result ) {
         this.pagination = result.getPagination();
         this.users      = result.getUsers();
     }
