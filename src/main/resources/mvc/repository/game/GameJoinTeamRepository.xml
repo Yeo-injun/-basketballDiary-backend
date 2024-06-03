@@ -47,5 +47,14 @@
         )
     </insert>
 
+    <update id="updateTeamName" parameterType="com.threeNerds.basketballDiary.mvc.game.domain.GameJoinTeam" >
+        /* GameJoinTeamRepository.updateTeamName */
+        UPDATE GAME_JOIN_TEAM
+           SET TEAM_NAME = #{teamName}
+         WHERE 1=1
+           AND GAME_SEQ         = #{gameSeq}
+           AND HOME_AWAY_CODE   = #{homeAwayCode}
+    </update>
+
 
 </mapper>
