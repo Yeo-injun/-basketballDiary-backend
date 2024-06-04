@@ -308,12 +308,15 @@ public class GameController {
      */
     @Auth
     @GetMapping("{gameSeq}/info")
-    public ResponseEntity<GetGameBasicInfoResponse> getGameBasicInfo(
+    public ResponseEntity< GetGameBasicInfoResponse > getGameBasicInfo(
             @PathVariable(name = "gameSeq") Long gameSeq
     ) {
-        // TODO Query Inner클래스 활용
-        GameDetailDTO gameDetail = gameService.getGameDetailInfo( gameSeq );
-        return ResponseEntity.ok( new GetGameBasicInfoResponse( gameDetail ) );
+        GameQuery.Result result = gameService.getGameDetailInfo(
+                GameQuery.builder()
+                         .gameSeq( gameSeq )
+                         .build()
+        );
+        return ResponseEntity.ok( new GetGameBasicInfoResponse( result ) );
     }
 
     /**

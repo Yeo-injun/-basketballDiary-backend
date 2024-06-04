@@ -7,6 +7,7 @@ import com.threeNerds.basketballDiary.mvc.game.domain.Game;
 
 import com.threeNerds.basketballDiary.mvc.game.dto.GameDetailDTO;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.GameCreationCommand;
+import com.threeNerds.basketballDiary.mvc.game.service.dto.GameQuery;
 import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember;
 import com.threeNerds.basketballDiary.mvc.game.repository.GameRepository;
 import com.threeNerds.basketballDiary.mvc.myTeam.repository.TeamMemberRepository;
@@ -62,12 +63,12 @@ public class GameService {
      * 게임기록 상세조회
      * @author 이성주
      */
-    public GameDetailDTO getGameDetailInfo( Long gameSeq ) {
-        Game game = Optional
-                .ofNullable( gameRepository.findGame( gameSeq ) )
-                .orElseThrow( () -> new CustomException( DomainErrorType.NOT_FOUND_GAME ) );
-
-        return GameDetailDTO.of( game );
+    public GameQuery.Result getGameDetailInfo( GameQuery query ) {
+        Game game = gameRepository.findGame( query.getGameSeq() );
+        if ( null == game ) {
+            throw new CustomException( DomainErrorType.NOT_FOUND_GAME );
+        }
+        return query.buildResult( GameDetailDTO.of( game ) );
     }
 
     /**
