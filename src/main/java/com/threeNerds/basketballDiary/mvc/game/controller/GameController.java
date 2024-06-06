@@ -193,19 +193,14 @@ public class GameController {
             @PathVariable("quarterCode") String quarterCode,
             @RequestParam(name = "homeAwayCode", required = false) String homeAwayCode
     ) {
-        // TODO Query Inner클래스 활용
-        Map< HomeAwayCode, QuarterTeamEntryDTO > gameEntrys = gameJoinManagerService.getGameEntry(
-                                                                  GameEntryQuery.builder()
-                                                                      .gameSeq( gameSeq )
-                                                                      .quarterCode( quarterCode )
-                                                                      .homeAwayCode( homeAwayCode )
-                                                                      .build()
-                                                              );
-        GetGameEntryResponse response = new GetGameEntryResponse(
-            gameEntrys.get( HomeAwayCode.HOME_TEAM ),
-            gameEntrys.get( HomeAwayCode.AWAY_TEAM )
-        );
-        return ResponseEntity.ok( response );
+        GameEntryQuery.Result result = gameJoinManagerService.getGameEntry(
+                                            GameEntryQuery.builder()
+                                                  .gameSeq( gameSeq )
+                                                  .quarterCode( quarterCode )
+                                                  .homeAwayCode( homeAwayCode )
+                                                  .build()
+                                       );
+        return ResponseEntity.ok( new GetGameEntryResponse( result ) );
     }
 
 

@@ -18,6 +18,7 @@ public enum SystemErrorType implements ErrorMessageType {
     PARAMETER_FORMAT_ERROR( BAD_REQUEST, "파라미터 값 형식이 맞지 않습니다." ),
 
     /** 400 BAD_REQUEST : 코드 도메인 유효성 실패 */
+    NO_EXIST_MATCHED_ENUM_TYPE( BAD_REQUEST, "코드 값에 맞는 Enum타입이 존재하지 않습니다." ),
     INVALID_CODE_DOMAIN_FOR_HOME_AWAY_CODE( BAD_REQUEST, "유효하지 않은 홈어웨이 코드입니다." ),
     INVALID_CODE_DOMAIN_FOR_QUARTER_CODE( BAD_REQUEST, "유효하지 않은 쿼터 코드입니다." ),
 

@@ -445,49 +445,48 @@ public class GameJoinManagerService {
     }
 
     /**
-     * 게임엔트리 조회하기
-     * @param query
-     * @return GetGameEntryResponse
+     * 경기 엔트리 조회하기
+     * - cf. 엔트리 : 경기시 in-court에서 뛰고 있는 선수들
+     * @param query GameEntryQuery
+     * @return GameEntryQuery.Result
      */
-    public Map< HomeAwayCode, QuarterTeamEntryDTO > getGameEntry( GameEntryQuery query ) {
+    public GameEntryQuery.Result getGameEntry( GameEntryQuery query ) {
         /** 한 게임의 모든 게임참가팀 조회 */
         List<GameJoinTeam> gameJoinTeams = gameJoinTeamRepository.findAllGameJoinTeam( query.getGameSeq() );
+        if ( gameJoinTeams.isEmpty() ) {
+            throw new CustomException( DomainErrorType.NOT_FOUND_GAME_JOIN_TEAM );
+        }
 
         String quarterCode  = query.getQuarterCode();
         String homeAwayCode = query.getHomeAwayCode();
 
         /** 홈어웨이코드 존재 여부확인 - 코드값이 존재하면 팀의 엔트리만 조회 */
-        Map< HomeAwayCode, QuarterTeamEntryDTO > result = new EnumMap<>( HomeAwayCode.class );
-
         boolean isAllTeamEntryInq = !StringUtils.hasText( homeAwayCode );
         if ( isAllTeamEntryInq ) {
             /** 홈/어웨이팀 전체 엔트리 조회 */
-            result.put( HomeAwayCode.HOME_TEAM, getQuarterTeamEntryInfo( quarterCode, HomeAwayCode.HOME_TEAM.getCode(), gameJoinTeams ) );
-            result.put( HomeAwayCode.AWAY_TEAM, getQuarterTeamEntryInfo( quarterCode, HomeAwayCode.AWAY_TEAM.getCode(), gameJoinTeams ) );
-            return result;
+            return query.buildResult(
+                getQuarterTeamEntryInfo( quarterCode, HomeAwayCode.HOME_TEAM, gameJoinTeams ),
+                getQuarterTeamEntryInfo( quarterCode, HomeAwayCode.AWAY_TEAM, gameJoinTeams )
+            );
         }
-
-        switch ( HomeAwayCode.typeOf( homeAwayCode ) ) {
-            case HOME_TEAM:
-                result.put( HomeAwayCode.HOME_TEAM, getQuarterTeamEntryInfo( quarterCode, homeAwayCode, gameJoinTeams ) );
-                return result;
-            case AWAY_TEAM:
-                result.put( HomeAwayCode.AWAY_TEAM, getQuarterTeamEntryInfo( quarterCode, homeAwayCode, gameJoinTeams ) );
-                return result;
-            default:
-                throw new CustomException( SystemErrorType.INVALID_CODE_DOMAIN_FOR_HOME_AWAY_CODE );
-        }
+        /** 홈/어웨이 팀에 맞게 엔트리 조회 */
+        HomeAwayCode homeAwayType = HomeAwayCode.typeOf( homeAwayCode );
+        return query.buildResult( homeAwayType, getQuarterTeamEntryInfo( quarterCode, homeAwayType, gameJoinTeams ) );
     }
+
 
     private QuarterTeamEntryDTO getQuarterTeamEntryInfo(
             String quarterCode,
-            String homeAwayCode,
+            HomeAwayCode homeAwayCode,
             List<GameJoinTeam> gameJoinTeams
     ) {
-        GameJoinTeam gameJoinTeam = gameJoinTeams.stream()
-                .filter( t -> homeAwayCode.equals( t.getHomeAwayCode() ))
-                .findAny()
-                .get();
+        Optional<GameJoinTeam> gameJoinTeamNullable = gameJoinTeams.stream()
+                                                        .filter( t -> homeAwayCode.getCode().equals( t.getHomeAwayCode() ))
+                                                        .findAny();
+        if ( gameJoinTeamNullable.isEmpty() ) {
+            throw new CustomException( DomainErrorType.NOT_FOUND_GAME_JOIN_TEAM );
+        }
+        GameJoinTeam gameJoinTeam = gameJoinTeamNullable.get();
 
         SearchEntryDTO searchCond = new SearchEntryDTO()
                 .gameJoinTeamSeq( gameJoinTeam.getGameJoinTeamSeq() )
@@ -495,8 +494,9 @@ public class GameJoinManagerService {
         List<QuarterPlayerRecordDTO> entry = gameJoinManagerRepo.findOneTeamEntry( searchCond );
 
         return new QuarterTeamEntryDTO()
-                    .teamName( gameJoinTeam.getTeamName() )
-                    .homeAwayCode( homeAwayCode )
-                    .entry( entry );
+                .teamName( gameJoinTeam.getTeamName() )
+                .homeAwayCode( homeAwayCode.getCode() )
+                .entry( entry );
     }
+
 }
