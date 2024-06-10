@@ -345,15 +345,15 @@ public class GameController {
             @PathVariable(name = "gameSeq") Long gameSeq,
             @PathVariable(name = "quarterCode") String quarterCode
     ) {
+        GameQuarterQuery.Result result = gameRecordManagerService.getGameQuarterRecords(
+                GameQuarterQuery.builder()
+                    .gameSeq( gameSeq )
+                    .quarterCode( quarterCode )
+                    .build()
+        );
 
-        // TODO Query 패턴 적용 / Service의 Request-Response클래스참조 걷어내기
-        GetGameQuarterRecordsRequest reqBody = new GetGameQuarterRecordsRequest()
-                .gameSeq(gameSeq)
-                .quarterCode(quarterCode);
-
-        GetGameQuarterRecordsResponse resBody = gameRecordManagerService.getGameQuarterRecords(reqBody);
-
-        return ResponseEntity.ok(resBody);
+        // TODO Result타입을 Response타입으로 변경하여 return 처리하기
+        return ResponseEntity.ok( result );
     }
 
 

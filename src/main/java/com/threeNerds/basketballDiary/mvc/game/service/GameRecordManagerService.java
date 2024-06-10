@@ -22,6 +22,7 @@ import com.threeNerds.basketballDiary.mvc.game.repository.*;
 import com.threeNerds.basketballDiary.mvc.game.repository.dto.GameRecordManagerRepository;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.GameJoinPlayerRecordQuery;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.GameQuarterCommand;
+import com.threeNerds.basketballDiary.mvc.game.service.dto.GameQuarterQuery;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.QuarterRecordCommand;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.SearchMyTeamGamesRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.SearchMyTeamGamesResponse;
@@ -107,63 +108,36 @@ public class GameRecordManagerService {
      * @author 강창기
      * - 23.03.05 여인준 : API수정에 따른 파라미터 및 return 클래스 변경
      */
-    public GetGameQuarterRecordsResponse getGameQuarterRecords(GetGameQuarterRecordsRequest reqBody)
-    {
-        Long gameSeq = reqBody.getGameSeq();
-        Game gameInfo = Optional
-                            .ofNullable( gameRepository.findGame( gameSeq ) )
-                            .orElseThrow( () -> new CustomException(DomainErrorType.NOT_FOUND_GAME) );
+    public GameQuarterQuery.Result getGameQuarterRecords( GameQuarterQuery query ) {
+        Long gameSeq        = query.getGameSeq();
+        String quarterCode  = query.getQuarterCode();
+        Game gameInfo       = gameRepository.findGame( gameSeq );
+        if ( null == gameInfo ) {
+            throw new CustomException( DomainErrorType.NOT_FOUND_GAME );
+        }
 
-        String quarterCode = reqBody.getQuarterCode();
         SearchGameDTO gameSearchCond = new SearchGameDTO()
                 .gameSeq( gameSeq )
                 .quarterCode( quarterCode );
         List<TeamQuarterRecordsDTO> allTeamsQuarterRecords = gameRecordManagerRepository.findAllTeamsQuarterRecords(gameSearchCond);
 
-        // TODO 메세지 생성 로직 리팩토링 >> 테스트
-
-        /** 쿼터기록이 입력되지 않은 경우 - 초기값 return */
-        if ( allTeamsQuarterRecords.isEmpty() ) {
-            List<GameJoinTeam> gameJoinTeams = gameJoinTeamRepo.findAllGameJoinTeam( gameSeq );
-            return new GetGameQuarterRecordsResponse(
-                    gameInfo,
-                    quarterCode,
-                    initGameJoinTeamByHomeAwayCode( gameJoinTeams, HomeAwayCode.HOME_TEAM ),
-                    initGameJoinTeamByHomeAwayCode( gameJoinTeams, HomeAwayCode.AWAY_TEAM )
-            );
+        if ( !allTeamsQuarterRecords.isEmpty() ) {
+            return query.buildResult( gameInfo, allTeamsQuarterRecords );
         }
 
-        return new GetGameQuarterRecordsResponse(
-                gameInfo,
-                quarterCode,
-                filterByHomeAwayCode( allTeamsQuarterRecords, HomeAwayCode.HOME_TEAM ),
-                filterByHomeAwayCode( allTeamsQuarterRecords, HomeAwayCode.AWAY_TEAM )
-        );
+        /** 쿼터기록이 입력되지 않은 경우 - 초기값 return */
+        List<GameJoinTeam> gameJoinTeams = gameJoinTeamRepo.findAllGameJoinTeam( gameSeq );
+        return query.buildResult( gameInfo, toTeamQuarterRecordsList( gameJoinTeams ) );
     }
 
-    private TeamQuarterRecordsDTO initGameJoinTeamByHomeAwayCode( List<GameJoinTeam> gameJoinTeams, HomeAwayCode homeAwayCode )
-    {
-        /** 홈/어웨이팀 구분에 따른 처리 */
-        GameJoinTeam gameJoinTeam = gameJoinTeams.stream()
-                                        .filter( gjt -> gjt.getHomeAwayCode().equals( homeAwayCode.getCode() ))
-                                        .findFirst()
-                                        .get();
-
-        return new TeamQuarterRecordsDTO()
-                .gameJoinTeamSeq( gameJoinTeam.getGameJoinTeamSeq() )
-                .teamName( gameJoinTeam.getTeamName() )
-                .homeAwayCode( homeAwayCode.getCode() );
-    }
-
-    private TeamQuarterRecordsDTO filterByHomeAwayCode( List<TeamQuarterRecordsDTO> gameJoinTeams, HomeAwayCode homeAwayCode )
-    {
-        /** 홈/어웨이팀 구분에 따른 처리 */
+    private List<TeamQuarterRecordsDTO> toTeamQuarterRecordsList( List<GameJoinTeam> gameJoinTeams ) {
         return gameJoinTeams.stream()
-                .filter( gjt -> gjt.getHomeAwayCode().equals( homeAwayCode.getCode() ))
-                .findFirst()
-                .get();
+                .map( gjt -> new TeamQuarterRecordsDTO()
+                        .gameJoinTeamSeq(   gjt.getGameJoinTeamSeq() )
+                        .teamName(          gjt.getTeamName() )
+                        .homeAwayCode(      gjt.getHomeAwayCode() ) )
+                .collect( Collectors.toList() );
     }
-
 
 
     /**
