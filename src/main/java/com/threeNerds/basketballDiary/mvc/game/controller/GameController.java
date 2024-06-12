@@ -10,13 +10,11 @@ import com.threeNerds.basketballDiary.mvc.game.controller.response.*;
 import com.threeNerds.basketballDiary.mvc.game.dto.*;
 import com.threeNerds.basketballDiary.mvc.game.dto.getGameAllQuartersRecords.GetGameAllQuartersRecordsResponse;
 import com.threeNerds.basketballDiary.mvc.game.controller.response.GetGameEntryResponse;
-import com.threeNerds.basketballDiary.mvc.game.dto.QuarterTeamEntryDTO;
+
 import com.threeNerds.basketballDiary.mvc.game.controller.response.GetGameJoinPlayerQuarterRecordsResponse;
 import com.threeNerds.basketballDiary.mvc.game.dto.PlayerQuarterRecordDTO;
 
 import com.threeNerds.basketballDiary.mvc.game.controller.response.GetGameJoinPlayersResponse;
-import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.request.GetGameQuarterRecordsRequest;
-import com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.response.GetGameQuarterRecordsResponse;
 import com.threeNerds.basketballDiary.mvc.game.service.GameAuthService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameJoinManagerService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameRecordManagerService;
@@ -351,9 +349,7 @@ public class GameController {
                     .quarterCode( quarterCode )
                     .build()
         );
-
-        // TODO Result타입을 Response타입으로 변경하여 return 처리하기
-        return ResponseEntity.ok( result );
+        return ResponseEntity.ok( new GetGameQuarterRecordsResponse( result ) );
     }
 
 
