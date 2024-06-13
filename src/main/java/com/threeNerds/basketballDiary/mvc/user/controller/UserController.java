@@ -6,7 +6,6 @@ import com.threeNerds.basketballDiary.exception.error.DomainErrorResponse;
 import com.threeNerds.basketballDiary.exception.error.SystemErrorType;
 import com.threeNerds.basketballDiary.mvc.user.controller.request.UpdateMyProfileRequest;
 import com.threeNerds.basketballDiary.mvc.user.controller.response.GetUsersExcludingTeamMembersResponse;
-import com.threeNerds.basketballDiary.mvc.user.dto.UserDTO;
 import com.threeNerds.basketballDiary.mvc.user.service.dto.MembershipCommand;
 import com.threeNerds.basketballDiary.mvc.user.controller.request.SignUpRequest;
 import com.threeNerds.basketballDiary.mvc.user.controller.request.UpdatePasswordRequest;
@@ -31,8 +30,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 
-import java.util.List;
-
 import static com.threeNerds.basketballDiary.session.util.SessionUtil.LOGIN_USER;
 
 /**
@@ -55,7 +52,7 @@ public class UserController {
 
     /**
      * TODO URL 및 파라미터 타입 재설계
-     * API006 사용자 검색
+     * API006 사용자 검색 ( 팀원 제외 )
      * 23.05.07 여인준 : 팀원 제외하고 조회되게끔 변경
      */
     @Auth
@@ -70,16 +67,18 @@ public class UserController {
     public ResponseEntity<?> getUsersExcludingTeamMembers  (
             @PathVariable Long teamSeq,
             @RequestParam( required = false ) String userName,
-            @RequestParam( required = false ) String email
-    ){
-        List<UserDTO> users = userService.getUsersExcludingTeamMembers(
+            @RequestParam( required = false ) String email,
+            @RequestParam( defaultValue = "0" ) Integer pageNo
+    ) {
+        UserQuery.Result result = userService.getUsersExcludingTeamMembers(
                                         UserQuery.builder()
+                                                .pageNo(    pageNo )
                                                 .teamSeq(   teamSeq )
                                                 .userName(  userName )
                                                 .email(     email )
                                                 .build()
                                         );
-        return ResponseEntity.ok().body( new GetUsersExcludingTeamMembersResponse( users ) );
+        return ResponseEntity.ok().body( new GetUsersExcludingTeamMembersResponse( result ) );
     }
 
     // >> AuthController는 권한부여, 검증, 만료처리에 대한 역할 수행

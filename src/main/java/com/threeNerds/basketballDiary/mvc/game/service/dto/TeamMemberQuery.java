@@ -1,6 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.game.service.dto;
 
 import com.threeNerds.basketballDiary.mvc.game.dto.GameOpponentDTO;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.MemberDTO;
 import com.threeNerds.basketballDiary.pagination.Pagination;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,12 +14,11 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class OppenentTeamQuery {
+public class TeamMemberQuery {
 
-    String sidoCode;    /*시도코드*/
-    String teamName;    /*팀이름*/
-    String leaderName;  /*리더이름*/
     Integer pageNo;     /* 페이징 : 현재 페이지 */
+    Long teamSeq;       /* 팀Seq */
+    String playerName;  /* 선수이름 */
 
     /**
      * 결과값
@@ -26,16 +26,16 @@ public class OppenentTeamQuery {
     @Getter
     public class Result {
         Pagination pagination;
-        List<GameOpponentDTO> opponents;
+        List<MemberDTO> teamMembers;
 
-        Result( Pagination pagination, List<GameOpponentDTO> opponents ) {
+        Result( Pagination pagination, List<MemberDTO> teamMembers ) {
             this.pagination = pagination;
-            this.opponents  = opponents;
+            this.teamMembers  = teamMembers;
         }
     }
 
-    public OppenentTeamQuery.Result setResult( Pagination pagination, List<GameOpponentDTO> opponents ) {
-        return new Result( pagination, opponents );
+    public TeamMemberQuery.Result buildResult( Pagination pagination, List<MemberDTO> teamMembers ) {
+        return new Result( pagination, teamMembers );
     }
 
 }

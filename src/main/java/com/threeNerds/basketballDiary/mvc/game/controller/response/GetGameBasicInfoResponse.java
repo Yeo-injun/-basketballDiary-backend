@@ -1,7 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.game.controller.response;
 
-import com.threeNerds.basketballDiary.mvc.game.domain.Game;
 import com.threeNerds.basketballDiary.mvc.game.dto.GameDetailDTO;
+import com.threeNerds.basketballDiary.mvc.game.service.dto.GameQuery;
 import lombok.Getter;
 
 @Getter
@@ -14,12 +14,13 @@ public class GetGameBasicInfoResponse {
     private final String gamePlaceName;       // 게임 장소이름
     private final String gamePlaceAddress;    // 게임 장소주소
 
-    public GetGameBasicInfoResponse ( GameDetailDTO gameDetail ) {
-        this.gameSeq            = gameDetail.getGameSeq();             // 게임Seq
-        this.gameYmd            = gameDetail.getGameYmd();             // 게임 생성일자
-        this.gameStartTime      = gameDetail.getGameStartTime();       // 게임 시작시간
-        this.gameEndTime        = gameDetail.getGameEndTime();         // 게임 종료시간
-        this.gamePlaceName      = gameDetail.getGamePlaceName();       // 게임 장소이름
-        this.gamePlaceAddress   = gameDetail.getGamePlaceAddress();    // 게임 장소주소
+    public GetGameBasicInfoResponse ( GameQuery.Result result ) {
+        GameDetailDTO gameInfo = result.getGameInfo();
+        this.gameSeq            = gameInfo.getGameSeq();             // 게임Seq
+        this.gameYmd            = gameInfo.getGameYmd();             // 게임 생성일자
+        this.gameStartTime      = gameInfo.getGameStartTime();       // 게임 시작시간
+        this.gameEndTime        = gameInfo.getGameEndTime();         // 게임 종료시간
+        this.gamePlaceName      = gameInfo.getGamePlaceName();       // 게임 장소이름
+        this.gamePlaceAddress   = gameInfo.getGamePlaceAddress();    // 게임 장소주소
     }
 }

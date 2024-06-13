@@ -16,6 +16,8 @@ public enum DomainErrorType implements ErrorMessageType {
     INVALID_SEARCH_DATE_SPAN(BAD_REQUEST, "검색기간이 올바르지 않습니다. 검색기간을 확인해주세요."),
     INCORRECT_PASSWORD( BAD_REQUEST, "비밀번호가 일치하지 않습니다." ),
     INCORRECT_LOGIN_INFO( BAD_REQUEST,"입력한 ID 혹은 비밀번호가 일치하지 않습니다"),
+    INVALID_GAME_TYPE( BAD_REQUEST, "유효하지 않은 경기유형입니다."),
+    INVALID_HOME_AWAY_CODE( BAD_REQUEST, "유효하지 않은 홈/어웨이 코드입니다."),
 
     /** 404 NOT_FOUND : Resource 를 찾을 수 없음 */
     JOIN_REQUEST_NOT_FOUND(NOT_FOUND, "대기 중인 가입요청 건이 존재하지 않습니다."),

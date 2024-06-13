@@ -2,6 +2,7 @@ package com.threeNerds.basketballDiary.mvc.myTeam.controller;
 
 import com.threeNerds.basketballDiary.auth.Auth;
 import com.threeNerds.basketballDiary.auth.constant.AuthLevel;
+import com.threeNerds.basketballDiary.mvc.game.service.dto.TeamMemberQuery;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.GetMyTeamsRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.ModifyMyTeamInfoRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.SearchMyTeamGamesRequest;
@@ -107,12 +108,18 @@ public class MyTeamController {
     @GetMapping("/{teamSeq}/allTeamMembers")
     public ResponseEntity<SearchAllTeamMembersResponse> searchAllTeamMembers(
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,
-            @PathVariable(value = "teamSeq") Long teamSeq,
-            @RequestParam(name = "pageNo", defaultValue = "0") Integer pageNo,
-            @RequestParam(name = "playerName", required = false) String playerName
+            @PathVariable( value = "teamSeq" ) Long teamSeq,
+            @RequestParam( name = "pageNo", defaultValue = "0" ) Integer pageNo,
+            @RequestParam( name = "playerName", required = false ) String playerName
     ) {
-        SearchAllTeamMembersResponse resBody = myTeamService.searchAllTeamMembers( new SearchAllTeamMembersRequest(teamSeq, pageNo, playerName) );
-        return ResponseEntity.ok().body(resBody);
+        TeamMemberQuery.Result result = myTeamService.searchAllTeamMembers(
+                TeamMemberQuery.builder()
+                    .teamSeq( teamSeq )
+                    .playerName( playerName )
+                    .pageNo( pageNo )
+                    .build()
+        );
+        return ResponseEntity.ok().body( new SearchAllTeamMembersResponse( result ) );
     }
 
     /**

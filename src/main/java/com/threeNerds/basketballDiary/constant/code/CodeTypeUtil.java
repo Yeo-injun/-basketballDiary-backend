@@ -24,7 +24,7 @@ public class CodeTypeUtil {
         return Arrays.stream( codeTypes )
                 .filter( item -> item.getCode().equals( code ) )
                 .findAny()
-                .orElseThrow(() -> new CustomException(SystemErrorType.NOT_FOUND_VALID_VALUE ) ); // TODO 에러메세지 친절하게 처리...
+                .orElseThrow( () -> new CustomException( SystemErrorType.NO_EXIST_MATCHED_ENUM_TYPE ) );
     }
 
 }
