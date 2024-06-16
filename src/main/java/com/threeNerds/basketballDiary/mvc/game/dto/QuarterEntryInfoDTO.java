@@ -1,6 +1,5 @@
 package com.threeNerds.basketballDiary.mvc.game.dto;
 
-import com.threeNerds.basketballDiary.mvc.game.controller.dto.QuarterEntryDTO;
 import lombok.Getter;
 
 import java.util.List;
