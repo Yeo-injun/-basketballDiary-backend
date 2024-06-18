@@ -21,10 +21,7 @@ import com.threeNerds.basketballDiary.mvc.game.service.GameRecordManagerService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameService;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.*;
 import com.threeNerds.basketballDiary.session.SessionUser;
-import com.threeNerds.basketballDiary.swagger.docs.game.ApiDocs035;
-import com.threeNerds.basketballDiary.swagger.docs.game.ApiDocs038;
-import com.threeNerds.basketballDiary.swagger.docs.game.ApiDocs040;
-import com.threeNerds.basketballDiary.swagger.docs.game.ApiDocs044;
+import com.threeNerds.basketballDiary.swagger.docs.game.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -122,6 +119,7 @@ public class GameController {
      * @since 23.05.06(월)
      * @author 여인준
      */
+    @ApiDocs067
     @Auth
     @PostMapping("/{gameSeq}/homeAwayCode/{homeAwayCode}/player")
     public ResponseEntity< URI > addGameJoinPlayer(
