@@ -205,7 +205,7 @@ public class GameJoinManagerService {
         List<QuarterPlayerRecords> playersRecord = quarterPlayerRecordsRepo.findAllInGame(gameSeq);
         boolean hasPlayerRecord = !playersRecord.isEmpty();
         if (hasPlayerRecord) {
-            throw new CustomException( DomainErrorType.INVALID_REGISTER_PLAYERS_FOR_ALREADY_HAS_RECORDS );
+            throw new CustomException( DomainErrorType.ALREADY_EXIST_QUARTER_RECORDS );
         }
 
         /** 게임참가선수 데이터 존재여부 확인 - 기존 데이터 존재시 삭제 TODO 경기생성자는 삭제에서 제외시켜야 함 / 상대팀에 등록되어 있는지 확인 */
@@ -273,7 +273,7 @@ public class GameJoinManagerService {
         List<QuarterPlayerRecords> playersRecord = quarterPlayerRecordsRepo.findAllInGame(gameSeq);
         boolean hasPlayerRecord = !playersRecord.isEmpty();
         if ( hasPlayerRecord ) {
-            throw new CustomException( DomainErrorType.INVALID_REGISTER_PLAYERS_FOR_ALREADY_HAS_RECORDS );
+            throw new CustomException( DomainErrorType.ALREADY_EXIST_QUARTER_RECORDS );
         }
 
         String backNumber           = command.getBackNumber();
@@ -315,7 +315,7 @@ public class GameJoinManagerService {
         List<QuarterPlayerRecords> playersRecord = quarterPlayerRecordsRepo.findAllInGame(gameSeq);
         boolean hasPlayerRecord = !playersRecord.isEmpty();
         if (hasPlayerRecord) {
-            throw new CustomException( DomainErrorType.INVALID_REGISTER_PLAYERS_FOR_ALREADY_HAS_RECORDS );
+            throw new CustomException( DomainErrorType.ALREADY_EXIST_QUARTER_RECORDS );
         }
 
         GameJoinPlayer deletePlayer = gameJoinPlayerRepository.findPlayer( GameJoinPlayer.builder()
