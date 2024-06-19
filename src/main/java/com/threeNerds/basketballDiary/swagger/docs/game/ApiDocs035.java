@@ -15,10 +15,10 @@ import static java.lang.annotation.ElementType.METHOD;
 @Target( METHOD )
 @Retention( RetentionPolicy.RUNTIME )
 @Operation(
-    summary     = "[ API035 ] 게임참가 선수등록하기",
+    summary     = "[ API035 ] 경기 참가 선수등록하기",
     description =
-            "게임참가 선수를 등록한다. \n" +
-            "제약사항 : .... ",
+            "경기에 참가하는 선수들을 목록으로 받아서 일괄로 등록한다."
+    ,
     responses   = {
         @ApiResponse(
             responseCode = "200"
@@ -30,6 +30,4 @@ import static java.lang.annotation.ElementType.METHOD;
         )
     }
 )
-public @interface ApiDocs035 {
-    String apiId() default "API035";
-}
+public @interface ApiDocs035 { }

@@ -30,5 +30,4 @@ import static java.lang.annotation.ElementType.METHOD;
         )
     }
 )
-public @interface ApiDocs038 {
-}
+public @interface ApiDocs038 { }
