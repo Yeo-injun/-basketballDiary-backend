@@ -39,6 +39,4 @@ import static java.lang.annotation.ElementType.METHOD;
         )
     }
 )
-public @interface ApiDocs067 {
-    String apiId() default "API035";
-}
+public @interface ApiDocs067 { }
