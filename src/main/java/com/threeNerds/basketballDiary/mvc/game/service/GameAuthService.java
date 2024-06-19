@@ -38,7 +38,8 @@ public class GameAuthService {
      * @author 이성주
      */
     // TODO 경기권한 테이블을 참조하지 않고 경기참가선수 테이블에 경기권한 컬럼을 추가하여 경기기록원을 조회
-    // TODO 현재 양쪽팀 모두에 경기참가선수 반영이 가능하여 기록권한을 부여하면 기록원이 2명으로 조회되는 오류 존재. 해당 오류를 해결하기 위해 테이블의 컬럼속성으로 기록원 관리하도록 변경 예정
+    // TODO 현재 양쪽팀 모두에 경기참가선수 반영이 가능하여 기록권한을 부여하면 기록원이 2명으로 조회되는 오류 존재.
+    // TODO 해당 오류를 해결하기 위해 테이블의 컬럼속성으로 기록원 관리하도록 변경 예정
     public List<GameRecorderDTO> getGameRecorders( GameRecorderQuery query ) {
         return gameRecorderRepo.findAllRecorders( query.getGameSeq() );
     }
@@ -102,12 +103,12 @@ public class GameAuthService {
      *   1) 서비스 회원이어야 한다.
      *   2) 경기에 참가한 선수여야 한다.
      */
-    public List<GameRecorderCandidateDTO> getGameRecorderCandidates( GameRecorderCandidatesQuery query ) {
+    public GameRecorderCandidatesQuery.Result getGameRecorderCandidates( GameRecorderCandidatesQuery query ) {
 
         GameRecorderCandidateDTO searchCond = new GameRecorderCandidateDTO()
                 .gameSeq(       query.getGameSeq() )
                 .homeAwayCode(  query.getHomeAwayCode() );
 
-        return gameRecorderRepo.findAllCandidates(searchCond);
+        return query.buildResult( gameRecorderRepo.findAllCandidates( searchCond ) );
     }
 }
