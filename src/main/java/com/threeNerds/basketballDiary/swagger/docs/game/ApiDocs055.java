@@ -15,19 +15,14 @@ import static java.lang.annotation.ElementType.METHOD;
 @Target( METHOD )
 @Retention( RetentionPolicy.RUNTIME )
 @Operation(
-    summary     = "[ API035 ] 경기 참가 선수등록하기",
+    summary     = "[ API055 ] 경기기록원 조회",
     description =
-        "경기에 참가하는 선수들을 목록으로 받아서 일괄로 등록한다."
-    ,
+        "경기를 기록할 수 있는 권한을 가진 사용자를 조회한다." +
+        "경기기록원은 경기를 생성한 경기생성자와 경기 기록권한을 부여받은 경기기록자 모두를 포함한다.",
     responses   = {
         @ApiResponse(
             responseCode = "200"
         ),
-        @ApiResponse(
-            responseCode    = "404",
-            description     = "팀원을 찾지 못하였습니다.",
-            content         = @Content( schema = @Schema( implementation = DomainErrorResponse.class ) )
-        )
     }
 )
-public @interface ApiDocs035 { }
+public @interface ApiDocs055 { }
