@@ -414,18 +414,18 @@ public class GameController {
     /**
      * API055 경기기록원 조회
      */
+    @ApiDocs055
     @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_RECORDER )
     @GetMapping("/{gameSeq}/recorders")
     public ResponseEntity<?> getGameRecorders(
             @PathVariable("gameSeq") Long gameSeq
     ) {
-        // TODO 패턴 개선 GameRecorderQuery inner 클래스로 Result 생성
-        List<GameRecorderDTO> gameRecorders = gameAuthService.getGameRecorders(
+        GameRecorderQuery.Result result = gameAuthService.getGameRecorders(
                                                 GameRecorderQuery.builder()
                                                     .gameSeq( gameSeq )
                                                     .build()
-                                            );
-        return ResponseEntity.ok( new GetGameRecordersResponse( gameRecorders ) );
+                                          );
+        return ResponseEntity.ok( new GetGameRecordersResponse( result ) );
     }
 
     /**
