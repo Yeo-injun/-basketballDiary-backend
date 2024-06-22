@@ -5,8 +5,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -17,15 +15,17 @@ import static java.lang.annotation.ElementType.METHOD;
 @Target( METHOD )
 @Retention( RetentionPolicy.RUNTIME )
 @Operation(
-    summary     = "[ API044 ] 상대팀 목록 조회",
-    description = "교류전으로 생성한 경기에서 상대팀으로 지정할 수 있는 팀의 목록을 조회한다. / "
-                + "[ 제약사항 ] 1. ",
+    summary     = "[ API057 ] 경기기록원 후보 조회",
+    description =
+            "경기기록 입력 권한을 부여할 수 있는 후보들을 조회한다." +
+            "경기기록 권한을 가질 수 있는 사람은 다음 2가지 조건을 충족해야 한다." +
+            "[1] 서비스에 가입된 회원이어야 한다." +
+            "[2] 경기에 참가한 선수여야 한다. ( 소속팀은 상관없다. )"
+    ,
     responses   = {
         @ApiResponse(
-            responseCode    = "200",
-            description     = "팀목록을 조회했습니다.",
-            content         = @Content( mediaType = MediaType.APPLICATION_JSON_VALUE )
+            responseCode = "200"
         ),
     }
 )
-public @interface ApiDocs044 { }
+public @interface ApiDocs057 { }

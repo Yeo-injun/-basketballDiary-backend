@@ -21,10 +21,7 @@ import com.threeNerds.basketballDiary.mvc.game.service.GameRecordManagerService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameService;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.*;
 import com.threeNerds.basketballDiary.session.SessionUser;
-import com.threeNerds.basketballDiary.swagger.docs.game.ApiDocs035;
-import com.threeNerds.basketballDiary.swagger.docs.game.ApiDocs038;
-import com.threeNerds.basketballDiary.swagger.docs.game.ApiDocs040;
-import com.threeNerds.basketballDiary.swagger.docs.game.ApiDocs044;
+import com.threeNerds.basketballDiary.swagger.docs.game.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -122,6 +119,7 @@ public class GameController {
      * @since 23.05.06(월)
      * @author 여인준
      */
+    @ApiDocs067
     @Auth
     @PostMapping("/{gameSeq}/homeAwayCode/{homeAwayCode}/player")
     public ResponseEntity< URI > addGameJoinPlayer(
@@ -416,18 +414,18 @@ public class GameController {
     /**
      * API055 경기기록원 조회
      */
+    @ApiDocs055
     @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_RECORDER )
     @GetMapping("/{gameSeq}/recorders")
     public ResponseEntity<?> getGameRecorders(
             @PathVariable("gameSeq") Long gameSeq
     ) {
-        // TODO 패턴 개선 GameRecorderQuery inner 클래스로 Result 생성
-        List<GameRecorderDTO> gameRecorders = gameAuthService.getGameRecorders(
+        GameRecorderQuery.Result result = gameAuthService.getGameRecorders(
                                                 GameRecorderQuery.builder()
                                                     .gameSeq( gameSeq )
                                                     .build()
-                                            );
-        return ResponseEntity.ok( new GetGameRecordersResponse( gameRecorders ) );
+                                          );
+        return ResponseEntity.ok( new GetGameRecordersResponse( result ) );
     }
 
     /**
@@ -441,7 +439,6 @@ public class GameController {
             @PathVariable("gameSeq") Long gameSeq,
             @RequestBody @Valid SaveGameRecordersRequest request
     ) {
-        // TODO Request클래스 분리 요망
         gameAuthService.saveGameRecorders( request.toCommand( gameSeq ) );
         return RESPONSE_OK;
     }
@@ -450,22 +447,21 @@ public class GameController {
      * API057 경기기록원 후보 조회 ( TODO API명칭 변경 사항 반영 요망 )
      * @since 24.04.21 (일)
      * @author injun
-     *  - 경기기록 권한을 부여할 수 있는 후보군 조회
      */
+    @ApiDocs057
     @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_RECORDER )
     @GetMapping("/{gameSeq}/recorders/candidates")
     public ResponseEntity<?> getGameRecorderCandidates(
             @PathVariable(name = "gameSeq") Long gameSeq,
             @RequestParam(name = "homeAwayCode", required = false) String homeAwayCode
     ) {
-        // TODO 패턴 개선 GameRecorderCandidatesQuery inner 클래스로 Result 생성
-        List<GameRecorderCandidateDTO> candidates = gameAuthService.getGameRecorderCandidates(
+        GameRecorderCandidatesQuery.Result result = gameAuthService.getGameRecorderCandidates(
                                                         GameRecorderCandidatesQuery.builder()
                                                             .gameSeq( gameSeq )
                                                             .homeAwayCode( homeAwayCode )
                                                             .build()
                                                     );
-        return ResponseEntity.ok( new GetGameRecorderCandidatesResponse( candidates ) );
+        return ResponseEntity.ok( new GetGameRecorderCandidatesResponse( result ) );
     }
 
     /**
