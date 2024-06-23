@@ -496,15 +496,14 @@ public class GameController {
             @RequestParam(name = "homeAwayCode" , required = false) String homeAwayCode,
             @RequestParam(name = "pageNo"       , defaultValue = "0") Integer pageNo
     ) {
-        // TODO 코드 개선 Query클래스 내에 Inner 클래스 활용
-        GameJoinPlayerResult homeResult = gameJoinManagerService.getGameJoinPlayers(
+        GameJoinPlayerQuery.Result homeResult = gameJoinManagerService.getGameJoinPlayers(
             GameJoinPlayerQuery.builder()
                     .gameSeq(       gameSeq )
                     .homeAwayCode(  HomeAwayCode.HOME_TEAM.getCode() )
                     .pageNo(        pageNo )
                     .build()
         );
-        GameJoinPlayerResult awayResult = gameJoinManagerService.getGameJoinPlayers(
+        GameJoinPlayerQuery.Result awayResult = gameJoinManagerService.getGameJoinPlayers(
             GameJoinPlayerQuery.builder()
                     .gameSeq(       gameSeq )
                     .homeAwayCode(  HomeAwayCode.AWAY_TEAM.getCode() )
@@ -526,8 +525,7 @@ public class GameController {
             @PathVariable(name = "homeAwayCode")    String homeAwayCode,
             @RequestParam(name = "pageNo" , defaultValue = "0") Integer pageNo
     ) {
-        // TODO 패턴 개선 GameJoinPlayerQuery inner 클래스로 Result 생성
-        GameJoinPlayerResult result = gameJoinManagerService.getGameJoinPlayers(
+        GameJoinPlayerQuery.Result result = gameJoinManagerService.getGameJoinPlayers(
             GameJoinPlayerQuery.builder()
                     .gameSeq(       gameSeq )
                     .homeAwayCode(  homeAwayCode )
