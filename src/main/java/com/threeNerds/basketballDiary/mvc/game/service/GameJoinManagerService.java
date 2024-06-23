@@ -296,6 +296,8 @@ public class GameJoinManagerService {
             gameJoinPlayerRepository.save( addPlayer );
         }
     }
+
+
     /**
      * 경기참가선수 삭제
      **/
@@ -329,44 +331,46 @@ public class GameJoinManagerService {
     }
 
 
-    public GameJoinPlayerResult getGameJoinPlayers( GameJoinPlayerQuery query ) {
-        /** 게임에 참가한 팀 및 팀원을 모두 조회해서 필터링 */
+
+    public GameJoinPlayerQuery.Result getGameJoinPlayers( GameJoinPlayerQuery query ) {
         final Long gameSeq          = query.getGameSeq();
         final String homeAwayCode   = query.getHomeAwayCode();
         final Integer pageNo        = query.getPageNo();
 
         GameJoinTeam gameJoinTeam = gameJoinTeamRepository.findGameJoinTeam(
-            GameJoinTeam.builder()
-                .gameSeq(       gameSeq )
-                .homeAwayCode(  homeAwayCode )
-                .build()
+                GameJoinTeam.builder()
+                        .gameSeq(       gameSeq )
+                        .homeAwayCode(  homeAwayCode )
+                        .build()
         );
-        Long teamSeq = gameJoinTeam.getTeamSeq();
+        if ( null == gameJoinTeam ) {
+            throw new CustomException( DomainErrorType.NOT_FOUND_GAME_JOIN_TEAM );
+        }
 
+        Long teamSeq            = gameJoinTeam.getTeamSeq();
         Pagination pagination   = Pagination.of( pageNo, 5 );
         boolean isNoPagination  = 0 == pageNo;
         if ( isNoPagination ) {
             SearchPlayersDTO searchCond = new SearchPlayersDTO()
                     .gameSeq(       gameSeq )
                     .homeAwayCode(  homeAwayCode );
-            return GameJoinPlayerResult.builder()
-                    .gameSeq(       gameSeq )
-                    .teamSeq(       teamSeq )
-                    .pagination(    pagination.getPages( gameJoinManagerRepo.findTotalCountGameJoinPlayers( searchCond ) ) )
-                    .players(       gameJoinManagerRepo.findGameJoinPlayers( searchCond ) )
-                    .build();
+            return query.buildResult(
+                    teamSeq,
+                    gameJoinManagerRepo.findGameJoinPlayers( searchCond ),
+                    pagination.getPages( gameJoinManagerRepo.findTotalCountGameJoinPlayers( searchCond ) )
+            );
         }
         SearchPlayersDTO searchCond = new SearchPlayersDTO()
                 .gameSeq(       gameSeq )
                 .homeAwayCode(  homeAwayCode )
                 .pagination(    pagination );
-        return GameJoinPlayerResult.builder()
-                .gameSeq(       gameSeq )
-                .teamSeq(       teamSeq )
-                .pagination(    pagination.getPages( gameJoinManagerRepo.findTotalCountGameJoinPlayers( searchCond ) ) )
-                .players(       gameJoinManagerRepo.findPaginationGameJoinPlayers( searchCond ) )
-                .build();
+        return query.buildResult(
+                teamSeq,
+                gameJoinManagerRepo.findPaginationGameJoinPlayers( searchCond ),
+                pagination.getPages( gameJoinManagerRepo.findTotalCountGameJoinPlayers( searchCond ) )
+        );
     }
+
 
     /**
      * 쿼터 엔트리 목록 저장
