@@ -374,15 +374,15 @@ public class GameJoinManagerService {
 
     /**
      * 쿼터 엔트리 목록 저장
-     * @param quarterEntryInfoDTO
+     * @param command
      */
-    public void saveQuarterEntryInfo(QuarterEntryInfoDTO quarterEntryInfoDTO) {
+    public void saveQuarterEntryInfo( GameEntryCommand command ) {
         /** TODO 게임생성자 권한 체크 - 게임기록권한T 조회해서 권한체크 */
 
         /**--------------------------------
          * 쿼터 엔트리 길이 체크 - 5명이 되는지 TODO entry로 속성명 수정 필요
          *---------------------------------*/
-        List<PlayerInfoDTO> entryInput = quarterEntryInfoDTO.getPlayerList();
+        List<PlayerInfoDTO> entryInput = command.getEntry();
         boolean hasNotValidEntry = entryInput.size() != 5;
         if (hasNotValidEntry) {
             throw new CustomException( DomainErrorType.INSUFFICIENT_PLAYERS_ON_ENTRY );
@@ -394,9 +394,9 @@ public class GameJoinManagerService {
          *  - gameJoinPlayerSeq를 Set으로 변경
          *  - 해당 Set으로 존재여부 확인
          *---------------------------------*/
-        Long gameSeq         = quarterEntryInfoDTO.getGameSeq();
-        String homeAwayCode  = quarterEntryInfoDTO.getHomeAwayCode();
-        String quarterCode   = quarterEntryInfoDTO.getQuarterCode();
+        Long gameSeq         = command.getGameSeq();
+        String homeAwayCode  = command.getHomeAwayCode();
+        String quarterCode   = command.getQuarterCode();
 
         QuarterPlayerRecords quarterRecordParam = QuarterPlayerRecords.builder()
                                                     .gameSeq( gameSeq )
@@ -444,7 +444,7 @@ public class GameJoinManagerService {
                     .quarterCode(           quarterCode )
                     .inGameYn(              "Y" )
                     .build();
-            quarterPlayerRecordsRepo.save(paramForCreation);
+            quarterPlayerRecordsRepo.save( paramForCreation );
         }
     }
 

@@ -471,15 +471,7 @@ public class GameController {
             @PathVariable(name = "gameSeq") Long gameSeq,
             @RequestBody @Valid SaveQuarterEntryInfoRequest reqBody
     ) {
-        // TODO Command 패턴으로 변경하기
-        QuarterEntryInfoDTO qeiDTO = new QuarterEntryInfoDTO()
-                                        .gameSeq(gameSeq)
-                                        .gameJoinTeamSeq(reqBody.getGameJoinTeamSeq())
-                                        .homeAwayCode(reqBody.getHomeAwayCode())
-                                        .quarterCode(reqBody.getQuarterCode())
-                                        .playerList(reqBody.getPlayerList());
-
-        gameJoinManagerService.saveQuarterEntryInfo(qeiDTO);
+        gameJoinManagerService.saveQuarterEntryInfo( reqBody.toCommand( gameSeq ) );
         return RESPONSE_OK;
     }
 
