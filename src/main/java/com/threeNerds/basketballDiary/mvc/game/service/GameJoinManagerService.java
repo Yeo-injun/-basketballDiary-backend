@@ -296,6 +296,8 @@ public class GameJoinManagerService {
             gameJoinPlayerRepository.save( addPlayer );
         }
     }
+
+
     /**
      * 경기참가선수 삭제
      **/
@@ -329,56 +331,58 @@ public class GameJoinManagerService {
     }
 
 
-    public GameJoinPlayerResult getGameJoinPlayers( GameJoinPlayerQuery query ) {
-        /** 게임에 참가한 팀 및 팀원을 모두 조회해서 필터링 */
+
+    public GameJoinPlayerQuery.Result getGameJoinPlayers( GameJoinPlayerQuery query ) {
         final Long gameSeq          = query.getGameSeq();
         final String homeAwayCode   = query.getHomeAwayCode();
         final Integer pageNo        = query.getPageNo();
 
         GameJoinTeam gameJoinTeam = gameJoinTeamRepository.findGameJoinTeam(
-            GameJoinTeam.builder()
-                .gameSeq(       gameSeq )
-                .homeAwayCode(  homeAwayCode )
-                .build()
+                GameJoinTeam.builder()
+                        .gameSeq(       gameSeq )
+                        .homeAwayCode(  homeAwayCode )
+                        .build()
         );
-        Long teamSeq = gameJoinTeam.getTeamSeq();
+        if ( null == gameJoinTeam ) {
+            throw new CustomException( DomainErrorType.NOT_FOUND_GAME_JOIN_TEAM );
+        }
 
+        Long teamSeq            = gameJoinTeam.getTeamSeq();
         Pagination pagination   = Pagination.of( pageNo, 5 );
         boolean isNoPagination  = 0 == pageNo;
         if ( isNoPagination ) {
             SearchPlayersDTO searchCond = new SearchPlayersDTO()
                     .gameSeq(       gameSeq )
                     .homeAwayCode(  homeAwayCode );
-            return GameJoinPlayerResult.builder()
-                    .gameSeq(       gameSeq )
-                    .teamSeq(       teamSeq )
-                    .pagination(    pagination.getPages( gameJoinManagerRepo.findTotalCountGameJoinPlayers( searchCond ) ) )
-                    .players(       gameJoinManagerRepo.findGameJoinPlayers( searchCond ) )
-                    .build();
+            return query.buildResult(
+                    teamSeq,
+                    gameJoinManagerRepo.findGameJoinPlayers( searchCond ),
+                    pagination.getPages( gameJoinManagerRepo.findTotalCountGameJoinPlayers( searchCond ) )
+            );
         }
         SearchPlayersDTO searchCond = new SearchPlayersDTO()
                 .gameSeq(       gameSeq )
                 .homeAwayCode(  homeAwayCode )
                 .pagination(    pagination );
-        return GameJoinPlayerResult.builder()
-                .gameSeq(       gameSeq )
-                .teamSeq(       teamSeq )
-                .pagination(    pagination.getPages( gameJoinManagerRepo.findTotalCountGameJoinPlayers( searchCond ) ) )
-                .players(       gameJoinManagerRepo.findPaginationGameJoinPlayers( searchCond ) )
-                .build();
+        return query.buildResult(
+                teamSeq,
+                gameJoinManagerRepo.findPaginationGameJoinPlayers( searchCond ),
+                pagination.getPages( gameJoinManagerRepo.findTotalCountGameJoinPlayers( searchCond ) )
+        );
     }
+
 
     /**
      * 쿼터 엔트리 목록 저장
-     * @param quarterEntryInfoDTO
+     * @param command
      */
-    public void saveQuarterEntryInfo(QuarterEntryInfoDTO quarterEntryInfoDTO) {
+    public void saveQuarterEntryInfo( GameEntryCommand command ) {
         /** TODO 게임생성자 권한 체크 - 게임기록권한T 조회해서 권한체크 */
 
         /**--------------------------------
          * 쿼터 엔트리 길이 체크 - 5명이 되는지 TODO entry로 속성명 수정 필요
          *---------------------------------*/
-        List<PlayerInfoDTO> entryInput = quarterEntryInfoDTO.getPlayerList();
+        List<PlayerInfoDTO> entryInput = command.getEntry();
         boolean hasNotValidEntry = entryInput.size() != 5;
         if (hasNotValidEntry) {
             throw new CustomException( DomainErrorType.INSUFFICIENT_PLAYERS_ON_ENTRY );
@@ -390,9 +394,9 @@ public class GameJoinManagerService {
          *  - gameJoinPlayerSeq를 Set으로 변경
          *  - 해당 Set으로 존재여부 확인
          *---------------------------------*/
-        Long gameSeq         = quarterEntryInfoDTO.getGameSeq();
-        String homeAwayCode  = quarterEntryInfoDTO.getHomeAwayCode();
-        String quarterCode   = quarterEntryInfoDTO.getQuarterCode();
+        Long gameSeq         = command.getGameSeq();
+        String homeAwayCode  = command.getHomeAwayCode();
+        String quarterCode   = command.getQuarterCode();
 
         QuarterPlayerRecords quarterRecordParam = QuarterPlayerRecords.builder()
                                                     .gameSeq( gameSeq )
@@ -440,7 +444,7 @@ public class GameJoinManagerService {
                     .quarterCode(           quarterCode )
                     .inGameYn(              "Y" )
                     .build();
-            quarterPlayerRecordsRepo.save(paramForCreation);
+            quarterPlayerRecordsRepo.save( paramForCreation );
         }
     }
 
