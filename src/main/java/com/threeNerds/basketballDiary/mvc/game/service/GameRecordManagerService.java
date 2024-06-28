@@ -60,21 +60,21 @@ public class GameRecordManagerService {
     private final String QUARTER_3RD_CODE = QuarterCode.THIRD.getCode();
     private final String QUARTER_4TH_CODE = QuarterCode.FOURTH.getCode();
 
-    /** TODO 23.04.09 테스트 필요
+    /**
      * 22.11.06
      * 특정쿼터의 선수별 기록조회(목록)
      * homeAwayCode에 따라 특정쿼터의 선수별 기록 목록을 조회한다.
      * @author 강창기
      * @update 여인준 23.04.08 : 파라미터 및 조회 데이터 변경
      */
-    public Map< HomeAwayCode, List<PlayerQuarterRecordDTO> > getGameJoinPlayerQuarterRecords( GameJoinPlayerRecordQuery query ) {
+    public GameJoinPlayerRecordQuery.Result getGameJoinPlayerQuarterRecords( GameJoinPlayerRecordQuery query ) {
         Long gameSeq        = query.getGameSeq();
         String homeAwayCode = query.getHomeAwayCode();
         String quarterCode  = query.getQuarterCode();
 
         /** gameSeq에 해당하는 게임내역이 존재하는지 확인. */
-        boolean isExistGame = !ObjectUtils.isEmpty( gameRepository.findGame( gameSeq ) );
-        if( !isExistGame ) {
+        boolean isNotExistGame = null == gameRepository.findGame( gameSeq );
+        if( isNotExistGame ) {
             throw new CustomException(DomainErrorType.NOT_FOUND_GAME);
         }
 
@@ -84,15 +84,13 @@ public class GameRecordManagerService {
                 .quarterCode( quarterCode );
 
         List<PlayerQuarterRecordDTO> players = gameRecordManagerRepository.findAllPlayerRecordsByQuarter( searchParams );
-
-        Map< HomeAwayCode, List<PlayerQuarterRecordDTO> > result = new EnumMap<>( HomeAwayCode.class );
-        result.put( HomeAwayCode.HOME_TEAM, filterPlayersByHomeAwayCode( players, HomeAwayCode.HOME_TEAM ) );
-        result.put( HomeAwayCode.AWAY_TEAM, filterPlayersByHomeAwayCode( players, HomeAwayCode.AWAY_TEAM ) );
-        return result;
+        return query.buildResult(
+            filterPlayersByHomeAwayCode( players, HomeAwayCode.HOME_TEAM ),
+            filterPlayersByHomeAwayCode( players, HomeAwayCode.AWAY_TEAM )
+        );
     }
 
-    private List<PlayerQuarterRecordDTO> filterPlayersByHomeAwayCode( List<PlayerQuarterRecordDTO> targetPlayers, HomeAwayCode filterCode )
-    {
+    private List<PlayerQuarterRecordDTO> filterPlayersByHomeAwayCode( List<PlayerQuarterRecordDTO> targetPlayers, HomeAwayCode filterCode ) {
         /** 홈/어웨이팀 구분에 따른 처리 */
         return targetPlayers.stream()
                 .filter( t -> filterCode.getCode().equals( t.getHomeAwayCode() ) )

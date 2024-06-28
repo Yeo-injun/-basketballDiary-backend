@@ -242,12 +242,11 @@ public class GameController {
     }
 
     /**
-     * API043 참가선수 쿼터기록조회
-     * @param gameSeq 게임Seq
-     * @param quarterCode 쿼터코드; 01~04(1~4쿼터), 11(전반), 12(후반)
-     * @result 특정쿼터의 선수별 기록조회
+     * API043 쿼터별 경기참가선수들의 경기기록 조회
+     * @since 23.03.10(금)
      * @author 강창기
      */
+    @ApiDocs043
     @Auth
     @GetMapping("/{gameSeq}/quarters/{quarterCode}/players")
     public ResponseEntity<?> getGameJoinPlayerQuarterRecords(
@@ -255,9 +254,7 @@ public class GameController {
         @PathVariable(name = "quarterCode") String quarterCode,
         @RequestParam(name = "homeAwayCode", required = false) String homeAwayCode
     ) {
-        // TODO 설계구조상 pagination data를 받지 않음.
-        // TODO Query Inner클래스 활용
-        Map< HomeAwayCode, List<PlayerQuarterRecordDTO> > playerQuarterRecords = gameRecordManagerService.getGameJoinPlayerQuarterRecords(
+        GameJoinPlayerRecordQuery.Result result = gameRecordManagerService.getGameJoinPlayerQuarterRecords(
             GameJoinPlayerRecordQuery.builder()
                 .gameSeq(       gameSeq )
                 .quarterCode(   quarterCode )
@@ -266,8 +263,8 @@ public class GameController {
         );
         return ResponseEntity.ok( new GetGameJoinPlayerQuarterRecordsResponse(
                 gameSeq, quarterCode,
-                playerQuarterRecords.get( HomeAwayCode.HOME_TEAM ),
-                playerQuarterRecords.get( HomeAwayCode.AWAY_TEAM )
+                result.getHomeTeamPlayers(),
+                result.getAwayTeamPlayers()
         ) );
     }
 
@@ -474,15 +471,7 @@ public class GameController {
             @PathVariable(name = "gameSeq") Long gameSeq,
             @RequestBody @Valid SaveQuarterEntryInfoRequest reqBody
     ) {
-        // TODO Command 패턴으로 변경하기
-        QuarterEntryInfoDTO qeiDTO = new QuarterEntryInfoDTO()
-                                        .gameSeq(gameSeq)
-                                        .gameJoinTeamSeq(reqBody.getGameJoinTeamSeq())
-                                        .homeAwayCode(reqBody.getHomeAwayCode())
-                                        .quarterCode(reqBody.getQuarterCode())
-                                        .playerList(reqBody.getPlayerList());
-
-        gameJoinManagerService.saveQuarterEntryInfo(qeiDTO);
+        gameJoinManagerService.saveQuarterEntryInfo( reqBody.toCommand( gameSeq ) );
         return RESPONSE_OK;
     }
 
