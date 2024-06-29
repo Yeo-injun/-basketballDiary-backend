@@ -33,5 +33,6 @@ public interface GameJoinTeamRepository {
     /**********
      * DELETE
      **********/
+    int deleteByGame( Long gameSeq );
 
 }

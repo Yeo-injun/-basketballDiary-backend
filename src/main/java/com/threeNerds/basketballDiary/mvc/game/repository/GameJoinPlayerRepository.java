@@ -44,4 +44,6 @@ public interface GameJoinPlayerRepository {
 
     /** 경기참가선수 삭제(단건) */
     int deletePlayer( GameJoinPlayer gameJoinPlayer );
+
+    int deleteByGame( Long gameSeq );
 }
