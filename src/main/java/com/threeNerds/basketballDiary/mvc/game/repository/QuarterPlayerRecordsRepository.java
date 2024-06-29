@@ -31,7 +31,7 @@ public interface QuarterPlayerRecordsRepository {
     /**********
      * DELETE
      **********/
-    Long deleteGameQuarter(QuarterPlayerRecords quarterPlayerRecords);
+    int deleteGameQuarter(QuarterPlayerRecords quarterPlayerRecords);
 
-
+    int deleteByGame( Long gameSeq );
 }

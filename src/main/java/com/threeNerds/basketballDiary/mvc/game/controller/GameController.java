@@ -398,7 +398,6 @@ public class GameController {
     /**
      * API051 경기 삭제
      */
-    // TODO 데이터 삭제 로직 Service에 추가
     @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_CREATOR )
     @DeleteMapping("/{gameSeq}")
     public ResponseEntity<?> deleteGame(

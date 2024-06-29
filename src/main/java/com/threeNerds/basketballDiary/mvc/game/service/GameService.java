@@ -6,10 +6,10 @@ import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.mvc.game.domain.Game;
 
 import com.threeNerds.basketballDiary.mvc.game.dto.GameDetailDTO;
+import com.threeNerds.basketballDiary.mvc.game.repository.*;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.GameCreationCommand;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.GameQuery;
 import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember;
-import com.threeNerds.basketballDiary.mvc.game.repository.GameRepository;
 import com.threeNerds.basketballDiary.mvc.myTeam.repository.TeamMemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,8 +24,15 @@ import java.util.Optional;
 @Transactional
 public class GameService {
 
-    private final GameRepository gameRepository;
+    private final GameRepository gameRepo;
+    private final GameJoinPlayerRepository gameJoinPlayerRepo;
+    private final GameJoinTeamRepository gameJoinTeamRepo;
+    private final QuarterPlayerRecordsRepository quarterPlayerRecordsRepo;
+    private final QuarterTeamRecordsRepository quarterTeamRecordsRepo;
+
     private final TeamMemberRepository teamMemberRepository;
+
+
 
     /** 22.10.31
      * 게임 생성
@@ -46,16 +53,20 @@ public class GameService {
 
         /** 게임 생성 */
         Game newGame = Game.of( tm.getTeamMemberSeq(), command );
-        gameRepository.saveGame( newGame );
+        gameRepo.saveGame( newGame );
         return newGame.getGameSeq();
     }
 
     public void deleteGame( Long gameSeq ) {
-        boolean isDeleteGame = gameRepository.deleteGame(gameSeq) > 0;
+        boolean isDeleteGame = gameRepo.deleteGame(gameSeq) > 0;
         if ( !isDeleteGame ) {
             throw new CustomException( DomainErrorType.NOT_FOUND_GAME_FOR_DELETE );
         }
-        // TODO 게임참가팀, 게임참가선수, 쿼터기록, 게임기록권한 테이블도 다 삭제해줘야 함....
+        // TODO 게임기록권한 테이블은 삭제하지 않음. 테이블 자체를 없앨 예정이기 때문.
+        gameJoinTeamRepo.deleteByGame( gameSeq );
+        gameJoinPlayerRepo.deleteByGame( gameSeq );
+        quarterTeamRecordsRepo.deleteByGame( gameSeq );
+        quarterPlayerRecordsRepo.deleteByGame( gameSeq );
     }
 
     /**
@@ -64,7 +75,7 @@ public class GameService {
      * @author 이성주
      */
     public GameQuery.Result getGameDetailInfo( GameQuery query ) {
-        Game game = gameRepository.findGame( query.getGameSeq() );
+        Game game = gameRepo.findGame( query.getGameSeq() );
         if ( null == game ) {
             throw new CustomException( DomainErrorType.NOT_FOUND_GAME );
         }
@@ -79,7 +90,7 @@ public class GameService {
      */
     public void confirmGame( Long gameSeq ) {
         /** 해당 경기의 게임기록상태코드 확인 */
-        Game game = gameRepository.findGame( gameSeq );
+        Game game = gameRepo.findGame( gameSeq );
         if ( game.isConfirmed() ) {
             throw new CustomException( DomainErrorType.ALREADY_GAME_CONFIRMED );
         }
@@ -89,7 +100,7 @@ public class GameService {
         }
 
         /** 게임기록상태코드 변경 - >> 게임확정(03) */
-        gameRepository.updateGameRecordState(
+        gameRepo.updateGameRecordState(
             Game.builder()
                 .gameSeq(               gameSeq )
                 .gameRecordStateCode(   GameRecordStateCode.CONFIRMATION.getCode() )

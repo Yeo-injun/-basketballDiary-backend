@@ -57,4 +57,10 @@
     </update>
 
 
+    <delete id="deleteByGame" parameterType="Long">
+        /* GameJoinTeamRepository.deleteByGame */
+        DELETE
+          FROM GAME_JOIN_TEAM
+         WHERE GAME_SEQ = ${gameSeq}
+    </delete>
 </mapper>

@@ -106,9 +106,19 @@
 
 
     <delete id="deleteGameQuarter">
+        /* QuarterTeamRecordsRepository.deleteGameQuarter */
         DELETE FROM QUARTER_TEAM_RECORDS
          WHERE 1=1
            AND GAME_SEQ = #{gameSeq}
            AND QUARTER_CODE = #{quarterCode}
     </delete>
+
+
+    <delete id="deleteByGame">
+        /* QuarterTeamRecordsRepository.deleteByGame */
+        DELETE
+          FROM QUARTER_TEAM_RECORDS
+         WHERE GAME_SEQ = #{gameSeq}
+    </delete>
+
 </mapper>
