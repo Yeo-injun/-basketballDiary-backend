@@ -1,4 +1,4 @@
-package com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.response;
+package com.threeNerds.basketballDiary.mvc.game.dto;
 
 import com.threeNerds.basketballDiary.constant.code.type.HomeAwayCode;
 import lombok.Getter;
