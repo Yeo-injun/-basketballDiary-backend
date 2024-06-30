@@ -96,7 +96,7 @@
        </if>
     </select>
 
-    <select id="findAllTeamsQuarterRecords" resultType="com.threeNerds.basketballDiary.mvc.game.dto.getGameQuarterRecords.response.TeamQuarterRecordsDTO">
+    <select id="findAllTeamsQuarterRecords" resultType="com.threeNerds.basketballDiary.mvc.game.dto.TeamQuarterRecordsDTO">
         /* GameRecordManagerRepository.findAllTeamsQuarterRecords */
         SELECT GJT.GAME_JOIN_TEAM_SEQ
              , GJT.TEAM_NAME
@@ -113,7 +113,7 @@
     </select>
 
 
-    <select id="findAllQuarterRecords" resultType="com.threeNerds.basketballDiary.mvc.game.dto.getGameAllQuartersRecords.QuarterTeamRecordsDTO">
+    <select id="findAllQuarterRecords" resultType="com.threeNerds.basketballDiary.mvc.game.dto.QuarterTeamRecordsDTO">
         /* GameRecordManagerRepository.findAllQuarterRecords */
         SELECT GJT.GAME_SEQ
              , GJT.GAME_JOIN_TEAM_SEQ
