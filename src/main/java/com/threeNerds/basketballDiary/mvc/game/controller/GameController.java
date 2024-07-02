@@ -135,6 +135,7 @@ public class GameController {
      * @since 23.05.06(월)
      * @author 여인준
      */
+    @ApiDocs068
     @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_RECORDER )
     @DeleteMapping("/{gameSeq}/homeAwayCode/{homeAwayCode}/players/{gameJoinPlayerSeq}")
     public ResponseEntity< Void > deleteGameJoinPlayers(
