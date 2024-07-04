@@ -97,4 +97,10 @@
            AND GAME_JOIN_PLAYER_SEQ = ${gameJoinPlayerSeq}
     </delete>
 
+    <delete id="deleteByGame" parameterType="com.threeNerds.basketballDiary.mvc.game.domain.GameJoinPlayer">
+        /* GameJoinPlayerRepository.deleteByGame */
+        DELETE
+          FROM GAME_JOIN_PLAYER
+         WHERE GAME_SEQ = ${gameSeq}
+    </delete>
 </mapper>

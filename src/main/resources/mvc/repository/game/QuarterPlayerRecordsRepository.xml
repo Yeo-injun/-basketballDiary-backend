@@ -29,8 +29,7 @@
         SELECT
         <include refid="DomainProperties" />
           FROM QUARTER_PLAYER_RECORDS
-         WHERE 1=1
-           AND GAME_SEQ = #{gameSeq}
+         WHERE GAME_SEQ = #{gameSeq}
     </select>
 
     <select id="findOneTeamQuarterRecord" resultType="com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords">
@@ -38,8 +37,7 @@
         SELECT
         <include refid="DomainProperties" />
           FROM QUARTER_PLAYER_RECORDS
-         WHERE 1=1
-           AND GAME_SEQ         = #{gameSeq}
+         WHERE GAME_SEQ         = #{gameSeq}
            AND HOME_AWAY_CODE   = #{homeAwayCode}
            AND QUARTER_CODE     = #{quarterCode}
     </select>
@@ -49,8 +47,7 @@
         SELECT
         <include refid="DomainProperties" />
           FROM QUARTER_PLAYER_RECORDS
-         WHERE 1=1
-           AND GAME_SEQ         = #{gameSeq}
+         WHERE GAME_SEQ         = #{gameSeq}
            AND QUARTER_CODE     = #{quarterCode}
     </select>
 
@@ -107,8 +104,7 @@
         /* QuarterPlayerRecordsRepository.updateInGameYn */
         UPDATE QUARTER_PLAYER_RECORDS
            SET IN_GAME_YN = #{inGameYn}
-         WHERE 1=1
-           AND QUARTER_CODE         = #{quarterCode}
+         WHERE QUARTER_CODE         = #{quarterCode}
         <choose>
             <when test='gameJoinPlayerSeq != null and !"".equals( gameJoinPlayerSeq )'>
            AND GAME_JOIN_PLAYER_SEQ = #{gameJoinPlayerSeq}
@@ -123,8 +119,7 @@
         /* QuarterPlayerRecordsRepository.updateInGameYnForAllQuarterPlayer */
         UPDATE QUARTER_PLAYER_RECORDS
            SET IN_GAME_YN = #{inGameYn}
-         WHERE 1=1
-           AND QUARTER_CODE         = #{quarterCode}
+         WHERE QUARTER_CODE         = #{quarterCode}
         <choose>
             <when test='gameJoinTeamSeq != null and !"".equals( gameJoinTeamSeq )'>
            AND GAME_JOIN_TEAM_SEQ   = #{gameJoinTeamSeq}
@@ -151,15 +146,21 @@
              , BLOCK            = #{block}
              , TURNOVER         = #{turnover}
              , FOUL             = #{foul}
-         WHERE 1=1
-           AND QUARTER_PLAYER_RECORDS_SEQ = #{quarterPlayerRecordsSeq}
+         WHERE QUARTER_PLAYER_RECORDS_SEQ = #{quarterPlayerRecordsSeq}
     </update>
 
 
     <delete id="deleteGameQuarter">
-        DELETE FROM QUARTER_PLAYER_RECORDS
-         WHERE 1=1
-           AND GAME_SEQ = #{gameSeq}
+        DELETE
+          FROM QUARTER_PLAYER_RECORDS
+         WHERE GAME_SEQ = #{gameSeq}
            AND QUARTER_CODE = #{quarterCode}
     </delete>
+
+    <delete id="deleteByGame">
+        DELETE
+          FROM QUARTER_PLAYER_RECORDS
+         WHERE GAME_SEQ = #{gameSeq}
+    </delete>
+
 </mapper>

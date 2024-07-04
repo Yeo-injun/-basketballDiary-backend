@@ -5,14 +5,10 @@ import com.threeNerds.basketballDiary.auth.constant.AuthType;
 import com.threeNerds.basketballDiary.constant.code.type.HomeAwayCode;
 import com.threeNerds.basketballDiary.auth.Auth;
 import com.threeNerds.basketballDiary.mvc.game.controller.request.*;
-import com.threeNerds.basketballDiary.mvc.game.dto.confirmGameJoinTeam.request.ConfirmGameJoinTeamRequest;
 import com.threeNerds.basketballDiary.mvc.game.controller.response.*;
-import com.threeNerds.basketballDiary.mvc.game.dto.*;
-import com.threeNerds.basketballDiary.mvc.game.dto.getGameAllQuartersRecords.GetGameAllQuartersRecordsResponse;
 import com.threeNerds.basketballDiary.mvc.game.controller.response.GetGameEntryResponse;
 
 import com.threeNerds.basketballDiary.mvc.game.controller.response.GetGameJoinPlayerQuarterRecordsResponse;
-import com.threeNerds.basketballDiary.mvc.game.dto.PlayerQuarterRecordDTO;
 
 import com.threeNerds.basketballDiary.mvc.game.controller.response.GetGameJoinPlayersResponse;
 import com.threeNerds.basketballDiary.mvc.game.service.GameAuthService;
@@ -31,8 +27,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.util.List;
-import java.util.Map;
 
 import static com.threeNerds.basketballDiary.constant.HttpResponseConst.RESPONSE_OK;
 import static com.threeNerds.basketballDiary.session.util.SessionUtil.LOGIN_USER;
@@ -141,6 +135,7 @@ public class GameController {
      * @since 23.05.06(월)
      * @author 여인준
      */
+    @ApiDocs068
     @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_RECORDER )
     @DeleteMapping("/{gameSeq}/homeAwayCode/{homeAwayCode}/players/{gameJoinPlayerSeq}")
     public ResponseEntity< Void > deleteGameJoinPlayers(
@@ -398,7 +393,6 @@ public class GameController {
     /**
      * API051 경기 삭제
      */
-    // TODO 데이터 삭제 로직 Service에 추가
     @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_CREATOR )
     @DeleteMapping("/{gameSeq}")
     public ResponseEntity<?> deleteGame(
@@ -539,30 +533,28 @@ public class GameController {
     @PostMapping("/{gameSeq}/gameJoinTeams")
     public ResponseEntity< Void > confirmGameJoinTeam (
             @PathVariable(name = "gameSeq") Long gameSeq,
-            @RequestBody @Valid ConfirmGameJoinTeamRequest request
+            @RequestBody @Valid RegisterGameJoinPlayersRequest.ConfirmGameJoinTeamRequest request
     ) {
         gameJoinManagerService.confirmJoinTeam( request.toCommand( gameSeq ) );
         return ResponseEntity.ok().build();
     }
 
     /**
-     * API063 게임전체쿼터 조회
+     * API063 경기 전체 기록 조회
      * @since 22.12.25(금)
      * @author 강창기
      * 23.01.25(수) 여인준 - API Body 수정
      */
-    // TODO Query 패턴 적용 / Service의 Request-Response클래스참조 걷어내기
-    // TODO 난이도 상
     @Auth
     @GetMapping("/{gameSeq}/quarters")
-    public ResponseEntity<?> getGameAllQuartersRecords (
+    public ResponseEntity<?> getGameAllRecords (
             @PathVariable(name = "gameSeq") Long gameSeq
     ) {
-        SearchGameDTO searchGameDTO = new SearchGameDTO()
-                                             .gameSeq(gameSeq);
-
-        GetGameAllQuartersRecordsResponse resBody = gameRecordManagerService.getGameAllQuartersRecords(searchGameDTO);
-        return ResponseEntity.ok(resBody);
+        GameAllRecordsQuery.Result result = gameRecordManagerService.getGameAllRecords( GameAllRecordsQuery.builder()
+            .gameSeq( gameSeq )
+            .build()
+        );
+        return ResponseEntity.ok( new GetGameAllRecordsResponse( result ) );
     }
 
 }

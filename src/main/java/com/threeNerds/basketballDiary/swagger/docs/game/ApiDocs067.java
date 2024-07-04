@@ -23,12 +23,12 @@ import static java.lang.annotation.ElementType.METHOD;
             responseCode = "200"
         ),
         @ApiResponse(
-            responseCode    = "403",
-            description     = "경기기록이 확정된 상태입니다. 경기참가선수를 변경할 수 없습니다.",
+            responseCode    = "403#1",
+            description     = "경기참가선수를 변경할 수 없습니다. 참가선수는 경기의 참가팀이 확정된 상태에서만 변경할 수 있습니다.",
             content         = @Content( schema = @Schema( implementation = DomainErrorResponse.class ) )
         ),
         @ApiResponse(
-            responseCode    = "403",
+            responseCode    = "403#2",
             description     = "이미 쿼터기록이 입력되고 있어 선수 추가가 불가합니다.",
             content         = @Content( schema = @Schema( implementation = DomainErrorResponse.class ) )
         ),
