@@ -200,6 +200,7 @@ public class GameController {
      * @since 23.03.10(금)
      * @author 여인준
      */
+    @ApiDocs064
     @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_RECORDER )
     @PostMapping("/{gameSeq}/quarters/{quarterCode}")
     public ResponseEntity< Void > createGameQuarterBasicInfo (
