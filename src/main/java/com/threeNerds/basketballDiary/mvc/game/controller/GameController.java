@@ -222,6 +222,7 @@ public class GameController {
      * @since 23.03.10(금)
      * @author 여인준
      **/
+    @ApiDocs041
     @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_CREATOR )
     @DeleteMapping("/{gameSeq}/quarters/{quarterCode}")
     public ResponseEntity< Void > deleteGameQuarter(
