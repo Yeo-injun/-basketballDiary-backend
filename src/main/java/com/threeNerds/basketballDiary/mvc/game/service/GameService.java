@@ -71,10 +71,10 @@ public class GameService {
 
     /**
      * 22.11.12
-     * 게임기록 상세조회
+     * 경기 기초 정보 조회
      * @author 이성주
      */
-    public GameQuery.Result getGameDetailInfo( GameQuery query ) {
+    public GameQuery.Result getGameBasicInfo( GameQuery query ) {
         Game game = gameRepo.findGame( query.getGameSeq() );
         if ( null == game ) {
             throw new CustomException( DomainErrorType.NOT_FOUND_GAME );

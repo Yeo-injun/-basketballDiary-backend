@@ -289,14 +289,15 @@ public class GameController {
     }
 
     /**
-     * API046 경기 기초정보 조회
+     * API046 경기 기초 정보 조회
      */
+    @ApiDocs046
     @Auth
     @GetMapping("{gameSeq}/info")
     public ResponseEntity< GetGameBasicInfoResponse > getGameBasicInfo(
             @PathVariable(name = "gameSeq") Long gameSeq
     ) {
-        GameQuery.Result result = gameService.getGameDetailInfo(
+        GameQuery.Result result = gameService.getGameBasicInfo(
                 GameQuery.builder()
                          .gameSeq( gameSeq )
                          .build()
