@@ -308,6 +308,7 @@ public class GameController {
     /**
      * API047 경기 참가팀 조회
      */
+    @ApiDocs047
     @Auth
     @GetMapping("{gameSeq}/teams")
     public ResponseEntity<?> getGameJoinTeamsInfo(
