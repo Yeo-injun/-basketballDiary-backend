@@ -70,7 +70,7 @@ public class GameRecordManagerService {
         /** gameSeq에 해당하는 게임내역이 존재하는지 확인. */
         boolean isNotExistGame = null == gameRepository.findGame( gameSeq );
         if( isNotExistGame ) {
-            throw new CustomException(DomainErrorType.NOT_FOUND_GAME);
+            throw new CustomException( DomainErrorType.NOT_FOUND_GAME );
         }
 
         SearchGameDTO searchParams = new SearchGameDTO()

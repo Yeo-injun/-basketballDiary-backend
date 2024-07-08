@@ -384,10 +384,10 @@ public class GameController {
     }
 
     /**
-     * API050 경기 확정(경기 등록)
+     * API050 경기 확정 기록 확정하기
      * @author 이성주
      */
-    // @ApiDocs050
+    @ApiDocs050
     @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_CREATOR )
     @PostMapping("/{gameSeq}/confirmation")
     public ResponseEntity<?> confirmGame(
@@ -398,9 +398,9 @@ public class GameController {
     }
 
     /**
-     * API051 경기 삭제
+     * API051 경기 삭제하기
      */
-    // @ApiDocs051
+    @ApiDocs051
     @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_CREATOR )
     @DeleteMapping("/{gameSeq}")
     public ResponseEntity<?> deleteGame(
