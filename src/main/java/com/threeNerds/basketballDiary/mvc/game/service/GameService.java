@@ -58,7 +58,7 @@ public class GameService {
     }
 
     public void deleteGame( Long gameSeq ) {
-        boolean isDeleteGame = gameRepo.deleteGame(gameSeq) > 0;
+        boolean isDeleteGame = gameRepo.deleteGame( gameSeq ) > 0;
         if ( !isDeleteGame ) {
             throw new CustomException( DomainErrorType.NOT_FOUND_GAME_FOR_DELETE );
         }
