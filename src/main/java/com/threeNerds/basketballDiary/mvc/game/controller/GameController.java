@@ -331,6 +331,7 @@ public class GameController {
      * @result 특정쿼터의 선수별 기록조회
      * @author 강창기
      */
+    @ApiDocs048
     @Auth
     @GetMapping("/{gameSeq}/quarters/{quarterCode}")
     public ResponseEntity<?> getGameQuarterRecords(
@@ -354,6 +355,7 @@ public class GameController {
      * TODO 여러개의 분할된 서비스를 하나의 트랜잭션으로 묶을 수 있도록 ServiceTransactionBroker를 만들어서 관리하기
      * TODO cf. 현재는 개별 서비스가 독립된 트랜잭션...
      */
+    // @ApiDocs053
     @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_CREATOR )
     @PostMapping
     public ResponseEntity<CreateGameResponse> createGame (
@@ -385,6 +387,7 @@ public class GameController {
      * API050 경기 확정(경기 등록)
      * @author 이성주
      */
+    // @ApiDocs050
     @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_CREATOR )
     @PostMapping("/{gameSeq}/confirmation")
     public ResponseEntity<?> confirmGame(
@@ -397,6 +400,7 @@ public class GameController {
     /**
      * API051 경기 삭제
      */
+    // @ApiDocs051
     @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_CREATOR )
     @DeleteMapping("/{gameSeq}")
     public ResponseEntity<?> deleteGame(
@@ -428,6 +432,7 @@ public class GameController {
      * @since 24.04.21 (일)
      * @author injun
      */
+    // @ApiDocs056
     @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_CREATOR )
     @PostMapping("/{gameSeq}/recorders")
     public ResponseEntity<?> saveGameRecorders(
@@ -463,6 +468,7 @@ public class GameController {
      * API060 쿼터 엔트리 정보 저장
      * 22.12.15(목) @ReauestBody부분 Request클래스로 대체
      */
+    // @ApiDocs060
     @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_RECORDER )
     @PostMapping("/{gameSeq}/entry")
     public ResponseEntity<?> saveQuarterEntryInfo(
@@ -476,6 +482,7 @@ public class GameController {
     /**
      * API061 경기 전체참가선수 조회
      */
+    // @ApiDocs061
     @Auth
     @GetMapping("/{gameSeq}/players")
     public ResponseEntity<?> getAllGameJoinPlayers(
@@ -505,6 +512,7 @@ public class GameController {
     /**
      * API066 경기참가선수 조회 ( 팀별 조회 )
      */
+    // @ApiDocs066
     @Auth
     @GetMapping("/{gameSeq}/homeAwayCode/{homeAwayCode}/players")
     public ResponseEntity< GetGameJoinPlayersResponse > getGameJoinPlayers(
@@ -533,6 +541,7 @@ public class GameController {
      * 22.12.15(목) @ReauestBody부분 Request클래스로 대체
      * 23.01.11(수) 누락된 로직 추가 - 게임기록상태코드 업데이트
      */
+    // @ApiDocs062
     @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_CREATOR )
     @PostMapping("/{gameSeq}/gameJoinTeams")
     public ResponseEntity< Void > confirmGameJoinTeam (
@@ -549,6 +558,7 @@ public class GameController {
      * @author 강창기
      * 23.01.25(수) 여인준 - API Body 수정
      */
+    // @ApiDocs063
     @Auth
     @GetMapping("/{gameSeq}/quarters")
     public ResponseEntity<?> getGameAllRecords (
