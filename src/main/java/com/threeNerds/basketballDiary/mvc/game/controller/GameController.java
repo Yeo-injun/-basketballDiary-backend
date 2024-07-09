@@ -355,7 +355,7 @@ public class GameController {
      * TODO 여러개의 분할된 서비스를 하나의 트랜잭션으로 묶을 수 있도록 ServiceTransactionBroker를 만들어서 관리하기
      * TODO cf. 현재는 개별 서비스가 독립된 트랜잭션...
      */
-    // @ApiDocs053
+    @ApiDocs053
     @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_CREATOR )
     @PostMapping
     public ResponseEntity<CreateGameResponse> createGame (
