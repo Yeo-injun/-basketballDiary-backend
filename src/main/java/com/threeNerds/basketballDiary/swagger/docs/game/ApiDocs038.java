@@ -16,8 +16,9 @@ import static java.lang.annotation.ElementType.METHOD;
 @Retention( RetentionPolicy.RUNTIME )
 @Operation(
     summary     = "[ API038 ] 경기 쿼터기록 수정하기",
-    description = "경기의 특정 쿼터를 지정하여 기록을 저장, 수정한다. / "
-                + "[제약사항] : 1. 경기 기록 권한을 가지고 있어야 한다.",
+    description = "경기의 특정 쿼터를 지정하여 기록을 저장, 수정한다. <br>"
+                + "<strong>[ 제약사항 ]</strong>"
+                + "<li>경기 기록 권한을 가지고 있어야 한다.</li>",
     responses   = {
         @ApiResponse(
             responseCode = "200",
