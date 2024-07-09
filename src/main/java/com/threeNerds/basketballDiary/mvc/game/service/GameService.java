@@ -49,7 +49,7 @@ public class GameService {
 
         TeamMember tm = Optional
                             .ofNullable( teamMemberRepository.findTeamMemberByUserAndTeamSeq( tmParam ) )
-                            .orElseThrow( ()-> new CustomException( DomainErrorType.ONLY_TEAM_MEMBER_HANDLE ) );
+                            .orElseThrow( ()-> new CustomException( DomainErrorType.ONLY_CREATE_GAME_BY_TEAM_MEMBER ) );
 
         /** 게임 생성 */
         Game newGame = Game.of( tm.getTeamMemberSeq(), command );

@@ -57,7 +57,7 @@ public class TeamJoinService {
 
         /** 팀 존재여부 확인 */
         if ( null == teamRepository.findByTeamSeq( joinRequestInfo.getTeamSeq() ) ) {
-            throw new CustomException( TEAM_NOT_FOUND );
+            throw new CustomException( NOT_FOUND_TEAM_INFO );
         }
 
         /** 이미 팀원으로 존재하는지 확인 */

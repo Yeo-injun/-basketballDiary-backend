@@ -24,7 +24,7 @@ public enum DomainErrorType implements ErrorMessageType {
     REGULAR_EXERCISE_NOT_FOUND(NOT_FOUND, "정기운동 정보가 존재하지 않습니다"),
     MANAGER_NOT_FOUND(NOT_FOUND, "운영진 정보가 존재하지 않습니다"),
     NOT_FOUND_ASSIGNED_TEAM(NOT_FOUND, "소속팀 정보가 존재하지 않습니다"),
-    TEAM_NOT_FOUND(NOT_FOUND, "해당 팀이 존재하지 않습니다."),
+    NOT_FOUND_TEAM_INFO(NOT_FOUND, "팀 정보가 존재하지 않습니다."),
     NOT_FOUND_GAME(NOT_FOUND,"경기 정보가 존재하지 않습니다."),
     NOT_FOUND_GAME_FOR_DELETE(NOT_FOUND,"삭제할 경기정보가 존재하지 않습니다."),
     NOT_FOUND_GAME_JOIN_TEAM(NOT_FOUND, "경기참가팀 정보가 존재하지 않습니다."),
@@ -36,7 +36,7 @@ public enum DomainErrorType implements ErrorMessageType {
 
     /** 403 FORBIDDEN : 서버에 정상적인 요청이 전송됐지만, 권한 문제로 거절 */
     ONLY_TEAM_MEMBER_QUERY( FORBIDDEN, "소속된 팀원만 조회할 수 있습니다." ),
-    ONLY_TEAM_MEMBER_HANDLE(FORBIDDEN,"해당팀에 소속된 팀원만 처리할 수 있습니다."),
+    ONLY_CREATE_GAME_BY_TEAM_MEMBER(FORBIDDEN,"소속된 팀원만 경기를 생성할 수 있습니다."),
     CANT_DISMISSAL_MANAGER(FORBIDDEN, "관리자가 아닙니다. 팀장이나 팀원은 관리자에서 해임할 수 없습니다."),
     CANT_APPOINTMENT_MANAGER(FORBIDDEN, "팀원이 아닙니다. 팀원만 관리자로 임명할 수 있습니다."),
     CANT_ADD_QUARTER_RECORD( FORBIDDEN, "경기기록이 확정된 상태입니다. 쿼터기록을 입력할 수 없습니다." ),

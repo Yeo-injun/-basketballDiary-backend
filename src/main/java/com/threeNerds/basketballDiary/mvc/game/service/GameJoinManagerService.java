@@ -66,7 +66,7 @@ public class GameJoinManagerService {
         /** 경기참가팀 생성 - HOME팀 */
         Team team = teamRepository.findByTeamSeq( teamSeq );
         if ( null == team ) {
-            throw new CustomException( DomainErrorType.TEAM_NOT_FOUND );
+            throw new CustomException( DomainErrorType.NOT_FOUND_TEAM_INFO );
         }
         GameJoinTeam homeTeam = team.joinGameAsHome( gameSeq );
         homeTeam.joinInSelfGame();
@@ -121,7 +121,7 @@ public class GameJoinManagerService {
                 // AWAY팀 세팅
                 Team opponentTeam = teamRepository.findByTeamSeq( opponentTeamSeq );
                 if ( null == opponentTeam ) {
-                    throw new CustomException( DomainErrorType.TEAM_NOT_FOUND );
+                    throw new CustomException( DomainErrorType.NOT_FOUND_TEAM_INFO );
                 }
                 awayTeam = opponentTeam.joinGameAsAway( gameSeq );
                 break;
