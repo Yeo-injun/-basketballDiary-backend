@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.Stack;
 
 import static com.threeNerds.basketballDiary.constant.HttpResponseConst.RESPONSE_OK;
 import static com.threeNerds.basketballDiary.session.util.SessionUtil.LOGIN_USER;
@@ -378,7 +379,6 @@ public class GameController {
                 .gameJoinPlayerSeq( gameJoinPlayerSeq )
                 .build()
         );
-
         sessionUser.addGameCreatorAuth( newGameSeq );
         return ResponseEntity.ok( new CreateGameResponse( newGameSeq ) );
     }
@@ -428,11 +428,11 @@ public class GameController {
     }
 
     /**
-     * API056 경기기록원 목록 저장
+     * API056 경기기록원 저장
      * @since 24.04.21 (일)
      * @author injun
      */
-    // @ApiDocs056
+    @ApiDocs056
     @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_CREATOR )
     @PostMapping("/{gameSeq}/recorders")
     public ResponseEntity<?> saveGameRecorders(
