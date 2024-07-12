@@ -49,7 +49,7 @@ public class GameService {
 
         TeamMember tm = Optional
                             .ofNullable( teamMemberRepository.findTeamMemberByUserAndTeamSeq( tmParam ) )
-                            .orElseThrow( ()-> new CustomException( DomainErrorType.ONLY_TEAM_MEMBER_HANDLE ) );
+                            .orElseThrow( ()-> new CustomException( DomainErrorType.ONLY_CREATE_GAME_BY_TEAM_MEMBER ) );
 
         /** 게임 생성 */
         Game newGame = Game.of( tm.getTeamMemberSeq(), command );
@@ -58,7 +58,7 @@ public class GameService {
     }
 
     public void deleteGame( Long gameSeq ) {
-        boolean isDeleteGame = gameRepo.deleteGame(gameSeq) > 0;
+        boolean isDeleteGame = gameRepo.deleteGame( gameSeq ) > 0;
         if ( !isDeleteGame ) {
             throw new CustomException( DomainErrorType.NOT_FOUND_GAME_FOR_DELETE );
         }
@@ -71,10 +71,10 @@ public class GameService {
 
     /**
      * 22.11.12
-     * 게임기록 상세조회
+     * 경기 기초 정보 조회
      * @author 이성주
      */
-    public GameQuery.Result getGameDetailInfo( GameQuery query ) {
+    public GameQuery.Result getGameBasicInfo( GameQuery query ) {
         Game game = gameRepo.findGame( query.getGameSeq() );
         if ( null == game ) {
             throw new CustomException( DomainErrorType.NOT_FOUND_GAME );
