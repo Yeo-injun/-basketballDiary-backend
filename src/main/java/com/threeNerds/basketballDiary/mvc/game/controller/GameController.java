@@ -468,7 +468,7 @@ public class GameController {
      * API060 쿼터 엔트리 정보 저장
      * 22.12.15(목) @ReauestBody부분 Request클래스로 대체
      */
-    // @ApiDocs060
+     @ApiDocs060
     @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_RECORDER )
     @PostMapping("/{gameSeq}/entry")
     public ResponseEntity<?> saveQuarterEntryInfo(
