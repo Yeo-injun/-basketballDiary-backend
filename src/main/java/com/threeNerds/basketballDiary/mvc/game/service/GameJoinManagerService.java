@@ -330,9 +330,36 @@ public class GameJoinManagerService {
         gameJoinPlayerRepository.deletePlayer( deletePlayer );
     }
 
-
-
+    /**
+     * 경기에 참가한 선수들을 홈/어웨이 팀에 따라 조회
+     */
     public GameJoinPlayerQuery.Result getGameJoinPlayers( GameJoinPlayerQuery query ) {
+        final Long gameSeq          = query.getGameSeq();
+        final String homeAwayCode   = query.getHomeAwayCode();
+        GameJoinTeam gameJoinTeam = gameJoinTeamRepository.findGameJoinTeam(
+                GameJoinTeam.builder()
+                        .gameSeq(       gameSeq )
+                        .homeAwayCode(  homeAwayCode )
+                        .build()
+        );
+        if ( null == gameJoinTeam ) {
+            throw new CustomException( DomainErrorType.NOT_FOUND_GAME_JOIN_TEAM );
+        }
+        SearchPlayersDTO searchCond = new SearchPlayersDTO()
+                .gameSeq(       gameSeq )
+                .homeAwayCode(  homeAwayCode );
+        return query.buildResult(
+                gameJoinTeam.getTeamSeq(),
+                gameJoinManagerRepo.findGameJoinPlayers( searchCond ),
+                null
+        );
+    }
+
+
+    /**
+     * 경기에 참가한 선수들을 홈/어웨이 팀에 따라 조회 ( 페이징 처리 반영 )
+     */
+    public GameJoinPlayerQuery.Result getGameJoinPlayersWithPaging( GameJoinPlayerQuery query ) {
         final Long gameSeq          = query.getGameSeq();
         final String homeAwayCode   = query.getHomeAwayCode();
         final Integer pageNo        = query.getPageNo();
@@ -346,26 +373,13 @@ public class GameJoinManagerService {
         if ( null == gameJoinTeam ) {
             throw new CustomException( DomainErrorType.NOT_FOUND_GAME_JOIN_TEAM );
         }
-
-        Long teamSeq            = gameJoinTeam.getTeamSeq();
-        boolean isNoPagination  = null == pageNo;
-        if ( isNoPagination ) {
-            SearchPlayersDTO searchCond = new SearchPlayersDTO()
-                    .gameSeq(       gameSeq )
-                    .homeAwayCode(  homeAwayCode );
-            return query.buildResult(
-                    teamSeq,
-                    gameJoinManagerRepo.findGameJoinPlayers( searchCond ),
-                    null
-            );
-        }
         Pagination pagination   = Pagination.of( pageNo, 5 );
         SearchPlayersDTO searchCond = new SearchPlayersDTO()
                 .gameSeq(       gameSeq )
                 .homeAwayCode(  homeAwayCode )
                 .pagination(    pagination );
         return query.buildResult(
-                teamSeq,
+                gameJoinTeam.getTeamSeq(),
                 gameJoinManagerRepo.findPaginationGameJoinPlayers( searchCond ),
                 pagination.getPages( gameJoinManagerRepo.findTotalCountGameJoinPlayers( searchCond ) )
         );

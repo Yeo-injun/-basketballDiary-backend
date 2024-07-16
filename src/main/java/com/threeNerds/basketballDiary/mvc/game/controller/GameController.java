@@ -480,7 +480,7 @@ public class GameController {
     }
 
     /**
-     * API061 경기 참가선수 전체 조회
+     * API061 경기 참가 선수 전체 조회
      */
     @ApiDocs061
     @Auth
@@ -506,17 +506,18 @@ public class GameController {
     }
 
     /**
-     * API066 경기참가선수 조회 ( 팀별 조회 )
+     * API066 경기 참가 선수 조회 ( 팀별 조회 )
+     * - 페이징 처리 적용 완료
      */
-    // @ApiDocs066
+    @ApiDocs066
     @Auth
     @GetMapping("/{gameSeq}/homeAwayCode/{homeAwayCode}/players")
-    public ResponseEntity< GetGameJoinPlayersResponse > getGameJoinPlayers(
-            @PathVariable(name = "gameSeq")         Long gameSeq,
-            @PathVariable(name = "homeAwayCode")    String homeAwayCode,
-            @RequestParam(name = "pageNo" , defaultValue = "0") Integer pageNo
+    public ResponseEntity< GetGameJoinPlayersResponse > getGameJoinPlayersWithPaging(
+        @PathVariable(name = "gameSeq")         Long gameSeq,
+        @PathVariable(name = "homeAwayCode")    String homeAwayCode,
+        @RequestParam(name = "pageNo" , defaultValue = "0") Integer pageNo
     ) {
-        GameJoinPlayerQuery.Result result = gameJoinManagerService.getGameJoinPlayers(
+        GameJoinPlayerQuery.Result result = gameJoinManagerService.getGameJoinPlayersWithPaging(
             GameJoinPlayerQuery.builder()
                     .gameSeq(       gameSeq )
                     .homeAwayCode(  homeAwayCode )
