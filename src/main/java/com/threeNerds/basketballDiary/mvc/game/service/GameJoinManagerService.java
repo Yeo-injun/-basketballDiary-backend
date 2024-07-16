@@ -348,8 +348,7 @@ public class GameJoinManagerService {
         }
 
         Long teamSeq            = gameJoinTeam.getTeamSeq();
-        Pagination pagination   = Pagination.of( pageNo, 5 );
-        boolean isNoPagination  = 0 == pageNo;
+        boolean isNoPagination  = null == pageNo;
         if ( isNoPagination ) {
             SearchPlayersDTO searchCond = new SearchPlayersDTO()
                     .gameSeq(       gameSeq )
@@ -357,9 +356,10 @@ public class GameJoinManagerService {
             return query.buildResult(
                     teamSeq,
                     gameJoinManagerRepo.findGameJoinPlayers( searchCond ),
-                    pagination.getPages( gameJoinManagerRepo.findTotalCountGameJoinPlayers( searchCond ) )
+                    null
             );
         }
+        Pagination pagination   = Pagination.of( pageNo, 5 );
         SearchPlayersDTO searchCond = new SearchPlayersDTO()
                 .gameSeq(       gameSeq )
                 .homeAwayCode(  homeAwayCode )
