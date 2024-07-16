@@ -22,11 +22,11 @@ public class Pagination {
     }
 
     public static Pagination of( Integer pageNo ) {
-        return new Pagination( pageNo, DEFAULT_ROW_COUNT, 0 );
+        return new Pagination( null == pageNo  ? 1 : pageNo, DEFAULT_ROW_COUNT, 0 );
     }
 
     public static Pagination of( Integer pageNo, Integer rowCount ) {
-        return new Pagination( pageNo, rowCount, 0 );
+        return new Pagination( null == pageNo  ? 1 : pageNo, rowCount, 0 );
     }
 
     public Pagination empty() {
