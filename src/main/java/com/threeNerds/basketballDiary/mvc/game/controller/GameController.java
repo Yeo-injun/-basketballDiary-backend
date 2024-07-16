@@ -468,7 +468,7 @@ public class GameController {
      * API060 쿼터 엔트리 정보 저장
      * 22.12.15(목) @ReauestBody부분 Request클래스로 대체
      */
-     @ApiDocs060
+    @ApiDocs060
     @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_RECORDER )
     @PostMapping("/{gameSeq}/entry")
     public ResponseEntity<?> saveQuarterEntryInfo(
@@ -480,28 +480,24 @@ public class GameController {
     }
 
     /**
-     * API061 경기 전체참가선수 조회
+     * API061 경기 참가선수 전체 조회
      */
-    // @ApiDocs061
+    @ApiDocs061
     @Auth
     @GetMapping("/{gameSeq}/players")
     public ResponseEntity<?> getAllGameJoinPlayers(
-            @PathVariable(name = "gameSeq") Long gameSeq,
-            @RequestParam(name = "homeAwayCode" , required = false) String homeAwayCode,
-            @RequestParam(name = "pageNo"       , defaultValue = "0") Integer pageNo
+            @PathVariable(name = "gameSeq") Long gameSeq
     ) {
         GameJoinPlayerQuery.Result homeResult = gameJoinManagerService.getGameJoinPlayers(
             GameJoinPlayerQuery.builder()
                     .gameSeq(       gameSeq )
                     .homeAwayCode(  HomeAwayCode.HOME_TEAM.getCode() )
-                    .pageNo(        pageNo )
                     .build()
         );
         GameJoinPlayerQuery.Result awayResult = gameJoinManagerService.getGameJoinPlayers(
             GameJoinPlayerQuery.builder()
                     .gameSeq(       gameSeq )
                     .homeAwayCode(  HomeAwayCode.AWAY_TEAM.getCode() )
-                    .pageNo(        pageNo )
                     .build()
         );
         return ResponseEntity.ok(
