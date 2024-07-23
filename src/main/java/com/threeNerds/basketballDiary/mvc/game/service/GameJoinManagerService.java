@@ -178,76 +178,6 @@ public class GameJoinManagerService {
         return query.buildResult( homeTeam, awayTeam );
     }
 
-    /**
-     * 게임참가선수 등록
-     **/
-    public void registerGameJoinPlayers( GameJoinPlayerCommand command ) {
-
-        Long gameSeq                              = command.getGameSeq();
-        String homeAwayCode                       = command.getHomeAwayCode();
-        List<GameJoinPlayerDTO> gameJoinPlayers   = command.getGameJoinPlayers();
-
-        /** 게임참가팀이 존재하는지 확인 */
-        GameJoinTeam joinTeamParam = GameJoinTeam.builder()
-                                        .gameSeq( gameSeq )
-                                        .homeAwayCode( homeAwayCode )
-                                        .build();
-        GameJoinTeam gameJoinTeam = Optional
-                                        .ofNullable( gameJoinTeamRepository.findGameJoinTeam( joinTeamParam ) )
-                                        .orElseThrow( () -> new CustomException( DomainErrorType.NOT_FOUND_GAME_JOIN_TEAM ) );
-        /** 게임기록상태 확인 */
-        Game game = gameRepository.findGame( gameSeq );
-        if ( !game.canUpdateRecord() ) {
-            throw new CustomException( DomainErrorType.CANT_ADD_GAME_JOIN_PLAYER );
-        }
-
-        /** 해당 게임의 쿼터선수기록 존재여부 확인 - 쿼터기록이 존재할 경우 수정 불가 */
-        List<QuarterPlayerRecords> playersRecord = quarterPlayerRecordsRepo.findAllInGame(gameSeq);
-        boolean hasPlayerRecord = !playersRecord.isEmpty();
-        if (hasPlayerRecord) {
-            throw new CustomException( DomainErrorType.ALREADY_EXIST_QUARTER_RECORDS );
-        }
-
-        /** 게임참가선수 데이터 존재여부 확인 - 기존 데이터 존재시 삭제 TODO 경기생성자는 삭제에서 제외시켜야 함 / 상대팀에 등록되어 있는지 확인 */
-        GameJoinPlayer joinPlayerParam = GameJoinPlayer.builder()
-                                            .gameSeq( gameSeq )
-                                            .homeAwayCode( homeAwayCode )
-                                            .build();
-        List<GameJoinPlayer> registeredJoinPlayers = gameJoinPlayerRepository.findAllPlayersOnOneSideTeam( joinPlayerParam );
-        boolean hasJoinPlayers = !registeredJoinPlayers.isEmpty();
-        if (hasJoinPlayers) {
-            gameJoinPlayerRepository.deletePlayers( joinPlayerParam );
-        }
-
-        /** 중복된 등번호가 있는지 체크하기 */
-        Set<String> backNumberSet = new HashSet<>();
-        for (GameJoinPlayerDTO player : gameJoinPlayers) {
-            String backNumber = player.getBackNumber();
-            boolean isDuplicatedBackNumber = !backNumberSet.add(backNumber);
-            if (isDuplicatedBackNumber) {
-                throw new CustomException(DomainErrorType.DUPLICATE_BACK_NUMBER);
-            }
-        }
-        // TODO 중복된 회원이 있는지 체크하기 - userSeq의 중복이 있는지 stream으로 확인
-
-        /** 게임참가선수 데이터 저장 - 선수유형에 따라서 처리하기 */
-        for (GameJoinPlayerDTO joinPlayerDTO : gameJoinPlayers) {
-            String playerTypeCode = joinPlayerDTO.getPlayerTypeCode();
-            boolean isUnauthGuest = PlayerTypeCode.UNAUTH_GUEST.getCode().equals(playerTypeCode);
-            /** 회원이 아닌 선수는 입력값을 직접 DB에 insert */
-            if (isUnauthGuest) {
-                GameJoinPlayer unauthGuest = GameJoinPlayer.createUnauthPlayer( gameJoinTeam, joinPlayerDTO );
-                gameJoinPlayerRepository.save(unauthGuest);
-                continue;
-            }
-
-            /** 회원인 선수는 User테이블에서 데이터를 조회하여 insert */
-            String backNumber = joinPlayerDTO.getBackNumber();
-            User user = userRepo.findUser(joinPlayerDTO.getUserSeq());
-            GameJoinPlayer authJoinPlayer = GameJoinPlayer.createAuthPlayer( gameJoinTeam, playerTypeCode, backNumber, user);
-            gameJoinPlayerRepository.save(authJoinPlayer);
-        }
-    }
 
     /**
      * 경기참가선수 추가
@@ -304,7 +234,6 @@ public class GameJoinManagerService {
     public void deleteGameJoinPlayer( GameJoinPlayerCommand command ) {
 
         Long gameSeq            = command.getGameSeq();
-        String homeAwayCode     = command.getHomeAwayCode();
         Long gameJoinPlayerSeq  = command.getGameJoinPlayerSeq();
 
         /** 게임기록상태 확인 */

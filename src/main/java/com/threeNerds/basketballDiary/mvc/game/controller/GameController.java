@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.util.Stack;
+
 
 import static com.threeNerds.basketballDiary.constant.HttpResponseConst.RESPONSE_OK;
 import static com.threeNerds.basketballDiary.session.util.SessionUtil.LOGIN_USER;
@@ -85,28 +85,6 @@ public class GameController {
     private final GameJoinManagerService gameJoinManagerService;
     private final GameRecordManagerService gameRecordManagerService;
     private final GameAuthService gameAuthService;
-
-
-    /**
-     * API035 경기참가선수 등록하기
-     * 22.12.15(목) @ReauestBody부분 Request클래스로 대체
-     */
-    @ApiDocs035
-    @Auth
-    @PostMapping("/{gameSeq}/homeAwayCode/{homeAwayCode}/players")
-    public ResponseEntity< URI > registerGameJoinPlayers(
-            @PathVariable(name = "gameSeq") Long gameSeq,
-            @PathVariable(name = "homeAwayCode") String homeAwayCode,
-            @RequestBody @Valid RegisterGameJoinPlayersRequest request
-    ) {
-        gameJoinManagerService.registerGameJoinPlayers( request.toCommand( gameSeq, homeAwayCode ) );
-        /**--------------------------------------------------------------------------------------
-         * API061 게임참가선수 조회 URL을 리턴.
-         * cf. created 상태코드는 return시 Location Header속성에 생성된 자원을 조회할 수 있는 URL를 표기함.
-         **--------------------------------------------------------------------------------------*/
-        URI createdURL = URI.create( "/api/games/" + gameSeq + "/players?homeAwayCode=" + homeAwayCode );
-        return ResponseEntity.created( createdURL ).build();
-    }
 
 
     /**
@@ -543,7 +521,7 @@ public class GameController {
     @PostMapping("/{gameSeq}/gameJoinTeams")
     public ResponseEntity< Void > confirmGameJoinTeam (
             @PathVariable(name = "gameSeq") Long gameSeq,
-            @RequestBody @Valid RegisterGameJoinPlayersRequest.ConfirmGameJoinTeamRequest request
+            @RequestBody @Valid ConfirmGameJoinTeamRequest request
     ) {
         gameJoinManagerService.confirmJoinTeam( request.toCommand( gameSeq ) );
         return ResponseEntity.ok().build();
