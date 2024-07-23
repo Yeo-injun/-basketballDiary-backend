@@ -15,9 +15,9 @@ import java.util.List;
 @NoArgsConstructor
 public class GameJoinPlayerCommand {
 
-    @Deprecated // TODO 걷어낼 API에서 참조하는 필드
-    private List<GameJoinPlayerDTO> gameJoinPlayers;
-
+    /**
+     * Insert 처리시 참조 속성
+     */
     private Long gameSeq;
     private String homeAwayCode;
     private String playerTypeCode;      // 선수유형코드
@@ -26,7 +26,6 @@ public class GameJoinPlayerCommand {
     private String backNumber;          // 등번호
     private String positionCode;        // 포지션코드
     private String email;               // 이메일
-
 
     /**
      * Update/Delete 처리시 참조 속성
