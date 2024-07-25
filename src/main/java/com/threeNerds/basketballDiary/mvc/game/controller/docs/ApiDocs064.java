@@ -1,4 +1,4 @@
-package com.threeNerds.basketballDiary.swagger.docs.game;
+package com.threeNerds.basketballDiary.mvc.game.controller.docs;
 
 import com.threeNerds.basketballDiary.exception.error.DomainErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;

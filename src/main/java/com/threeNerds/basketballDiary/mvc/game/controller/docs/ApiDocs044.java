@@ -1,8 +1,11 @@
-package com.threeNerds.basketballDiary.swagger.docs.game;
+package com.threeNerds.basketballDiary.mvc.game.controller.docs;
 
+import com.threeNerds.basketballDiary.exception.error.DomainErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
 import java.lang.annotation.Retention;
@@ -14,14 +17,15 @@ import static java.lang.annotation.ElementType.METHOD;
 @Target( METHOD )
 @Retention( RetentionPolicy.RUNTIME )
 @Operation(
-    summary     = "[ API047 ] 경기 참가팀 조회",
-    description = "경기Seq로 경기에 참가한 Home/Away팀의 정보를 조회한다.",
+    summary     = "[ API044 ] 상대팀 목록 조회",
+    description = "교류전으로 생성한 경기에서 상대팀으로 지정할 수 있는 팀의 목록을 조회한다. / "
+                + "[ 제약사항 ] 1. ",
     responses   = {
         @ApiResponse(
             responseCode    = "200",
-            description     = "경기에 참가한 팀의 정보를 조회했습니다.",
+            description     = "팀목록을 조회했습니다.",
             content         = @Content( mediaType = MediaType.APPLICATION_JSON_VALUE )
         ),
     }
 )
-public @interface ApiDocs047 { }
+public @interface ApiDocs044 { }
