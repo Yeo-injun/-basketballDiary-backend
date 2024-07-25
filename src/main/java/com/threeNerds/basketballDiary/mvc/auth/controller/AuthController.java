@@ -3,6 +3,7 @@ package com.threeNerds.basketballDiary.mvc.auth.controller;
 import com.threeNerds.basketballDiary.mvc.auth.controller.request.LoginRequest;
 import com.threeNerds.basketballDiary.mvc.auth.service.dto.LoginUserDTO;
 import com.threeNerds.basketballDiary.mvc.auth.service.AuthService;
+import com.threeNerds.basketballDiary.mvc.auth.service.dto.LoginUserQuery;
 import com.threeNerds.basketballDiary.mvc.game.service.GameAuthService;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.GameAuthQuery;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.MyTeamAuthService;
@@ -44,10 +45,10 @@ public class AuthController {
      * API065 권한정보 조회
      */
     @GetMapping
-    public ResponseEntity<SessionUser> getAuthInfo(
+    public ResponseEntity< SessionUser > getAuthInfo(
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession
     ) {
-        return ResponseEntity.ok().body(userSession);
+        return ResponseEntity.ok().body( userSession );
     }
 
 
@@ -55,17 +56,13 @@ public class AuthController {
      * API030 로그인
      */
     @PostMapping("/login")
-    public ResponseEntity<SessionUser> login(
-            @RequestBody @Valid LoginRequest reqBody
+    public ResponseEntity< SessionUser > login(
+            @RequestBody @Valid LoginRequest request
     ) {
         log.info("======= Try login =======");
-        LoginUserDTO loginRequest = new LoginUserDTO()
-                .userId(reqBody.getUserId())
-                .password(reqBody.getPassword());
-
         /** 로그인 정보 확인 */
-        LoginUserDTO loginUser = authService.login(loginRequest);
-        Long loginUserSeq = loginUser.getUserSeq();
+        LoginUserQuery.Result loginUser = authService.login( request.toQuery() );
+        Long loginUserSeq               = loginUser.getUserSeq();
 
         /** 소속팀 권한정보 조회 */
         TeamAuthDTO teamAuthInfo = myTeamAuthService.getAllTeamAuthInfo(TeamAuthDTO.of(loginUserSeq));
@@ -79,16 +76,17 @@ public class AuthController {
 
         /** 세션 정보 생성 및 저장 */
         SessionUser sessionUser = SessionUser.createWithAuth(
-                loginUserSeq, loginUser.getUserId(),
+                loginUserSeq,
+                loginUser.getUserId(),
                 teamAuthInfo.getAuthTeams(),
                 gameAuthInfo.getAuthGames()
         );
-        SessionUtil.setSessionUser(sessionUser);
+        SessionUtil.setSessionUser( sessionUser );
 
         /* 경기기록권한 정보 확인 */
         // TODO 세션ID 로그찍기  log.info(SessionUtil.get.getId());
         // TODO 쿠키생성 로직 - https://reflectoring.io/spring-boot-cookies/
-        return ResponseEntity.ok().body(sessionUser);
+        return ResponseEntity.ok().body( sessionUser );
     }
 
 
@@ -96,7 +94,7 @@ public class AuthController {
      * API031 로그아웃
      */
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(HttpSession session) {
+    public ResponseEntity< Void > logout(HttpSession session) {
         log.info("로그아웃");
         session.invalidate();
         return ResponseEntity.ok().build();
