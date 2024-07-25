@@ -4,7 +4,7 @@ import com.threeNerds.basketballDiary.mvc.auth.controller.request.LoginRequest;
 import com.threeNerds.basketballDiary.mvc.auth.service.dto.LoginUserDTO;
 import com.threeNerds.basketballDiary.mvc.auth.service.AuthService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameAuthService;
-import com.threeNerds.basketballDiary.mvc.game.service.dto.GameAuthDTO;
+import com.threeNerds.basketballDiary.mvc.game.service.dto.GameAuthQuery;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.MyTeamAuthService;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.TeamAuthDTO;
 import com.threeNerds.basketballDiary.session.SessionUser;
@@ -68,16 +68,20 @@ public class AuthController {
         Long loginUserSeq = loginUser.getUserSeq();
 
         /** 소속팀 권한정보 조회 */
-        TeamAuthDTO userTeamAuthInfo = myTeamAuthService.getAllTeamAuthInfo(TeamAuthDTO.of(loginUserSeq));
+        TeamAuthDTO teamAuthInfo = myTeamAuthService.getAllTeamAuthInfo(TeamAuthDTO.of(loginUserSeq));
 
         /** 경기 권한정보 조회 */
-        GameAuthDTO userAuthGameInfo = gameAuthService.getGameAuthInfo(loginUserSeq);
+        GameAuthQuery.Result gameAuthInfo = gameAuthService.getGameAuthInfo(
+                                            GameAuthQuery.builder()
+                                                .userSeq( loginUserSeq )
+                                                .build()
+                                       );
 
         /** 세션 정보 생성 및 저장 */
         SessionUser sessionUser = SessionUser.createWithAuth(
                 loginUserSeq, loginUser.getUserId(),
-                userTeamAuthInfo.getAuthTeams(),
-                userAuthGameInfo.getAuthGames()
+                teamAuthInfo.getAuthTeams(),
+                gameAuthInfo.getAuthGames()
         );
         SessionUtil.setSessionUser(sessionUser);
 
