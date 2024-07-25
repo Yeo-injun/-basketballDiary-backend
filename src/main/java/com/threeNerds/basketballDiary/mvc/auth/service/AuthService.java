@@ -2,6 +2,7 @@ package com.threeNerds.basketballDiary.mvc.auth.service;
 
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
+import com.threeNerds.basketballDiary.mvc.auth.service.dto.LoginUserQuery;
 import com.threeNerds.basketballDiary.mvc.user.domain.User;
 
 import com.threeNerds.basketballDiary.mvc.auth.service.dto.LoginUserDTO;
@@ -35,9 +36,9 @@ public class AuthService {
      * 입력정보로 로그인 정보 조회 및 return
      * @throw DomainErrorType.INCORRECT_LOGIN_INFO 로그인 정보가 일치하지 않을 경우 해당 오류메세지 throw
      **/
-    public LoginUserDTO login( LoginUserDTO loginInfo ) {
-        String userId        = loginInfo.getUserId();
-        String plainPassword = loginInfo.getPassword();
+    public LoginUserQuery.Result login( LoginUserQuery query ) {
+        String userId        = query.getUserId();
+        String plainPassword = query.getPassword();
 
         log.info("Check User id = {}", userId);
         User findUser = userRepository.findUserByUserId( userId );
@@ -50,6 +51,6 @@ public class AuthService {
         if ( !findUser.checkAuthentication( plainPassword ) ) {
             throw new CustomException( DomainErrorType.INCORRECT_LOGIN_INFO );
         }
-        return LoginUserDTO.ofSuccess( findUser.getUserId(), findUser.getUserSeq() );
+        return query.buildResult( findUser.getUserSeq() );
     }
 }
