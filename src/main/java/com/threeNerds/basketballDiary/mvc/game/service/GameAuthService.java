@@ -81,20 +81,16 @@ public class GameAuthService {
      * cf. 로그인시 사용자의 경기별로 권한수준이 매핑된 Map객체를 Session에 보관한다.
      * @author 여인준
      */
-    public GameAuthDTO getGameAuthInfo( Long userSeq ) {
-        List<GameAuth> userAuthList = gameRecordAuthRepo.findAuthList( userSeq );
-        Map< Long, AuthLevel > authGames     = toGameAuthSet( userAuthList );
-        return new GameAuthDTO( userSeq, authGames );
+    public GameAuthQuery.Result getGameAuthInfo( GameAuthQuery query ) {
+        Map< Long, AuthLevel > authGames = gameRecordAuthRepo.findAuthList( query.getUserSeq() ).stream()
+                .collect( Collectors.toMap(
+                                GameAuth::getGameSeq,
+                                item -> AuthLevel.of( AuthType.GAME_RECORD, Integer.parseInt( item.getGameRecordAuthCode() ) )
+                        )
+                );
+        return query.buildResult( authGames );
     }
 
-    private Map< Long, AuthLevel > toGameAuthSet( List<GameAuth > authList ) {
-        return authList.stream()
-                .collect( Collectors.toMap(
-                        GameAuth::getGameSeq,
-                        item -> AuthLevel.of( AuthType.GAME_RECORD, Integer.parseInt( item.getGameRecordAuthCode() ) )
-                    )
-                );
-    }
 
 
     /**
