@@ -5,7 +5,6 @@ import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import com.threeNerds.basketballDiary.mvc.auth.service.dto.LoginUserQuery;
 import com.threeNerds.basketballDiary.mvc.user.domain.User;
 
-import com.threeNerds.basketballDiary.mvc.auth.service.dto.LoginUserDTO;
 
 import com.threeNerds.basketballDiary.mvc.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
