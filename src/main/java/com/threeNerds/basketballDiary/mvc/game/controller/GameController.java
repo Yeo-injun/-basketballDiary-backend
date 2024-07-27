@@ -4,20 +4,15 @@ import com.threeNerds.basketballDiary.auth.constant.AuthLevel;
 import com.threeNerds.basketballDiary.auth.constant.AuthType;
 import com.threeNerds.basketballDiary.constant.code.type.HomeAwayCode;
 import com.threeNerds.basketballDiary.auth.Auth;
+import com.threeNerds.basketballDiary.mvc.game.controller.docs.*;
 import com.threeNerds.basketballDiary.mvc.game.controller.request.*;
 import com.threeNerds.basketballDiary.mvc.game.controller.response.*;
-import com.threeNerds.basketballDiary.mvc.game.controller.response.GetGameEntryResponse;
-
-import com.threeNerds.basketballDiary.mvc.game.controller.response.GetGameJoinPlayerQuarterRecordsResponse;
-
-import com.threeNerds.basketballDiary.mvc.game.controller.response.GetGameJoinPlayersResponse;
 import com.threeNerds.basketballDiary.mvc.game.service.GameAuthService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameJoinManagerService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameRecordManagerService;
 import com.threeNerds.basketballDiary.mvc.game.service.GameService;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.*;
 import com.threeNerds.basketballDiary.session.SessionUser;
-import com.threeNerds.basketballDiary.swagger.docs.game.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.util.Stack;
+
 
 import static com.threeNerds.basketballDiary.constant.HttpResponseConst.RESPONSE_OK;
 import static com.threeNerds.basketballDiary.session.util.SessionUtil.LOGIN_USER;
@@ -85,28 +80,6 @@ public class GameController {
     private final GameJoinManagerService gameJoinManagerService;
     private final GameRecordManagerService gameRecordManagerService;
     private final GameAuthService gameAuthService;
-
-
-    /**
-     * API035 경기참가선수 등록하기
-     * 22.12.15(목) @ReauestBody부분 Request클래스로 대체
-     */
-    @ApiDocs035
-    @Auth
-    @PostMapping("/{gameSeq}/homeAwayCode/{homeAwayCode}/players")
-    public ResponseEntity< URI > registerGameJoinPlayers(
-            @PathVariable(name = "gameSeq") Long gameSeq,
-            @PathVariable(name = "homeAwayCode") String homeAwayCode,
-            @RequestBody @Valid RegisterGameJoinPlayersRequest request
-    ) {
-        gameJoinManagerService.registerGameJoinPlayers( request.toCommand( gameSeq, homeAwayCode ) );
-        /**--------------------------------------------------------------------------------------
-         * API061 게임참가선수 조회 URL을 리턴.
-         * cf. created 상태코드는 return시 Location Header속성에 생성된 자원을 조회할 수 있는 URL를 표기함.
-         **--------------------------------------------------------------------------------------*/
-        URI createdURL = URI.create( "/api/games/" + gameSeq + "/players?homeAwayCode=" + homeAwayCode );
-        return ResponseEntity.created( createdURL ).build();
-    }
 
 
     /**
@@ -468,7 +441,7 @@ public class GameController {
      * API060 쿼터 엔트리 정보 저장
      * 22.12.15(목) @ReauestBody부분 Request클래스로 대체
      */
-    // @ApiDocs060
+    @ApiDocs060
     @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_RECORDER )
     @PostMapping("/{gameSeq}/entry")
     public ResponseEntity<?> saveQuarterEntryInfo(
@@ -480,28 +453,24 @@ public class GameController {
     }
 
     /**
-     * API061 경기 전체참가선수 조회
+     * API061 경기 참가 선수 전체 조회
      */
-    // @ApiDocs061
+    @ApiDocs061
     @Auth
     @GetMapping("/{gameSeq}/players")
     public ResponseEntity<?> getAllGameJoinPlayers(
-            @PathVariable(name = "gameSeq") Long gameSeq,
-            @RequestParam(name = "homeAwayCode" , required = false) String homeAwayCode,
-            @RequestParam(name = "pageNo"       , defaultValue = "0") Integer pageNo
+            @PathVariable(name = "gameSeq") Long gameSeq
     ) {
         GameJoinPlayerQuery.Result homeResult = gameJoinManagerService.getGameJoinPlayers(
             GameJoinPlayerQuery.builder()
                     .gameSeq(       gameSeq )
                     .homeAwayCode(  HomeAwayCode.HOME_TEAM.getCode() )
-                    .pageNo(        pageNo )
                     .build()
         );
         GameJoinPlayerQuery.Result awayResult = gameJoinManagerService.getGameJoinPlayers(
             GameJoinPlayerQuery.builder()
                     .gameSeq(       gameSeq )
                     .homeAwayCode(  HomeAwayCode.AWAY_TEAM.getCode() )
-                    .pageNo(        pageNo )
                     .build()
         );
         return ResponseEntity.ok(
@@ -510,17 +479,18 @@ public class GameController {
     }
 
     /**
-     * API066 경기참가선수 조회 ( 팀별 조회 )
+     * API066 경기 참가 선수 조회 ( 팀별 조회 )
+     * - 페이징 처리 적용 완료
      */
-    // @ApiDocs066
+    @ApiDocs066
     @Auth
     @GetMapping("/{gameSeq}/homeAwayCode/{homeAwayCode}/players")
-    public ResponseEntity< GetGameJoinPlayersResponse > getGameJoinPlayers(
-            @PathVariable(name = "gameSeq")         Long gameSeq,
-            @PathVariable(name = "homeAwayCode")    String homeAwayCode,
-            @RequestParam(name = "pageNo" , defaultValue = "0") Integer pageNo
+    public ResponseEntity< GetGameJoinPlayersResponse > getGameJoinPlayersWithPaging(
+        @PathVariable(name = "gameSeq")         Long gameSeq,
+        @PathVariable(name = "homeAwayCode")    String homeAwayCode,
+        @RequestParam(name = "pageNo" , defaultValue = "0") Integer pageNo
     ) {
-        GameJoinPlayerQuery.Result result = gameJoinManagerService.getGameJoinPlayers(
+        GameJoinPlayerQuery.Result result = gameJoinManagerService.getGameJoinPlayersWithPaging(
             GameJoinPlayerQuery.builder()
                     .gameSeq(       gameSeq )
                     .homeAwayCode(  homeAwayCode )
@@ -541,12 +511,12 @@ public class GameController {
      * 22.12.15(목) @ReauestBody부분 Request클래스로 대체
      * 23.01.11(수) 누락된 로직 추가 - 게임기록상태코드 업데이트
      */
-    // @ApiDocs062
+    @ApiDocs062
     @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_CREATOR )
     @PostMapping("/{gameSeq}/gameJoinTeams")
     public ResponseEntity< Void > confirmGameJoinTeam (
             @PathVariable(name = "gameSeq") Long gameSeq,
-            @RequestBody @Valid RegisterGameJoinPlayersRequest.ConfirmGameJoinTeamRequest request
+            @RequestBody @Valid ConfirmGameJoinTeamRequest request
     ) {
         gameJoinManagerService.confirmJoinTeam( request.toCommand( gameSeq ) );
         return ResponseEntity.ok().build();
@@ -558,7 +528,7 @@ public class GameController {
      * @author 강창기
      * 23.01.25(수) 여인준 - API Body 수정
      */
-    // @ApiDocs063
+    @ApiDocs063
     @Auth
     @GetMapping("/{gameSeq}/quarters")
     public ResponseEntity<?> getGameAllRecords (
