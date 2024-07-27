@@ -1,7 +1,9 @@
 package com.threeNerds.basketballDiary.mvc.auth.controller;
 
+import com.threeNerds.basketballDiary.mvc.auth.controller.docs.ApiDocs065;
 import com.threeNerds.basketballDiary.mvc.auth.controller.request.LoginRequest;
-import com.threeNerds.basketballDiary.mvc.auth.service.dto.LoginUserDTO;
+import com.threeNerds.basketballDiary.mvc.auth.controller.response.GetAuthInfoResponse;
+import com.threeNerds.basketballDiary.mvc.auth.controller.response.LoginResponse;
 import com.threeNerds.basketballDiary.mvc.auth.service.AuthService;
 import com.threeNerds.basketballDiary.mvc.auth.service.dto.LoginUserQuery;
 import com.threeNerds.basketballDiary.mvc.game.service.GameAuthService;
@@ -44,19 +46,19 @@ public class AuthController {
     /**
      * API065 권한정보 조회
      */
+    @ApiDocs065
     @GetMapping
-    public ResponseEntity< SessionUser > getAuthInfo(
+    public ResponseEntity< GetAuthInfoResponse > getAuthInfo(
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession
     ) {
-        return ResponseEntity.ok().body( userSession );
+        return ResponseEntity.ok().body( new GetAuthInfoResponse( userSession ) );
     }
-
 
     /**
      * API030 로그인
      */
     @PostMapping("/login")
-    public ResponseEntity< SessionUser > login(
+    public ResponseEntity< LoginResponse > login(
             @RequestBody @Valid LoginRequest request
     ) {
         log.info("======= Try login =======");
@@ -86,7 +88,7 @@ public class AuthController {
         /* 경기기록권한 정보 확인 */
         // TODO 세션ID 로그찍기  log.info(SessionUtil.get.getId());
         // TODO 쿠키생성 로직 - https://reflectoring.io/spring-boot-cookies/
-        return ResponseEntity.ok().body( sessionUser );
+        return ResponseEntity.ok().body( new LoginResponse( sessionUser ) );
     }
 
 
