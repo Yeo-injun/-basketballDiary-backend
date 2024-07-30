@@ -1,5 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.auth.controller;
 
+import com.threeNerds.basketballDiary.mvc.auth.controller.docs.ApiDocs030;
 import com.threeNerds.basketballDiary.mvc.auth.controller.docs.ApiDocs065;
 import com.threeNerds.basketballDiary.mvc.auth.controller.request.LoginRequest;
 import com.threeNerds.basketballDiary.mvc.auth.controller.response.GetAuthInfoResponse;
@@ -57,6 +58,7 @@ public class AuthController {
     /**
      * API030 로그인
      */
+    @ApiDocs030
     @PostMapping("/login")
     public ResponseEntity< LoginResponse > login(
             @RequestBody @Valid LoginRequest request
