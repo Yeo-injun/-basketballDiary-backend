@@ -1,14 +1,11 @@
 
 package com.threeNerds.basketballDiary.mvc.auth.service.dto;
 
-import com.threeNerds.basketballDiary.auth.constant.AuthLevel;
-import com.threeNerds.basketballDiary.mvc.game.service.dto.GameAuthQuery;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.Map;
 
 @Getter
 @Builder
