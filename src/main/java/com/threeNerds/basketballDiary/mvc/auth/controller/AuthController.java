@@ -1,6 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.auth.controller;
 
 import com.threeNerds.basketballDiary.mvc.auth.controller.docs.ApiDocs030;
+import com.threeNerds.basketballDiary.mvc.auth.controller.docs.ApiDocs031;
 import com.threeNerds.basketballDiary.mvc.auth.controller.docs.ApiDocs065;
 import com.threeNerds.basketballDiary.mvc.auth.controller.request.LoginRequest;
 import com.threeNerds.basketballDiary.mvc.auth.controller.response.GetAuthInfoResponse;
@@ -13,6 +14,7 @@ import com.threeNerds.basketballDiary.mvc.myTeam.service.MyTeamAuthService;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.TeamAuthDTO;
 import com.threeNerds.basketballDiary.session.SessionUser;
 import com.threeNerds.basketballDiary.session.util.SessionUtil;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -38,6 +40,10 @@ import static com.threeNerds.basketballDiary.session.util.SessionUtil.LOGIN_USER
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/auth")
+@Tag(
+    name        = "인증 컨트롤러",
+    description = "인증과 관련된 서비스를 제공하는 컨트롤러. 추후 소셜 로그인 등 다양한 로그인 방식에 대한 처리는 해당 컨트롤러를 통해 처리"
+)
 public class AuthController {
 
     private final AuthService authService;
@@ -97,6 +103,7 @@ public class AuthController {
     /**
      * API031 로그아웃
      */
+    @ApiDocs031
     @PostMapping("/logout")
     public ResponseEntity< Void > logout(HttpSession session) {
         log.info("로그아웃");
