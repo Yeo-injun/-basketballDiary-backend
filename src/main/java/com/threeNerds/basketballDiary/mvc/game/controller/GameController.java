@@ -43,7 +43,7 @@ import static com.threeNerds.basketballDiary.session.util.SessionUtil.LOGIN_USER
 @RequiredArgsConstructor
 @RequestMapping("/api/games")
 @Tag(
-    name        = "게임컨트롤러",
+    name        = "게임 컨트롤러",
     description = "Game 도메인과 관련된 서비스를 수행하는 Controller. Game도메인의 생성, 조회, 수정, 삭제 등"
 )
 /** swagger 관련 참고 자료 : https://devocean.sk.com/experts/techBoardDetail.do?ID=164919 */
