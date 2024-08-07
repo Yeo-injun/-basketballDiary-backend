@@ -1,6 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.authUser.controller;
 
 import com.threeNerds.basketballDiary.auth.Auth;
+import com.threeNerds.basketballDiary.mvc.authUser.controller.docs.ApiDocs020;
 import com.threeNerds.basketballDiary.mvc.authUser.service.TeamJoinService;
 import com.threeNerds.basketballDiary.mvc.authUser.service.dto.*;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.MyTeamAuthService;
@@ -8,6 +9,7 @@ import com.threeNerds.basketballDiary.mvc.myTeam.service.MyTeamAuthService;
 import com.threeNerds.basketballDiary.mvc.authUser.dto.JoinRequestDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.TeamAuthDTO;
 import com.threeNerds.basketballDiary.session.SessionUser;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +23,10 @@ import static com.threeNerds.basketballDiary.session.util.SessionUtil.LOGIN_USER
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/loginUser")
+@Tag(
+    name        = "로그인(인증)한 사용자 컨트롤러",
+    description = "로그인(인증)한 사용자와 관련된 서비스를 제공하는 컨트롤러."
+)
 public class AuthUserController {
 
     private final MyTeamAuthService myTeamAuthService;
@@ -28,11 +34,12 @@ public class AuthUserController {
     private final TeamJoinService teamJoinService;
 
     /**
-     *  API020 : 농구팀 가입요청 보내기
+     *  API020 : 팀 가입요청 보내기
      *  22.03.25 인준 : SessionUser null체크후 예외처리 적용. Service Layer에서의 예외처리 적용
      *  22.03.26 인준 : SessionUser null체크 로직 제거 - 인터셉터에서 하기 때문.
      *  22.03.29 인준 : 권한어노테이션 추가
      **/
+    @ApiDocs020
     @Auth
     @PostMapping("/joinRequestTo/{teamSeq}")
     public ResponseEntity<Void> sendRequest(
