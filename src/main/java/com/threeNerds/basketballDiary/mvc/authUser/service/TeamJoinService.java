@@ -63,7 +63,7 @@ public class TeamJoinService {
         /** 이미 팀원으로 존재하는지 확인 */
         TeamMember teamMember = teamMemberRepository.findTeamMember( joinRequestInfo );
         if ( teamMember != null ) {
-            throw new CustomException(ALREADY_EXIST_TEAM_MEMBER);
+            throw new CustomException( ALREADY_EXIST_TEAM_MEMBER );
         }
 
         /** 팀이 존재하고, 초대-가입요청이 없을경우에만 INSERT */
