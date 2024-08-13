@@ -2,6 +2,8 @@ package com.threeNerds.basketballDiary.mvc.authUser.controller;
 
 import com.threeNerds.basketballDiary.auth.Auth;
 import com.threeNerds.basketballDiary.mvc.authUser.controller.docs.ApiDocs020;
+import com.threeNerds.basketballDiary.mvc.authUser.controller.docs.ApiDocs022;
+import com.threeNerds.basketballDiary.mvc.authUser.controller.docs.ApiDocs023;
 import com.threeNerds.basketballDiary.mvc.authUser.service.TeamJoinService;
 import com.threeNerds.basketballDiary.mvc.authUser.service.dto.*;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.MyTeamAuthService;
@@ -34,7 +36,23 @@ public class AuthUserController {
     private final TeamJoinService teamJoinService;
 
     /**
-     *  API020 : 팀 가입요청 보내기
+     *  API022 : 농구팀 가입요청 목록 조회
+     *  22.03.13 인준 : API022 세분화 - 가입요청 및 초대 목록을 하나의 API콜로 가져오는 것에서 API 2개를 콜해서 가져오는 구조로 변경
+     *  22.03.26 인준 : SessionUser null체크 로직 제거 - 인터셉터에서 체크하기 때문
+     *  22.03.29 인준 : 권한어노테이션 추가
+     **/
+    @ApiDocs022
+    @Auth
+    @GetMapping("/joinRequestsTo")
+    public ResponseEntity<?> getJoinRequests(
+            @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession
+    ) {
+        List<JoinRequestDTO> result = teamJoinService.getJoinRequests( JoinRequestQuery.of( userSession.getUserSeq() ) );
+        return ResponseEntity.ok().body(result);
+    }
+
+    /**
+     *  API020 : 농구팀 가입요청 보내기
      *  22.03.25 인준 : SessionUser null체크후 예외처리 적용. Service Layer에서의 예외처리 적용
      *  22.03.26 인준 : SessionUser null체크 로직 제거 - 인터셉터에서 하기 때문.
      *  22.03.29 인준 : 권한어노테이션 추가
@@ -51,9 +69,10 @@ public class AuthUserController {
     }
 
     /**
-     *  API023 : 팀 가입요청 취소
+     *  API023 : 농구팀 가입요청 취소
      *  22.03.29 인준 : 권한어노테이션 추가
      **/
+    @ApiDocs023
     @Auth
     @DeleteMapping("/joinRequestsTo/{teamJoinRequestSeq}")
     public ResponseEntity<?> cancelRequest(
@@ -62,21 +81,6 @@ public class AuthUserController {
     ) {
         teamJoinService.cancelRequest( JoinRequestCommand.ofCancel( teamJoinRequestSeq, userSession.getUserSeq() ) );
         return ResponseEntity.ok().build();
-    }
-
-    /**
-     *  API022 : 농구팀 가입요청 목록 조회
-     *  22.03.13 인준 : API022 세분화 - 가입요청 및 초대 목록을 하나의 API콜로 가져오는 것에서 API 2개를 콜해서 가져오는 구조로 변경
-     *  22.03.26 인준 : SessionUser null체크 로직 제거 - 인터셉터에서 체크하기 때문
-     *  22.03.29 인준 : 권한어노테이션 추가
-     **/
-    @Auth
-    @GetMapping("/joinRequestsTo")
-    public ResponseEntity<?> getJoinRequests(
-            @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession
-    ) {
-        List<JoinRequestDTO> result = teamJoinService.getJoinRequests( JoinRequestQuery.of( userSession.getUserSeq() ) );
-        return ResponseEntity.ok().body(result);
     }
 
     /**
