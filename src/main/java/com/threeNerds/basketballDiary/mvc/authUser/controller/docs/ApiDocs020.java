@@ -13,7 +13,7 @@ import static java.lang.annotation.ElementType.METHOD;
 @Target( METHOD )
 @Retention( RetentionPolicy.RUNTIME )
 @Operation(
-    summary     = "[ API020 ] 팀 가입요청 보내기",
+    summary     = "[ API020 ] 농구팀 가입요청 보내기",
     description = "사용자의 로그인을 수행한다. <br>"
                 + "로그인 결과로 사용자의 팀별 권한과 경기별 작성권한을 리턴해준다. <br>",
     responses   = {
