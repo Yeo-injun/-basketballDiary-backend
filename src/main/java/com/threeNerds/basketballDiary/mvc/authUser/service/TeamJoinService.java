@@ -75,10 +75,9 @@ public class TeamJoinService {
      **-------------------------------*/
     public void cancelRequest( JoinRequestCommand command ) {
         TeamJoinRequest joinRequestCancel = TeamJoinRequest.cancelJoinRequest( command );
-
-        boolean isCancelSuccess = teamJoinRequestRepository.updateJoinRequestState(joinRequestCancel) > 0;
+        boolean isCancelSuccess = teamJoinRequestRepository.updateJoinRequestState( joinRequestCancel ) > 0;
         if ( !isCancelSuccess ) {
-            throw new CustomException(JOIN_REQUEST_NOT_FOUND);
+            throw new CustomException( JOIN_REQUEST_NOT_FOUND );
         }
     }
 
