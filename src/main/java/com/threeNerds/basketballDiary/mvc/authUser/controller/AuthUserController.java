@@ -1,9 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.authUser.controller;
 
 import com.threeNerds.basketballDiary.auth.Auth;
-import com.threeNerds.basketballDiary.mvc.authUser.controller.docs.ApiDocs020;
-import com.threeNerds.basketballDiary.mvc.authUser.controller.docs.ApiDocs022;
-import com.threeNerds.basketballDiary.mvc.authUser.controller.docs.ApiDocs023;
+import com.threeNerds.basketballDiary.mvc.authUser.controller.docs.*;
 import com.threeNerds.basketballDiary.mvc.authUser.service.TeamJoinService;
 import com.threeNerds.basketballDiary.mvc.authUser.service.dto.*;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.MyTeamAuthService;
@@ -84,9 +82,10 @@ public class AuthUserController {
     }
 
     /**
-     *  API024 : 팀 초대 승인
+     *  API024 : 농구팀 초대 승인
      *  22.03.29 인준 : 권한어노테이션 추가
      **/
+    @ApiDocs024
     @Auth
     @PutMapping("/joinRequestsFrom/{teamJoinRequestSeq}/approval")
     public ResponseEntity<?> approveTeamInvitation(
@@ -106,6 +105,7 @@ public class AuthUserController {
      *  API033 : 농구팀 초대 거절
      *  22.03.29 인준 : 권한어노테이션 추가
      **/
+    @ApiDocs033
     @Auth
     @PutMapping("/joinRequestsFrom/{teamJoinRequestSeq}/rejection")
     public ResponseEntity<?> rejectTeamInvitation(
