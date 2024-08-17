@@ -3,6 +3,7 @@ package com.threeNerds.basketballDiary.mvc.myTeam.controller;
 import com.threeNerds.basketballDiary.auth.Auth;
 import com.threeNerds.basketballDiary.auth.constant.AuthLevel;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.TeamMemberQuery;
+import com.threeNerds.basketballDiary.mvc.myTeam.controller.docs.ApiDocs001;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.GetMyTeamsRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.ModifyMyTeamInfoRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.SearchMyTeamGamesRequest;
@@ -76,6 +77,7 @@ public class MyTeamController {
      * API001 : 소속팀 운영진 조회
      * 23.05.14. Request & Response 형 변경
      */
+    @ApiDocs001
     @Auth( level = AuthLevel.TEAM_MEMBER )
     @GetMapping("/{teamSeq}/managers")
     public ResponseEntity<GetManagersResponse> getManagers(
