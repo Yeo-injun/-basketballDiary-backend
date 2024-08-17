@@ -118,10 +118,11 @@ public class AuthUserController {
 
 
     /**
-     *  API032 : 농구팀 초대 목록 조회
+     *  API032 : 농구팀에게 받은 초대 목록 조회
      *  22.03.13 인준 : API022 세분화 - 가입요청 및 초대 목록을 하나의 API콜로 가져오는 것에서 API 2개를 콜해서 가져오는 구조로 변경
      *  22.03.29 인준 : 권한어노테이션 추가
      **/
+    @ApiDocs032
     @Auth
     @GetMapping("/joinRequestsFrom")
     public ResponseEntity<?> getTeamInvitations(
