@@ -4,6 +4,7 @@ import com.threeNerds.basketballDiary.auth.Auth;
 import com.threeNerds.basketballDiary.auth.constant.AuthLevel;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.TeamMemberQuery;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.docs.ApiDocs001;
+import com.threeNerds.basketballDiary.mvc.myTeam.controller.docs.ApiDocs002;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.GetMyTeamsRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.ModifyMyTeamInfoRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.SearchMyTeamGamesRequest;
@@ -91,6 +92,7 @@ public class MyTeamController {
     /**
      * API002 : 소속팀 팀원등급인 팀원 목록 조회
      */
+    @ApiDocs002
     @Auth( level = AuthLevel.TEAM_MEMBER )
     @GetMapping("/{teamSeq}/members")
     public ResponseEntity<GetTeamMembersResponse> getTeamMembers(
