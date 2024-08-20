@@ -34,6 +34,9 @@ public class TeamMemberQuery {
         }
     }
 
+    public TeamMemberQuery.Result buildResult( List<MemberDTO> teamMembers ) {
+        return new Result( null, teamMembers );
+    }
     public TeamMemberQuery.Result buildResult( Pagination pagination, List<MemberDTO> teamMembers ) {
         return new Result( pagination, teamMembers );
     }
