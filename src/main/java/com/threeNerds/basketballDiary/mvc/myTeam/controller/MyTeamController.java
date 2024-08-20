@@ -11,16 +11,13 @@ import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.ModifyMyTeam
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.SearchMyTeamGamesRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.GetMyTeamsResponse;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.GetTeamInfoResponse;
+import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.GetTeamMembersResponse;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.SearchMyTeamGamesResponse;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.getManagers.request.GetManagersRequest;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.getManagers.response.GetManagersResponse;
+import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.GetManagersResponse;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getMyTeamProfile.request.GetMyTeamProfileRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getMyTeamProfile.response.GetMyTeamProfileResponse;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getMyTeamProfile.response.MyTeamProfileDTO;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.getTeamMembers.request.GetTeamMembersRequest;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.getTeamMembers.response.GetTeamMembersResponse;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.modifyMyTeamProfile.request.ModifyMyTeamProfileRequest;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.searchAllTeamMembers.request.SearchAllTeamMembersRequest;
 import com.threeNerds.basketballDiary.mvc.team.dto.PlayerDTO;
 import com.threeNerds.basketballDiary.mvc.game.service.GameRecordManagerService;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.*;
@@ -85,9 +82,12 @@ public class MyTeamController {
     public ResponseEntity<GetManagersResponse> getManagers(
             @PathVariable(value = "teamSeq") Long teamSeq
     ) {
-        GetManagersRequest reqBody = new GetManagersRequest( teamSeq );
-        GetManagersResponse resBody = myTeamService.getManagers( reqBody );
-        return ResponseEntity.ok().body(resBody);
+        TeamMemberQuery.Result result = myTeamService.getManagers(
+            TeamMemberQuery.builder()
+                    .teamSeq(   teamSeq )
+                    .build()
+        );
+        return ResponseEntity.ok().body( new GetManagersResponse( result ) );
     }
 
     /**
@@ -96,14 +96,18 @@ public class MyTeamController {
     @ApiDocs002
     @Auth( level = AuthLevel.TEAM_MEMBER )
     @GetMapping("/{teamSeq}/members")
-    public ResponseEntity<GetTeamMembersResponse> getTeamMembers(
+    public ResponseEntity<?> getTeamMembers(
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,
             @PathVariable(value = "teamSeq") Long teamSeq,
             @RequestParam(name = "pageNo", defaultValue = "0") Integer pageNo
     ) {
-        GetTeamMembersRequest reqBody = new GetTeamMembersRequest(teamSeq, pageNo);
-        GetTeamMembersResponse resBody = myTeamService.getTeamMembers(reqBody);
-        return ResponseEntity.ok().body(resBody);
+        TeamMemberQuery.Result result = myTeamService.getTeamMembers(
+            TeamMemberQuery.builder()
+                    .teamSeq(   teamSeq )
+                    .pageNo(    pageNo )
+                    .build()
+        );
+        return ResponseEntity.ok().body( new GetTeamMembersResponse( result ) );
     }
 
     /**
