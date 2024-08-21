@@ -7,6 +7,7 @@ import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamJoinRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember;
+import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.TeamAuthCommand;
 import com.threeNerds.basketballDiary.mvc.team.dto.PlayerDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.CmnMyTeamDTO;
 import com.threeNerds.basketballDiary.mvc.team.repository.dto.PlayerRepository;
@@ -152,31 +153,19 @@ public class TeamMemberManagerService {
 
     /**
      * 소속팀 관리자 임명하기
-     * @param teamMemberKey
      */
-    public void appointManager(CmnMyTeamDTO teamMemberKey)
-    {
-        TeamMember teamMember = teamMemberRepository.findByTeamMemberSeq(teamMemberKey.getTeamMemberSeq());
-        TeamMember memberToManager = teamMember.toManager();
-
-        boolean isSuccess = teamMemberRepository.updateTeamAuth(memberToManager) == 1;
-        if (!isSuccess) {
-            throw new CustomException(USER_NOT_FOUND);
-        }
+    public void appointManager( TeamAuthCommand command ) {
+        TeamMember teamMember       = teamMemberRepository.findByTeamMemberSeq( command.getTeamMemberSeq() );
+        TeamMember managerMember    = teamMember.toManager();
+        teamMemberRepository.updateTeamAuth( managerMember );
     }
 
     /**
      * 소속팀 관리자 해임하기
-     * @param teamMemberKeys
      */
-    public void dismissManager(CmnMyTeamDTO teamMemberKeys)
-    {
-        TeamMember manager = teamMemberRepository.findByTeamMemberSeq(teamMemberKeys.getTeamMemberSeq());
-        TeamMember managerToTeamMember = manager.toMember();
-
-        boolean isSuccess = teamMemberRepository.updateTeamAuth(managerToTeamMember) == 1;
-        if (!isSuccess) {
-            throw new CustomException(USER_NOT_FOUND);
-        }
+    public void dismissManager( TeamAuthCommand command ) {
+        TeamMember manager  = teamMemberRepository.findByTeamMemberSeq( command.getTeamMemberSeq() );
+        TeamMember member   = manager.toMember();
+        teamMemberRepository.updateTeamAuth( member );
     }
 }
