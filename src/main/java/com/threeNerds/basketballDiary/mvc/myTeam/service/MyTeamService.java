@@ -63,8 +63,6 @@ public class MyTeamService {
 
     /**
      * 소속팀 운영진 목록 조회
-     * @param reqBody
-     * @return List<MemberDTO>
      */
     public TeamMemberQuery.Result getManagers( TeamMemberQuery query ) {
         Long teamSeq = query.getTeamSeq();

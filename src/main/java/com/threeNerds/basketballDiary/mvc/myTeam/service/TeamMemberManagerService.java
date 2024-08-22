@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static com.threeNerds.basketballDiary.exception.error.DomainErrorType.NOT_FOUND_TEAM_INFO;
 import static com.threeNerds.basketballDiary.exception.error.DomainErrorType.USER_NOT_FOUND;
 
 /**
@@ -139,16 +140,13 @@ public class TeamMemberManagerService {
 
     /**
      * 소속팀 회원 강퇴시키기
-     * @param teamMemberKey
-     * @return List<PlayerDTO>
      */
-    public void dischargeTeamMember(CmnMyTeamDTO teamMemberKey)
-    {
-        TeamMember teamMember = TeamMember.withdrawalMember(teamMemberKey);
-        boolean isWithdrawal = teamMemberRepository.updateWithdrawalState(teamMember) == 1;
-        if (!isWithdrawal) {
-            throw new CustomException(USER_NOT_FOUND);
+    public void dismissTeamMember( TeamAuthCommand command ) {
+        TeamMember teamMember = teamMemberRepository.findByTeamMemberSeq( command.getTeamMemberSeq() );
+        if ( !teamMember.isJoinTeam( command.getTeamSeq() ) ) {
+            throw new CustomException( DomainErrorType.NO_JOIN_TEAM_MEMBER );
         }
+        teamMemberRepository.updateWithdrawalState( teamMember.toWithdrawal() );
     }
 
     /**
@@ -156,8 +154,13 @@ public class TeamMemberManagerService {
      */
     public void appointManager( TeamAuthCommand command ) {
         TeamMember teamMember       = teamMemberRepository.findByTeamMemberSeq( command.getTeamMemberSeq() );
-        TeamMember managerMember    = teamMember.toManager();
-        teamMemberRepository.updateTeamAuth( managerMember );
+        if ( !teamMember.isJoinTeam( command.getTeamSeq() ) ) {
+            throw new CustomException( DomainErrorType.NO_JOIN_TEAM_MEMBER );
+        }
+        if ( !teamMember.checkTeamMemberAuth() ) {
+            throw new CustomException( DomainErrorType.INVALID_STATE_FOR_MANAGER_AUTH );
+        }
+        teamMemberRepository.updateTeamAuth( teamMember.toManager() );
     }
 
     /**
@@ -165,7 +168,12 @@ public class TeamMemberManagerService {
      */
     public void dismissManager( TeamAuthCommand command ) {
         TeamMember manager  = teamMemberRepository.findByTeamMemberSeq( command.getTeamMemberSeq() );
-        TeamMember member   = manager.toMember();
-        teamMemberRepository.updateTeamAuth( member );
+        if ( !manager.isJoinTeam( command.getTeamSeq() ) ) {
+            throw new CustomException( DomainErrorType.NO_JOIN_TEAM_MEMBER );
+        }
+        if ( !manager.checkManagerAuth() ) {
+            throw new CustomException( DomainErrorType.INVALID_STATE_FOR_TEAM_MEMBER_AUTH );
+        }
+        teamMemberRepository.updateTeamAuth( manager.toMember() );
     }
 }
