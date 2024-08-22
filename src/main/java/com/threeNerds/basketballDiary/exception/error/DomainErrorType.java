@@ -18,6 +18,8 @@ public enum DomainErrorType implements ErrorMessageType {
     INCORRECT_LOGIN_INFO( BAD_REQUEST,"입력한 ID 혹은 비밀번호가 일치하지 않습니다"),
     INVALID_GAME_TYPE( BAD_REQUEST, "유효하지 않은 경기유형입니다."),
     INVALID_HOME_AWAY_CODE( BAD_REQUEST, "유효하지 않은 홈/어웨이 코드입니다."),
+    INVALID_STATE_FOR_MANAGER_AUTH( BAD_REQUEST, "관리자 권한으로 변경하기 위해서는 팀원이어야 합니다." ),
+    INVALID_STATE_FOR_TEAM_MEMBER_AUTH( BAD_REQUEST, "팀원 권한으로 변경하기 위해서는 관리자여야 합니다." ),
 
     /** 404 NOT_FOUND : Resource 를 찾을 수 없음 */
     JOIN_REQUEST_NOT_FOUND(NOT_FOUND, "대기 중인 가입요청 건이 존재하지 않습니다."),
@@ -33,6 +35,7 @@ public enum DomainErrorType implements ErrorMessageType {
     NOT_FOUND_REJECT_INVITATION( NOT_FOUND, "거절할 팀초대정보가 존재하지 않습니다." ),
     USER_NOT_FOUND(NOT_FOUND, "해당 사용자를 찾을 수 없습니다"),
     NO_EXIST_PASSWORD(NOT_FOUND, "비밀번호를 입력해주시기 바랍니다."),
+    NO_JOIN_TEAM_MEMBER(NOT_FOUND, "팀에 소속되지 않은 팀원입니다."),
 
     /** 403 FORBIDDEN : 서버에 정상적인 요청이 전송됐지만, 권한 문제로 거절 */
     ONLY_TEAM_MEMBER_QUERY( FORBIDDEN, "소속된 팀원만 조회할 수 있습니다." ),

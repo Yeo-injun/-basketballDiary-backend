@@ -157,6 +157,7 @@ public class MyTeamController {
      * 22.03.08 인준 : CustomException적용 - 퇴장상태로 업데이트된 결과가 없을 때 USER_NOT_FOUND 예외 발생
      * 22.03.29 인준 : 권한어노테이션 추가
      */
+    @ApiDocs015
     @Auth( level = AuthLevel.TEAM_LEADER )
     @DeleteMapping("/{teamSeq}/members/{teamMemberSeq}/manager")
     public ResponseEntity<?> dismissManager(
@@ -177,16 +178,19 @@ public class MyTeamController {
      * 22.03.08 인준 : CustomException적용 - 퇴장상태로 업데이트된 결과가 없을 때 USER_NOT_FOUND 예외 발생
      * 22.03.29 인준 : 권한어노테이션 추가
      */
+    @ApiDocs004
     @Auth( level = AuthLevel.TEAM_LEADER )
     @DeleteMapping("{teamSeq}/members/{teamMemberSeq}")
     public ResponseEntity<?> dischargeTeamMember(
             @PathVariable Long teamSeq,
             @PathVariable Long teamMemberSeq
     ) {
-        CmnMyTeamDTO teamMemberKey = new CmnMyTeamDTO()
-                                .teamSeq(teamSeq)
-                                .teamMemberSeq(teamMemberSeq);
-        teamMemberManagerService.dischargeTeamMember(teamMemberKey);
+        teamMemberManagerService.dismissTeamMember(
+            TeamAuthCommand.builder()
+                    .teamSeq(       teamSeq )
+                    .teamMemberSeq( teamMemberSeq )
+                    .build()
+        );
         return RESPONSE_OK;
     }
 
