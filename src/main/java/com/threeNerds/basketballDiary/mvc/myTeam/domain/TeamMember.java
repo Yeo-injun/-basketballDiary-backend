@@ -2,6 +2,7 @@ package com.threeNerds.basketballDiary.mvc.myTeam.domain;
 
 import com.threeNerds.basketballDiary.constant.code.type.TeamAuthCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
+import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.TeamAuthCommand;
 import com.threeNerds.basketballDiary.mvc.team.domain.Team;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.CmnMyTeamDTO;
 import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
@@ -48,6 +49,11 @@ public class TeamMember {
         return this;
     }
 
+    public TeamMember toWithdrawal() {
+        this.withdrawalYn = "Y";
+        return this;
+    }
+
     /**
      * 가입요청에 따른 팀원 객체 생성
      */
@@ -75,37 +81,22 @@ public class TeamMember {
                 .build();
     }
 
-    public static TeamMember withdrawalMember(CmnMyTeamDTO teamMember)
-    {
-        return TeamMember.builder()
-                .teamMemberSeq(teamMember.getTeamMemberSeq())
-                .teamSeq(teamMember.getTeamSeq())
-                .withdrawalYn("Y")
-                .build();
-    }
 
 
     /** 팀원객체가 파라미터로 던진 팀에 소속되어 있는지 확인 */
-    public boolean isJoinTeam(Long teamSeq)
-    {
+    public boolean isJoinTeam( Long teamSeq ) {
         // 팀원 객체가 소속팀 정보를 가지고 있는지 체크
-        if (Optional.ofNullable(this.teamSeq).isEmpty()) {
+        if ( null == this.teamSeq || null == teamSeq ) {
             return false;
         }
-        
-        // 팀원 객체가 소속팀 정보를 가지고 있다면 
-        // 넘겨받은 팀seq의 null체크 - null일경우 -1값을 반영하여 팀seq가 무조건 일치하지 않도록 처리
-        teamSeq = Optional.ofNullable(teamSeq)
-                            .orElseGet(()-> Long.valueOf(-1));
-
-        // 팀원 객체가 가지고 있는 팀seq와 넘겨받은 팀seq가 같을 경우에만 true반환
-        if (teamSeq.equals(this.teamSeq)) {
-            return true;
-        }
-        return false;
+        return teamSeq.equals( this.teamSeq );
     }
 
-    public boolean isNotJoinTeam(Long teamSeq) {
-        return !isJoinTeam(teamSeq);
+    public boolean checkManagerAuth() {
+        return TeamAuthCode.MANAGER.getCode().equals( this.teamAuthCode );
+    }
+
+    public boolean checkTeamMemberAuth() {
+        return TeamAuthCode.TEAM_MEMBER.getCode().equals( this.teamAuthCode );
     }
 }

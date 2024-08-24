@@ -1,6 +1,5 @@
 package com.threeNerds.basketballDiary.mvc.myTeam.service;
 
-import com.threeNerds.basketballDiary.constant.code.type.PlayerTypeCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import com.threeNerds.basketballDiary.file.ImageUploader;
@@ -11,18 +10,12 @@ import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.ModifyMyTeam
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.GetMyTeamsResponse;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.GetTeamInfoResponse;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.*;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.getManagers.request.GetManagersRequest;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.getManagers.response.GetManagersResponse;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.getTeamMembers.request.GetTeamMembersRequest;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.getTeamMembers.response.GetTeamMembersResponse;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.searchAllTeamMembers.request.SearchAllTeamMembersRequest;
 import com.threeNerds.basketballDiary.mvc.team.domain.Team;
 import com.threeNerds.basketballDiary.mvc.team.domain.TeamRegularExercise;
 import com.threeNerds.basketballDiary.mvc.team.dto.TeamRegularExerciseDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.repository.MyTeamRepository;
 import com.threeNerds.basketballDiary.mvc.team.repository.TeamRegularExerciseRepository;
 import com.threeNerds.basketballDiary.mvc.team.repository.TeamRepository;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.searchAllTeamMembers.response.SearchAllTeamMembersResponse;
 import com.threeNerds.basketballDiary.pagination.Pagination;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -70,16 +63,11 @@ public class MyTeamService {
 
     /**
      * 소속팀 운영진 목록 조회
-     * @param reqBody
-     * @return List<MemberDTO>
      */
-    public GetManagersResponse getManagers(GetManagersRequest reqBody) {
-        // 소속팀 운영진 정보는 반드시 1건 이상(최소한 팀장이 존재해야함)이어야 하므로,
-        // 조회내역이 존재하지 않으면 200 처리후 메시지를 전달한다.
-
-        Long teamSeq = reqBody.getTeamSeq();
-        List<MemberDTO> resultManagerList = myTeamRepository.findAllManagerByTeamSeq( teamSeq );
-        return new GetManagersResponse(resultManagerList);
+    public TeamMemberQuery.Result getManagers( TeamMemberQuery query ) {
+        Long teamSeq = query.getTeamSeq();
+        List<MemberDTO> managerList = myTeamRepository.findAllManagerByTeamSeq( teamSeq );
+        return query.buildResult( managerList );
     }
 
     /**
@@ -87,11 +75,11 @@ public class MyTeamService {
      * @param
      * @return List<MemberDTO>
      */
-    public GetTeamMembersResponse getTeamMembers( GetTeamMembersRequest reqBody ) {
-        Pagination pagination = Pagination.of( reqBody.getPageNo(), 5 );
+    public TeamMemberQuery.Result getTeamMembers( TeamMemberQuery query ) {
+        Pagination pagination = Pagination.of( query.getPageNo() );
 
         MemberDTO searchMemebrCond = new MemberDTO()
-                .teamSeq( reqBody.getTeamSeq() )
+                .teamSeq( query.getTeamSeq() )
                 .pagination( pagination );
 
         // 소속팀은 팀장과 운영진을 제외하므로, 팀원 정보가 존재하지 않더라도 404 처리하지 않는다.
@@ -99,9 +87,9 @@ public class MyTeamService {
 
         /** 페이징DTO에 조회 결과 세팅 */
         if ( resultMembers.isEmpty() ) {
-            return new GetTeamMembersResponse( pagination.empty(), Collections.emptyList());
+            return query.buildResult( pagination.empty(), Collections.emptyList() );
         }
-        return new GetTeamMembersResponse( pagination.getPages( resultMembers.get(0).getTotalCount() ), resultMembers);
+        return query.buildResult( pagination.getPages( resultMembers.get(0).getTotalCount() ), resultMembers );
     }
 
     public TeamMemberQuery.Result searchAllTeamMembers( TeamMemberQuery query ) {

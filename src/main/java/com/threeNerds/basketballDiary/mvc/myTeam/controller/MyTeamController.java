@@ -3,22 +3,20 @@ package com.threeNerds.basketballDiary.mvc.myTeam.controller;
 import com.threeNerds.basketballDiary.auth.Auth;
 import com.threeNerds.basketballDiary.auth.constant.AuthLevel;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.TeamMemberQuery;
-import com.threeNerds.basketballDiary.mvc.myTeam.controller.docs.ApiDocs001;
+import com.threeNerds.basketballDiary.mvc.myTeam.controller.docs.*;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.GetMyTeamsRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.ModifyMyTeamInfoRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.SearchMyTeamGamesRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.GetMyTeamsResponse;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.GetTeamInfoResponse;
+import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.GetTeamMembersResponse;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.SearchMyTeamGamesResponse;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.getManagers.request.GetManagersRequest;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.getManagers.response.GetManagersResponse;
+import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.GetManagersResponse;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getMyTeamProfile.request.GetMyTeamProfileRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getMyTeamProfile.response.GetMyTeamProfileResponse;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getMyTeamProfile.response.MyTeamProfileDTO;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.getTeamMembers.request.GetTeamMembersRequest;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.getTeamMembers.response.GetTeamMembersResponse;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.modifyMyTeamProfile.request.ModifyMyTeamProfileRequest;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.searchAllTeamMembers.request.SearchAllTeamMembersRequest;
+import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.TeamAuthCommand;
 import com.threeNerds.basketballDiary.mvc.team.dto.PlayerDTO;
 import com.threeNerds.basketballDiary.mvc.game.service.GameRecordManagerService;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.*;
@@ -83,29 +81,38 @@ public class MyTeamController {
     public ResponseEntity<GetManagersResponse> getManagers(
             @PathVariable(value = "teamSeq") Long teamSeq
     ) {
-        GetManagersRequest reqBody = new GetManagersRequest( teamSeq );
-        GetManagersResponse resBody = myTeamService.getManagers( reqBody );
-        return ResponseEntity.ok().body(resBody);
+        TeamMemberQuery.Result result = myTeamService.getManagers(
+            TeamMemberQuery.builder()
+                    .teamSeq(   teamSeq )
+                    .build()
+        );
+        return ResponseEntity.ok().body( new GetManagersResponse( result ) );
     }
 
     /**
      * API002 : 소속팀 팀원등급인 팀원 목록 조회
      */
+    @ApiDocs002
     @Auth( level = AuthLevel.TEAM_MEMBER )
     @GetMapping("/{teamSeq}/members")
-    public ResponseEntity<GetTeamMembersResponse> getTeamMembers(
+    public ResponseEntity<?> getTeamMembers(
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,
             @PathVariable(value = "teamSeq") Long teamSeq,
             @RequestParam(name = "pageNo", defaultValue = "0") Integer pageNo
     ) {
-        GetTeamMembersRequest reqBody = new GetTeamMembersRequest(teamSeq, pageNo);
-        GetTeamMembersResponse resBody = myTeamService.getTeamMembers(reqBody);
-        return ResponseEntity.ok().body(resBody);
+        TeamMemberQuery.Result result = myTeamService.getTeamMembers(
+            TeamMemberQuery.builder()
+                    .teamSeq(   teamSeq )
+                    .pageNo(    pageNo )
+                    .build()
+        );
+        return ResponseEntity.ok().body( new GetTeamMembersResponse( result ) );
     }
 
     /**
      * API036 : 소속팀 전체 팀원목록 검색
      */
+    @ApiDocs036
     @Auth( level = AuthLevel.TEAM_MEMBER )
     @GetMapping("/{teamSeq}/allTeamMembers")
     public ResponseEntity<SearchAllTeamMembersResponse> searchAllTeamMembers(
@@ -125,22 +132,45 @@ public class MyTeamController {
     }
 
     /**
-     * API003 : 소속팀 관리자임명
+     * API003 : 소속팀 관리자 임명하기
      * 22.03.08 인준 : CustomException적용 - 퇴장상태로 업데이트된 결과가 없을 때 USER_NOT_FOUND 예외 발생
      * 22.03.29 인준 : 권한어노테이션 추가
      */
+    @ApiDocs003
     @Auth( level = AuthLevel.TEAM_LEADER )
     @PatchMapping("{teamSeq}/members/{teamMemberSeq}/manager")
     public ResponseEntity<Void> appointManager (
             @PathVariable Long teamSeq,
             @PathVariable Long teamMemberSeq
     ) {
-        CmnMyTeamDTO teamMemberKey = new CmnMyTeamDTO()
-                .teamSeq(teamSeq)
-                .teamMemberSeq(teamMemberSeq);
-
-        teamMemberManagerService.appointManager(teamMemberKey);
+        teamMemberManagerService.appointManager(
+            TeamAuthCommand.builder()
+                .teamSeq(       teamSeq )
+                .teamMemberSeq( teamMemberSeq )
+                .build()
+        );
         return ResponseEntity.ok().build();
+    }
+
+    /**
+     * API015 : 소속팀 관리자 제명하기
+     * 22.03.08 인준 : CustomException적용 - 퇴장상태로 업데이트된 결과가 없을 때 USER_NOT_FOUND 예외 발생
+     * 22.03.29 인준 : 권한어노테이션 추가
+     */
+    @ApiDocs015
+    @Auth( level = AuthLevel.TEAM_LEADER )
+    @DeleteMapping("/{teamSeq}/members/{teamMemberSeq}/manager")
+    public ResponseEntity<?> dismissManager(
+            @PathVariable Long teamSeq,
+            @PathVariable Long teamMemberSeq
+    ) {
+        teamMemberManagerService.dismissManager(
+            TeamAuthCommand.builder()
+                .teamSeq(       teamSeq )
+                .teamMemberSeq( teamMemberSeq )
+                .build()
+        );
+        return RESPONSE_OK;
     }
 
     /**
@@ -148,16 +178,19 @@ public class MyTeamController {
      * 22.03.08 인준 : CustomException적용 - 퇴장상태로 업데이트된 결과가 없을 때 USER_NOT_FOUND 예외 발생
      * 22.03.29 인준 : 권한어노테이션 추가
      */
+    @ApiDocs004
     @Auth( level = AuthLevel.TEAM_LEADER )
     @DeleteMapping("{teamSeq}/members/{teamMemberSeq}")
     public ResponseEntity<?> dischargeTeamMember(
             @PathVariable Long teamSeq,
             @PathVariable Long teamMemberSeq
     ) {
-        CmnMyTeamDTO teamMemberKey = new CmnMyTeamDTO()
-                                .teamSeq(teamSeq)
-                                .teamMemberSeq(teamMemberSeq);
-        teamMemberManagerService.dischargeTeamMember(teamMemberKey);
+        teamMemberManagerService.dismissTeamMember(
+            TeamAuthCommand.builder()
+                    .teamSeq(       teamSeq )
+                    .teamMemberSeq( teamMemberSeq )
+                    .build()
+        );
         return RESPONSE_OK;
     }
 
@@ -331,23 +364,6 @@ public class MyTeamController {
         return ResponseEntity.ok().body( myTeamList );
     }
 
-    /**
-     * API015 : 소속팀 관리자 제명
-     * 22.03.08 인준 : CustomException적용 - 퇴장상태로 업데이트된 결과가 없을 때 USER_NOT_FOUND 예외 발생
-     * 22.03.29 인준 : 권한어노테이션 추가
-     */
-    @Auth( level = AuthLevel.TEAM_LEADER )
-    @DeleteMapping("/{teamSeq}/members/{teamMemberSeq}/manager")
-    public ResponseEntity<?> dismissManager(
-            @PathVariable Long teamSeq,
-            @PathVariable Long teamMemberSeq
-    ) {
-        CmnMyTeamDTO teamMemberKeys = new CmnMyTeamDTO()
-                .teamMemberSeq(teamMemberSeq)
-                .teamSeq(teamSeq);
-        teamMemberManagerService.dismissManager(teamMemberKeys);
-        return RESPONSE_OK;
-    }
 
     /**
      * API016 : 소속팀 정보 조회
