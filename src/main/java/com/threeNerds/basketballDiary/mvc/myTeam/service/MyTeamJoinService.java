@@ -12,6 +12,7 @@ import com.threeNerds.basketballDiary.mvc.myTeam.dto.InvitationDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.repository.InvitationRepository;
 import com.threeNerds.basketballDiary.mvc.myTeam.repository.TeamJoinRequestRepository;
 import com.threeNerds.basketballDiary.mvc.myTeam.repository.TeamMemberRepository;
+import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.InvitationCommand;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.InvitationQuery;
 import com.threeNerds.basketballDiary.mvc.team.dto.PlayerDTO;
 import lombok.RequiredArgsConstructor;
@@ -47,30 +48,30 @@ public class MyTeamJoinService {
     private final InvitationRepository invitationRepository;
 
     /**
-     * 팀원 초대 API
+     * 사용자 초대
      */
-    public void inviteTeamMember(CmnMyTeamDTO joinRequest) {
-        joinRequest.joinRequestTypeCode(JoinRequestTypeCode.INVITATION.getCode());
-        TeamJoinRequest invitationInfo = TeamJoinRequest.createInvitation(joinRequest);
+    public void inviteUser( InvitationCommand command ) {
+        TeamJoinRequest invitation = TeamJoinRequest.createInvitation( command.getTeamSeq(), command.getUserSeq() );
 
         /** 초대-가입요청 존재여부 확인 : 대기중인 가입요청 혹은 초대가 있을 경우 중복가입요청 방지 */
-        int pendingJoinReqCnt = teamJoinRequestRepository.checkPendingJoinRequest(invitationInfo);
-        if (pendingJoinReqCnt > 0) {
-            throw new CustomException(DomainErrorType.ALREADY_EXIST_JOIN_REQUEST);
+        int pendingCount = teamJoinRequestRepository.checkPendingJoinRequest( invitation );
+        if ( pendingCount > 0 ) {
+            throw new CustomException( DomainErrorType.ALREADY_EXIST_JOIN_REQUEST );
         }
 
         /** 팀원으로 존재하는지 확인 : 팀원으로 존재할 경우 예외를 던짐(409에러) */
-        int duplicatedTeamMemberCnt = teamMemberRepository.checkDuplicatedTeamMember(joinRequest);
-        if (duplicatedTeamMemberCnt > 0) {
+
+        TeamMember teamMember = teamMemberRepository.findTeamMember( TeamMember.of( invitation ) );
+        if ( null != teamMember ) {
             throw new CustomException(DomainErrorType.ALREADY_EXIST_TEAM_MEMBER);
         }
 
         /** 초대-가입요청이 없고, 팀원이 아닐 경우에만 INSERT */
-        teamJoinRequestRepository.createJoinRequest(invitationInfo);
+        teamJoinRequestRepository.createJoinRequest( invitation );
     }
 
     /**
-     * 소속팀에서 초대한 사용자 목록 조회
+     * 초대한 사용자 목록 조회
      */
     public InvitationQuery.Result getInvitations( InvitationQuery query ) {
         TeamMember teamMember = teamMemberRepository.findTeamMemberByUserAndTeamSeq(

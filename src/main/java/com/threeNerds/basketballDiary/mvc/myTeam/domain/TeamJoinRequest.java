@@ -76,12 +76,12 @@ public class TeamJoinRequest {
     }
 
     /** 초대 생성(팀 -> 사용자) */
-    public static TeamJoinRequest createInvitation (CmnMyTeamDTO joinRequest) {
+    public static TeamJoinRequest createInvitation( Long teamSeq, Long userSeq ) {
         return TeamJoinRequest.builder()
-                .teamSeq(joinRequest.getTeamSeq())
-                .userSeq(joinRequest.getUserSeq())
-                .joinRequestTypeCode(JoinRequestTypeCode.INVITATION.getCode())
-                .joinRequestStateCode(JoinRequestStateCode.WAITING.getCode())
+                .teamSeq(               teamSeq )
+                .userSeq(               userSeq )
+                .joinRequestTypeCode(   JoinRequestTypeCode.INVITATION.getCode() )
+                .joinRequestStateCode(  JoinRequestStateCode.WAITING.getCode() )
                 .build();
     }
 

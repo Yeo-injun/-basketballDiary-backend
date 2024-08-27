@@ -66,8 +66,8 @@ public class TeamMember {
         return TeamMember.create(joinRequest.getTeamSeq(), joinRequest.getUserSeq(), TeamAuthCode.TEAM_MEMBER.getCode());
     }
 
-    public static TeamMember createLeader(Team newTeam) {
-        return TeamMember.create(newTeam.getTeamSeq(), newTeam.getLeaderUserSeq(), TeamAuthCode.LEADER.getCode());
+    public static TeamMember createLeader( Team team ) {
+        return TeamMember.create( team.getTeamSeq(), team.getLeaderUserSeq(), TeamAuthCode.LEADER.getCode());
     }
 
     private static TeamMember create(Long teamSeq, Long userSeq, String teamAuthCode) {
