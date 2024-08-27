@@ -24,7 +24,7 @@ public class CodeTypeUtil {
         return Arrays.stream( codeTypes )
                 .filter( item -> item.getCode().equals( code ) )
                 .findAny()
-                .orElseThrow( () -> new CustomException( SystemErrorType.NO_EXIST_MATCHED_ENUM_TYPE ) );
+                .orElseGet( () -> null );
     }
 
 }
