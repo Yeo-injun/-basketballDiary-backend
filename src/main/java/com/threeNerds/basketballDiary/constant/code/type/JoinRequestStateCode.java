@@ -5,6 +5,7 @@ import com.threeNerds.basketballDiary.constant.code.CodeTypeUtil;
 import lombok.Getter;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 @Getter
 public enum JoinRequestStateCode implements CodeType {
@@ -27,6 +28,12 @@ public enum JoinRequestStateCode implements CodeType {
      *---------------------------------------*/
     public static String nameOf( String code ) {
         return CodeTypeUtil.getCodeName( values(), code );
+    }
+    /**--------------------------------------
+     * code값으로 enum객체 가져오기
+     *---------------------------------------*/
+    public static JoinRequestStateCode ofType( String code ) {
+        return CodeTypeUtil.getEnumType( values(), code );
     }
 
 }

@@ -7,33 +7,32 @@ import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamJoinRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.CmnMyTeamDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.InvitationDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.repository.InvitationRepository;
-import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.InvitationQuery;
-import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.TeamAuthCommand;
-import com.threeNerds.basketballDiary.mvc.team.dto.PlayerDTO;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.CmnMyTeamDTO;
-import com.threeNerds.basketballDiary.mvc.team.repository.dto.PlayerRepository;
 import com.threeNerds.basketballDiary.mvc.myTeam.repository.TeamJoinRequestRepository;
 import com.threeNerds.basketballDiary.mvc.myTeam.repository.TeamMemberRepository;
+import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.InvitationQuery;
+import com.threeNerds.basketballDiary.mvc.team.dto.PlayerDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
-
 
 import static com.threeNerds.basketballDiary.exception.error.DomainErrorType.USER_NOT_FOUND;
 
 /**
- * 팀관리자가 팀원을 관리하기 위한 업무를 수행하는 Service
- * @author 책임자 작성
+ * 팀 가입과 관련된 서비스
+ * - 팀 가입은 2가지 방식으로 가능하다.
+ *  1. 팀이 사용자를 초대하는 방법. ( Invitation )
+ *  2. 사용자가 팀에게 가입을 요청하는 방법 ( JoinRequest )
  *
  * issue and history
  * <pre>
- * 2022.02.08 여인준 : 소스코드 생성
- * 2022.02.22 여인준 : CodeEnum에서 Code로 Name가져오는 메소드 구현 및 적용 완료
+ * 2024.08.27 여인준 : 최초 생성 cf. TeamMemberManagerService에서 팀 가입 업무 분리
  * </pre>
  */
 
@@ -41,19 +40,16 @@ import static com.threeNerds.basketballDiary.exception.error.DomainErrorType.USE
 @Slf4j
 @RequiredArgsConstructor
 @Transactional
-public class TeamMemberManagerService {
+public class MyTeamJoinService {
 
     private final TeamJoinRequestRepository teamJoinRequestRepository;
     private final TeamMemberRepository teamMemberRepository;
-    private final PlayerRepository playerRepository;
     private final InvitationRepository invitationRepository;
 
     /**
      * 팀원 초대 API
-     * @param joinRequest
      */
-    public void inviteTeamMember(CmnMyTeamDTO joinRequest)
-    {
+    public void inviteTeamMember(CmnMyTeamDTO joinRequest) {
         joinRequest.joinRequestTypeCode(JoinRequestTypeCode.INVITATION.getCode());
         TeamJoinRequest invitationInfo = TeamJoinRequest.createInvitation(joinRequest);
 
@@ -89,13 +85,12 @@ public class TeamMemberManagerService {
         InvitationDTO invitationParam = InvitationDTO.of( teamMember.getTeamSeq(), query.getJoinRequestState() );
         return query.buildResult( invitationRepository.findAllNotApproval( invitationParam ) );
     }
-
+    
     /**
      * 소속팀 가입요청 승인 API
      * @param joinRequest
      */
-    public void approveJoinRequest(CmnMyTeamDTO joinRequest)
-    {
+    public void approveJoinRequest( CmnMyTeamDTO joinRequest ) {
         /** 가입요청 상태 업데이트 하기 */
         boolean isApproveSuccess = teamJoinRequestRepository
                                         .updateJoinRequestState(TeamJoinRequest.approveJoinRequest(joinRequest)) == 1 ? true : false;
@@ -113,8 +108,7 @@ public class TeamMemberManagerService {
      * 소속팀 가입요청 거절 API
      * @param joinRequest
      */
-    public void rejectJoinRequest(CmnMyTeamDTO joinRequest)
-    {
+    public void rejectJoinRequest(CmnMyTeamDTO joinRequest) {
         TeamJoinRequest rejectionInfo = TeamJoinRequest.rejectJoinRequest(joinRequest);
 
         boolean isRejectionSuccess = teamJoinRequestRepository.updateJoinRequestState(rejectionInfo) == 1;
@@ -130,9 +124,9 @@ public class TeamMemberManagerService {
      * @param playerSearchCond
      * @return List<PlayerDTO>
      */
-    public List<PlayerDTO> searchJoinRequestPlayer(CmnMyTeamDTO playerSearchCond) {
+    public List<PlayerDTO> getJoinRequest( CmnMyTeamDTO playerSearchCond ) {
         playerSearchCond.joinRequestTypeCode(JoinRequestTypeCode.JOIN_REQUEST.getCode());
-        List<PlayerDTO> players = playerRepository.findPlayers(playerSearchCond);
+        List<PlayerDTO> players = new ArrayList<>(); // TODO 구현 예정
 
         players.stream().forEach(player -> { player
                                                 .positionCodeName(PositionCode.nameOf(player.getPositionCode()))
@@ -140,44 +134,5 @@ public class TeamMemberManagerService {
         });
 
         return players;
-    }
-
-    /**
-     * 소속팀 회원 강퇴시키기
-     */
-    public void dismissTeamMember( TeamAuthCommand command ) {
-        TeamMember teamMember = teamMemberRepository.findByTeamMemberSeq( command.getTeamMemberSeq() );
-        if ( !teamMember.isJoinTeam( command.getTeamSeq() ) ) {
-            throw new CustomException( DomainErrorType.NO_JOIN_TEAM_MEMBER );
-        }
-        teamMemberRepository.updateWithdrawalState( teamMember.toWithdrawal() );
-    }
-
-    /**
-     * 소속팀 관리자 임명하기
-     */
-    public void appointManager( TeamAuthCommand command ) {
-        TeamMember teamMember       = teamMemberRepository.findByTeamMemberSeq( command.getTeamMemberSeq() );
-        if ( !teamMember.isJoinTeam( command.getTeamSeq() ) ) {
-            throw new CustomException( DomainErrorType.NO_JOIN_TEAM_MEMBER );
-        }
-        if ( !teamMember.checkTeamMemberAuth() ) {
-            throw new CustomException( DomainErrorType.INVALID_STATE_FOR_MANAGER_AUTH );
-        }
-        teamMemberRepository.updateTeamAuth( teamMember.toManager() );
-    }
-
-    /**
-     * 소속팀 관리자 해임하기
-     */
-    public void dismissManager( TeamAuthCommand command ) {
-        TeamMember manager  = teamMemberRepository.findByTeamMemberSeq( command.getTeamMemberSeq() );
-        if ( !manager.isJoinTeam( command.getTeamSeq() ) ) {
-            throw new CustomException( DomainErrorType.NO_JOIN_TEAM_MEMBER );
-        }
-        if ( !manager.checkManagerAuth() ) {
-            throw new CustomException( DomainErrorType.INVALID_STATE_FOR_TEAM_MEMBER_AUTH );
-        }
-        teamMemberRepository.updateTeamAuth( manager.toMember() );
     }
 }

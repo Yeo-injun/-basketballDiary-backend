@@ -2,20 +2,19 @@ package com.threeNerds.basketballDiary.mvc.myTeam.controller;
 
 import com.threeNerds.basketballDiary.auth.Auth;
 import com.threeNerds.basketballDiary.auth.constant.AuthLevel;
+import com.threeNerds.basketballDiary.constant.code.type.JoinRequestStateCode;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.TeamMemberQuery;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.docs.*;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.GetMyTeamsRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.ModifyMyTeamInfoRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.SearchMyTeamGamesRequest;
-import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.GetMyTeamsResponse;
-import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.GetTeamInfoResponse;
-import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.GetTeamMembersResponse;
-import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.SearchMyTeamGamesResponse;
-import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.GetManagersResponse;
+import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.*;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getMyTeamProfile.request.GetMyTeamProfileRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getMyTeamProfile.response.GetMyTeamProfileResponse;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getMyTeamProfile.response.MyTeamProfileDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.modifyMyTeamProfile.request.ModifyMyTeamProfileRequest;
+import com.threeNerds.basketballDiary.mvc.myTeam.service.MyTeamJoinService;
+import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.InvitationQuery;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.TeamAuthCommand;
 import com.threeNerds.basketballDiary.mvc.team.dto.PlayerDTO;
 import com.threeNerds.basketballDiary.mvc.game.service.GameRecordManagerService;
@@ -67,6 +66,7 @@ public class MyTeamController {
     private final MyTeamService myTeamService;
     private final TeamMemberService teamMemberService;
     private final TeamMemberManagerService teamMemberManagerService;
+    private final MyTeamJoinService myTeamJoinService;
 
     private final GameRecordManagerService gameRecordManagerService;
 
@@ -195,22 +195,22 @@ public class MyTeamController {
     }
 
     /**
-     * API005 : 소속팀의 초대한 선수목록 조회
-     * 22.03.22(화) 인준 : 공통DTO적용 및 동적쿼리 수정
-     * 22.03.29 인준 : 권한어노테이션 추가
+     * API005 : 초대한 사용자 목록 조회
      */
+    @ApiDocs005
     @Auth( level = AuthLevel.TEAM_MANAGER )
     @GetMapping("/{teamSeq}/joinRequestsTo")
-    public ResponseEntity<?> searchInvitedPlayer(
+    public ResponseEntity<?> getInvitations(
+            @SessionAttribute(value = LOGIN_USER,required = false) SessionUser userSession,
             @PathVariable Long teamSeq,
             @RequestParam(name = "state", required = false) String joinRequestStateCode
     ) {
-        CmnMyTeamDTO playerSearchCond = new CmnMyTeamDTO()
-                                            .teamSeq(teamSeq)
-                                            .joinRequestStateCode(joinRequestStateCode);
-
-        List<PlayerDTO> playerList = teamMemberManagerService.searchInvitedPlayer(playerSearchCond);
-        return ResponseEntity.ok(playerList);
+        InvitationQuery query = InvitationQuery.builder()
+                .userSeq(           userSession.getUserSeq() )
+                .teamSeq(           teamSeq )
+                .joinRequestState(  JoinRequestStateCode.ofType( joinRequestStateCode ) )
+                .build();
+        return ResponseEntity.ok( new GetInvitationsResponse( myTeamJoinService.getInvitations( query ) ) );
     }
 
     /**

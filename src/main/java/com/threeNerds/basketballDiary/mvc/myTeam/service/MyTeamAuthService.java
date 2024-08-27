@@ -41,6 +41,7 @@ public class MyTeamAuthService {
      * Repository
      **--------------------------------------*/
     private final TeamMemberRepository teamMemberRepo;
+    // TODO TeamMemberManagerService에서 팀원의 권한 관련 제어 메소드 옮겨두기
 
     public TeamAuthDTO getAllTeamAuthInfo( TeamAuthDTO userInfo ) {
 

@@ -10,7 +10,6 @@ import java.util.List;
 @Mapper
 public interface PlayerRepository {
 
-    List<PlayerDTO> findPlayers(PlayerSearchDTO searchCond);
     List<PlayerDTO> findPlayers(CmnMyTeamDTO searchCond);
 
 
