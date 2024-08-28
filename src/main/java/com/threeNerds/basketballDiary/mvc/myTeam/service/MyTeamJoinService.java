@@ -48,7 +48,7 @@ public class MyTeamJoinService {
     private final InvitationRepository invitationRepository;
 
     /**
-     * 사용자 초대
+     * 초대 요청 보내기
      */
     public void inviteUser( InvitationCommand command ) {
         TeamJoinRequest invitation = TeamJoinRequest.createInvitation( command.getTeamSeq(), command.getUserSeq() );

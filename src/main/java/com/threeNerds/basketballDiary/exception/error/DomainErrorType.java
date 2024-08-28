@@ -56,7 +56,7 @@ public enum DomainErrorType implements ErrorMessageType {
     ALREADY_EXIST_JOIN_PLAYER( CONFLICT, "이미 존재하는 참가선수입니다." ),
 
     NOT_AVAILABLE_USER_ID(CONFLICT, "동일한 회원ID가 존재합니다."),
-    ALREADY_EXIST_TEAM_MEMBER(CONFLICT, "이미 팀원으로 존재합니다"),
+    ALREADY_EXIST_TEAM_MEMBER(CONFLICT, "이미 팀원으로 존재합니다."),
     ALREADY_EXIST_JOIN_REQUEST(CONFLICT, "아직 처리 대기중인 가입요청이 존재합니다."),
     ALREADY_EXIST_JOIN_TEAM(CONFLICT, "이미 게임참가팀이 존재합니다.");
 
