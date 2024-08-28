@@ -19,13 +19,14 @@
 - 우리 팀끼리 경기하거나 상대팀과 함께한 경기도 기록할 수 있습니다.
 - 진행했던 경기의 기록들을 선수별로 스탯을 입력할 수 있습니다.
 - 입력된 경기결과를 팀별로, 쿼터별로 볼 수 있습니다.
-  #### cf. API문서 URL : http://changkeeroom.iptime.org:18080/swagger-ui/index.html
+> - APIDocs URL : http://changkeeroom.iptime.org:18080/swagger-ui/index.html
 
 <br>
 
 ### 서비스 구성도
-#### cf. 개발서버 URL : http://changkeeroom.iptime.org/
-#### Front-End GitRepo URL : https://github.com/Yeo-injun/-basketballDiary-frontend
+![서비스 구성도 - CICD 구성 포함](basketballDiaryArchitecture.png)
+> - 개발서버 URL : http://changkeeroom.iptime.org/ <br>
+> - FrontEnd GitRepo URL : https://github.com/Yeo-injun/-basketballDiary-frontend <br>
 
 
 ### 기술적 이슈 및 해결
