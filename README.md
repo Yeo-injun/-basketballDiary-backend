@@ -24,7 +24,7 @@
 <br>
 
 ### 서비스 구성도
-![서비스 구성도 - CICD 구성 포함](basketballDiaryArchitecture.png)
+![서비스 구성도 - CICD 구성 포함](resource/image/readme/basketballDiaryArchitecture.png)
 > - 개발서버 URL : http://changkeeroom.iptime.org/ <br>
 > - FrontEnd GitRepo URL : https://github.com/Yeo-injun/-basketballDiary-frontend <br>
 
