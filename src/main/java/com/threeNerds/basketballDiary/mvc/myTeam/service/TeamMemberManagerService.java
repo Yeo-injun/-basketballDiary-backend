@@ -55,7 +55,7 @@ public class TeamMemberManagerService {
     public void inviteTeamMember(CmnMyTeamDTO joinRequest)
     {
         joinRequest.joinRequestTypeCode(JoinRequestTypeCode.INVITATION.getCode());
-        TeamJoinRequest invitationInfo = TeamJoinRequest.createInvitation(joinRequest);
+        TeamJoinRequest invitationInfo = TeamJoinRequest.createInvitation(joinRequest.getTeamSeq(), joinRequest.getUserSeq() );
 
         /** 초대-가입요청 존재여부 확인 : 대기중인 가입요청 혹은 초대가 있을 경우 중복가입요청 방지 */
         int pendingJoinReqCnt = teamJoinRequestRepository.checkPendingJoinRequest(invitationInfo);
@@ -71,23 +71,6 @@ public class TeamMemberManagerService {
 
         /** 초대-가입요청이 없고, 팀원이 아닐 경우에만 INSERT */
         teamJoinRequestRepository.createJoinRequest(invitationInfo);
-    }
-
-    /**
-     * 소속팀에서 초대한 사용자 목록 조회
-     */
-    public InvitationQuery.Result getInvitations( InvitationQuery query ) {
-        TeamMember teamMember = teamMemberRepository.findTeamMemberByUserAndTeamSeq(
-                TeamMember.builder()
-                        .userSeq(   query.getUserSeq() )
-                        .teamSeq(   query.getTeamSeq() )
-                        .build()
-        );
-        if ( null == teamMember ) {
-            throw new CustomException( DomainErrorType.NO_JOIN_TEAM_MEMBER );
-        }
-        InvitationDTO invitationParam = InvitationDTO.of( teamMember.getTeamSeq(), query.getJoinRequestState() );
-        return query.buildResult( invitationRepository.findAllNotApproval( invitationParam ) );
     }
 
     /**
