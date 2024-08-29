@@ -14,9 +14,6 @@ public interface TeamMemberRepository {
     /**********
      * SELECT
      **********/
-    /** 팀원 중복여부 확인 TODO 삭제검토  */
-    int checkDuplicatedTeamMember(CmnMyTeamDTO joinRequest);
-
     /** 팀원 조회 */
     TeamMember findTeamMember( TeamJoinRequest joinRequest );
     TeamMember findTeamMember( TeamMember teamMember );

@@ -55,15 +55,6 @@
            AND WITHDRAWAL_YN = 'N'
     </select>
 
-    <select id="checkDuplicatedTeamMember" resultType="int">
-        /* TeamMemberRepository.checkDuplicatedTeamMember */
-        SELECT COUNT(*)
-          FROM TEAM_MEMBER
-         WHERE 1=1
-           AND TEAM_SEQ = #{teamSeq}
-           AND USER_SEQ = #{userSeq}
-    </select>
-
     <insert id="saveTeamMember" parameterType="com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember">
         /* TeamMemberRepository.saveTeamMember */
         INSERT INTO TEAM_MEMBER (

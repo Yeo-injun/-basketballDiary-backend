@@ -14,6 +14,7 @@ import com.threeNerds.basketballDiary.mvc.myTeam.repository.TeamJoinRequestRepos
 import com.threeNerds.basketballDiary.mvc.myTeam.repository.TeamMemberRepository;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.InvitationCommand;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.InvitationQuery;
+import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.JoinRequestCommand;
 import com.threeNerds.basketballDiary.mvc.team.dto.PlayerDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.threeNerds.basketballDiary.exception.error.DomainErrorType.NOT_FOUND_TEAM_INFO;
 import static com.threeNerds.basketballDiary.exception.error.DomainErrorType.USER_NOT_FOUND;
 
 /**
@@ -48,7 +50,7 @@ public class MyTeamJoinService {
     private final InvitationRepository invitationRepository;
 
     /**
-     * 사용자 초대
+     * 초대 요청 보내기
      */
     public void inviteUser( InvitationCommand command ) {
         TeamJoinRequest invitation = TeamJoinRequest.createInvitation( command.getTeamSeq(), command.getUserSeq() );
@@ -88,21 +90,19 @@ public class MyTeamJoinService {
     }
     
     /**
-     * 소속팀 가입요청 승인 API
-     * @param joinRequest
+     * 소속팀 가입요청 승인
      */
-    public void approveJoinRequest( CmnMyTeamDTO joinRequest ) {
-        /** 가입요청 상태 업데이트 하기 */
-        boolean isApproveSuccess = teamJoinRequestRepository
-                                        .updateJoinRequestState(TeamJoinRequest.approveJoinRequest(joinRequest)) == 1 ? true : false;
-        if (!isApproveSuccess) {
-            throw new CustomException(USER_NOT_FOUND);
+    public void approveJoinRequest( JoinRequestCommand command ) {
+
+        /** 가입요청 검증 및 승인 처리 */
+        TeamJoinRequest joinRequest = teamJoinRequestRepository.findBySeq( command.getTeamJoinRequestSeq() );
+        if ( !joinRequest.isTeamApprovalGranted( command.getTeamSeq() ) ) {
+            throw new CustomException( DomainErrorType.CANT_APPROVE_JOIN_REQUEST_BY_TEAM );
         }
+        teamJoinRequestRepository.updateJoinRequestState( joinRequest.toApproval() );
 
         /** 팀원 추가 */
-        TeamJoinRequest joinRequestInfo = teamJoinRequestRepository.findUserByTeamJoinRequestSeq(joinRequest.getTeamJoinRequestSeq());
-        TeamMember newTeamMember = TeamMember.create(joinRequestInfo);
-        teamMemberRepository.saveTeamMember(newTeamMember);
+        teamMemberRepository.saveTeamMember( TeamMember.of( joinRequest ) );
     }
 
     /**

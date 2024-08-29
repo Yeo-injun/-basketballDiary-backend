@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Getter
 @Builder
@@ -57,13 +58,21 @@ public class TeamJoinRequest {
                 .build();
     }
 
-    /** 승인처리 - 팀이 사용자의 가입요청을 */
-    public static TeamJoinRequest approveJoinRequest( CmnMyTeamDTO joinRequest ) {
+    /** 승인상태로 변경 */
+    public TeamJoinRequest toApproval() {
         return TeamJoinRequest.builder()
-                .teamJoinRequestSeq(joinRequest.getTeamJoinRequestSeq())
-                .teamSeq(joinRequest.getTeamSeq())
-                .joinRequestStateCode(JoinRequestStateCode.APPROVAL.getCode())
+                .teamJoinRequestSeq(    this.teamJoinRequestSeq )
+                .teamSeq(               this.teamSeq )
+                .userSeq(               this.userSeq )
+                .joinRequestStateCode(  JoinRequestStateCode.APPROVAL.getCode() )
                 .build();
+    }
+
+    /** 가입요창을 받은 팀인지 검증하는 메소드 */
+    public boolean isTeamApprovalGranted( Long teamSeq ) {
+        boolean isValidTeam = Objects.equals( this.teamSeq, teamSeq );
+        boolean isPendingState = JoinRequestStateCode.WAITING.getCode().equals( this.joinRequestStateCode );
+        return isValidTeam && isPendingState;
     }
 
     /** 거절처리 - 팀이 사용자의 가입요청을 */

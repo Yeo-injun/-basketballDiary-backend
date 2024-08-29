@@ -37,6 +37,7 @@ import static com.threeNerds.basketballDiary.exception.error.DomainErrorType.USE
  * </pre>
  */
 
+@Deprecated
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -46,56 +47,13 @@ public class TeamMemberManagerService {
     private final TeamJoinRequestRepository teamJoinRequestRepository;
     private final TeamMemberRepository teamMemberRepository;
     private final PlayerRepository playerRepository;
-    private final InvitationRepository invitationRepository;
 
-    /**
-     * 팀원 초대 API
-     * @param joinRequest
-     */
-    public void inviteTeamMember(CmnMyTeamDTO joinRequest)
-    {
-        joinRequest.joinRequestTypeCode(JoinRequestTypeCode.INVITATION.getCode());
-        TeamJoinRequest invitationInfo = TeamJoinRequest.createInvitation(joinRequest.getTeamSeq(), joinRequest.getUserSeq() );
-
-        /** 초대-가입요청 존재여부 확인 : 대기중인 가입요청 혹은 초대가 있을 경우 중복가입요청 방지 */
-        int pendingJoinReqCnt = teamJoinRequestRepository.checkPendingJoinRequest(invitationInfo);
-        if (pendingJoinReqCnt > 0) {
-            throw new CustomException(DomainErrorType.ALREADY_EXIST_JOIN_REQUEST);
-        }
-
-        /** 팀원으로 존재하는지 확인 : 팀원으로 존재할 경우 예외를 던짐(409에러) */
-        int duplicatedTeamMemberCnt = teamMemberRepository.checkDuplicatedTeamMember(joinRequest);
-        if (duplicatedTeamMemberCnt > 0) {
-            throw new CustomException(DomainErrorType.ALREADY_EXIST_TEAM_MEMBER);
-        }
-
-        /** 초대-가입요청이 없고, 팀원이 아닐 경우에만 INSERT */
-        teamJoinRequestRepository.createJoinRequest(invitationInfo);
-    }
-
-    /**
-     * 소속팀 가입요청 승인 API
-     * @param joinRequest
-     */
-    public void approveJoinRequest(CmnMyTeamDTO joinRequest)
-    {
-        /** 가입요청 상태 업데이트 하기 */
-        boolean isApproveSuccess = teamJoinRequestRepository
-                                        .updateJoinRequestState(TeamJoinRequest.approveJoinRequest(joinRequest)) == 1 ? true : false;
-        if (!isApproveSuccess) {
-            throw new CustomException(USER_NOT_FOUND);
-        }
-
-        /** 팀원 추가 */
-        TeamJoinRequest joinRequestInfo = teamJoinRequestRepository.findUserByTeamJoinRequestSeq(joinRequest.getTeamJoinRequestSeq());
-        TeamMember newTeamMember = TeamMember.create(joinRequestInfo);
-        teamMemberRepository.saveTeamMember(newTeamMember);
-    }
 
     /**
      * 소속팀 가입요청 거절 API
-     * @param joinRequest
+     * TODO MyTeamJoinService로 이전
      */
+    @Deprecated
     public void rejectJoinRequest(CmnMyTeamDTO joinRequest)
     {
         TeamJoinRequest rejectionInfo = TeamJoinRequest.rejectJoinRequest(joinRequest);
@@ -110,9 +68,10 @@ public class TeamMemberManagerService {
 
     /**
      * 소속팀에 가입요청한 선수목록 조회 API
-     * @param playerSearchCond
+     * TODO MyTeamJoinService로 이전
      * @return List<PlayerDTO>
      */
+    @Deprecated
     public List<PlayerDTO> searchJoinRequestPlayer(CmnMyTeamDTO playerSearchCond) {
         playerSearchCond.joinRequestTypeCode(JoinRequestTypeCode.JOIN_REQUEST.getCode());
         List<PlayerDTO> players = playerRepository.findPlayers(playerSearchCond);
@@ -125,42 +84,4 @@ public class TeamMemberManagerService {
         return players;
     }
 
-    /**
-     * 소속팀 회원 강퇴시키기
-     */
-    public void dismissTeamMember( TeamAuthCommand command ) {
-        TeamMember teamMember = teamMemberRepository.findByTeamMemberSeq( command.getTeamMemberSeq() );
-        if ( !teamMember.isJoinTeam( command.getTeamSeq() ) ) {
-            throw new CustomException( DomainErrorType.NO_JOIN_TEAM_MEMBER );
-        }
-        teamMemberRepository.updateWithdrawalState( teamMember.toWithdrawal() );
-    }
-
-    /**
-     * 소속팀 관리자 임명하기
-     */
-    public void appointManager( TeamAuthCommand command ) {
-        TeamMember teamMember       = teamMemberRepository.findByTeamMemberSeq( command.getTeamMemberSeq() );
-        if ( !teamMember.isJoinTeam( command.getTeamSeq() ) ) {
-            throw new CustomException( DomainErrorType.NO_JOIN_TEAM_MEMBER );
-        }
-        if ( !teamMember.checkTeamMemberAuth() ) {
-            throw new CustomException( DomainErrorType.INVALID_STATE_FOR_MANAGER_AUTH );
-        }
-        teamMemberRepository.updateTeamAuth( teamMember.toManager() );
-    }
-
-    /**
-     * 소속팀 관리자 해임하기
-     */
-    public void dismissManager( TeamAuthCommand command ) {
-        TeamMember manager  = teamMemberRepository.findByTeamMemberSeq( command.getTeamMemberSeq() );
-        if ( !manager.isJoinTeam( command.getTeamSeq() ) ) {
-            throw new CustomException( DomainErrorType.NO_JOIN_TEAM_MEMBER );
-        }
-        if ( !manager.checkManagerAuth() ) {
-            throw new CustomException( DomainErrorType.INVALID_STATE_FOR_TEAM_MEMBER_AUTH );
-        }
-        teamMemberRepository.updateTeamAuth( manager.toMember() );
-    }
 }
