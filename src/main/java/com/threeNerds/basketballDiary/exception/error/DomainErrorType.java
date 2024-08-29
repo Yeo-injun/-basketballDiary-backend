@@ -47,6 +47,7 @@ public enum DomainErrorType implements ErrorMessageType {
     ALREADY_GAME_CONFIRMED( FORBIDDEN, "경기 기록이 이미 확정된 상태입니다."),
     CANT_UPDATE_GAME_CONFIRMATION( FORBIDDEN, "경기 기록을 확정지을 수 없는 상태입니다. 경기 진행상태를 확인해주시기 바랍니다."),
     CANT_REMOVE_PLAYER_FOR_RECORDER( FORBIDDEN, "경기기록 권한을 가지고 있는 선수는 삭제할 수 없습니다."),
+    CANT_APPROVE_JOIN_REQUEST_BY_TEAM( FORBIDDEN, "팀이 승인 처리할 수 있는 가입요청이 아닙니다."),
     INSUFFICIENT_GAME_JOIN_TEAMS( FORBIDDEN, "경기에 참가하는 팀의 수가 부족합니다."),
     ALREADY_EXIST_QUARTER_RECORDS(FORBIDDEN, "이미 쿼터기록이 입력되고 있어 선수 추가가 불가합니다."),
 

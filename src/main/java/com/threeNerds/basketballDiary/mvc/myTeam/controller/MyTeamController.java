@@ -16,6 +16,7 @@ import com.threeNerds.basketballDiary.mvc.myTeam.dto.modifyMyTeamProfile.request
 import com.threeNerds.basketballDiary.mvc.myTeam.service.*;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.InvitationCommand;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.InvitationQuery;
+import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.JoinRequestCommand;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.TeamAuthCommand;
 import com.threeNerds.basketballDiary.mvc.team.dto.PlayerDTO;
 import com.threeNerds.basketballDiary.mvc.game.service.GameRecordManagerService;
@@ -242,22 +243,21 @@ public class MyTeamController {
     }
 
     /**
-     * API009 : 소속팀이 사용자의 가입요청 승인
-     * 22.03.10 인준 : Service Layer에 CustomException 적용
-     * 22.03.25 인준 : CmnMyTeamDTO적용
-     * 22.03.29 인준 : 권한어노테이션 추가
+     * API009 : 사용자의 팀가입요청 승인
      */
+    @ApiDocs009
     @Auth( level = AuthLevel.TEAM_MANAGER )
     @PatchMapping("/{teamSeq}/joinRequestFrom/{teamJoinRequestSeq}/approval")
     public ResponseEntity<?> approveJoinRequest(
             @PathVariable Long teamJoinRequestSeq,
             @PathVariable Long teamSeq
     ) {
-        CmnMyTeamDTO joinRequest = new CmnMyTeamDTO()
-                .teamJoinRequestSeq(teamJoinRequestSeq)
-                .teamSeq(teamSeq);
-
-        teamMemberManagerService.approveJoinRequest(joinRequest);
+        myTeamJoinService.approveJoinRequest(
+            JoinRequestCommand.builder()
+                    .teamJoinRequestSeq(    teamJoinRequestSeq )
+                    .teamSeq(               teamSeq )
+                    .build()
+        );
         return RESPONSE_OK;
     }
 

@@ -48,25 +48,6 @@ public class TeamMemberManagerService {
     private final TeamMemberRepository teamMemberRepository;
     private final PlayerRepository playerRepository;
 
-    /**
-     * 소속팀 가입요청 승인 API
-     * TODO MyTeamJoinService로 이전
-     */
-    @Deprecated
-    public void approveJoinRequest(CmnMyTeamDTO joinRequest)
-    {
-        /** 가입요청 상태 업데이트 하기 */
-        boolean isApproveSuccess = teamJoinRequestRepository
-                                        .updateJoinRequestState(TeamJoinRequest.approveJoinRequest(joinRequest)) == 1 ? true : false;
-        if (!isApproveSuccess) {
-            throw new CustomException(USER_NOT_FOUND);
-        }
-
-        /** 팀원 추가 */
-        TeamJoinRequest joinRequestInfo = teamJoinRequestRepository.findUserByTeamJoinRequestSeq(joinRequest.getTeamJoinRequestSeq());
-        TeamMember newTeamMember = TeamMember.create(joinRequestInfo);
-        teamMemberRepository.saveTeamMember(newTeamMember);
-    }
 
     /**
      * 소속팀 가입요청 거절 API

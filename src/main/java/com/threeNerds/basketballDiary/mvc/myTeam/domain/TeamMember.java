@@ -58,19 +58,14 @@ public class TeamMember {
      * 가입요청에 따른 팀원 객체 생성
      */
     public static TeamMember of( TeamJoinRequest joinRequest ) {
-        return TeamMember.create(joinRequest.getTeamSeq(), joinRequest.getUserSeq(), TeamAuthCode.TEAM_MEMBER.getCode());
-    }
-
-    @Deprecated
-    public static TeamMember create(TeamJoinRequest joinRequest) {
-        return TeamMember.create(joinRequest.getTeamSeq(), joinRequest.getUserSeq(), TeamAuthCode.TEAM_MEMBER.getCode());
+        return TeamMember.create( joinRequest.getTeamSeq(), joinRequest.getUserSeq(), TeamAuthCode.TEAM_MEMBER.getCode() );
     }
 
     public static TeamMember createLeader( Team team ) {
         return TeamMember.create( team.getTeamSeq(), team.getLeaderUserSeq(), TeamAuthCode.LEADER.getCode());
     }
 
-    private static TeamMember create(Long teamSeq, Long userSeq, String teamAuthCode) {
+    private static TeamMember create( Long teamSeq, Long userSeq, String teamAuthCode ) {
         String currentYmd = LocalDate.now().toString().replace("-", "");
         return TeamMember.builder()
                 .teamSeq(teamSeq)
