@@ -90,40 +90,36 @@ public class MyTeamJoinService {
     }
     
     /**
-     * 소속팀 가입요청 승인
+     * 팀 가입요청 승인
      */
     public void approveJoinRequest( JoinRequestCommand command ) {
-
         /** 가입요청 검증 및 승인 처리 */
         TeamJoinRequest joinRequest = teamJoinRequestRepository.findBySeq( command.getTeamJoinRequestSeq() );
-        if ( !joinRequest.isTeamApprovalGranted( command.getTeamSeq() ) ) {
-            throw new CustomException( DomainErrorType.CANT_APPROVE_JOIN_REQUEST_BY_TEAM );
+        if ( joinRequest.checkDecisionEnabled( command.getTeamSeq() ) ) {
+            teamJoinRequestRepository.updateJoinRequestState( joinRequest.toApproval() );
+            /** 팀원 추가 */
+            teamMemberRepository.saveTeamMember( TeamMember.of( joinRequest ) );
+        } else {
+            throw new CustomException( DomainErrorType.CANT_DECISION_JOIN_REQUEST_BY_TEAM );
         }
-        teamJoinRequestRepository.updateJoinRequestState( joinRequest.toApproval() );
-
-        /** 팀원 추가 */
-        teamMemberRepository.saveTeamMember( TeamMember.of( joinRequest ) );
     }
 
     /**
-     * 소속팀 가입요청 거절 API
-     * @param joinRequest
+     * 팀 가입요청 거절
      */
-    public void rejectJoinRequest(CmnMyTeamDTO joinRequest) {
-        TeamJoinRequest rejectionInfo = TeamJoinRequest.rejectJoinRequest(joinRequest);
-
-        boolean isRejectionSuccess = teamJoinRequestRepository.updateJoinRequestState(rejectionInfo) == 1;
-        if (!isRejectionSuccess) {
-            throw new CustomException(DomainErrorType.JOIN_REQUEST_NOT_FOUND);
+    public void rejectJoinRequest( JoinRequestCommand command ) {
+        TeamJoinRequest joinRequest = teamJoinRequestRepository.findBySeq( command.getTeamJoinRequestSeq() );
+        if ( joinRequest.checkDecisionEnabled( command.getTeamSeq() ) ) {
+            teamJoinRequestRepository.updateJoinRequestState( joinRequest.toRejection() );
+        } else {
+            throw new CustomException( DomainErrorType.CANT_DECISION_JOIN_REQUEST_BY_TEAM );
         }
     }
 
 
 
     /**
-     * 소속팀에 가입요청한 선수목록 조회 API
-     * @param playerSearchCond
-     * @return List<PlayerDTO>
+     * 팀 가입요청을 보낸 사용자 목록 조회
      */
     public List<PlayerDTO> getJoinRequest( CmnMyTeamDTO playerSearchCond ) {
         playerSearchCond.joinRequestTypeCode(JoinRequestTypeCode.JOIN_REQUEST.getCode());
