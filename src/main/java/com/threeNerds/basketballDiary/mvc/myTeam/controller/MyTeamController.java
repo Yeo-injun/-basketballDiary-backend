@@ -243,7 +243,7 @@ public class MyTeamController {
     }
 
     /**
-     * API009 : 사용자의 팀가입요청 승인
+     * API009 : 팀가입요청 승인
      */
     @ApiDocs009
     @Auth( level = AuthLevel.TEAM_MANAGER )
@@ -262,9 +262,7 @@ public class MyTeamController {
     }
 
     /**
-     * API010 : 소속팀의 가입요청 거절
-     * 22.03.25 인준 : CmnMyTeamDTO적용 및 예외처리
-     * 22.03.29 인준 : 권한어노테이션 추가
+     * API010 : 팀가입요청 거절
      */
     @Auth( level = AuthLevel.TEAM_MANAGER )
     @PatchMapping("/{teamSeq}/joinRequestFrom/{teamJoinRequestSeq}/rejection")
@@ -272,11 +270,12 @@ public class MyTeamController {
             @PathVariable Long teamSeq,
             @PathVariable Long teamJoinRequestSeq
     ) {
-        CmnMyTeamDTO joinRequest = new CmnMyTeamDTO()
-                .teamSeq(teamSeq)
-                .teamJoinRequestSeq(teamJoinRequestSeq);
-
-        teamMemberManagerService.rejectJoinRequest(joinRequest);
+        myTeamJoinService.rejectJoinRequest(
+            JoinRequestCommand.builder()
+                    .teamJoinRequestSeq(    teamJoinRequestSeq )
+                    .teamSeq(               teamSeq )
+                    .build()
+        );
         return RESPONSE_OK;
     }
 

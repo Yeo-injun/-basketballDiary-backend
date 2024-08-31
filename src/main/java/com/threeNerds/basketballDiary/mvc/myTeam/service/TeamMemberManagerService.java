@@ -44,26 +44,7 @@ import static com.threeNerds.basketballDiary.exception.error.DomainErrorType.USE
 @Transactional
 public class TeamMemberManagerService {
 
-    private final TeamJoinRequestRepository teamJoinRequestRepository;
-    private final TeamMemberRepository teamMemberRepository;
     private final PlayerRepository playerRepository;
-
-
-    /**
-     * 소속팀 가입요청 거절 API
-     * TODO MyTeamJoinService로 이전
-     */
-    @Deprecated
-    public void rejectJoinRequest(CmnMyTeamDTO joinRequest)
-    {
-        TeamJoinRequest rejectionInfo = TeamJoinRequest.rejectJoinRequest(joinRequest);
-
-        boolean isRejectionSuccess = teamJoinRequestRepository.updateJoinRequestState(rejectionInfo) == 1;
-        if (!isRejectionSuccess) {
-            throw new CustomException(DomainErrorType.JOIN_REQUEST_NOT_FOUND);
-        }
-    }
-
 
 
     /**
