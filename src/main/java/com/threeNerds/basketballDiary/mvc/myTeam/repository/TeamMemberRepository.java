@@ -2,9 +2,6 @@ package com.threeNerds.basketballDiary.mvc.myTeam.repository;
 
 import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamJoinRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.CmnMyTeamDTO;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.FindMyTeamProfileDTO;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.ModifyMyTeamProfileDTO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -14,9 +11,6 @@ public interface TeamMemberRepository {
     /**********
      * SELECT
      **********/
-    /** 팀원 중복여부 확인 TODO 삭제검토  */
-    int checkDuplicatedTeamMember(CmnMyTeamDTO joinRequest);
-
     /** 팀원 조회 */
     TeamMember findTeamMember( TeamJoinRequest joinRequest );
     TeamMember findTeamMember( TeamMember teamMember );

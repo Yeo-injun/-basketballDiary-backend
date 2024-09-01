@@ -2,6 +2,8 @@ package com.threeNerds.basketballDiary.mvc.myTeam.service;
 
 import com.threeNerds.basketballDiary.auth.constant.AuthLevel;
 import com.threeNerds.basketballDiary.auth.constant.AuthType;
+import com.threeNerds.basketballDiary.exception.CustomException;
+import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import com.threeNerds.basketballDiary.file.ImageUploader;
 import com.threeNerds.basketballDiary.file.Uploader;
 import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember;
@@ -11,6 +13,7 @@ import com.threeNerds.basketballDiary.mvc.myTeam.dto.getMyTeamProfile.response.M
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.modifyMyTeamProfile.request.ModifyMyTeamProfileRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.repository.MyTeamRepository;
 import com.threeNerds.basketballDiary.mvc.myTeam.repository.TeamMemberRepository;
+import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.TeamAuthCommand;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.TeamAuthDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,7 +44,9 @@ public class MyTeamAuthService {
      * Repository
      **--------------------------------------*/
     private final TeamMemberRepository teamMemberRepo;
+    
 
+    //TODO 파라미터 타입변경
     public TeamAuthDTO getAllTeamAuthInfo( TeamAuthDTO userInfo ) {
 
         TeamMember teamMemberParam = TeamMember.builder()
@@ -56,5 +61,44 @@ public class MyTeamAuthService {
                                                             )
                                                 );
         return TeamAuthDTO.ofJoinTeam( userInfo.getUserSeq(), teamAuthMap );
+    }
+
+    /**
+     * 소속팀 회원 강퇴시키기
+     */
+    public void dismissTeamMember( TeamAuthCommand command ) {
+        TeamMember teamMember = teamMemberRepo.findByTeamMemberSeq( command.getTeamMemberSeq() );
+        if ( !teamMember.isJoinTeam( command.getTeamSeq() ) ) {
+            throw new CustomException( DomainErrorType.NO_JOIN_TEAM_MEMBER );
+        }
+        teamMemberRepo.updateWithdrawalState( teamMember.toWithdrawal() );
+    }
+
+    /**
+     * 소속팀 관리자 임명하기
+     */
+    public void appointManager( TeamAuthCommand command ) {
+        TeamMember teamMember       = teamMemberRepo.findByTeamMemberSeq( command.getTeamMemberSeq() );
+        if ( !teamMember.isJoinTeam( command.getTeamSeq() ) ) {
+            throw new CustomException( DomainErrorType.NO_JOIN_TEAM_MEMBER );
+        }
+        if ( !teamMember.checkTeamMemberAuth() ) {
+            throw new CustomException( DomainErrorType.INVALID_STATE_FOR_MANAGER_AUTH );
+        }
+        teamMemberRepo.updateTeamAuth( teamMember.toManager() );
+    }
+
+    /**
+     * 소속팀 관리자 해임하기
+     */
+    public void dismissManager( TeamAuthCommand command ) {
+        TeamMember manager  = teamMemberRepo.findByTeamMemberSeq( command.getTeamMemberSeq() );
+        if ( !manager.isJoinTeam( command.getTeamSeq() ) ) {
+            throw new CustomException( DomainErrorType.NO_JOIN_TEAM_MEMBER );
+        }
+        if ( !manager.checkManagerAuth() ) {
+            throw new CustomException( DomainErrorType.INVALID_STATE_FOR_TEAM_MEMBER_AUTH );
+        }
+        teamMemberRepo.updateTeamAuth( manager.toMember() );
     }
 }

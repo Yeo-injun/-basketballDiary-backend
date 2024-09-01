@@ -2,14 +2,11 @@ package com.threeNerds.basketballDiary.mvc.myTeam.domain;
 
 import com.threeNerds.basketballDiary.constant.code.type.TeamAuthCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
-import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.TeamAuthCommand;
 import com.threeNerds.basketballDiary.mvc.team.domain.Team;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.CmnMyTeamDTO;
 import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.Optional;
 
 @Getter
 @Builder
@@ -58,19 +55,14 @@ public class TeamMember {
      * 가입요청에 따른 팀원 객체 생성
      */
     public static TeamMember of( TeamJoinRequest joinRequest ) {
-        return TeamMember.create(joinRequest.getTeamSeq(), joinRequest.getUserSeq(), TeamAuthCode.TEAM_MEMBER.getCode());
+        return TeamMember.create( joinRequest.getTeamSeq(), joinRequest.getUserSeq(), TeamAuthCode.TEAM_MEMBER.getCode() );
     }
 
-    @Deprecated
-    public static TeamMember create(TeamJoinRequest joinRequest) {
-        return TeamMember.create(joinRequest.getTeamSeq(), joinRequest.getUserSeq(), TeamAuthCode.TEAM_MEMBER.getCode());
+    public static TeamMember createLeader( Team team ) {
+        return TeamMember.create( team.getTeamSeq(), team.getLeaderUserSeq(), TeamAuthCode.LEADER.getCode());
     }
 
-    public static TeamMember createLeader(Team newTeam) {
-        return TeamMember.create(newTeam.getTeamSeq(), newTeam.getLeaderUserSeq(), TeamAuthCode.LEADER.getCode());
-    }
-
-    private static TeamMember create(Long teamSeq, Long userSeq, String teamAuthCode) {
+    private static TeamMember create( Long teamSeq, Long userSeq, String teamAuthCode ) {
         String currentYmd = LocalDate.now().toString().replace("-", "");
         return TeamMember.builder()
                 .teamSeq(teamSeq)

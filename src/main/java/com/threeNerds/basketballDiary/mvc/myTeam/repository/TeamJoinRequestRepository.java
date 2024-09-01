@@ -9,8 +9,6 @@ public interface TeamJoinRequestRepository {
      * SELECT
      **********/
     TeamJoinRequest findBySeq( Long teamJoinRequestSeq );
-    @Deprecated // findBySeq로 대체 예정
-    TeamJoinRequest findUserByTeamJoinRequestSeq(Long teamJoinRequestSeq);
     int checkPendingJoinRequest(TeamJoinRequest invitationInfo);
 
     /**********

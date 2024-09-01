@@ -4,13 +4,13 @@ import com.threeNerds.basketballDiary.constant.code.type.JoinRequestStateCode;
 import com.threeNerds.basketballDiary.constant.code.type.JoinRequestTypeCode;
 import com.threeNerds.basketballDiary.mvc.authUser.service.dto.TeamInvitationCommand;
 import com.threeNerds.basketballDiary.mvc.authUser.service.dto.JoinRequestCommand;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.CmnMyTeamDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Getter
 @Builder
@@ -57,35 +57,45 @@ public class TeamJoinRequest {
                 .build();
     }
 
-    /** 승인처리 - 팀이 사용자의 가입요청을 */
-    public static TeamJoinRequest approveJoinRequest( CmnMyTeamDTO joinRequest ) {
+    /** 승인상태로 변경 */
+    public TeamJoinRequest toApproval() {
         return TeamJoinRequest.builder()
-                .teamJoinRequestSeq(joinRequest.getTeamJoinRequestSeq())
-                .teamSeq(joinRequest.getTeamSeq())
-                .joinRequestStateCode(JoinRequestStateCode.APPROVAL.getCode())
+                .teamJoinRequestSeq(    this.teamJoinRequestSeq )
+                .teamSeq(               this.teamSeq )
+                .userSeq(               this.userSeq )
+                .joinRequestStateCode(  JoinRequestStateCode.APPROVAL.getCode() )
                 .build();
     }
 
-    /** 거절처리 - 팀이 사용자의 가입요청을 */
-    public static TeamJoinRequest rejectJoinRequest(CmnMyTeamDTO joinRequest) {
+    public TeamJoinRequest toRejection() {
         return TeamJoinRequest.builder()
-                .teamJoinRequestSeq(joinRequest.getTeamJoinRequestSeq())
-                .teamSeq(joinRequest.getTeamSeq())
-                .joinRequestStateCode(JoinRequestStateCode.REJECTION.getCode())
+                .teamJoinRequestSeq(    this.teamJoinRequestSeq )
+                .teamSeq(               this.teamSeq )
+                .userSeq(               this.userSeq )
+                .joinRequestStateCode(  JoinRequestStateCode.REJECTION.getCode() )
                 .build();
     }
+
+    /** 가입요청의 수용여부를 결정할 수 있는 상태인지 검증하는 메소드 */
+    public boolean checkDecisionEnabled( Long teamSeq ) {
+        boolean isValidTeam = Objects.equals( this.teamSeq, teamSeq );
+        boolean isPendingState = JoinRequestStateCode.WAITING.getCode().equals( this.joinRequestStateCode );
+        return isValidTeam && isPendingState;
+    }
+
 
     /** 초대 생성(팀 -> 사용자) */
-    public static TeamJoinRequest createInvitation (CmnMyTeamDTO joinRequest) {
+    public static TeamJoinRequest createInvitation( Long teamSeq, Long userSeq ) {
         return TeamJoinRequest.builder()
-                .teamSeq(joinRequest.getTeamSeq())
-                .userSeq(joinRequest.getUserSeq())
-                .joinRequestTypeCode(JoinRequestTypeCode.INVITATION.getCode())
-                .joinRequestStateCode(JoinRequestStateCode.WAITING.getCode())
+                .teamSeq(               teamSeq )
+                .userSeq(               userSeq )
+                .joinRequestTypeCode(   JoinRequestTypeCode.INVITATION.getCode() )
+                .joinRequestStateCode(  JoinRequestStateCode.WAITING.getCode() )
                 .build();
     }
 
     /** 초대 승낙처리 - 사용자가 팀의 초대를 */
+    @Deprecated
     public static TeamJoinRequest approveInvitation( TeamInvitationCommand command ) {
         return TeamJoinRequest.builder()
                 .teamJoinRequestSeq(    command.getTeamJoinRequestSeq() )
@@ -95,6 +105,7 @@ public class TeamJoinRequest {
     }
 
     /** 거절처리 - 팀이 사용자의 가입요청을 */
+    @Deprecated
     public static TeamJoinRequest rejectInvitation( TeamInvitationCommand command ) {
         return TeamJoinRequest.builder()
                 .teamJoinRequestSeq(    command.getTeamJoinRequestSeq() )
