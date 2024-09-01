@@ -13,8 +13,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @NoArgsConstructor
-// TODO 해당 클래스명 변경 MyTeamJoinRequestDTO로...
-public class InvitationDTO {
+public class TeamJoinRequestDTO {
     private Long teamSeq;
     // 가입요청유형상태코드
     private String joinRequestTypeCode;
@@ -49,13 +48,16 @@ public class InvitationDTO {
     private Float weight;
 
 
-    InvitationDTO( Long teamSeq, JoinRequestStateCode state ) {
+    TeamJoinRequestDTO( JoinRequestTypeCode type, Long teamSeq, JoinRequestStateCode state ) {
         this.teamSeq                = teamSeq;
-        this.joinRequestTypeCode    = JoinRequestTypeCode.INVITATION.getCode();
+        this.joinRequestTypeCode    = type.getCode();
         this.joinRequestStateCode   = state == null ? null : state.getCode();
     }
-    public static InvitationDTO of( Long teamSeq, JoinRequestStateCode state ) {
-        return new InvitationDTO( teamSeq, state );
+    public static TeamJoinRequestDTO ofInvitation( Long teamSeq, JoinRequestStateCode state ) {
+        return new TeamJoinRequestDTO( JoinRequestTypeCode.INVITATION, teamSeq, state );
+    }
+    public static TeamJoinRequestDTO ofReceivedJoinRequest( Long teamSeq, JoinRequestStateCode state ) {
+        return new TeamJoinRequestDTO( JoinRequestTypeCode.JOIN_REQUEST, teamSeq, state );
     }
 
     // 쿼리 조회시 코드명 세팅을 위해 setter정의

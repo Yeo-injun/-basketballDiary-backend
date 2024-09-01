@@ -12,7 +12,7 @@ import static java.lang.annotation.ElementType.METHOD;
 @Target( METHOD )
 @Retention( RetentionPolicy.RUNTIME )
 @Operation(
-    summary     = "[ API010 ] 사용자가 보낸 팀가입요청 거절",
+    summary     = "[ API010 ] 받은 팀가입요청 거절",
     description = "사용자에게 받은 팀가입요청을 거절한다.<br>"
             + "[ 참고사항 ]<br>"
             + "1. 팀 가입요청은 관리자 이상의 권한을 가지고 있는 팀원이 거절할 수 있다.<br>",

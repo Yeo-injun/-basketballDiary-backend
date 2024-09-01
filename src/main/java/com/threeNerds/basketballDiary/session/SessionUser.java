@@ -1,18 +1,10 @@
 package com.threeNerds.basketballDiary.session;
 
 import com.threeNerds.basketballDiary.auth.constant.AuthLevel;
-import com.threeNerds.basketballDiary.constant.code.type.TeamAuthCode;
-import com.threeNerds.basketballDiary.mvc.user.domain.User;
-import com.threeNerds.basketballDiary.mvc.team.dto.TeamAuthDTO;
 import lombok.Getter;
-import lombok.Setter;
-import org.springframework.data.relational.core.sql.In;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Getter
 public class SessionUser {

@@ -14,20 +14,23 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class InvitationQuery {
-    private Long teamSeq;
+public class JoinRequestQuery {
     private Long userSeq;
+    private Long teamSeq;
     private JoinRequestStateCode joinRequestState;
 
     @Getter
     public class Result {
-        private final List<TeamJoinRequestDTO> invitations;
+        List<TeamJoinRequestDTO> joinRequests;
 
-        Result( List<TeamJoinRequestDTO> invitations ) {
-            this.invitations = invitations;
+        Result(List<TeamJoinRequestDTO> joinRequests ) {
+            this.joinRequests = joinRequests;
         }
     }
-    public InvitationQuery.Result buildResult( List<TeamJoinRequestDTO> invitations ) {
-        return new Result( invitations );
+
+    public Result buildResult( List<TeamJoinRequestDTO> joinRequests ) {
+        return new Result( joinRequests );
     }
+
+
 }
