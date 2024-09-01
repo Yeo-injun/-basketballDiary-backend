@@ -1,4 +1,4 @@
-package com.threeNerds.basketballDiary.mvc.myTeam.dto.searchAllTeamMembers.response;
+package com.threeNerds.basketballDiary.mvc.myTeam.controller.response;
 
 import com.threeNerds.basketballDiary.mvc.game.service.dto.TeamMemberQuery;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.MemberDTO;

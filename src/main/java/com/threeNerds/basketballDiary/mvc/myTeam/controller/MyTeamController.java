@@ -14,22 +14,16 @@ import com.threeNerds.basketballDiary.mvc.myTeam.dto.getMyTeamProfile.response.G
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.getMyTeamProfile.response.MyTeamProfileDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.modifyMyTeamProfile.request.ModifyMyTeamProfileRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.*;
-import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.InvitationCommand;
-import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.InvitationQuery;
-import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.JoinRequestCommand;
-import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.TeamAuthCommand;
-import com.threeNerds.basketballDiary.mvc.team.dto.PlayerDTO;
+import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.*;
 import com.threeNerds.basketballDiary.mvc.game.service.GameRecordManagerService;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.*;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.searchAllTeamMembers.response.SearchAllTeamMembersResponse;
+import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.SearchAllTeamMembersResponse;
 import com.threeNerds.basketballDiary.session.SessionUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 import static com.threeNerds.basketballDiary.constant.HttpResponseConst.RESPONSE_OK;
 import static com.threeNerds.basketballDiary.session.util.SessionUtil.LOGIN_USER;
@@ -65,7 +59,6 @@ public class MyTeamController {
     private final MyTeamService myTeamService;
     private final MyTeamAuthService myTeamAuthService;
     private final TeamMemberService teamMemberService;
-    private final TeamMemberManagerService teamMemberManagerService;
     private final MyTeamJoinService myTeamJoinService;
 
     private final GameRecordManagerService gameRecordManagerService;
@@ -228,18 +221,20 @@ public class MyTeamController {
     /**
      * API008 : 소속팀이 받은 가입요청목록 조회
      */
+    @ApiDocs008
     @Auth( level = AuthLevel.TEAM_MANAGER )
     @GetMapping("/{teamSeq}/joinRequestsFrom")
-    public ResponseEntity<?> searchJoinRequestPlayer (
+    public ResponseEntity<?> getReceivedJoinRequests(
+            @SessionAttribute( value = LOGIN_USER,required = false ) SessionUser userSession,
             @PathVariable Long teamSeq,
-            @RequestParam(name = "state", required = false) String joinRequestStateCode
+            @RequestParam( name = "state", required = false ) String joinRequestStateCode
     ) {
-        CmnMyTeamDTO playerSearchCond = new CmnMyTeamDTO()
-                .teamSeq(teamSeq)
-                .joinRequestStateCode(joinRequestStateCode);
-
-        List<PlayerDTO> playerList = teamMemberManagerService.searchJoinRequestPlayer(playerSearchCond);
-        return ResponseEntity.ok(playerList);
+        JoinRequestQuery query = JoinRequestQuery.builder()
+                .userSeq(           userSession.getUserSeq() )
+                .teamSeq(           teamSeq )
+                .joinRequestState(  JoinRequestStateCode.ofType( joinRequestStateCode ) )
+                .build();
+        return ResponseEntity.ok( new GetReceivedJoinRequestsResponse( myTeamJoinService.getReceivedJoinRequests( query ) ) );
     }
 
     /**
@@ -264,6 +259,7 @@ public class MyTeamController {
     /**
      * API010 : 팀가입요청 거절
      */
+    @ApiDocs010
     @Auth( level = AuthLevel.TEAM_MANAGER )
     @PatchMapping("/{teamSeq}/joinRequestFrom/{teamJoinRequestSeq}/rejection")
     public ResponseEntity<?> rejectJoinRequest(

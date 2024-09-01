@@ -4,7 +4,6 @@ import com.threeNerds.basketballDiary.constant.code.type.JoinRequestStateCode;
 import com.threeNerds.basketballDiary.constant.code.type.JoinRequestTypeCode;
 import com.threeNerds.basketballDiary.mvc.authUser.service.dto.TeamInvitationCommand;
 import com.threeNerds.basketballDiary.mvc.authUser.service.dto.JoinRequestCommand;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.CmnMyTeamDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

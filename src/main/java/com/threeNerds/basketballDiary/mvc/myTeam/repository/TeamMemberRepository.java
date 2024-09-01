@@ -2,9 +2,6 @@ package com.threeNerds.basketballDiary.mvc.myTeam.repository;
 
 import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamJoinRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.CmnMyTeamDTO;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.FindMyTeamProfileDTO;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.ModifyMyTeamProfileDTO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;

@@ -2,14 +2,11 @@ package com.threeNerds.basketballDiary.mvc.myTeam.domain;
 
 import com.threeNerds.basketballDiary.constant.code.type.TeamAuthCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
-import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.TeamAuthCommand;
 import com.threeNerds.basketballDiary.mvc.team.domain.Team;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.CmnMyTeamDTO;
 import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.Optional;
 
 @Getter
 @Builder

@@ -1,31 +1,21 @@
 package com.threeNerds.basketballDiary.mvc.myTeam.service;
 
-import com.threeNerds.basketballDiary.constant.code.type.JoinRequestStateCode;
-import com.threeNerds.basketballDiary.constant.code.type.JoinRequestTypeCode;
-import com.threeNerds.basketballDiary.constant.code.type.PositionCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamJoinRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.CmnMyTeamDTO;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.InvitationDTO;
-import com.threeNerds.basketballDiary.mvc.myTeam.repository.InvitationRepository;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.TeamJoinRequestDTO;
+import com.threeNerds.basketballDiary.mvc.myTeam.repository.MyTeamJoinRequestRepository;
 import com.threeNerds.basketballDiary.mvc.myTeam.repository.TeamJoinRequestRepository;
 import com.threeNerds.basketballDiary.mvc.myTeam.repository.TeamMemberRepository;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.InvitationCommand;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.InvitationQuery;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.JoinRequestCommand;
-import com.threeNerds.basketballDiary.mvc.team.dto.PlayerDTO;
+import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.JoinRequestQuery;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static com.threeNerds.basketballDiary.exception.error.DomainErrorType.NOT_FOUND_TEAM_INFO;
-import static com.threeNerds.basketballDiary.exception.error.DomainErrorType.USER_NOT_FOUND;
 
 /**
  * 팀 가입과 관련된 서비스
@@ -47,7 +37,7 @@ public class MyTeamJoinService {
 
     private final TeamJoinRequestRepository teamJoinRequestRepository;
     private final TeamMemberRepository teamMemberRepository;
-    private final InvitationRepository invitationRepository;
+    private final MyTeamJoinRequestRepository myTeamJoinRequestRepository;
 
     /**
      * 초대 요청 보내기
@@ -76,17 +66,11 @@ public class MyTeamJoinService {
      * 초대한 사용자 목록 조회
      */
     public InvitationQuery.Result getInvitations( InvitationQuery query ) {
-        TeamMember teamMember = teamMemberRepository.findTeamMemberByUserAndTeamSeq(
-                TeamMember.builder()
-                        .userSeq(   query.getUserSeq() )
-                        .teamSeq(   query.getTeamSeq() )
-                        .build()
-        );
-        if ( null == teamMember ) {
-            throw new CustomException( DomainErrorType.NO_JOIN_TEAM_MEMBER );
+        if ( !checkTeamMember( query.getUserSeq(), query.getTeamSeq() ) ) {
+            throw new CustomException( DomainErrorType.ONLY_TEAM_MEMBER_QUERY );
         }
-        InvitationDTO invitationParam = InvitationDTO.of( teamMember.getTeamSeq(), query.getJoinRequestState() );
-        return query.buildResult( invitationRepository.findAllNotApproval( invitationParam ) );
+        TeamJoinRequestDTO invitationParam = TeamJoinRequestDTO.ofInvitation( query.getTeamSeq(), query.getJoinRequestState() );
+        return query.buildResult( myTeamJoinRequestRepository.findAllByMyTeam( invitationParam ) );
     }
     
     /**
@@ -116,20 +100,24 @@ public class MyTeamJoinService {
         }
     }
 
-
-
     /**
      * 팀 가입요청을 보낸 사용자 목록 조회
      */
-    public List<PlayerDTO> getJoinRequest( CmnMyTeamDTO playerSearchCond ) {
-        playerSearchCond.joinRequestTypeCode(JoinRequestTypeCode.JOIN_REQUEST.getCode());
-        List<PlayerDTO> players = new ArrayList<>(); // TODO 구현 예정
+    public JoinRequestQuery.Result getReceivedJoinRequests( JoinRequestQuery query ) {
+        if ( !checkTeamMember( query.getUserSeq(), query.getTeamSeq() ) ) {
+            throw new CustomException( DomainErrorType.ONLY_TEAM_MEMBER_QUERY );
+        }
+        TeamJoinRequestDTO receivedJoinRequestParam = TeamJoinRequestDTO.ofReceivedJoinRequest( query.getTeamSeq(), query.getJoinRequestState() );
+        return query.buildResult( myTeamJoinRequestRepository.findAllByMyTeam( receivedJoinRequestParam ) );
+    }
 
-        players.stream().forEach(player -> { player
-                                                .positionCodeName(PositionCode.nameOf(player.getPositionCode()))
-                                                .joinRequestStateCodeName(JoinRequestStateCode.nameOf(player.getJoinRequestStateCode()));
-        });
-
-        return players;
+    private boolean checkTeamMember( Long userSeq, Long teamSeq ) {
+        TeamMember teamMember = teamMemberRepository.findTeamMemberByUserAndTeamSeq(
+                TeamMember.builder()
+                        .userSeq(   userSeq )
+                        .teamSeq(   teamSeq )
+                        .build()
+        );
+        return null != teamMember;
     }
 }
