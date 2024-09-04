@@ -4,9 +4,11 @@ import com.threeNerds.basketballDiary.file.ImageUploader;
 import com.threeNerds.basketballDiary.file.Uploader;
 import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.FindMyTeamProfileDTO;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.ProfileDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.modifyMyTeamProfile.request.ModifyMyTeamProfileRequest;
-import com.threeNerds.basketballDiary.mvc.myTeam.repository.TeamMemberRepository;
 import com.threeNerds.basketballDiary.mvc.myTeam.repository.MyTeamRepository;
+import com.threeNerds.basketballDiary.mvc.myTeam.repository.TeamMemberRepository;
+import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.ProfileQuery;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
  *
  * issue and history
  * <pre>
- * 2022.02.08 여인준 : 소스코드 생성
+ * 2024.09.04 여인준 : 소스코드 생성
  * </pre>
  */
 
@@ -27,7 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @RequiredArgsConstructor
 @Transactional
-public class TeamMemberService {
+public class MyTeamProfileService {
 
     /**--------------------------------------
      * Repository
@@ -38,19 +40,17 @@ public class TeamMemberService {
     /**--------------------------------------
      * Components
      **--------------------------------------*/
+    private final Uploader imageUploader;
 
     /**
-     * DI원리
-     * - 스프링 컨테이너 있는 스프링 Bean들을 Spring에서 자동으로 주입해줌.
-     * - @Autowired로 주입대상을 선언하면 해당되는 Bean을 자동으로 주입시켜줌
-     *      1. @Autowired는 기본적으로 Type을 기반으로 주입한다. ( Class or Interface )
-     *      2. Type기반 주입시 2개 이상의 Type이 존재할 경우 fieldName과 일치하는 Bean Name을 가진 Bean을 주입한다.
-     * - 그 이외에 Bean 주입의 우선순위 제어
-     *      1. @Primary 어노테이션을 통해 특정 Type의 Bean을 우선순위로 지정
-     *      2. @Qualifier로 주입하고자 하는 Bean을 명시적으로 선언할 수 있음
-     * - 명시적으로 제어하는 방식을 지향 ( @Primary는 사용지양 1순위 @Autowired 필드기반 주입 / 2순위 @Qualifier 한정자 사용 )
+     * 소속팀 프로필 조회
+     * @return
      */
-    private final Uploader imageUploader;
+    public ProfileQuery.Result getProfile( ProfileQuery query ) {
+        ProfileDTO profileParam = ProfileDTO.ofParam( query.getUserSeq(), query.getTeamSeq() );
+        ProfileDTO profile = myTeamRepository.findProfileByUserSeqAndTeamSeq( profileParam );
+        return query.buildResult( profile );
+    }
 
     /**
      * 소속팀 프로필 수정
@@ -58,7 +58,7 @@ public class TeamMemberService {
      * - 프로필 사진이 존재하는 경우 기존 프로필 사진 삭제 후 업로드
      * @return
      */
-    public void modifyMyTeamProfile( ModifyMyTeamProfileRequest reqBody ) {
+    public void modifyProfile( ModifyMyTeamProfileRequest reqBody ) {
         TeamMember teamMember = teamMemberRepository.findTeamMember( TeamMember.builder()
                                                                         .userSeq( reqBody.getUserSeq() )
                                                                         .teamSeq( reqBody.getTeamSeq() )
@@ -77,7 +77,8 @@ public class TeamMemberService {
 
     }
 
-    public void deleteMyTeamProfile( FindMyTeamProfileDTO userDto ) {
+    // 소속팀 탈퇴하기
+    public void removeProfile( FindMyTeamProfileDTO userDto ) {
         // TODO 테스트 필요
         TeamMember deleteTeamMember = TeamMember.builder()
                                         .userSeq( userDto.getUserSeq() )

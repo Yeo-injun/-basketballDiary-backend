@@ -51,33 +51,8 @@
         ) ORDERS LIMIT #{pagination.rowCount} OFFSET #{pagination.offset}
     </select>
 
-    <select id="findProfileByUserSeqAndTeamSeqOld" resultType="com.threeNerds.basketballDiary.mvc.myTeam.dto.MemberDTO">
-        SELECT A.USER_SEQ
-        , B.TEAM_SEQ
-        , A.NAME 			"USER_NAME"
-        , C.TEAM_NAME
-        , A.POSITION_CODE
-        , B.TEAM_AUTH_CODE
-        , B.TEAM_MEMBER_SEQ
-        , B.JOIN_YMD
-        , A.HEIGHT
-        , A.WEIGHT
-        , B.BACK_NUMBER
-        , IFNULL(D.TOT_MATCH, 0) TOT_GAME
-        FROM USER A
-        LEFT JOIN TEAM_MEMBER B
-        ON A.USER_SEQ = B.USER_SEQ
-        JOIN TEAM C
-        ON B.TEAM_SEQ = C.TEAM_SEQ
-        LEFT JOIN (SELECT TEAM_MEMBER_SEQ, COUNT(*) AS "TOT_MATCH"
-        FROM GAME_JOIN_PLAYER
-        GROUP BY TEAM_MEMBER_SEQ) D
-        ON B.TEAM_MEMBER_SEQ = D.TEAM_MEMBER_SEQ
-        WHERE A.USER_SEQ = #{userSeq}
-        AND B.TEAM_SEQ = #{teamSeq}
-    </select>
 
-    <select id="findProfileByUserSeqAndTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.myTeam.dto.getMyTeamProfile.response.MyTeamProfileDTO">
+    <select id="findProfileByUserSeqAndTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.myTeam.dto.ProfileDTO">
         SELECT TM.USER_SEQ
              , TM.TEAM_SEQ
              , TM.TEAM_MEMBER_SEQ
