@@ -1,13 +1,11 @@
 package com.threeNerds.basketballDiary.mvc.myTeam.service;
 
 import com.threeNerds.basketballDiary.file.ImageUploader;
-import com.threeNerds.basketballDiary.file.Uploader;
 import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.FindMyTeamProfileDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.ProfileDTO;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.modifyMyTeamProfile.request.ModifyMyTeamProfileRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.repository.MyTeamRepository;
 import com.threeNerds.basketballDiary.mvc.myTeam.repository.TeamMemberRepository;
+import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.ProfileCommand;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.ProfileQuery;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +38,7 @@ public class MyTeamProfileService {
     /**--------------------------------------
      * Components
      **--------------------------------------*/
-    private final Uploader imageUploader;
+    private final ImageUploader imageUploader;
 
     /**
      * 소속팀 프로필 조회
@@ -58,17 +56,19 @@ public class MyTeamProfileService {
      * - 프로필 사진이 존재하는 경우 기존 프로필 사진 삭제 후 업로드
      * @return
      */
-    public void modifyProfile( ModifyMyTeamProfileRequest reqBody ) {
-        TeamMember teamMember = teamMemberRepository.findTeamMember( TeamMember.builder()
-                                                                        .userSeq( reqBody.getUserSeq() )
-                                                                        .teamSeq( reqBody.getTeamSeq() )
-                                                                        .build() );
+    public void modifyProfile( ProfileCommand command ) {
+        TeamMember teamMember = teamMemberRepository.findTeamMember(
+                                        TeamMember.builder()
+                                            .userSeq( command.getUserSeq() )
+                                            .teamSeq( command.getTeamSeq() )
+                                            .build()
+                                );
 
-        String imagePath = imageUploader.upload( ImageUploader.Path.PROFILE_THUMBNAIL, reqBody.getImageFile() );
+        String imagePath = imageUploader.upload( ImageUploader.Path.PROFILE_THUMBNAIL, command.getProfileImage() );
 
         teamMemberRepository.updateMyTeamProfile( TeamMember.builder()
                                                     .teamMemberSeq(     teamMember.getTeamMemberSeq() )
-                                                    .backNumber(        reqBody.getBackNumber() )
+                                                    .backNumber(        command.getBackNumber() )
                                                     .memberImagePath(   "".equals( imagePath ) ? teamMember.getMemberImagePath() : imagePath )
                                                     .build() );
 
@@ -78,11 +78,11 @@ public class MyTeamProfileService {
     }
 
     // 소속팀 탈퇴하기
-    public void removeProfile( FindMyTeamProfileDTO userDto ) {
+    public void removeProfile( ProfileCommand command ) {
         // TODO 테스트 필요
         TeamMember deleteTeamMember = TeamMember.builder()
-                                        .userSeq( userDto.getUserSeq() )
-                                        .teamSeq( userDto.getTeamSeq() )
+                                        .userSeq( command.getUserSeq() )
+                                        .teamSeq( command.getTeamSeq() )
                                         .build();
         teamMemberRepository.deleteTeamMemberByUserSeqAndTeamSeq( deleteTeamMember );
     }
