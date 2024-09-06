@@ -1,7 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.myTeam.repository;
 
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.*;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.getMyTeamProfile.response.MyTeamProfileDTO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -27,7 +26,9 @@ public interface MyTeamRepository {
     /**
      * 리팩토링 완료 메소드
      */
-    /** 소속팀 프로필 조회 */
-    MyTeamProfileDTO findProfileByUserSeqAndTeamSeq( MyTeamProfileDTO dto );
+    /**----------------------
+     * 소속팀 프로필 조회
+     *----------------------*/
+    ProfileDTO findProfileByUserSeqAndTeamSeq( ProfileDTO profileDTO );
 
 }

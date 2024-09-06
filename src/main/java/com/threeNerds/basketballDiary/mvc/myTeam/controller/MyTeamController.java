@@ -9,9 +9,7 @@ import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.GetMyTeamsRe
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.ModifyMyTeamInfoRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.SearchMyTeamGamesRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.*;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.getMyTeamProfile.request.GetMyTeamProfileRequest;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.getMyTeamProfile.response.GetMyTeamProfileResponse;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.getMyTeamProfile.response.MyTeamProfileDTO;
+import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.GetProfileResponse;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.modifyMyTeamProfile.request.ModifyMyTeamProfileRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.*;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.*;
@@ -58,8 +56,10 @@ public class MyTeamController {
      **--------------------------------------*/
     private final MyTeamService myTeamService;
     private final MyTeamAuthService myTeamAuthService;
+    @Deprecated
     private final TeamMemberService teamMemberService;
     private final MyTeamJoinService myTeamJoinService;
+    private final MyTeamProfileService myTeamProfileService;
 
     private final GameRecordManagerService gameRecordManagerService;
 
@@ -277,21 +277,19 @@ public class MyTeamController {
 
     /**
      * API011 소속팀 개인프로필 조회
-     * // TODO MyTeamProfileService구현
      */
+    @ApiDocs011
     @Auth( level = AuthLevel.TEAM_MEMBER )
     @GetMapping("/{teamSeq}/profile")
-    public ResponseEntity<GetMyTeamProfileResponse> getMyTeamProfile(
+    public ResponseEntity<?> getProfile(
             @SessionAttribute(value = LOGIN_USER,required = false) SessionUser userSession,
             @PathVariable Long teamSeq
     ) {
-
-        GetMyTeamProfileRequest reqBody = new GetMyTeamProfileRequest(
-                userSession.getUserSeq()
-              , teamSeq
-        );
-        MyTeamProfileDTO myTeamProfile = teamMemberService.getMyTeamProfile( reqBody );
-        return ResponseEntity.ok( new GetMyTeamProfileResponse().toResponse( myTeamProfile ) );
+        ProfileQuery query = ProfileQuery.builder()
+                .userSeq( userSession.getUserSeq() )
+                .teamSeq( teamSeq )
+                .build();
+        return ResponseEntity.ok( new GetProfileResponse( myTeamProfileService.getProfile( query ) ) );
     }
 
     /**
