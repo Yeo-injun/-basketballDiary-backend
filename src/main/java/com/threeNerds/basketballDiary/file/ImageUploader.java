@@ -35,10 +35,10 @@ public class ImageUploader implements Uploader<ImageUploader.Path> {
         PROFILE_THUMBNAIL( "소속팀 프로필", "/myTeam/profile" ),
         TEAM_LOGO( "팀로고", "/myTeam/logo" );
 
-        private String imageName;
-        private String imagePath;
+        private final String imageName;
+        private final String imagePath;
 
-        Path( String imageName, String imagePath ) {
+        private Path( String imageName, String imagePath ) {
             this.imageName = imageName;
             this.imagePath = imagePath;
         }
