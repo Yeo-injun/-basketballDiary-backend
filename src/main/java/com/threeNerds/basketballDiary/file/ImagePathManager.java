@@ -4,23 +4,41 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.function.Supplier;
 
 @Component
 public class ImagePathManager implements PathManager {
 
     @Value("${file.image.path.root}")
     private String rootPath;
+    @Value("${file.image.path.teamProfile}")
+    private String PATH_TEAM_PROFILE;
+    @Value("${file.image.path.teamLogo}")
+    private String PATH_TEAM_LOGO;
 
-    @Override
-    public File makeDir( String path ) {
+    public File makeDir( PathType pathType ) {
         // 저장경로 설정
-        File targetPath = new File( this.rootPath, path );
+        File targetPath = new File( getFullPath( pathType ) );
 
         // 저장경로 물리적 생성
         targetPath.mkdirs();
 
         // 저장경로를 가지고 있는 File객체 리턴
         return targetPath;
+    }
+
+    private String getFullPath( PathType pathType ) {
+        ImagePath path = (ImagePath) pathType;
+        String subPath = "";
+        switch ( path ) {
+        case TEAM_PROFILE    : subPath = this.PATH_TEAM_PROFILE; break;
+        case TEAM_LOGO       : subPath = this.PATH_TEAM_LOGO; break;
+        default:
+            subPath = "";
+        }
+        return this.rootPath + subPath + "/" + LocalDate.now().format( DateTimeFormatter.ofPattern( "yyyyMMdd" ) );
     }
 
     /**

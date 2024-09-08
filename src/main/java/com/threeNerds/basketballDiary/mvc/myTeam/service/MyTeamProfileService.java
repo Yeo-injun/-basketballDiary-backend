@@ -1,5 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.myTeam.service;
 
+import com.threeNerds.basketballDiary.file.ImagePath;
 import com.threeNerds.basketballDiary.file.ImageUploader;
 import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.ProfileDTO;
@@ -64,7 +65,7 @@ public class MyTeamProfileService {
                                             .build()
                                 );
 
-        String imagePath = imageUploader.upload( ImageUploader.Path.PROFILE_THUMBNAIL, command.getProfileImage() );
+        String imagePath = imageUploader.upload( ImagePath.TEAM_PROFILE, command.getProfileImage() );
 
         teamMemberRepository.updateMyTeamProfile( TeamMember.builder()
                                                     .teamMemberSeq(     teamMember.getTeamMemberSeq() )

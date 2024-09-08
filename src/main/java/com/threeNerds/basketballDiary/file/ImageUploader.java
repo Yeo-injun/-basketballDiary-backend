@@ -19,43 +19,16 @@ import java.util.stream.Stream;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class ImageUploader implements Uploader<ImageUploader.Path> {
+public class ImageUploader implements Uploader<PathType> {
 
     private static final Set<String> allowedExtensions = new HashSet<>( List.of( "png", "jpeg", "jpg", "gif", "svg" ) );
     private static final long MAX_SIZE_IN_BYTES = 1024 * 1024 * 3 / 2; // 1.5Mb로 반영. yml파일의 Multipart max-size보다 작게 반영 ( bytes > Kb > Mb > Gb > Tb ... )
 
     private final ImagePathManager imagePathManager;
 
-    /**
-     * 이미지 Path관리
-     * TODO 이미지 PathManger 구현을 통해 해당 내용 관리 + 해당 내용을 설정값으로 관리
-     */
-    @Getter
-    public enum Path {
-        PROFILE_THUMBNAIL( "소속팀 프로필", "/myTeam/profile" ),
-        TEAM_LOGO( "팀로고", "/myTeam/logo" );
-
-        private final String imageName;
-        private final String imagePath;
-
-        Path( String imageName, String imagePath ) {
-            this.imageName = imageName;
-            this.imagePath = imagePath;
-        }
-        //        PROFILE_THUMBNAIL( "소속팀 프로필", "/myTeam/profile" ),
-//        TEAM_LOGO( "팀로고", "/myTeam/logo" );
-//
-//        private final String imageName;
-//        private final String imagePath;
-//
-//        Path( String imageName, String imagePath ) {
-//            this.imageName = imageName;
-//            this.imagePath = imagePath;
-//        }
-    }
-
+    // TODO 템플릿 패턴 적용해서 업로드 절차 추상화
     @Override
-    public String upload( Path path, MultipartFile input ) {
+    public String upload( PathType path, MultipartFile input ) {
         if ( null == input || input.isEmpty() ) {
             return ""; // 이미지가 없으면 경로를 ""로 return
         }
@@ -69,7 +42,7 @@ public class ImageUploader implements Uploader<ImageUploader.Path> {
             throw new ExceedMaxFileSizeException();
         }
 
-        File uploadPath = imagePathManager.makeDir( getUploadPath( path ) );
+        File uploadPath = imagePathManager.makeDir( path );
         File targetFile = new File( uploadPath, getUniqueFileName( fileExtension ) );
         try {
             // 이미지 물리적 저장
@@ -110,22 +83,6 @@ public class ImageUploader implements Uploader<ImageUploader.Path> {
             return false;
         }
         return allowedExtensions.contains( fileExtension );
-    }
-
-    /**
-     * 이미지 저장 목적지 경로 생성
-     * - path/yyyyMMdd 형태의 경로 return
-     */
-    // TODO Type 이넘을 없애고 업로드 클래스별 PathManager를 별도 구현하기.
-    // PathManager내에서 Path생성로직을 관리.
-    @Deprecated // TODO 해당 메소드를 PathManager에서 파일 Type에 따라 처리할 수 있도록 구현변경..!
-    private String getUploadPath( Path path ) {
-        return  Optional.ofNullable( path.getImagePath() ).orElseGet( ()-> "" )
-                + "/"
-                + LocalDate
-                    .now()
-                    .format( DateTimeFormatter.ofPattern( "yyyy/MM/dd" ) )
-                    .replace( "/", "" );
     }
 
     /**

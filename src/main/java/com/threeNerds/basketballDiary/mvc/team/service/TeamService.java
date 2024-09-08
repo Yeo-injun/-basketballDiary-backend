@@ -1,7 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.team.service;
 
+import com.threeNerds.basketballDiary.file.ImagePath;
 import com.threeNerds.basketballDiary.file.ImageUploader;
-import com.threeNerds.basketballDiary.file.Uploader;
 import com.threeNerds.basketballDiary.mvc.team.controller.request.RegisterTeamRequest;
 import com.threeNerds.basketballDiary.mvc.team.controller.response.SearchTeamsResponse;
 import com.threeNerds.basketballDiary.mvc.team.domain.Team;
@@ -45,7 +45,7 @@ public class TeamService {
     /**------------------------------------
      * Components
      *-------------------------------------*/
-    private final Uploader imageUploader;
+    private final ImageUploader imageUploader;
 
     /**------------------------------------
      * Repository
@@ -97,7 +97,7 @@ public class TeamService {
     @Transactional
     public void createTeam( RegisterTeamRequest teamDTO ) {
 
-        String uploadUrl = imageUploader.upload( ImageUploader.Path.TEAM_LOGO, teamDTO.getTeamLogoImage() );
+        String uploadUrl = imageUploader.upload( ImagePath.TEAM_LOGO, teamDTO.getTeamLogoImage() );
 
         /** 팀정보 저장  - seq생성 */
         Team newTeam = Team.create( teamDTO, uploadUrl );

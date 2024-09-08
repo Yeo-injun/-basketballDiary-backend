@@ -4,7 +4,7 @@ import java.io.File;
 
 public interface PathManager {
 
-    File makeDir( String dir );
+    File makeDir( PathType pathType );
 
     String toURL( File file );
 

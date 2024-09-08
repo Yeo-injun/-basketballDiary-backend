@@ -1,0 +1,5 @@
+package com.threeNerds.basketballDiary.file;
+
+public interface PathType {
+
+}
