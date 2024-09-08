@@ -1,8 +1,11 @@
 ## File 업로드 경로 설정
 file:
-  upload:
-    root:
-      image: C://image # D://image
+  image:
+    path:
+      root: C://image2
+  excel:
+    path:
+      root:
 
 
 

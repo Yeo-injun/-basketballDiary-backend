@@ -30,11 +30,11 @@ import java.net.MalformedURLException;
 @RequiredArgsConstructor
 public class ImageProvider implements Provider {
 
-    private final PathManager imagePathManager;
+    private final ImagePathManager imagePathManager;
 
     @Override
     public Resource provide( String saveUrl ) throws MalformedURLException {
-        Resource imageResource = new FileSystemResource( imagePathManager.toPath( saveUrl, PathManager.Type.IMAGE ) );
+        Resource imageResource = new FileSystemResource( imagePathManager.toPath( saveUrl ) );
         if ( imageResource.exists() ) {
             log.info( "Success Get Saved Image : {}", saveUrl );
             return imageResource;

@@ -24,7 +24,7 @@ public class ImageUploader implements Uploader<ImageUploader.Path> {
     private static final Set<String> allowedExtensions = new HashSet<>( List.of( "png", "jpeg", "jpg", "gif", "svg" ) );
     private static final long MAX_SIZE_IN_BYTES = 1024 * 1024 * 3 / 2; // 1.5Mb로 반영. yml파일의 Multipart max-size보다 작게 반영 ( bytes > Kb > Mb > Gb > Tb ... )
 
-    private final PathManager imagePathManager;
+    private final ImagePathManager imagePathManager;
 
     /**
      * 이미지 Path관리
@@ -38,10 +38,20 @@ public class ImageUploader implements Uploader<ImageUploader.Path> {
         private final String imageName;
         private final String imagePath;
 
-        private Path( String imageName, String imagePath ) {
+        Path( String imageName, String imagePath ) {
             this.imageName = imageName;
             this.imagePath = imagePath;
         }
+        //        PROFILE_THUMBNAIL( "소속팀 프로필", "/myTeam/profile" ),
+//        TEAM_LOGO( "팀로고", "/myTeam/logo" );
+//
+//        private final String imageName;
+//        private final String imagePath;
+//
+//        Path( String imageName, String imagePath ) {
+//            this.imageName = imageName;
+//            this.imagePath = imagePath;
+//        }
     }
 
     @Override
@@ -59,7 +69,7 @@ public class ImageUploader implements Uploader<ImageUploader.Path> {
             throw new ExceedMaxFileSizeException();
         }
 
-        File uploadPath = imagePathManager.makeDir( getUploadPath( path ), PathManager.Type.IMAGE );
+        File uploadPath = imagePathManager.makeDir( getUploadPath( path ) );
         File targetFile = new File( uploadPath, getUniqueFileName( fileExtension ) );
         try {
             // 이미지 물리적 저장
@@ -70,7 +80,7 @@ public class ImageUploader implements Uploader<ImageUploader.Path> {
         }
 
         // 이미지 저장위치 리턴 : URL로
-        return imagePathManager.toURL( targetFile, PathManager.Type.IMAGE );
+        return imagePathManager.toURL( targetFile );
     }
 
     /**
@@ -106,6 +116,9 @@ public class ImageUploader implements Uploader<ImageUploader.Path> {
      * 이미지 저장 목적지 경로 생성
      * - path/yyyyMMdd 형태의 경로 return
      */
+    // TODO Type 이넘을 없애고 업로드 클래스별 PathManager를 별도 구현하기.
+    // PathManager내에서 Path생성로직을 관리.
+    @Deprecated // TODO 해당 메소드를 PathManager에서 파일 Type에 따라 처리할 수 있도록 구현변경..!
     private String getUploadPath( Path path ) {
         return  Optional.ofNullable( path.getImagePath() ).orElseGet( ()-> "" )
                 + "/"
