@@ -2,7 +2,11 @@
 file:
   image:
     path:
-      root: C://image2
+      root: C://image
+      ## 팀 프로필
+      teamProfile : /team/profile
+      ## 팀 로고
+      teamLogo    : /team/logo
   excel:
     path:
       root:

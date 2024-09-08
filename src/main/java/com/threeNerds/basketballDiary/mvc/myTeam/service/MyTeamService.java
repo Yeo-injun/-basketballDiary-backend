@@ -2,8 +2,8 @@ package com.threeNerds.basketballDiary.mvc.myTeam.service;
 
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
+import com.threeNerds.basketballDiary.file.ImagePath;
 import com.threeNerds.basketballDiary.file.ImageUploader;
-import com.threeNerds.basketballDiary.file.Uploader;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.TeamMemberQuery;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.GetMyTeamsRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.ModifyMyTeamInfoRequest;
@@ -52,7 +52,7 @@ public class MyTeamService {
     /**------------------------------------
      * Components
      *-------------------------------------*/
-    private final Uploader imageUploader;
+    private final ImageUploader imageUploader;
 
     /**------------------------------------
      * Repository
@@ -171,7 +171,7 @@ public class MyTeamService {
                 .orElseThrow(() -> new CustomException(DomainErrorType.NOT_FOUND_ASSIGNED_TEAM));
 
         /** 이미지 업로드 */
-        String imageUploadPath = imageUploader.upload( ImageUploader.Path.TEAM_LOGO, teamLogo );
+        String imageUploadPath = imageUploader.upload( ImagePath.TEAM_LOGO, teamLogo );
 
         teamRepository.updateTeam( Team.builder()
                 .teamSeq(teamSeq)
