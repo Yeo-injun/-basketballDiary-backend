@@ -59,10 +59,9 @@
              , TM.TEAM_AUTH_CODE
              , TM.JOIN_YMD
              , TM.BACK_NUMBER
-             , MEMBER_IMAGE_PATH
+             , MEMBER_IMAGE_PATH   AS "PROFILE_IMAGE_PATH"
              , T.TEAM_NAME
-             , U.NAME
-               AS  "USER_NAME"
+             , U.NAME   AS "USER_NAME"
              , U.HEIGHT
              , U.WEIGHT
              , U.POSITION_CODE
