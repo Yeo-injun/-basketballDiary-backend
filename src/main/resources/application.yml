@@ -4,9 +4,9 @@ file:
     path:
       root: C://image
       ## 팀 프로필
-      teamProfile : /team/profile
+      team-profile : /team/profile
       ## 팀 로고
-      teamLogo    : /team/logo
+      team-logo    : /team/logo
   excel:
     path:
       root:

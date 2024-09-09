@@ -171,7 +171,7 @@ public class MyTeamService {
                 .orElseThrow(() -> new CustomException(DomainErrorType.NOT_FOUND_ASSIGNED_TEAM));
 
         /** 이미지 업로드 */
-        String imageUploadPath = imageUploader.upload( ImagePath.TEAM_LOGO, teamLogo );
+        String imageUploadPath = imageUploader.upload( ImagePath.Type.TEAM_LOGO, teamLogo );
 
         teamRepository.updateTeam( Team.builder()
                 .teamSeq(teamSeq)
