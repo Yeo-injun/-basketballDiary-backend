@@ -9,8 +9,8 @@ import java.io.File;
 @Component
 public class ImagePathManager implements PathManager {
 
-//    private final ImagePath imagePath;
     public File makeDir( PathType pathType ) {
+
         // 저장경로 설정
         File targetPath = new File( pathType.getFullPath() );
 
