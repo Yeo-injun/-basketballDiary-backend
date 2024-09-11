@@ -8,6 +8,7 @@ import com.threeNerds.basketballDiary.mvc.game.service.dto.TeamMemberQuery;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.ModifyMyTeamInfoRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.GetTeamInfoResponse;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.*;
+import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.MyTeamInfoQuery;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.MyTeamQuery;
 import com.threeNerds.basketballDiary.mvc.team.domain.Team;
 import com.threeNerds.basketballDiary.mvc.team.domain.TeamRegularExercise;
@@ -128,7 +129,7 @@ public class MyTeamService {
         /** 팀들의 정기운동시간 조회 및 세팅 */
         myTeams.forEach( myTeamInfo -> {
             List<TeamRegularExerciseDTO> exercises = teamRegularExerciseRepository.findByTeamSeq( myTeamInfo.getTeamSeq() );
-            myTeamInfo.setParsedTeamRegularExercises( exercises );
+            myTeamInfo.setTeamRegularExercises( exercises );
         });
 
         return query.buildResult( myTeams, pagination.getPages( myTeams.get(0).getTotalCount() ) );
@@ -136,22 +137,15 @@ public class MyTeamService {
 
     /**
      * 소속팀 단건 조회
-     * @param teamSeq
-     * @param userSeq
-     * @return MyTeamDTO
      */
-    public GetTeamInfoResponse getTeamInfo( Long teamSeq, Long userSeq ) {
-
-        // 소속되지 않은 팀에 대한 조회는 Interceptor에 의해 처리됨.
-
-        TeamInfoDTO teamInfo = myTeamRepository.findByUserSeqAndTeamSeq( new FindTeamInfoDTO( teamSeq, userSeq ) );
+    public MyTeamInfoQuery.Result getMyTeamInfo( MyTeamInfoQuery query ) {
+        TeamInfoDTO teamInfo = myTeamRepository.findByUserSeqAndTeamSeq( new FindTeamInfoDTO( query.getTeamSeq(), query.getUserSeq() ) );
         boolean assignedTeam = null != teamInfo;
         if ( !assignedTeam ) {
             throw new CustomException( DomainErrorType.NOT_FOUND_ASSIGNED_TEAM );
         }
-
-        List<TeamRegularExerciseDTO> regularExercises = teamRegularExerciseRepository.findByTeamSeq( teamSeq );
-        return new GetTeamInfoResponse( teamInfo, regularExercises );
+        List<TeamRegularExerciseDTO> regularExercises = teamRegularExerciseRepository.findByTeamSeq( query.getTeamSeq() );
+        return query.buildResult( teamInfo, regularExercises );
     }
 
     /**

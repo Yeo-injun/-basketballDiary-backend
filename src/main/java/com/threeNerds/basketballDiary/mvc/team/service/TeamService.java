@@ -59,7 +59,6 @@ public class TeamService {
      * @return List<TeamDTO>
      */
     public SearchTeamsResponse searchTeams(SearchTeamDTO searchTeamDTO) {
-        log.info("TeamService.searchTeams");
         if ( searchTeamDTO.getStartTime() != null
             && searchTeamDTO.getEndTime() != ""
         ) {
@@ -82,9 +81,8 @@ public class TeamService {
 
         /** 팀들의 정기운동시간 조회 및 세팅 */
         teamSearchResults.forEach(teamDTO -> {
-            Long teamSeq = teamDTO.getTeamSeq();
-            List<TeamRegularExerciseDTO> exercises = teamRegularExerciseRepository.findByTeamSeq(teamSeq);
-            teamDTO.setParsedTeamRegularExercises(exercises);
+            List<TeamRegularExerciseDTO> exercises = teamRegularExerciseRepository.findByTeamSeq( teamDTO.getTeamSeq() );
+            teamDTO.setTeamRegularExercises( exercises );
         });
 
         return new SearchTeamsResponse( pagination.getPages( teamSearchResults.get(0).getTotalCount() ), teamSearchResults);
