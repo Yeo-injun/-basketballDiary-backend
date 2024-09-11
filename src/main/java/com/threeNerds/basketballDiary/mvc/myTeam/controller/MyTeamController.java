@@ -5,7 +5,6 @@ import com.threeNerds.basketballDiary.auth.constant.AuthLevel;
 import com.threeNerds.basketballDiary.constant.code.type.JoinRequestStateCode;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.TeamMemberQuery;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.docs.*;
-import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.GetMyTeamsRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.ModifyMyTeamInfoRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.SearchMyTeamGamesRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.*;
@@ -314,12 +313,12 @@ public class MyTeamController {
 
     /**
      * API013 소속팀 탈퇴하기 ( 프로필 삭제 )
-     * TODO 테스트 필요 FrontEnd에서 호출 하지 않음.
+     * TODO FrontEnd에서 호출 하지 않음. >> 탈퇴기능 만들기..
      */
     @ApiDocs013
     @Auth( level = AuthLevel.TEAM_MEMBER )
     @DeleteMapping("/{teamSeq}/profile")
-    public ResponseEntity<?> deleteProfile(
+    public ResponseEntity<?> removeProfile(
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession,
             @PathVariable Long teamSeq
     ) {
@@ -335,18 +334,20 @@ public class MyTeamController {
     /**
      * API014 : 소속팀 목록 조회
      */
-    // TODO 리팩토링 서비스 패턴 작업
+    @ApiDocs014
     @Auth( level = AuthLevel.TEAM_MEMBER )
     @GetMapping
     public ResponseEntity<GetMyTeamsResponse> getMyTeams(
             @SessionAttribute( value = LOGIN_USER ) SessionUser sessionUser,
             @RequestParam( name = "pageNo", defaultValue = "0" ) Integer pageNo
     ) {
-        GetMyTeamsResponse myTeamList = myTeamService.findTeams(
-            new GetMyTeamsRequest( sessionUser.getUserSeq(), pageNo )
+        MyTeamQuery.Result result = myTeamService.getMyTeams(
+            MyTeamQuery.builder()
+                    .userSeq(   sessionUser.getUserSeq() )
+                    .pageNo(    pageNo )
+                    .build()
         );
-
-        return ResponseEntity.ok().body( myTeamList );
+        return ResponseEntity.ok().body( new GetMyTeamsResponse( result ) );
     }
 
 

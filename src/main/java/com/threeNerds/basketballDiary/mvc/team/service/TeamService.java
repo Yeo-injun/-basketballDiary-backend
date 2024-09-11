@@ -97,7 +97,7 @@ public class TeamService {
     @Transactional
     public void createTeam( RegisterTeamRequest teamDTO ) {
 
-        String uploadUrl = imageUploader.upload( ImagePath.TEAM_LOGO, teamDTO.getTeamLogoImage() );
+        String uploadUrl = imageUploader.upload( ImagePath.Type.TEAM_LOGO, teamDTO.getTeamLogoImage() );
 
         /** 팀정보 저장  - seq생성 */
         Team newTeam = Team.create( teamDTO, uploadUrl );

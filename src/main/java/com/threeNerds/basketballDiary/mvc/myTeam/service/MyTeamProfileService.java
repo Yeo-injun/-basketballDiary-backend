@@ -65,7 +65,7 @@ public class MyTeamProfileService {
                                             .build()
                                 );
 
-        String imagePath = imageUploader.upload( ImagePath.TEAM_PROFILE, command.getProfileImage() );
+        String imagePath = imageUploader.upload( ImagePath.Type.TEAM_PROFILE, command.getProfileImage() );
 
         teamMemberRepository.updateMyTeamProfile( TeamMember.builder()
                                                     .teamMemberSeq(     teamMember.getTeamMemberSeq() )
