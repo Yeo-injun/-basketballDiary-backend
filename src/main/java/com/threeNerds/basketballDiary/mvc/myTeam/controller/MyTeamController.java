@@ -354,14 +354,20 @@ public class MyTeamController {
     /**
      * API016 : 소속팀 정보 조회
      */
-    // TODO 리팩토링 서비스 패턴 작업
+    @ApiDocs016
     @Auth( level = AuthLevel.TEAM_MEMBER )
     @GetMapping("/{teamSeq}/info")
-    public ResponseEntity<GetTeamInfoResponse> getTeamInfo(
+    public ResponseEntity<GetTeamInfoResponse> getMyTeamInfo(
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession,
             @PathVariable(value = "teamSeq") Long teamSeq
     ) {
-        return ResponseEntity.ok().body( myTeamService.getTeamInfo( teamSeq, userSession.getUserSeq() ) );
+        MyTeamInfoQuery.Result result = myTeamService.getMyTeamInfo(
+                MyTeamInfoQuery.builder()
+                        .userSeq( userSession.getUserSeq() )
+                        .teamSeq( teamSeq )
+                        .build()
+        );
+        return ResponseEntity.ok().body( new GetTeamInfoResponse( result ) );
     }
 
     /**

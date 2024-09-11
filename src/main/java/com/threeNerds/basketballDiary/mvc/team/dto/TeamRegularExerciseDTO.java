@@ -22,8 +22,8 @@ public class TeamRegularExerciseDTO {
     /* 정기운동장소명 */
     private String exercisePlaceName;
 
-    public TeamRegularExerciseDTO dayOfTheWeekCodeName() {
-        this.dayOfTheWeekCodeName = DayOfTheWeekCode.nameOf(this.dayOfTheWeekCode);
-        return this;
+    public void setDayOfTheWeekCode( String dayOfTheWeekCode ) {
+        this.dayOfTheWeekCode       = dayOfTheWeekCode;
+        this.dayOfTheWeekCodeName   = DayOfTheWeekCode.nameOf( dayOfTheWeekCode );
     }
 }
