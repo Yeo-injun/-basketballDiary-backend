@@ -1,8 +1,15 @@
 ## File 업로드 경로 설정
 file:
-  upload:
-    root:
-      image: C://image # D://image
+  image:
+    path:
+      root: C://image
+      ## 팀 프로필
+      team-profile : /team/profile
+      ## 팀 로고
+      team-logo    : /team/logo
+  excel:
+    path:
+      root:
 
 
 

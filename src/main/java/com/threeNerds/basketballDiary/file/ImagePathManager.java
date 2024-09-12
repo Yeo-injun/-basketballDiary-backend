@@ -1,25 +1,18 @@
 package com.threeNerds.basketballDiary.file;
 
-import org.springframework.beans.factory.annotation.Value;
 
 import org.springframework.stereotype.Component;
 
 import java.io.File;
 
+
 @Component
-public class DefaultPathManager implements PathManager {
+public class ImagePathManager implements PathManager {
 
-    @Value("${file.upload.root.image}")
-    private String imageRootPath;
+    public File makeDir( PathType pathType ) {
 
-    private String excelRootPath;
-
-
-
-    @Override
-    public File makeDir( String path, Type fileType ) {
         // 저장경로 설정
-        File targetPath = new File( getRootPath( fileType ), path );
+        File targetPath = new File( pathType.getFullPath() );
 
         // 저장경로 물리적 생성
         targetPath.mkdirs();
@@ -28,21 +21,14 @@ public class DefaultPathManager implements PathManager {
         return targetPath;
     }
 
-    private String getRootPath( Type fileType ) {
-        switch ( fileType ) {
-            case IMAGE : return imageRootPath;
-            case EXCEL : return excelRootPath;
-        }
-        return "";
-    }
     /**
      * url을 받아서 파일이 저장된 물리적 위치를 반환함
      * @param url
      * @return
      */
     @Override
-    public String toPath( String url, Type fileType ) {
-        return getRootPath( fileType ) + url;
+    public String toPath( String url ) {
+        return ImagePath.getRootPath() + url;
     }
 
     /**
@@ -51,9 +37,9 @@ public class DefaultPathManager implements PathManager {
      * - 운영체제별로 파일시스템의 경로 구분자가 다르기 때문에 URL로 제공하기!!
      */
     @Override
-    public String toURL( File file, Type fileType ) {
+    public String toURL( File file ) {
         String fileURL = file.toURI().getPath();
-        String rootURL = new File( getRootPath( fileType ) ).toURI().getPath();
+        String rootURL = new File( ImagePath.getRootPath() ).toURI().getPath();
         return fileURL.replace( rootURL , "/" );
     }
 

@@ -2,14 +2,14 @@ package com.threeNerds.basketballDiary.mvc.myTeam.service;
 
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
+import com.threeNerds.basketballDiary.file.ImagePath;
 import com.threeNerds.basketballDiary.file.ImageUploader;
-import com.threeNerds.basketballDiary.file.Uploader;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.TeamMemberQuery;
-import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.GetMyTeamsRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.ModifyMyTeamInfoRequest;
-import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.GetMyTeamsResponse;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.GetTeamInfoResponse;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.*;
+import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.MyTeamInfoQuery;
+import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.MyTeamQuery;
 import com.threeNerds.basketballDiary.mvc.team.domain.Team;
 import com.threeNerds.basketballDiary.mvc.team.domain.TeamRegularExercise;
 import com.threeNerds.basketballDiary.mvc.team.dto.TeamRegularExerciseDTO;
@@ -52,7 +52,7 @@ public class MyTeamService {
     /**------------------------------------
      * Components
      *-------------------------------------*/
-    private final Uploader imageUploader;
+    private final ImageUploader imageUploader;
 
     /**------------------------------------
      * Repository
@@ -111,14 +111,12 @@ public class MyTeamService {
 
     /**
      * 소속팀 목록 조회
-     * @param reqBody
-     * @return List<MyTeamDTO>
      */
-    public GetMyTeamsResponse findTeams( GetMyTeamsRequest reqBody ) {
+    public MyTeamQuery.Result getMyTeams( MyTeamQuery query ) {
         /** 페이징 정보 세팅 */
-        Pagination pagination = Pagination.of( reqBody.getPageNo(), 3 );
+        Pagination pagination = Pagination.of( query.getPageNo(), 3 );
         SearchMyTeamDTO searchTeamParam = new SearchMyTeamDTO()
-                                                .userSeq( reqBody.getUserSeq() )
+                                                .userSeq( query.getUserSeq() )
                                                 .pagination( pagination );
 
         /** 소속팀 목록 조회 */
@@ -126,35 +124,28 @@ public class MyTeamService {
 
         /** 페이징DTO에 조회 결과 세팅 */
         if ( myTeams.isEmpty()) {
-            return new GetMyTeamsResponse( pagination.empty(), Collections.emptyList() );
+            return query.buildResult( Collections.emptyList(), pagination.empty() );
         }
         /** 팀들의 정기운동시간 조회 및 세팅 */
         myTeams.forEach( myTeamInfo -> {
             List<TeamRegularExerciseDTO> exercises = teamRegularExerciseRepository.findByTeamSeq( myTeamInfo.getTeamSeq() );
-            myTeamInfo.setParsedTeamRegularExercises( exercises );
+            myTeamInfo.setTeamRegularExercises( exercises );
         });
 
-        return new GetMyTeamsResponse( pagination.getPages( myTeams.get(0).getTotalCount() ), myTeams );
+        return query.buildResult( myTeams, pagination.getPages( myTeams.get(0).getTotalCount() ) );
     }
 
     /**
      * 소속팀 단건 조회
-     * @param teamSeq
-     * @param userSeq
-     * @return MyTeamDTO
      */
-    public GetTeamInfoResponse getTeamInfo( Long teamSeq, Long userSeq ) {
-
-        // 소속되지 않은 팀에 대한 조회는 Interceptor에 의해 처리됨.
-
-        TeamInfoDTO teamInfo = myTeamRepository.findByUserSeqAndTeamSeq( new FindTeamInfoDTO( teamSeq, userSeq ) );
+    public MyTeamInfoQuery.Result getMyTeamInfo( MyTeamInfoQuery query ) {
+        TeamInfoDTO teamInfo = myTeamRepository.findByUserSeqAndTeamSeq( new FindTeamInfoDTO( query.getTeamSeq(), query.getUserSeq() ) );
         boolean assignedTeam = null != teamInfo;
         if ( !assignedTeam ) {
             throw new CustomException( DomainErrorType.NOT_FOUND_ASSIGNED_TEAM );
         }
-
-        List<TeamRegularExerciseDTO> regularExercises = teamRegularExerciseRepository.findByTeamSeq( teamSeq );
-        return new GetTeamInfoResponse( teamInfo, regularExercises );
+        List<TeamRegularExerciseDTO> regularExercises = teamRegularExerciseRepository.findByTeamSeq( query.getTeamSeq() );
+        return query.buildResult( teamInfo, regularExercises );
     }
 
     /**
@@ -171,7 +162,7 @@ public class MyTeamService {
                 .orElseThrow(() -> new CustomException(DomainErrorType.NOT_FOUND_ASSIGNED_TEAM));
 
         /** 이미지 업로드 */
-        String imageUploadPath = imageUploader.upload( ImageUploader.Path.TEAM_LOGO, teamLogo );
+        String imageUploadPath = imageUploader.upload( ImagePath.Type.TEAM_LOGO, teamLogo );
 
         teamRepository.updateTeam( Team.builder()
                 .teamSeq(teamSeq)

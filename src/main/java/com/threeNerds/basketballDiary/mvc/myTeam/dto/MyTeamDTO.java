@@ -47,76 +47,8 @@ public class MyTeamDTO {
      * 정기운동 목록 정보
      */
     private List<TeamRegularExerciseDTO> teamRegularExercises;
-//    // TODO 삭제예정
-//    private List<TeamRegularExercise> teamRegularExercisesList;
 
-
-    public MyTeamDTO teamSeq (Long teamSeq) {
-        this.teamSeq = teamSeq;
-        return this;
-    }
-
-    public MyTeamDTO teamName (String teamName) {
-        this.teamName = teamName;
-        return this;
-    }
-
-    public MyTeamDTO teamImagePath (String teamImagePath) {
-        this.teamImagePath = teamImagePath;
-        return this;
-    }
-
-    public MyTeamDTO teamImage (MultipartFile teamImage) {
-        this.teamImage = teamImage;
-        return this;
-    }
-
-    public MyTeamDTO hometown (String hometown) {
-        this.hometown = hometown;
-        return this;
-    }
-
-    public MyTeamDTO sidoCode (String sidoCode) {
-        this.sidoCode = sidoCode;
-        return this;
-    }
-
-    public MyTeamDTO sigunguCode (String sigunguCode) {
-        this.sigunguCode = sigunguCode;
-        return this;
-    }
-
-    public MyTeamDTO foundationYmd (String foundationYmd) {
-        this.foundationYmd = foundationYmd;
-        return this;
-    }
-
-    public MyTeamDTO introduction (String introduction) {
-        this.introduction = introduction;
-        return this;
-    }
-
-    public MyTeamDTO totMember (Integer totMember) {
-        this.totMember = totMember;
-        return this;
-    }
-
-//    public MyTeamDTO teamRegularExercises (List<TeamRegularExerciseDTO> teamRegularExercises) {
-//        this.teamRegularExercises = teamRegularExercises;
-//        return this;
-//    }
-
-    public MyTeamDTO setParsedTeamRegularExercises( List<TeamRegularExerciseDTO> exercisesDTO ) {
-        if (exercisesDTO.isEmpty()) {
-            this.teamRegularExercises = Collections.emptyList();
-            return this;
-        }
-
-        exercisesDTO.stream()
-                .map(TeamRegularExerciseDTO::dayOfTheWeekCodeName)
-                .collect(Collectors.toList());
-
-        this.teamRegularExercises = exercisesDTO;
-        return this;
+    public void setTeamRegularExercises( List<TeamRegularExerciseDTO> teamRegularExercises ) {
+        this.teamRegularExercises = teamRegularExercises;
     }
 }

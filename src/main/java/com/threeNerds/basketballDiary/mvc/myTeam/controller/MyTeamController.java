@@ -5,16 +5,13 @@ import com.threeNerds.basketballDiary.auth.constant.AuthLevel;
 import com.threeNerds.basketballDiary.constant.code.type.JoinRequestStateCode;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.TeamMemberQuery;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.docs.*;
-import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.GetMyTeamsRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.ModifyMyTeamInfoRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.SearchMyTeamGamesRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.*;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.GetProfileResponse;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.modifyMyTeamProfile.request.ModifyMyTeamProfileRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.*;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.*;
 import com.threeNerds.basketballDiary.mvc.game.service.GameRecordManagerService;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.*;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.SearchAllTeamMembersResponse;
 import com.threeNerds.basketballDiary.session.SessionUser;
 import lombok.RequiredArgsConstructor;
@@ -56,8 +53,6 @@ public class MyTeamController {
      **--------------------------------------*/
     private final MyTeamService myTeamService;
     private final MyTeamAuthService myTeamAuthService;
-    @Deprecated
-    private final TeamMemberService teamMemberService;
     private final MyTeamJoinService myTeamJoinService;
     private final MyTeamProfileService myTeamProfileService;
 
@@ -294,79 +289,92 @@ public class MyTeamController {
 
     /**
      * API012 소속팀 개인프로필 수정
-     * // TODO MyTeamProfileService구현
      */
+    @ApiDocs012
     @Auth( level = AuthLevel.TEAM_MEMBER )
     @PostMapping("/{teamSeq}/profile")
-    public ResponseEntity<?> modifyMyTeamsProfile(
+    public ResponseEntity<?> modifyProfile(
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession,
             @PathVariable Long teamSeq,
             @RequestPart(required = false) String backNumber,
-            @RequestPart(required = false) MultipartFile imageFile
+            @RequestPart(required = false) MultipartFile profileImage
     ) {
-        teamMemberService.modifyMyTeamProfile(
-            new ModifyMyTeamProfileRequest(
-                    userSession.getUserSeq()
-                  , teamSeq
-                  , backNumber
-                  , imageFile
-            )
+        myTeamProfileService.modifyProfile(
+            ProfileCommand.builder()
+                    .userSeq(       userSession.getUserSeq() )
+                    .teamSeq(       teamSeq )
+                    .backNumber(    backNumber )
+                    .profileImage(  profileImage )
+                    .build()
         );
         return RESPONSE_OK;
     }
 
 
     /**
-     * API013 소속팀 개인프로필 삭제 > 탈퇴하기...?
-     * // TODO MyTeamProfileService구현
-     * TODO 테스트 필요 FrontEnd에서 호출 하지 않음.
+     * API013 소속팀 탈퇴하기 ( 프로필 삭제 )
+     * TODO FrontEnd에서 호출 하지 않음. >> 탈퇴기능 만들기..
      */
+    @ApiDocs013
     @Auth( level = AuthLevel.TEAM_MEMBER )
     @DeleteMapping("/{teamSeq}/profile")
-    public ResponseEntity<?> deleteMyTeamProfile(
-            @SessionAttribute(value = LOGIN_USER,required = false) SessionUser userSession,
+    public ResponseEntity<?> removeProfile(
+            @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession,
             @PathVariable Long teamSeq
     ) {
-        FindMyTeamProfileDTO findMyTeamProfileDTO = new FindMyTeamProfileDTO()
-                                                            .userSeq( userSession.getUserSeq() )
-                                                            .teamSeq( teamSeq );
-        teamMemberService.deleteMyTeamProfile(findMyTeamProfileDTO);
+        myTeamProfileService.removeProfile(
+            ProfileCommand.builder()
+                    .userSeq(       userSession.getUserSeq() )
+                    .teamSeq(       teamSeq )
+                    .build()
+        );
         return RESPONSE_OK;
     }
 
     /**
      * API014 : 소속팀 목록 조회
      */
+    @ApiDocs014
     @Auth( level = AuthLevel.TEAM_MEMBER )
     @GetMapping
     public ResponseEntity<GetMyTeamsResponse> getMyTeams(
             @SessionAttribute( value = LOGIN_USER ) SessionUser sessionUser,
             @RequestParam( name = "pageNo", defaultValue = "0" ) Integer pageNo
     ) {
-        GetMyTeamsResponse myTeamList = myTeamService.findTeams(
-            new GetMyTeamsRequest( sessionUser.getUserSeq(), pageNo )
+        MyTeamQuery.Result result = myTeamService.getMyTeams(
+            MyTeamQuery.builder()
+                    .userSeq(   sessionUser.getUserSeq() )
+                    .pageNo(    pageNo )
+                    .build()
         );
-
-        return ResponseEntity.ok().body( myTeamList );
+        return ResponseEntity.ok().body( new GetMyTeamsResponse( result ) );
     }
 
 
     /**
      * API016 : 소속팀 정보 조회
      */
+    @ApiDocs016
     @Auth( level = AuthLevel.TEAM_MEMBER )
     @GetMapping("/{teamSeq}/info")
-    public ResponseEntity<GetTeamInfoResponse> getTeamInfo(
+    public ResponseEntity<GetTeamInfoResponse> getMyTeamInfo(
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession,
             @PathVariable(value = "teamSeq") Long teamSeq
     ) {
-        return ResponseEntity.ok().body( myTeamService.getTeamInfo( teamSeq, userSession.getUserSeq() ) );
+        MyTeamInfoQuery.Result result = myTeamService.getMyTeamInfo(
+                MyTeamInfoQuery.builder()
+                        .userSeq( userSession.getUserSeq() )
+                        .teamSeq( teamSeq )
+                        .build()
+        );
+        return ResponseEntity.ok().body( new GetTeamInfoResponse( result ) );
     }
 
     /**
      * API017 : 소속팀 정보 수정
      * 23.10.28 인준 : 팀 이미지 속성 추가 반영 ( @RequestPart를 적용하여 mulitpart/form 데이터의 객체 바인딩 제공 )
      */
+    // TODO 리팩토링 서비스 패턴 작업
     @Auth( level = AuthLevel.TEAM_MANAGER )
     @PostMapping( "/{teamSeq}/info" )
     public ResponseEntity<?> modifyMyTeamInfo(
@@ -383,6 +391,7 @@ public class MyTeamController {
     /**
      * API018 : 소속팀 정보 삭제
      */
+    // TODO 리팩토링 서비스 패턴 작업
     @Auth( level = AuthLevel.TEAM_LEADER )
     @DeleteMapping("/{teamSeq}")
     public ResponseEntity<?> removeMyTeam(
@@ -397,6 +406,7 @@ public class MyTeamController {
     /**
      * API052 : 소속팀 게임목록조회
      */
+    // TODO 리팩토링 서비스 패턴 작업
     @Auth( level = AuthLevel.TEAM_MEMBER )
     @GetMapping("/{teamSeq}/games")
     public ResponseEntity<SearchMyTeamGamesResponse> searchMyTeamGames (
