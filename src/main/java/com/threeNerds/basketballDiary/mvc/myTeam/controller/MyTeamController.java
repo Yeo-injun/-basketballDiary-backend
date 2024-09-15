@@ -9,16 +9,20 @@ import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.ModifyMyTeam
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.SearchMyTeamGamesRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.*;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.GetProfileResponse;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.TeamInfoDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.*;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.*;
 import com.threeNerds.basketballDiary.mvc.game.service.GameRecordManagerService;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.SearchAllTeamMembersResponse;
+import com.threeNerds.basketballDiary.mvc.team.dto.TeamRegularExerciseDTO;
 import com.threeNerds.basketballDiary.session.SessionUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 import static com.threeNerds.basketballDiary.constant.HttpResponseConst.RESPONSE_OK;
 import static com.threeNerds.basketballDiary.session.util.SessionUtil.LOGIN_USER;
@@ -379,11 +383,19 @@ public class MyTeamController {
     @PostMapping( "/{teamSeq}/info" )
     public ResponseEntity<?> modifyMyTeamInfo(
             @PathVariable( value = "teamSeq" ) Long teamSeq,
-            @RequestPart( value = "teamLogo", required = false ) MultipartFile teamLogo,
-            @RequestPart( value = "teamInfo", required = false ) ModifyMyTeamInfoRequest teamInfo
+            @RequestPart( value = "teamInfo", required = false ) TeamInfoDTO teamInfo,
+            @RequestPart( value = "teamRegularExercises", required = false ) List<TeamRegularExerciseDTO> exercises,
+            @RequestPart( value = "teamLogo", required = false ) MultipartFile teamLogo
     ) {
 
-        myTeamService.modifyMyTeamInfo( new ModifyMyTeamInfoRequest( teamSeq, teamInfo ), teamLogo );
+        myTeamService.modifyMyTeamInfo(
+                MyTeamInfoCommand.builder()
+                        .teamSeq( teamSeq )
+                        .teamInfo( teamInfo )
+                        .teamRegularExercises( exercises )
+                        .teamLogoImage( teamLogo )
+                        .build()
+        );
 
         return RESPONSE_OK;
     }
