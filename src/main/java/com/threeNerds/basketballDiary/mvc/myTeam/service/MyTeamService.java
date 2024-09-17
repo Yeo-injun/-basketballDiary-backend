@@ -8,6 +8,7 @@ import com.threeNerds.basketballDiary.mvc.game.service.dto.TeamMemberQuery;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.ModifyMyTeamInfoRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.GetTeamInfoResponse;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.*;
+import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.MyTeamInfoCommand;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.MyTeamInfoQuery;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.MyTeamQuery;
 import com.threeNerds.basketballDiary.mvc.team.domain.Team;
@@ -149,33 +150,33 @@ public class MyTeamService {
     }
 
     /**
-     * 소속팀 수정
-     * @param dto
+     * 소속팀 정보 수정
      */
-    public void modifyMyTeamInfo( ModifyMyTeamInfoRequest dto, MultipartFile teamLogo ) {
+    public void modifyMyTeamInfo( MyTeamInfoCommand command ) {
         // TODO 차후 TeamRegularExcerciseDTO로 수정하기. 임시 처리
-        Long teamSeq        = dto.getTeamSeq();
-        List<TeamRegularExerciseDTO> paramExerciseList = dto.getTeamRegularExercises();
+        Long teamSeq            = command.getTeamSeq();
+        TeamInfoDTO teamInfo    = command.getTeamInfo();
+        List<TeamRegularExerciseDTO> paramExerciseList = command.getTeamRegularExercises();
 
         /** 1. 팀정보 수정 - 존재여부 검증 > 이미지 존재여부 확인 및 업로드 > 데이터 수정 */
         Team team = Optional.ofNullable(teamRepository.findByTeamSeq(teamSeq))
                 .orElseThrow(() -> new CustomException(DomainErrorType.NOT_FOUND_ASSIGNED_TEAM));
 
         /** 이미지 업로드 */
-        String imageUploadPath = imageUploader.upload( ImagePath.Type.TEAM_LOGO, teamLogo );
+        String imageUploadPath = imageUploader.upload( ImagePath.Type.TEAM_LOGO, command.getTeamLogoImage() );
 
         teamRepository.updateTeam( Team.builder()
                 .teamSeq(teamSeq)
                 .leaderUserSeq(team.getLeaderUserSeq())
-                .teamName(dto.getTeamName())
+                .teamName(teamInfo.getTeamName())
                 .teamImagePath( "".equals( imageUploadPath ) ? team.getTeamImagePath() : imageUploadPath )
-                .hometown(dto.getHometown())
-                .introduction(dto.getIntroduction())
-                .foundationYmd(dto.getFoundationYmd())
+                .hometown(teamInfo.getHometown())
+                .introduction(teamInfo.getIntroduction())
+                .foundationYmd(teamInfo.getFoundationYmd())
                 .regDate(team.getRegDate())
                 .updateDate(LocalDate.now(ZoneId.of("Asia/Seoul")))
-                .sidoCode(dto.getSidoCode())
-                .sigunguCode(dto.getSigunguCode())
+                .sidoCode(teamInfo.getSidoCode())
+                .sigunguCode(teamInfo.getSigunguCode())
                 .build() );
 
         /* 2. 정기운동내역 수정 */
