@@ -5,8 +5,6 @@ import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import com.threeNerds.basketballDiary.file.ImagePath;
 import com.threeNerds.basketballDiary.file.ImageUploader;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.TeamMemberQuery;
-import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.ModifyMyTeamInfoRequest;
-import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.GetTeamInfoResponse;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.*;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.MyTeamInfoCommand;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.MyTeamInfoQuery;
@@ -22,7 +20,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -153,79 +150,45 @@ public class MyTeamService {
      * 소속팀 정보 수정
      */
     public void modifyMyTeamInfo( MyTeamInfoCommand command ) {
-        // TODO 차후 TeamRegularExcerciseDTO로 수정하기. 임시 처리
+
         Long teamSeq            = command.getTeamSeq();
         TeamInfoDTO teamInfo    = command.getTeamInfo();
-        List<TeamRegularExerciseDTO> paramExerciseList = command.getTeamRegularExercises();
+        List<TeamRegularExerciseDTO> paramExercises = command.getTeamRegularExercises();
 
-        /** 1. 팀정보 수정 - 존재여부 검증 > 이미지 존재여부 확인 및 업로드 > 데이터 수정 */
-        Team team = Optional.ofNullable(teamRepository.findByTeamSeq(teamSeq))
-                .orElseThrow(() -> new CustomException(DomainErrorType.NOT_FOUND_ASSIGNED_TEAM));
-
-        /** 이미지 업로드 */
-        String imageUploadPath = imageUploader.upload( ImagePath.Type.TEAM_LOGO, command.getTeamLogoImage() );
-
-        teamRepository.updateTeam( Team.builder()
-                .teamSeq(teamSeq)
-                .leaderUserSeq(team.getLeaderUserSeq())
-                .teamName(teamInfo.getTeamName())
-                .teamImagePath( "".equals( imageUploadPath ) ? team.getTeamImagePath() : imageUploadPath )
-                .hometown(teamInfo.getHometown())
-                .introduction(teamInfo.getIntroduction())
-                .foundationYmd(teamInfo.getFoundationYmd())
-                .regDate(team.getRegDate())
-                .updateDate(LocalDate.now(ZoneId.of("Asia/Seoul")))
-                .sidoCode(teamInfo.getSidoCode())
-                .sigunguCode(teamInfo.getSigunguCode())
-                .build() );
-
-        /* 2. 정기운동내역 수정 */
-        // 실제 db에 저장된 정기운동내역
-        List<TeamRegularExerciseDTO> dbExerciseList
-                = teamRegularExerciseRepository.findByTeamSeq(teamSeq);
-        // Front에서 받아온 정기운동내역
-        Map<Long, TeamRegularExerciseDTO> paramExerciseMap =
-                paramExerciseList.stream()
-                        .collect(Collectors.toMap(TeamRegularExerciseDTO::getTeamRegularExerciseSeq, dvo->dvo));
-
-        // DB내용 기준으로 Front 데이터와 비교
-        dbExerciseList.forEach(dbData -> {
-            Long dbSeq = dbData.getTeamRegularExerciseSeq();
-            TeamRegularExerciseDTO paramData = paramExerciseMap.get(dbSeq);
-
-            if (paramData != null) {
-                // Seq가 있으므로 조회 후 수정내역 update
-                teamRegularExerciseRepository.updateTeamRegularExercise(TeamRegularExercise.builder()
-                        .teamRegularExerciseSeq(dbSeq)
-                        .teamSeq(teamSeq)
-                        .dayOfTheWeekCode(paramData.getDayOfTheWeekCode())
-                        .startTime(paramData.getStartTime())
-                        .endTime(paramData.getEndTime())
-                        .exercisePlaceAddress(paramData.getExercisePlaceAddress())
-                        .exercisePlaceName(paramData.getExercisePlaceName())
-                        .build());
-                // update했으므로 map에서 해당 정기운동항목 삭제
-                paramExerciseMap.remove(dbSeq);
-            } else {
-                // Front에서 값이 없으면 삭제된 내용임.
-                teamRegularExerciseRepository.deleteTeamRegularExercise(dbSeq);
-            }
-        });
-        // Map에 값이 남아있다면 INSERT 하기.
-        if(paramExerciseMap.size() > 0) {
-            paramExerciseMap.forEach((key, value) -> {
-                TeamRegularExercise teamRegularExercise = TeamRegularExercise.builder()
-                        .teamSeq(teamSeq)
-                        .dayOfTheWeekCode(value.getDayOfTheWeekCode())
-                        .startTime(value.getStartTime())
-                        .endTime(value.getEndTime())
-                        .exercisePlaceAddress(value.getExercisePlaceAddress())
-                        .exercisePlaceName(value.getExercisePlaceName())
-                        .build();
-
-                teamRegularExerciseRepository.saveTeamRegularExercise(teamRegularExercise);
-            });
+        /**----------------------
+         * 팀정보 수정
+         **----------------------*/
+        // 팀 존재여부 확인
+        Team team = teamRepository.findByTeamSeq( teamSeq );
+        if ( null == team ) {
+            throw new CustomException( DomainErrorType.NOT_FOUND_ASSIGNED_TEAM );
         }
+        // 팀 로고 업로드
+        String imageUploadPath = imageUploader.upload( ImagePath.Type.TEAM_LOGO, command.getTeamLogoImage() );
+        // 팀 정보 update
+        teamRepository.updateTeam( team.ofUpdate( teamInfo, imageUploadPath ) );
+
+        /**----------------------
+         * 정기운동시간 수정
+         **----------------------*/
+        if ( paramExercises.isEmpty() ) {
+            return;
+        }
+        // 기존 정기운동시간 삭제
+        teamRegularExerciseRepository.deleteAllByTeamSeq( teamSeq );
+        // 화면에서 입력한 정기운동시간 insert
+        paramExercises.stream()
+            .map( dto -> {
+                return TeamRegularExercise.builder()
+                        .teamSeq(           teamSeq )
+                        .dayOfTheWeekCode(  dto.getDayOfTheWeekCode() )
+                        .startTime(         dto.getStartTime() )
+                        .endTime(           dto.getEndTime() )
+                        .exercisePlaceName( dto.getExercisePlaceName() )
+                        .exercisePlaceAddress( dto.getExercisePlaceAddress() )
+                        .build();
+            })
+            .forEach( teamRegularExerciseRepository::saveTeamRegularExercise );
     }
 
     /**

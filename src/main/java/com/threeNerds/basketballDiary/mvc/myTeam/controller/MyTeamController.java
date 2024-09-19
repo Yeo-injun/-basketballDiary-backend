@@ -386,7 +386,6 @@ public class MyTeamController {
             @RequestPart( value = "teamRegularExercises", required = false ) List<TeamRegularExerciseDTO> exercises,
             @RequestPart( value = "teamLogo", required = false ) MultipartFile teamLogo
     ) {
-
         myTeamService.modifyMyTeamInfo(
                 MyTeamInfoCommand.builder()
                         .teamSeq( teamSeq )
@@ -395,7 +394,6 @@ public class MyTeamController {
                         .teamLogoImage( teamLogo )
                         .build()
         );
-
         return RESPONSE_OK;
     }
 

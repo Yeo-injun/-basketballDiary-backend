@@ -48,28 +48,12 @@
         )
     </insert>
 
-    <update id="updateTeamRegularExercise"
-            parameterType="com.threeNerds.basketballDiary.mvc.team.domain.TeamRegularExercise">
-        /* TeamRegularExerciseRepository.updateTeamRegularExercise */
-        UPDATE TEAM_REGULAR_EXERCISE
-           SET TEAM_SEQ               = #{teamSeq}
-             , DAY_OF_THE_WEEK_CODE   = #{dayOfTheWeekCode}
-             , START_TIME             = #{startTime}
-             , END_TIME               = #{endTime}
-             , EXERCISE_PLACE_ADDRESS = #{exercisePlaceAddress}
-             , EXERCISE_PLACE_NAME    = #{exercisePlaceName}
-        WHERE 1=1
-          AND TEAM_REGULAR_EXERCISE_SEQ = #{teamRegularExerciseSeq}
-    </update>
-
-
-    <delete id="deleteTeamRegularExercise" parameterType="Long">
-        /* TeamRegularExerciseRepository.deleteTeamRegularExercise */
+    <delete id="deleteAllByTeamSeq" parameterType="Long">
+        /* TeamRegularExerciseRepository.deleteAllByTeamSeq */
         DELETE
           FROM TEAM_REGULAR_EXERCISE
          WHERE 1=1
-           AND TEAM_REGULAR_EXERCISE_SEQ = #{teamRegularExerciseSeq}
+           AND TEAM_SEQ = #{teamSeq}
     </delete>
-
 
 </mapper>
