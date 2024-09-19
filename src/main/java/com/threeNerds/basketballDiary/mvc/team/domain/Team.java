@@ -2,6 +2,7 @@ package com.threeNerds.basketballDiary.mvc.team.domain;
 
 import com.threeNerds.basketballDiary.constant.code.type.HomeAwayCode;
 import com.threeNerds.basketballDiary.mvc.game.domain.GameJoinTeam;
+import com.threeNerds.basketballDiary.mvc.myTeam.dto.TeamInfoDTO;
 import com.threeNerds.basketballDiary.mvc.team.controller.request.RegisterTeamRequest;
 import lombok.*;
 
@@ -60,6 +61,23 @@ public class Team {
                     .build();
     }
 
+    public Team ofUpdate( TeamInfoDTO teamInfo, String teamImagePath ) {
+        String imagePath = "".equals( teamImagePath ) ? this.teamImagePath : teamImagePath;
+        return Team.builder()
+                .teamSeq(       this.teamSeq )
+                .leaderUserSeq( this.leaderUserSeq )
+                .teamName(      teamInfo.getTeamName() )
+                .teamImagePath( imagePath )
+                .hometown(      teamInfo.getHometown() )
+                .introduction(  teamInfo.getIntroduction() )
+                .foundationYmd( teamInfo.getFoundationYmd() )
+                .regDate(       this.regDate )
+                .updateDate(    LocalDate.now( ZoneId.of("Asia/Seoul" ) ) )
+                .sidoCode(      teamInfo.getSidoCode() )
+                .sigunguCode(   teamInfo.getSigunguCode() )
+                .build();
+    }
+
     public GameJoinTeam joinGameAsHome( Long gameSeq ) {
         return GameJoinTeam.builder()
                 .gameSeq(       gameSeq )
@@ -77,4 +95,5 @@ public class Team {
                 .homeAwayCode(  HomeAwayCode.AWAY_TEAM.getCode() )
                 .build();
     }
+
 }

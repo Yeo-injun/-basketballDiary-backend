@@ -25,10 +25,10 @@ public interface TeamRegularExerciseRepository {
     /**********
      * UPDATE
      **********/
-    int updateTeamRegularExercise(TeamRegularExercise teamRegularExercise);
 
     /**********
      * DELETE
      **********/
-    int deleteTeamRegularExercise(Long teamRegularExerciseSeq);
+    int deleteAllByTeamSeq( Long teamSeq );
+
 }
