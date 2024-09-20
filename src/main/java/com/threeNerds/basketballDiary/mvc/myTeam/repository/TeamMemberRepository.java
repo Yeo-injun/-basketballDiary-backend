@@ -46,6 +46,6 @@ public interface TeamMemberRepository {
     /**********
      * DELETE
      **********/
-    int deleteTeamMemberByUserSeqAndTeamSeq( TeamMember userDto );
-
+    int deleteTeamMemberByUserSeqAndTeamSeq( TeamMember teamMember );
+    int deleteAllByTeamSeq( Long teamSeq );
 }

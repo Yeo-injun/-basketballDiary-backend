@@ -381,10 +381,10 @@ public class MyTeamController {
     @Auth( level = AuthLevel.TEAM_MANAGER )
     @PostMapping( "/{teamSeq}/info" )
     public ResponseEntity<?> modifyMyTeamInfo(
-            @PathVariable( value = "teamSeq" ) Long teamSeq,
-            @RequestPart( value = "teamInfo", required = false ) TeamInfoDTO teamInfo,
-            @RequestPart( value = "teamRegularExercises", required = false ) List<TeamRegularExerciseDTO> exercises,
-            @RequestPart( value = "teamLogo", required = false ) MultipartFile teamLogo
+        @PathVariable( value = "teamSeq" ) Long teamSeq,
+        @RequestPart( value = "teamInfo", required = false ) TeamInfoDTO teamInfo,
+        @RequestPart( value = "teamRegularExercises", required = false ) List<TeamRegularExerciseDTO> exercises,
+        @RequestPart( value = "teamLogo", required = false ) MultipartFile teamLogo
     ) {
         myTeamService.modifyMyTeamInfo(
                 MyTeamInfoCommand.builder()
@@ -400,16 +400,20 @@ public class MyTeamController {
     /**
      * API018 : 소속팀 정보 삭제
      */
-    // TODO 리팩토링 서비스 패턴 작업
+    @ApiDocs018
     @Auth( level = AuthLevel.TEAM_LEADER )
     @DeleteMapping("/{teamSeq}")
     public ResponseEntity<?> removeMyTeam(
-            @PathVariable(value = "teamSeq") Long teamSeq
+        @SessionAttribute( value = LOGIN_USER ) SessionUser sessionUser,
+        @PathVariable( value = "teamSeq" ) Long teamSeq
     ) {
-        myTeamService.deleteMyTeam( teamSeq );
-
-        // 삭제가 정상적으로 완료된 경우 204 No Content로 응답한다.
-        return ResponseEntity.noContent().build();
+        myTeamService.removeMyTeam(
+            MyTeamCommand.builder()
+                .teamSeq( teamSeq )
+                .leaderUserSeq( sessionUser.getUserSeq() )
+                .build()
+        );
+        return RESPONSE_OK;
     }
 
     /**

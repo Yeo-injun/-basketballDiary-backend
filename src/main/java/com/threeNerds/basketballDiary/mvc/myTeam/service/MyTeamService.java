@@ -6,6 +6,8 @@ import com.threeNerds.basketballDiary.file.ImagePath;
 import com.threeNerds.basketballDiary.file.ImageUploader;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.TeamMemberQuery;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.*;
+import com.threeNerds.basketballDiary.mvc.myTeam.repository.TeamMemberRepository;
+import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.MyTeamCommand;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.MyTeamInfoCommand;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.MyTeamInfoQuery;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.MyTeamQuery;
@@ -21,10 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * 소속팀에서 팀원관리 및 소속팀정보 관리 등의 업무를 수행하는 Service
@@ -57,6 +56,7 @@ public class MyTeamService {
      *-------------------------------------*/
     private final MyTeamRepository myTeamRepository;
     private final TeamRepository teamRepository;
+    private final TeamMemberRepository teamMemberRepository;
     private final TeamRegularExerciseRepository teamRegularExerciseRepository;
 
     /**
@@ -193,23 +193,22 @@ public class MyTeamService {
 
     /**
      * 소속팀 삭제(팀 삭제와 동일)
-     * @param teamSeq
      */
-    public void deleteMyTeam(Long teamSeq) {
-
+    public void removeMyTeam( MyTeamCommand command ) {
+        Long teamSeq = command.getTeamSeq();
+        Team team = teamRepository.findByTeamSeq( teamSeq );
+        if ( null == team ) {
+            throw new CustomException( DomainErrorType.NOT_FOUND_TEAM_INFO );
+        }
+        if ( !team.isTeamLeader( command.getLeaderUserSeq() ) ) {
+            throw new CustomException( DomainErrorType.ONLY_REMOVE_TEAM_BY_LEADER );
+        }
         /**
-         * 1. /:teamSeq 에 가 존재하는 메서드인가? (405)
-         * 2. teamSeq가 유효한 형식인가? (400)
-         * 3. teamSeq에 해당하는 정보가 존재하는가? (404)
-         * 4. 헤더의 인증이 정확한가? (401)
-         * 5. 삭제 권한이 있는가? (403)
-         **/
-
-        // 1. 소속팀이 존재하는지 체크
-        Optional.ofNullable(teamRepository.findByTeamSeq(teamSeq))
-                .orElseThrow(() -> new CustomException(DomainErrorType.NOT_FOUND_ASSIGNED_TEAM));
-
-        teamRepository.deleteById(teamSeq);
+         * 팀정보와 팀원정보 모두 삭제처리
+         * TODO 향후 데이터 정합성 유지를 위해 삭제 flag로 관리하는 방식 검토
+         */
+        teamRepository.deleteById( teamSeq );
+        teamMemberRepository.deleteAllByTeamSeq( teamSeq );
     }
 
 }
