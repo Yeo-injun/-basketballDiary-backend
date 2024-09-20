@@ -114,4 +114,12 @@
            AND TEAM_SEQ = #{teamSeq}
     </delete>
 
+    <delete id="deleteAllByTeamSeq">
+        /* TeamMemberRepository.deleteAllByTeamSeq */
+        DELETE
+          FROM TEAM_MEMBER
+         WHERE 1=1
+           AND TEAM_SEQ = #{teamSeq}
+    </delete>
+
 </mapper>

@@ -47,6 +47,10 @@ public class Team {
     // 팀 이미지 경로
     private String teamImagePath;
 
+    public boolean isTeamLeader( Long userSeq ) {
+        return this.leaderUserSeq.equals( userSeq );
+    }
+
     public static Team create( RegisterTeamRequest teamDTO, String teamImagePath ) {
         LocalDate now = LocalDate.now(ZoneId.of("Asia/Seoul"));
         return Team.builder()
