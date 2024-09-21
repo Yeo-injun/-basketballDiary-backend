@@ -61,3 +61,11 @@ GET http://127.0.0.1:8080/api/myTeams/7/games
 
 GET http://127.0.0.1:8080/api/myTeams/7/allTeamMembers?playerName=성ㅈ
 Cookie: basketballDiary=5B0257C060FCFFA13827DBC70BD03B12; Path=/; Secure; HttpOnly; SameSite=None
+
+
+
+### API018 : 소속팀 삭제
+DELETE http://localhost:18080/api/myTeams/22
+content-type: application/json
+Cookie: basketballD=0A92DFF95E6640641051B8F60D52AADD;
+
