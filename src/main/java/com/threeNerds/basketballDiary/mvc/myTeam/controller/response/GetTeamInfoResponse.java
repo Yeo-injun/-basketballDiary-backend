@@ -1,10 +1,8 @@
 package com.threeNerds.basketballDiary.mvc.myTeam.controller.response;
 
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.MyTeamDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.TeamInfoDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.MyTeamInfoQuery;
 import com.threeNerds.basketballDiary.mvc.team.dto.TeamRegularExerciseDTO;
-import com.threeNerds.basketballDiary.pagination.Pagination;
 import lombok.Getter;
 
 import java.util.List;

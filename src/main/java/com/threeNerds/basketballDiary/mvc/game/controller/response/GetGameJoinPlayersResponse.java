@@ -1,8 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.game.controller.response;
 
 import com.threeNerds.basketballDiary.constant.code.type.HomeAwayCode;
-import com.threeNerds.basketballDiary.mvc.game.dto.GameJoinTeamDTO;
-import com.threeNerds.basketballDiary.mvc.game.dto.GameJoinTeamInfoDTO;
 import com.threeNerds.basketballDiary.mvc.game.dto.PlayerInfoDTO;
 import com.threeNerds.basketballDiary.pagination.Pagination;
 import lombok.Getter;

@@ -5,7 +5,6 @@ import com.threeNerds.basketballDiary.auth.constant.AuthLevel;
 import com.threeNerds.basketballDiary.constant.code.type.JoinRequestStateCode;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.TeamMemberQuery;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.docs.*;
-import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.ModifyMyTeamInfoRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.SearchMyTeamGamesRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.*;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.GetProfileResponse;
@@ -378,16 +377,15 @@ public class MyTeamController {
      * API017 : 소속팀 정보 수정
      * 23.10.28 인준 : 팀 이미지 속성 추가 반영 ( @RequestPart를 적용하여 mulitpart/form 데이터의 객체 바인딩 제공 )
      */
-    // TODO 리팩토링 서비스 패턴 작업
+    @ApiDocs017
     @Auth( level = AuthLevel.TEAM_MANAGER )
     @PostMapping( "/{teamSeq}/info" )
     public ResponseEntity<?> modifyMyTeamInfo(
-            @PathVariable( value = "teamSeq" ) Long teamSeq,
-            @RequestPart( value = "teamInfo", required = false ) TeamInfoDTO teamInfo,
-            @RequestPart( value = "teamRegularExercises", required = false ) List<TeamRegularExerciseDTO> exercises,
-            @RequestPart( value = "teamLogo", required = false ) MultipartFile teamLogo
+        @PathVariable( value = "teamSeq" ) Long teamSeq,
+        @RequestPart( value = "teamInfo", required = false ) TeamInfoDTO teamInfo,
+        @RequestPart( value = "teamRegularExercises", required = false ) List<TeamRegularExerciseDTO> exercises,
+        @RequestPart( value = "teamLogo", required = false ) MultipartFile teamLogo
     ) {
-
         myTeamService.modifyMyTeamInfo(
                 MyTeamInfoCommand.builder()
                         .teamSeq( teamSeq )
@@ -396,23 +394,26 @@ public class MyTeamController {
                         .teamLogoImage( teamLogo )
                         .build()
         );
-
         return RESPONSE_OK;
     }
 
     /**
      * API018 : 소속팀 정보 삭제
      */
-    // TODO 리팩토링 서비스 패턴 작업
+    @ApiDocs018
     @Auth( level = AuthLevel.TEAM_LEADER )
     @DeleteMapping("/{teamSeq}")
     public ResponseEntity<?> removeMyTeam(
-            @PathVariable(value = "teamSeq") Long teamSeq
+        @SessionAttribute( value = LOGIN_USER ) SessionUser sessionUser,
+        @PathVariable( value = "teamSeq" ) Long teamSeq
     ) {
-        myTeamService.deleteMyTeam( teamSeq );
-
-        // 삭제가 정상적으로 완료된 경우 204 No Content로 응답한다.
-        return ResponseEntity.noContent().build();
+        myTeamService.removeMyTeam(
+            MyTeamCommand.builder()
+                .teamSeq( teamSeq )
+                .leaderUserSeq( sessionUser.getUserSeq() )
+                .build()
+        );
+        return RESPONSE_OK;
     }
 
     /**
