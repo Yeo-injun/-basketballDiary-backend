@@ -5,7 +5,6 @@ import com.threeNerds.basketballDiary.auth.constant.AuthLevel;
 import com.threeNerds.basketballDiary.constant.code.type.JoinRequestStateCode;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.TeamMemberQuery;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.docs.*;
-import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.SearchMyTeamGamesRequest;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.*;
 import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.GetProfileResponse;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.TeamInfoDTO;
@@ -414,34 +413,6 @@ public class MyTeamController {
                 .build()
         );
         return RESPONSE_OK;
-    }
-
-    /**
-     * API052 : 소속팀 게임목록조회
-     */
-    // TODO 리팩토링 서비스 패턴 작업
-    @Auth( level = AuthLevel.TEAM_MEMBER )
-    @GetMapping("/{teamSeq}/games")
-    public ResponseEntity<SearchMyTeamGamesResponse> searchMyTeamGames (
-            @SessionAttribute( value = LOGIN_USER ) SessionUser sessionUser                     ,
-            @PathVariable( value = "teamSeq" ) Long teamSeq                                     ,
-            @RequestParam( name = "pageNo", defaultValue = "1") Integer pageNo                  ,
-            @RequestParam( name = "gameBgngYmd"     , required = false ) String gameBgngYmd     ,
-            @RequestParam( name = "gameEndYmd"      , required = false ) String gameEndYmd      ,
-            @RequestParam( name = "sidoCode"        , required = false ) String sidoCode        ,
-            @RequestParam( name = "gamePlaceName"   , required = false ) String gamePlaceName   ,
-            @RequestParam( name = "gameTypeCode"    , required = false ) String gameTypeCode    ,
-            @RequestParam( name = "homeAwayCode"    , required = false ) String homeAwayCode
-    ) {
-        // myTeamGameService.getGames() 소속팀을 기준으로 경기 기록 조회
-        return ResponseEntity.ok(
-            gameRecordManagerService.searchMyTeamGames( new SearchMyTeamGamesRequest(
-                    sessionUser.getUserSeq()    , teamSeq           , pageNo        ,
-                    gameBgngYmd                 , gameEndYmd        , sidoCode      ,
-                    gamePlaceName               , gameTypeCode      , homeAwayCode
-                )
-            )
-        );
     }
 
 }
