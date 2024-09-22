@@ -18,14 +18,7 @@ import com.threeNerds.basketballDiary.mvc.game.dto.SavePlayerRecordDTO;
 import com.threeNerds.basketballDiary.mvc.game.repository.*;
 import com.threeNerds.basketballDiary.mvc.game.repository.dto.GameRecordManagerRepository;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.*;
-import com.threeNerds.basketballDiary.mvc.myTeam.controller.request.SearchMyTeamGamesRequest;
-import com.threeNerds.basketballDiary.mvc.myTeam.controller.response.SearchMyTeamGamesResponse;
-import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameJoinTeamRecordDTO;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameRecordDTO;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.GameSearchCriteriaDTO;
-import com.threeNerds.basketballDiary.mvc.myTeam.repository.TeamMemberRepository;
-import com.threeNerds.basketballDiary.pagination.Pagination;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -47,13 +40,6 @@ public class GameRecordManagerService {
     private final QuarterPlayerRecordsRepository quarterPlayerRecordsRepository;
 
     private final GameRecordManagerRepository gameRecordManagerRepository;
-
-    private final TeamMemberRepository teamMemberRepo;
-
-    private final String QUARTER_1ST_CODE = QuarterCode.FIRST.getCode();
-    private final String QUARTER_2ND_CODE = QuarterCode.SECOND.getCode();
-    private final String QUARTER_3RD_CODE = QuarterCode.THIRD.getCode();
-    private final String QUARTER_4TH_CODE = QuarterCode.FOURTH.getCode();
 
     /**
      * 22.11.06
@@ -186,106 +172,6 @@ public class GameRecordManagerService {
                 .orElse( new QuarterTeamRecordsDTO() );
     }
 
-
-    /** 22.11.06
-     * 소속팀의 게임기록조회
-     * @author 여인준
-     **/
-    public SearchMyTeamGamesResponse searchMyTeamGames( SearchMyTeamGamesRequest message ) {
-
-        /** 소속 팀원인지 확인하기 ( userSeq, teamSeq로 ) */
-        TeamMember teamMemberParam = TeamMember.builder()
-                                        .teamSeq( message.getTeamSeq() )
-                                        .userSeq( message.getUserSeq() )
-                                        .build();
-        TeamMember teamMember = teamMemberRepo.findTeamMember( teamMemberParam );
-        if ( null == teamMember ) {
-            throw new CustomException( DomainErrorType.ONLY_TEAM_MEMBER_QUERY );
-        }
-
-        /** 경기목록 조회 */
-        // TODO 검색기간 조건 쿼리 반영 필요
-        Pagination pagination = Pagination.of( message.getPageNo(), 5 );
-        List<GameRecordDTO> games = gameRecordManagerRepository.findPagingGamesByTeamSeq( new GameSearchCriteriaDTO()
-                .pagination(    pagination )
-                .setSearchSpan( message.getGameBgngYmd(), message.getGameEndYmd() )
-                .teamSeq( 		message.getTeamSeq() )
-                .gameTypeCode( 	message.getGameTypeCode() )
-                .homeAwayCode( 	message.getHomeAwayCode() )
-                .gamePlaceName( message.getGamePlaceName() )
-        );
-
-        if ( games.isEmpty() ) {
-            return new SearchMyTeamGamesResponse( pagination.empty(), Collections.emptyList() );
-        }
-
-        /** 경기별 팀 기록 정보 조회 */
-        for ( GameRecordDTO gr : games ) {
-            gr.gameRecordStateCodeName(gr.getGameRecordStateCode());
-            gr.gameTypeCodeName(gr.getGameTypeCode());
-            if (GameRecordStateCode.CREATION.getCode().equals(gr.getGameRecordStateCode())) {
-                continue;
-            }
-            Long gameSeq = gr.getGameSeq();
-            List<GameJoinTeamRecordDTO> joinTeams = gameRecordManagerRepository.findGameJoinTeamRecordsByGameSeq(gameSeq);
-
-            GameJoinTeamRecordDTO homeTeam = filterGameJoinTeamByHomeAwayCodeTODO(joinTeams, HomeAwayCode.HOME_TEAM);
-            GameJoinTeamRecordDTO awayTeam = filterGameJoinTeamByHomeAwayCodeTODO(joinTeams, HomeAwayCode.AWAY_TEAM);
-
-            gr.homeTeam(homeTeam)
-                    .awayTeam(awayTeam);
-        }
-
-        return new SearchMyTeamGamesResponse( pagination.getPages( games.get( 0 ).getTotalCount() ), games );
-    }
-
-    // TODO 메소드 쪼개기... 함수명과 다른 처리를 하는 동작이 존재...
-    private GameJoinTeamRecordDTO filterGameJoinTeamByHomeAwayCodeTODO(List<GameJoinTeamRecordDTO> joinTeams, HomeAwayCode homeAwayCode) {
-        /** 참가팀 구분 - 홈/어웨이팀 */
-        GameJoinTeamRecordDTO joinTeam = joinTeams.stream()
-                                            .filter(t -> homeAwayCode.getCode().equals(t.getHomeAwayCode()))
-                                            .findFirst()
-                                            // TODO 에러메세지 동적으로 처리하기 homeAwayCode.getName();
-                                            .orElseThrow(() -> new CustomException(DomainErrorType.NOT_FOUND_HOME_TEAM));
-        joinTeam.homeAwayCodeName(joinTeam.getHomeAwayCode());
-
-        /** 참가팀의 기록 조회 */
-        Long gameJoinTeamSeq = joinTeam.getGameJoinTeamSeq();
-        List<QuarterTeamRecords> quarterRecords = quarterTeamRecordsRepository.findQuarterRecordsByJoinTeamSeq(gameJoinTeamSeq);
-
-        /** 조회한 기록으로 게임총점수 계산 */
-        int gameTotalScore = 0;
-        if (quarterRecords.isEmpty()) {
-            joinTeam.gameTotalScore(gameTotalScore);
-            joinTeam.quarterScore1st(0);
-            joinTeam.quarterScore2nd(0);
-            joinTeam.quarterScore3rd(0);
-            joinTeam.quarterScore4th(0);
-            return joinTeam;
-        }
-
-        for (QuarterTeamRecords qtr : quarterRecords)
-        {
-            qtr.calculateQuarterTotalScore();
-            int quarterScore = qtr.getScore();
-            gameTotalScore += quarterScore;
-
-            String quarterCode = qtr.getQuarterCode();
-            if ( QUARTER_1ST_CODE.equals( quarterCode ) ) {
-                joinTeam.quarterScore1st( quarterScore );
-            } else if ( QUARTER_2ND_CODE.equals( quarterCode ) ) {
-                joinTeam.quarterScore2nd( quarterScore );
-            } else if ( QUARTER_3RD_CODE.equals( quarterCode ) ) {
-                joinTeam.quarterScore3rd( quarterScore );
-            } else if ( QUARTER_4TH_CODE.equals( quarterCode ) ) {
-                joinTeam.quarterScore4th( quarterScore );
-            }
-        }
-
-        joinTeam.gameTotalScore( gameTotalScore );
-        return joinTeam;
-    }
-
     /**
      * 2022.12.05
      * 쿼터 삭제
@@ -302,21 +188,6 @@ public class GameRecordManagerService {
                                                             .gameSeq( gameSeq )
                                                             .quarterCode( quarterCode )
                                                             .build() );
-    }
-
-    /**
-     * 23.01.28
-     * 게임참가팀 팀원조회
-     * 게임 입력권한을 부여하기 위해 게임참가팀원을 조회한다.
-     * (이미 권한을 부여받은 선수는 제외한다.)
-     * @param searchGameDTO 게임조회용 DTO
-     * @author 강창기
-     */
-    public List<PlayerInfoDTO> getListTeamMembers(SearchGameDTO searchGameDTO) {
-
-        List<PlayerInfoDTO> resultDVOList = gameRecordManagerRepository.findTeamMembersByGameSeq(searchGameDTO);
-
-        return resultDVOList;
     }
 
     /**
