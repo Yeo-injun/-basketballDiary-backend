@@ -360,12 +360,10 @@ public class MyTeamController {
     @Auth( level = AuthLevel.TEAM_MEMBER )
     @GetMapping("/{teamSeq}/info")
     public ResponseEntity<GetTeamInfoResponse> getMyTeamInfo(
-            @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession,
             @PathVariable(value = "teamSeq") Long teamSeq
     ) {
         MyTeamInfoQuery.Result result = myTeamService.getMyTeamInfo(
                 MyTeamInfoQuery.builder()
-                        .userSeq( userSession.getUserSeq() )
                         .teamSeq( teamSeq )
                         .build()
         );

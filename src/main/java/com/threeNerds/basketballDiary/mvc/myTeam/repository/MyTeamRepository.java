@@ -8,8 +8,6 @@ import java.util.List;
 @Mapper
 public interface MyTeamRepository {
 
-    // 소속팀 단건 조회
-    TeamInfoDTO findByUserSeqAndTeamSeq( FindTeamInfoDTO cond );
     // 운영진 목록 리스트 조회
     List<MemberDTO> findAllManagerByTeamSeq( Long teamSeq );
     // 팀원 목록 페이징 조회
