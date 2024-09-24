@@ -5,9 +5,12 @@ import com.threeNerds.basketballDiary.auth.Auth;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.MyTeamAuthService;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.TeamAuthDTO;
 import com.threeNerds.basketballDiary.mvc.team.controller.request.RegisterTeamRequest;
+import com.threeNerds.basketballDiary.mvc.team.controller.response.SearchTeamGamesResponse;
 import com.threeNerds.basketballDiary.mvc.team.controller.response.SearchTeamsResponse;
 import com.threeNerds.basketballDiary.mvc.team.dto.SearchTeamDTO;
+import com.threeNerds.basketballDiary.mvc.team.service.TeamGameService;
 import com.threeNerds.basketballDiary.mvc.team.service.TeamService;
+import com.threeNerds.basketballDiary.mvc.team.service.dto.TeamGameQuery;
 import com.threeNerds.basketballDiary.session.SessionUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +41,8 @@ import static com.threeNerds.basketballDiary.session.util.SessionUtil.LOGIN_USER
 public class TeamController {
 
     private final TeamService teamService;
+    private final TeamGameService teamGameService;
+    // TODO TeamAuthService로 이전하기
     private final MyTeamAuthService myTeamAuthService;
 
     /**
@@ -87,5 +92,34 @@ public class TeamController {
         TeamAuthDTO authTeamInfo = myTeamAuthService.getAllTeamAuthInfo( TeamAuthDTO.of( loginUserSeq ) );
         sessionUser.setAuthTeams( authTeamInfo.getAuthTeams() );
         return ResponseEntity.ok().build();
+    }
+
+    /**
+     * API052 : 팀의 경기 목록 검색
+     */
+    @GetMapping("/{teamSeq}/games")
+    public ResponseEntity<SearchTeamGamesResponse> searchTeamGames (
+            @PathVariable( value = "teamSeq" ) Long teamSeq                                     ,
+            @RequestParam( name = "pageNo", defaultValue = "1") Integer pageNo                  ,
+            @RequestParam( name = "gameBgngYmd"     , required = false ) String gameBgngYmd     ,
+            @RequestParam( name = "gameEndYmd"      , required = false ) String gameEndYmd      ,
+            @RequestParam( name = "sidoCode"        , required = false ) String sidoCode        ,
+            @RequestParam( name = "gamePlaceName"   , required = false ) String gamePlaceName   ,
+            @RequestParam( name = "gameTypeCode"    , required = false ) String gameTypeCode    ,
+            @RequestParam( name = "homeAwayCode"    , required = false ) String homeAwayCode
+    ) {
+        TeamGameQuery.Result result = teamGameService.searchGames(
+            TeamGameQuery.builder()
+                    .teamSeq(       teamSeq )
+                    .pageNo(        pageNo )
+                    .gameBgngYmd(   gameBgngYmd )
+                    .gameEndYmd(    gameEndYmd )
+                    .sidoCode(      sidoCode )
+                    .gamePlaceName( gamePlaceName )
+                    .gameTypeCode(  gameTypeCode )
+                    .homeAwayCode(  homeAwayCode )
+                    .build()
+        );
+        return ResponseEntity.ok( new SearchTeamGamesResponse( result ) );
     }
 }

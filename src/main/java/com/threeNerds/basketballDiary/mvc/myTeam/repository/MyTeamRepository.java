@@ -9,19 +9,17 @@ import java.util.List;
 public interface MyTeamRepository {
 
     // 소속팀 단건 조회
-    TeamInfoDTO findByUserSeqAndTeamSeq( FindTeamInfoDTO params );
+    TeamInfoDTO findByUserSeqAndTeamSeq( FindTeamInfoDTO cond );
     // 운영진 목록 리스트 조회
-    List<MemberDTO> findAllManagerByTeamSeq(Long teamSeq);
-    // 팀원 목록 리스트 조회 TODO 삭제 검토
-    List<MemberDTO> findAllMemberByTeamSeq(Long teamSeq);
+    List<MemberDTO> findAllManagerByTeamSeq( Long teamSeq );
     // 팀원 목록 페이징 조회
     /** 페이징된 소속팀 목록 조회 */
-    List<MyTeamDTO> findPagingMyTeams(SearchMyTeamDTO searchMyTeamDTO);
+    List<MyTeamDTO> findPagingMyTeams( SearchMyTeamDTO cond );
 
-    List<MemberDTO> findPagingMemberByTeamSeq(MemberDTO memberDTO);
+    List<MemberDTO> findPagingMemberByTeamSeq( MemberDTO cond );
 
     /** 소속팀원 전체 조회 - 페이징 처리 */
-    List<MemberDTO> findAllTeamMemberPaging(MemberDTO searchMemebrCond);
+    List<MemberDTO> findAllTeamMemberPaging( MemberDTO cond );
 
     /**
      * 리팩토링 완료 메소드

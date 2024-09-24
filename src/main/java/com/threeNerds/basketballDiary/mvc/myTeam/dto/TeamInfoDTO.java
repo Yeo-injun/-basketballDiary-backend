@@ -1,13 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.myTeam.dto;
 
-import com.threeNerds.basketballDiary.mvc.team.dto.TeamRegularExerciseDTO;
 import lombok.Getter;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.validation.constraints.NotNull;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 public class TeamInfoDTO {

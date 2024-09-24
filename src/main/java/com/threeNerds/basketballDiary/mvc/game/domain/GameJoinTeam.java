@@ -34,6 +34,10 @@ public class GameJoinTeam {
         this.teamName = this.teamName.replace( this.getTeamNamePrefixByHomeAway() , "" );
     }
 
+    public boolean isHomeTeam() {
+        return HOME_CODE.equals( this.homeAwayCode );
+    }
+
     private String getTeamNamePrefixByHomeAway() {
         switch ( HomeAwayCode.typeOf( this.homeAwayCode ) ) {
             case HOME_TEAM : return HOME_NAME_PREFIX;

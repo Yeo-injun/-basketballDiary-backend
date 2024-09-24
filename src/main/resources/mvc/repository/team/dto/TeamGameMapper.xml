@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.threeNerds.basketballDiary.mvc.team.repository.dto.TeamGameRepository">
+
+    <select id="findPagingTeamGamesByTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.team.dto.TeamGameDTO">
+        /* TeamGameRepository.findPagingTeamGamesByTeamSeq */
+        SELECT *
+          FROM (
+        <include refid="sqlFindAllTeamGamesByTeamSeq" />
+          )
+        ORDERS LIMIT #{pagination.rowCount} OFFSET #{pagination.offset}
+    </select>
+
+    <select id="findTotalCountTeamGamesByTeamSeq" resultType="int" >
+        /* TeamGameRepository.findTotalCountTeamGamesByTeamSeq */
+        SELECT COUNT( 1 )
+          FROM (
+        <include refid="sqlFindAllTeamGamesByTeamSeq" />
+          ) TOTAL
+    </select>
+
+    <sql id="sqlFindAllTeamGamesByTeamSeq" >
+        SELECT G.GAME_SEQ
+             , G.GAME_RECORD_STATE_CODE
+             , G.GAME_TYPE_CODE
+             , G.GAME_YMD
+             , G.GAME_START_TIME
+             , G.GAME_END_TIME
+             , G.GAME_PLACE_ADDRESS
+             , G.GAME_PLACE_NAME
+          FROM GAME G
+         INNER JOIN GAME_JOIN_TEAM GJT
+            ON G.GAME_SEQ = GJT.GAME_SEQ
+         WHERE 1=1
+           AND GJT.TEAM_SEQ = #{teamSeq}
+        <if test='homeAwayCode != null and !"".equals( homeAwayCode )' >
+           AND G.HOME_AWAY_CODE = #{homeAwayCode}
+        </if>
+        <if test='inAllSpan != null and !inAllSpan' >
+           AND G.GAME_YMD BETWEEN #{gameBgngYmd} AND #{gameEndYmd}
+        </if>
+        <if test='gameTypeCode != null and !"".equals( gameTypeCode )' >
+           AND G.GAME_TYPE_CODE = #{gameTypeCode}
+        </if>
+        <if test='gamePlaceName != null and !"".equals( gamePlaceName )' >
+           AND INSTR( G.GAME_PLACE_NAME, #{gamePlaceName} ) > 0
+        </if>
+    </sql>
+
+</mapper>

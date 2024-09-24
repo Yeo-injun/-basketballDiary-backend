@@ -16,6 +16,11 @@ import java.util.List;
 @NoArgsConstructor
 public class QuarterTeamRecords {
 
+    private final QuarterCode FIRST_QUARTER = QuarterCode.FIRST;
+    private final QuarterCode SECOND_QUARTER = QuarterCode.SECOND;
+    private final QuarterCode THIRD_QUARTER = QuarterCode.THIRD;
+    private final QuarterCode FOURTH_QUARTER = QuarterCode.FOURTH;
+
     final private int SCORE_ONE = 1;
     final private int SCORE_TWO = 2;
     final private int SCORE_THREE = 3;
@@ -47,6 +52,22 @@ public class QuarterTeamRecords {
     /** 어웨이팀 기록 생성 ( 선수기록을 팀기록으로 합산 처리 ) */
     public static QuarterTeamRecords ofAway( Long gameSeq, QuarterCode quarterCode, List<QuarterPlayerRecords> playerRecords ) {
         return QuarterTeamRecords.of( gameSeq, quarterCode, HomeAwayCode.AWAY_TEAM, playerRecords );
+    }
+
+    public boolean is1stQuater() {
+        return checkQuarter( FIRST_QUARTER );
+    }
+    public boolean is2ndQuater() {
+        return checkQuarter( SECOND_QUARTER );
+    }
+    public boolean is3rdQuater() {
+        return checkQuarter( THIRD_QUARTER );
+    }
+    public boolean is4thQuater() {
+        return checkQuarter( FOURTH_QUARTER );
+    }
+    private boolean checkQuarter( QuarterCode codeType ) {
+        return codeType.getCode().equals( this.quarterCode );
     }
 
     private static QuarterTeamRecords of( Long gameSeq, QuarterCode quarterCode, HomeAwayCode homeAwayCode, List<QuarterPlayerRecords> playerRecords ) {

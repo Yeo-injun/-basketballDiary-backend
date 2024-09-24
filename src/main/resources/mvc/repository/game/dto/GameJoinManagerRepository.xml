@@ -106,47 +106,6 @@
     </select>
 
 
-    <select id="findGamesByTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.myTeam.dto.GameRecordDTO">
-        /* GameJoinManagerRepository.findGamesByTeamSeq */
-        SELECT GAME_SEQ
-             , GAME_RECORD_STATE_CODE
-             , GAME_TYPE_CODE
-             , GAME_YMD
-             , GAME_START_TIME
-             , GAME_END_TIME
-             , GAME_PLACE_ADDRESS
-             , GAME_PLACE_NAME
-          FROM GAME
-         WHERE 1=1
-           AND GAME_SEQ IN ( SELECT GAME_SEQ
-                               FROM GAME_JOIN_TEAM
-                              WHERE 1=1
-                                AND TEAM_SEQ = #{teamSeq}
-                            /* TODO homeAwayCOde 동적쿼리 구현하기 */
-                              UNION
-                             SELECT gra.GAME_SEQ
-                               FROM TEAM_MEMBER tm
-                              INNER JOIN GAME_RECORD_AUTH gra
-                                 ON gra.TEAM_MEMBER_SEQ = tm.TEAM_MEMBER_SEQ
-                              WHERE 1=1
-                                AND tm.TEAM_SEQ = #{teamSeq}
-                                AND tm.USER_SEQ = #{userSeq}
-                             )
-        /* TODO 검색조건 동적쿼리 처리하기 */
-    </select>
-
-    <select id="findGameJoinTeamRecords" resultType="com.threeNerds.basketballDiary.mvc.myTeam.dto.GameJoinTeamRecordDTO">
-        /* GameJoinManagerRepository.findGameJoinTeamRecords */
-        SELECT GAME_JOIN_TEAM_SEQ
-             , GAME_SEQ
-             , TEAM_SEQ
-             , TEAM_NAME
-             , HOME_AWAY_CODE
-          FROM GAME
-         WHERE 1=1
-           AND GAME_SEQ = #{gameSeq}
-    </select>
-
     <select id="findGameJoinTeams" resultType="com.threeNerds.basketballDiary.mvc.game.dto.GameJoinTeamInfoDTO">
         /* GameJoinManagerRepository.findGameJoinTeams */
         SELECT GJT.GAME_SEQ
