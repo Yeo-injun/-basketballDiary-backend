@@ -23,7 +23,8 @@ public interface TeamMemberRepository {
 
     /** 사용자가 소속된 모든 팀의 팀원정보 조회 */
     List<TeamMember> findAllJoinTeamsByUserSeq( TeamMember teamMember );
-
+    /** 팀의 모든 팀원 조회 */
+    List<TeamMember> findAllTeamMembersByTeamSeq( Long teamSeq );
 
     /**********
      * INSERT
