@@ -24,14 +24,16 @@ public class MyTeamInfoQuery {
     @Getter
     public class Result {
 
-        TeamInfoDTO teamInfo;
-        List<TeamRegularExerciseDTO> regularExercises;
-        Result( TeamInfoDTO teamInfo, List<TeamRegularExerciseDTO> regularExercises ) {
+        private final TeamInfoDTO teamInfo;
+        private final Integer memberCount;
+        private final List<TeamRegularExerciseDTO> regularExercises;
+        Result( TeamInfoDTO teamInfo, Integer memberCount, List<TeamRegularExerciseDTO> regularExercises ) {
             this.teamInfo           = teamInfo;
+            this.memberCount        = memberCount;
             this.regularExercises   = regularExercises;
         }
     }
-    public MyTeamInfoQuery.Result buildResult( TeamInfoDTO teamInfo, List<TeamRegularExerciseDTO> regularExercises ) {
-        return new Result( teamInfo, regularExercises );
+    public MyTeamInfoQuery.Result buildResult( TeamInfoDTO teamInfo, Integer memberCount, List<TeamRegularExerciseDTO> regularExercises ) {
+        return new Result( teamInfo, memberCount, regularExercises );
     }
 }

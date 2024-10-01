@@ -23,6 +23,16 @@
            AND WITHDRAWAL_YN = 'N'
     </select>
 
+    <select id="findAllTeamMembersByTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember">
+        /* TeamMemberRepository.findAllTeamMembersByTeamSeq */
+        SELECT
+        <include refid="AllProperties"/>
+          FROM TEAM_MEMBER
+         WHERE 1=1
+           AND TEAM_SEQ      = #{teamSeq}
+           AND WITHDRAWAL_YN = 'N'
+    </select>
+
     <select id="findTeamMember" resultType="com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember">
         /* TeamMemberRepository.findTeamMember */
         SELECT

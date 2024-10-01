@@ -21,7 +21,8 @@ public class GetTeamInfoResponse {
 
     /* 팀로고 이미지 경로 */
     private String teamLogoImagePath;
-
+    /* 팀원 수 */
+    private Integer memberCount;
     /* 정기운동시간 */
     private List<TeamRegularExerciseDTO> regularExercises;
 
@@ -35,6 +36,7 @@ public class GetTeamInfoResponse {
         this.sigunguCode        = teamInfo.getSigunguCode();
         this.introduction       = teamInfo.getIntroduction();
         this.teamLogoImagePath  = teamInfo.getTeamImagePath();
+        this.memberCount        = query.getMemberCount();
         this.regularExercises   = query.getRegularExercises();
     }
 }

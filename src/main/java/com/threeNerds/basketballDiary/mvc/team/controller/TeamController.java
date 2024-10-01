@@ -4,6 +4,7 @@ import com.threeNerds.basketballDiary.auth.Auth;
 
 import com.threeNerds.basketballDiary.mvc.myTeam.service.MyTeamAuthService;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.TeamAuthDTO;
+import com.threeNerds.basketballDiary.mvc.team.controller.docs.ApiDocs052;
 import com.threeNerds.basketballDiary.mvc.team.controller.request.RegisterTeamRequest;
 import com.threeNerds.basketballDiary.mvc.team.controller.response.SearchTeamGamesResponse;
 import com.threeNerds.basketballDiary.mvc.team.controller.response.SearchTeamsResponse;
@@ -97,6 +98,7 @@ public class TeamController {
     /**
      * API052 : 팀의 경기 목록 검색
      */
+    @ApiDocs052
     @GetMapping("/{teamSeq}/games")
     public ResponseEntity<SearchTeamGamesResponse> searchTeamGames (
             @PathVariable( value = "teamSeq" ) Long teamSeq                                     ,

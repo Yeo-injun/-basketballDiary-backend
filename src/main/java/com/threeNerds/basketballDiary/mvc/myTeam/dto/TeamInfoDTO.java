@@ -1,11 +1,13 @@
 package com.threeNerds.basketballDiary.mvc.myTeam.dto;
 
+import com.threeNerds.basketballDiary.mvc.team.domain.Team;
 import lombok.Getter;
 
 @Getter
 public class TeamInfoDTO {
 
-    private Long teamSeq; /* 팀 pk */
+    /* 팀 pk */
+    private Long teamSeq;
     /* 팀명 */
     private String teamName;
     /* 팀 이미지 경로 */
@@ -21,7 +23,14 @@ public class TeamInfoDTO {
     /* 팀 소개 */
     private String introduction;
 
-    // TEAM_MEMBER
-    /* 회원수 */
-    private Integer totMember;
+    public TeamInfoDTO( Team team ) {
+        this.teamSeq        = team.getTeamSeq();
+        this.teamName       = team.getTeamName();
+        this.teamImagePath  = team.getTeamImagePath();
+        this.hometown       = team.getHometown();
+        this.sidoCode       = team.getSidoCode();
+        this.sigunguCode    = team.getSigunguCode();
+        this.foundationYmd  = team.getFoundationYmd();
+        this.introduction   = team.getIntroduction();
+    }
 }

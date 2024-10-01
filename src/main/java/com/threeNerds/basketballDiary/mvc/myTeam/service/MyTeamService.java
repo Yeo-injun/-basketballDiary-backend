@@ -137,13 +137,16 @@ public class MyTeamService {
      * 소속팀 단건 조회
      */
     public MyTeamInfoQuery.Result getMyTeamInfo( MyTeamInfoQuery query ) {
-        TeamInfoDTO teamInfo = myTeamRepository.findByUserSeqAndTeamSeq( new FindTeamInfoDTO( query.getTeamSeq(), query.getUserSeq() ) );
-        boolean assignedTeam = null != teamInfo;
-        if ( !assignedTeam ) {
-            throw new CustomException( DomainErrorType.NOT_FOUND_ASSIGNED_TEAM );
+        Long teamSeq = query.getTeamSeq();
+        Team team = teamRepository.findByTeamSeq( teamSeq );
+        if ( null == team ) {
+            throw new CustomException( DomainErrorType.NOT_FOUND_TEAM_INFO );
         }
-        List<TeamRegularExerciseDTO> regularExercises = teamRegularExerciseRepository.findByTeamSeq( query.getTeamSeq() );
-        return query.buildResult( teamInfo, regularExercises );
+        return query.buildResult(
+                new TeamInfoDTO( team ),
+                teamMemberRepository.findAllTeamMembersByTeamSeq( teamSeq ).size(),
+                teamRegularExerciseRepository.findByTeamSeq( teamSeq )
+        );
     }
 
     /**

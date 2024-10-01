@@ -3,25 +3,6 @@
 
 <mapper namespace="com.threeNerds.basketballDiary.mvc.myTeam.repository.MyTeamRepository">
 
-    <select id="findByUserSeqAndTeamSeq" resultType="com.threeNerds.basketballDiary.mvc.myTeam.dto.TeamInfoDTO">
-        /* MyTeamRepository.findByUserSeqAndTeamSeq */
-        SELECT A.TEAM_SEQ
-             , B.TEAM_NAME
-             , B.TEAM_IMAGE_PATH
-             , B.HOMETOWN
-             , B.SIDO_CODE
-             , B.SIGUNGU_CODE
-             , B.INTRODUCTION
-             , B.FOUNDATION_YMD
-          FROM TEAM_MEMBER A
-         INNER JOIN TEAM B
-            ON A.TEAM_SEQ = B.TEAM_SEQ
-         WHERE 1=1
-           AND A.USER_SEQ = #{userSeq}
-           AND A.TEAM_SEQ = #{teamSeq}
-           AND A.WITHDRAWAL_YN != 'Y'
-    </select>
-
     <select id="findPagingMyTeams" resultType="com.threeNerds.basketballDiary.mvc.myTeam.dto.MyTeamDTO">
         /* myTeamRepository.findPagingMyTeams */
         SELECT *
