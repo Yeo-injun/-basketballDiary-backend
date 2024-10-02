@@ -4,6 +4,7 @@ import com.threeNerds.basketballDiary.auth.Auth;
 
 import com.threeNerds.basketballDiary.mvc.myTeam.service.MyTeamAuthService;
 import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.TeamAuthDTO;
+import com.threeNerds.basketballDiary.mvc.team.controller.docs.ApiDocs021;
 import com.threeNerds.basketballDiary.mvc.team.controller.docs.ApiDocs052;
 import com.threeNerds.basketballDiary.mvc.team.controller.request.RegisterTeamRequest;
 import com.threeNerds.basketballDiary.mvc.team.controller.response.SearchTeamGamesResponse;
@@ -75,6 +76,7 @@ public class TeamController {
     /**
      * API021 : 팀 생성
      */
+    @ApiDocs021
     @Auth
     @PostMapping
     public ResponseEntity<Void> createTeam(
