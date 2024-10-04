@@ -3,7 +3,6 @@ package com.threeNerds.basketballDiary.mvc.team.service;
 import com.threeNerds.basketballDiary.file.ImagePath;
 import com.threeNerds.basketballDiary.file.ImageUploader;
 import com.threeNerds.basketballDiary.mvc.team.controller.request.RegisterTeamRequest;
-import com.threeNerds.basketballDiary.mvc.team.controller.response.SearchTeamsResponse;
 import com.threeNerds.basketballDiary.mvc.team.domain.Team;
 import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember;
 import com.threeNerds.basketballDiary.mvc.team.domain.TeamRegularExercise;
@@ -14,6 +13,8 @@ import com.threeNerds.basketballDiary.mvc.team.dto.TeamRegularExerciseDTO;
 import com.threeNerds.basketballDiary.mvc.myTeam.repository.TeamMemberRepository;
 import com.threeNerds.basketballDiary.mvc.team.repository.TeamRegularExerciseRepository;
 import com.threeNerds.basketballDiary.mvc.team.repository.TeamRepository;
+import com.threeNerds.basketballDiary.mvc.team.repository.dto.TeamInfoRepository;
+import com.threeNerds.basketballDiary.mvc.team.service.dto.TeamQuery;
 import com.threeNerds.basketballDiary.pagination.Pagination;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -54,29 +55,29 @@ public class TeamService {
     private final TeamRegularExerciseRepository teamRegularExerciseRepository;
     private final TeamMemberRepository teamMemberRepository;
 
+    private final TeamInfoRepository teamInfoRepository;
+
     /**
      * 팀 목록 조회
      * @return List<TeamDTO>
      */
-    public SearchTeamsResponse searchTeams(SearchTeamDTO searchTeamDTO) {
-        if ( searchTeamDTO.getStartTime() != null
-            && searchTeamDTO.getEndTime() != ""
-        ) {
-            searchTeamDTO
-                    .startTime(searchTeamDTO.getStartTime().replace(":", ""))
-                    .endTime(searchTeamDTO.getEndTime().replace(":", ""));
-        }
+    public TeamQuery.Result searchTeams( TeamQuery query ) {
 
         /** 페이징 정보 세팅 */
-        Pagination pagination = Pagination.of( searchTeamDTO.getPageNo(), 5 );
-        searchTeamDTO.pagination( pagination );
+        Pagination pagination = Pagination.of( query.getPageNo(), 5 );
+        SearchTeamDTO searchTeamDTO = new SearchTeamDTO(
+                query.getTeamName(), query.getSigungu(),
+                query.getStartDay(), query.getEndDay(),
+                query.getStartTime(), query.getEndTime(),
+                pagination
+        );
 
         /** 팀목록 조회 */
-        List<TeamDTO> teamSearchResults = teamRepository.findPagingTeam(searchTeamDTO);
+        List<TeamDTO> teamSearchResults = teamInfoRepository.findPaginationTeamInfo( searchTeamDTO );
 
         /** 페이징DTO에 조회 결과 세팅 */
-        if(teamSearchResults.isEmpty()) {
-            return new SearchTeamsResponse( pagination.empty(), Collections.emptyList());
+        if ( teamSearchResults.isEmpty() ) {
+            return query.buildResult( pagination.empty(), Collections.emptyList() );
         }
 
         /** 팀들의 정기운동시간 조회 및 세팅 */
@@ -85,7 +86,7 @@ public class TeamService {
             teamDTO.setTeamRegularExercises( exercises );
         });
 
-        return new SearchTeamsResponse( pagination.getPages( teamSearchResults.get(0).getTotalCount() ), teamSearchResults);
+        return query.buildResult( pagination.getPages( teamInfoRepository.findTotalCountTeamInfo( searchTeamDTO ) ), teamSearchResults );
     }
 
     /**

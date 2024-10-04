@@ -9,10 +9,10 @@ import com.threeNerds.basketballDiary.mvc.team.controller.docs.ApiDocs052;
 import com.threeNerds.basketballDiary.mvc.team.controller.request.RegisterTeamRequest;
 import com.threeNerds.basketballDiary.mvc.team.controller.response.SearchTeamGamesResponse;
 import com.threeNerds.basketballDiary.mvc.team.controller.response.SearchTeamsResponse;
-import com.threeNerds.basketballDiary.mvc.team.dto.SearchTeamDTO;
 import com.threeNerds.basketballDiary.mvc.team.service.TeamGameService;
 import com.threeNerds.basketballDiary.mvc.team.service.TeamService;
 import com.threeNerds.basketballDiary.mvc.team.service.dto.TeamGameQuery;
+import com.threeNerds.basketballDiary.mvc.team.service.dto.TeamQuery;
 import com.threeNerds.basketballDiary.session.SessionUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -60,17 +60,17 @@ public class TeamController {
             @RequestParam(name = "end-time"   , required = false) String endTime,
             @RequestParam(name = "page-no"     , defaultValue = "0") Integer pageNo
     ) {
-        log.info("▒▒▒▒▒ API019: TeamController.searchTeams");
-        SearchTeamDTO searchTeamDTO = new SearchTeamDTO()
-                .teamName(teamName)
-                .sigungu(sigungu)
-                .startDay(startDay)
-                .endDay(endDay)
-                .startTime(startTime)
-                .endTime(endTime)
-                .pageNo(pageNo);
+        TeamQuery query = TeamQuery.builder()
+                            .teamName(  teamName )
+                            .sigungu(   sigungu )
+                            .startDay(  startDay )
+                            .endDay(    endDay )
+                            .startTime( startTime )
+                            .endTime(   endTime )
+                            .pageNo(    pageNo )
+                            .build();
 
-        return ResponseEntity.ok().body( teamService.searchTeams( searchTeamDTO ) );
+        return ResponseEntity.ok().body( new SearchTeamsResponse( teamService.searchTeams( query ) ) );
     }
 
     /**
