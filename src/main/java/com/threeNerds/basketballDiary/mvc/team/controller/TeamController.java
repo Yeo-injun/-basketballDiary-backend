@@ -9,8 +9,10 @@ import com.threeNerds.basketballDiary.mvc.team.controller.docs.ApiDocs052;
 import com.threeNerds.basketballDiary.mvc.team.controller.request.RegisterTeamRequest;
 import com.threeNerds.basketballDiary.mvc.team.controller.response.SearchTeamGamesResponse;
 import com.threeNerds.basketballDiary.mvc.team.controller.response.SearchTeamsResponse;
+import com.threeNerds.basketballDiary.mvc.team.service.TeamAuthService;
 import com.threeNerds.basketballDiary.mvc.team.service.TeamGameService;
 import com.threeNerds.basketballDiary.mvc.team.service.TeamService;
+import com.threeNerds.basketballDiary.mvc.team.service.dto.TeamAuthQuery;
 import com.threeNerds.basketballDiary.mvc.team.service.dto.TeamGameQuery;
 import com.threeNerds.basketballDiary.mvc.team.service.dto.TeamQuery;
 import com.threeNerds.basketballDiary.session.SessionUser;
@@ -44,8 +46,7 @@ public class TeamController {
 
     private final TeamService teamService;
     private final TeamGameService teamGameService;
-    // TODO TeamAuthService로 이전하기
-    private final MyTeamAuthService myTeamAuthService;
+    private final TeamAuthService teamAuthService;
 
     /**
      * API019 : 팀 목록 조회
@@ -92,7 +93,11 @@ public class TeamController {
         ) );
 
         /** 소속팀 권한정보 update */
-        TeamAuthDTO authTeamInfo = myTeamAuthService.getAllTeamAuthInfo( TeamAuthDTO.of( loginUserSeq ) );
+        TeamAuthDTO authTeamInfo = teamAuthService.getAllTeamAuthInfo(
+                TeamAuthQuery.builder()
+                        .userSeq( loginUserSeq )
+                        .build()
+        );
         sessionUser.setAuthTeams( authTeamInfo.getAuthTeams() );
         return ResponseEntity.ok().build();
     }
