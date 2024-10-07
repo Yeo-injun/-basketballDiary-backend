@@ -1,6 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.team.controller.response;
 
-import com.threeNerds.basketballDiary.mvc.team.dto.TeamDTO;
+import com.threeNerds.basketballDiary.mvc.team.mapper.dto.TeamDTO;
 import com.threeNerds.basketballDiary.mvc.team.service.dto.TeamQuery;
 import com.threeNerds.basketballDiary.pagination.Pagination;
 import lombok.Getter;

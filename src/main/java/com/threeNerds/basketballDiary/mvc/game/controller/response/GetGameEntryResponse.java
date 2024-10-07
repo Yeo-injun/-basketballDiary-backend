@@ -1,6 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.game.controller.response;
 
-import com.threeNerds.basketballDiary.mvc.game.dto.QuarterTeamEntryDTO;
+import com.threeNerds.basketballDiary.mvc.game.mapper.dto.QuarterTeamEntryDTO;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.GameEntryQuery;
 import lombok.Getter;
 

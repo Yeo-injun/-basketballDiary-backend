@@ -1,6 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.team.domain;
 
-import com.threeNerds.basketballDiary.mvc.team.dto.TeamRegularExerciseDTO;
+import com.threeNerds.basketballDiary.mvc.team.mapper.dto.TeamRegularExerciseDTO;
 import lombok.*;
 
 @Getter

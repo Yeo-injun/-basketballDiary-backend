@@ -6,26 +6,23 @@ import com.threeNerds.basketballDiary.constant.code.type.HomeAwayCode;
 import com.threeNerds.basketballDiary.constant.code.type.PlayerTypeCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
-import com.threeNerds.basketballDiary.exception.error.SystemErrorType;
-import com.threeNerds.basketballDiary.mvc.game.controller.response.GetAllGameJoinPlayersResponse;
-import com.threeNerds.basketballDiary.mvc.game.dto.QuarterTeamEntryDTO;
+import com.threeNerds.basketballDiary.mvc.game.mapper.dto.*;
 import com.threeNerds.basketballDiary.mvc.game.domain.Game;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.*;
-import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember;
-import com.threeNerds.basketballDiary.mvc.myTeam.repository.TeamMemberRepository;
+import com.threeNerds.basketballDiary.mvc.team.domain.TeamMember;
+import com.threeNerds.basketballDiary.mvc.team.domain.repository.TeamMemberRepository;
 import com.threeNerds.basketballDiary.mvc.team.domain.Team;
 import com.threeNerds.basketballDiary.mvc.user.domain.User;
 import com.threeNerds.basketballDiary.mvc.game.domain.GameJoinPlayer;
 import com.threeNerds.basketballDiary.mvc.game.domain.GameJoinTeam;
 import com.threeNerds.basketballDiary.mvc.game.domain.QuarterPlayerRecords;
-import com.threeNerds.basketballDiary.mvc.game.dto.*;
-import com.threeNerds.basketballDiary.mvc.game.repository.GameJoinPlayerRepository;
-import com.threeNerds.basketballDiary.mvc.game.repository.GameJoinTeamRepository;
-import com.threeNerds.basketballDiary.mvc.game.repository.GameRepository;
-import com.threeNerds.basketballDiary.mvc.game.repository.QuarterPlayerRecordsRepository;
-import com.threeNerds.basketballDiary.mvc.game.repository.dto.GameJoinManagerRepository;
-import com.threeNerds.basketballDiary.mvc.team.repository.TeamRepository;
-import com.threeNerds.basketballDiary.mvc.user.repository.UserRepository;
+import com.threeNerds.basketballDiary.mvc.game.domain.repository.GameJoinPlayerRepository;
+import com.threeNerds.basketballDiary.mvc.game.domain.repository.GameJoinTeamRepository;
+import com.threeNerds.basketballDiary.mvc.game.domain.repository.GameRepository;
+import com.threeNerds.basketballDiary.mvc.game.domain.repository.QuarterPlayerRecordsRepository;
+import com.threeNerds.basketballDiary.mvc.game.mapper.GameJoinMapper;
+import com.threeNerds.basketballDiary.mvc.team.domain.repository.TeamRepository;
+import com.threeNerds.basketballDiary.mvc.user.domain.repository.UserRepository;
 
 
 import com.threeNerds.basketballDiary.pagination.Pagination;
@@ -52,7 +49,7 @@ public class GameJoinManagerService {
     private final GameJoinPlayerRepository gameJoinPlayerRepository;
     private final QuarterPlayerRecordsRepository quarterPlayerRecordsRepo;
 
-    private final GameJoinManagerRepository gameJoinManagerRepo;
+    private final GameJoinMapper gameJoinManagerRepo;
 
     /**
      * 경기 생성시 최초 경기 참가정보 생성

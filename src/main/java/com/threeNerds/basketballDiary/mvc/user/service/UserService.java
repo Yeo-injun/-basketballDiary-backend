@@ -3,16 +3,16 @@ package com.threeNerds.basketballDiary.mvc.user.service;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import com.threeNerds.basketballDiary.exception.error.SystemErrorType;
-import com.threeNerds.basketballDiary.mvc.user.dto.UserQueryCondDTO;
-import com.threeNerds.basketballDiary.mvc.user.repository.dto.ProfileQueryRepository;
-import com.threeNerds.basketballDiary.mvc.user.repository.dto.UserQueryRepository;
+import com.threeNerds.basketballDiary.mvc.user.mapper.dto.UserQueryCondDTO;
+import com.threeNerds.basketballDiary.mvc.user.mapper.UserProfileMapper;
+import com.threeNerds.basketballDiary.mvc.user.mapper.UserMapper;
 import com.threeNerds.basketballDiary.mvc.user.service.dto.PasswordCommand;
 import com.threeNerds.basketballDiary.mvc.user.service.dto.ProfileCommand;
 import com.threeNerds.basketballDiary.mvc.user.domain.User;
 
-import com.threeNerds.basketballDiary.mvc.user.dto.MyProfileDTO;
-import com.threeNerds.basketballDiary.mvc.user.dto.UserDTO;
-import com.threeNerds.basketballDiary.mvc.user.repository.UserRepository;
+import com.threeNerds.basketballDiary.mvc.user.mapper.dto.MyProfileDTO;
+import com.threeNerds.basketballDiary.mvc.user.mapper.dto.UserDTO;
+import com.threeNerds.basketballDiary.mvc.user.domain.repository.UserRepository;
 import com.threeNerds.basketballDiary.mvc.user.service.dto.MembershipCommand;
 import com.threeNerds.basketballDiary.mvc.user.service.dto.UserQuery;
 import com.threeNerds.basketballDiary.pagination.Pagination;
@@ -44,8 +44,8 @@ public class UserService {
     private final UserRepository userRepository;
 
     /** 조회용 레포지토리 */
-    private final UserQueryRepository userQueryRepository;
-    private final ProfileQueryRepository profileQueryRepository;
+    private final UserMapper userQueryRepository;
+    private final UserProfileMapper profileQueryRepository;
 
     /**
      * 회원 조회
