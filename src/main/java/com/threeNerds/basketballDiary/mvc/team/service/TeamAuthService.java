@@ -40,7 +40,7 @@ public class TeamAuthService {
      **--------------------------------------*/
     private final TeamMemberRepository teamMemberRepo;
     
-    public TeamAuthDTO getAllTeamAuthInfo( TeamAuthQuery query ) {
+    public TeamAuthQuery.Result getAllTeamAuthInfo( TeamAuthQuery query ) {
 
         Long userSeq = query.getUserSeq();
         TeamMember teamMemberParam = TeamMember.builder()
@@ -50,11 +50,11 @@ public class TeamAuthService {
         List<TeamMember> joinTeamList = teamMemberRepo.findAllJoinTeamsByUserSeq( teamMemberParam );
         Map< Long, AuthLevel > teamAuthMap = joinTeamList.stream()
                                                     .collect( Collectors.toMap(
-                                                                TeamMember::getTeamSeq,
-                                                                item -> AuthLevel.of( AuthType.TEAM, Integer.parseInt( item.getTeamAuthCode() ) )
-                                                            )
-                                                );
-        return TeamAuthDTO.ofJoinTeam( userSeq, teamAuthMap );
+                                                                                TeamMember::getTeamSeq,
+                                                                                item -> AuthLevel.of( AuthType.TEAM, Integer.parseInt( item.getTeamAuthCode() ) )
+                                                                                )
+                                                    );
+        return query.buildResult( teamAuthMap );
     }
 
     /**

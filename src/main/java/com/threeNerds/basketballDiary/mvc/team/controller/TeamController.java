@@ -92,13 +92,13 @@ public class TeamController {
                 teamLogoImage
         ) );
 
-        /** 소속팀 권한정보 update */
-        TeamAuthDTO authTeamInfo = teamAuthService.getAllTeamAuthInfo(
+        /** 세션의 소속팀 권한정보 update */
+        TeamAuthQuery.Result authResult = teamAuthService.getAllTeamAuthInfo(
                 TeamAuthQuery.builder()
                         .userSeq( loginUserSeq )
                         .build()
         );
-        sessionUser.setAuthTeams( authTeamInfo.getAuthTeams() );
+        sessionUser.setAuthTeams( authResult.getAuthTeams() );
         return ResponseEntity.ok().build();
     }
 
