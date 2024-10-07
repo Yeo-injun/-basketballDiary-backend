@@ -1,14 +1,18 @@
 package com.threeNerds.basketballDiary.mvc.team.controller.request;
 
 import com.threeNerds.basketballDiary.mvc.team.dto.TeamRegularExerciseDTO;
+import com.threeNerds.basketballDiary.mvc.team.service.dto.TeamCommand;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotEmpty;
+import java.util.Collections;
 import java.util.List;
 
 @Getter
-public class RegisterTeamRequest {
+@NoArgsConstructor
+public class CreateTeamRequest {
 
     /* 팀장사용자Seq */
     private Long leaderUserSeq;
@@ -34,22 +38,18 @@ public class RegisterTeamRequest {
     /* 팀로고 이미지 */
     private MultipartFile teamLogoImage;
 
-    /**
-     * 기본생성자 선언 - MessageBinding시 Jackson 라이브러리 정책 때문에 선언
-     */
-    public RegisterTeamRequest() {
 
-    }
-
-    public RegisterTeamRequest( Long userSeq, RegisterTeamRequest reqBody, MultipartFile teamLogoImage ) {
-        this.leaderUserSeq  = userSeq;
-        this.teamName       = reqBody.getTeamName();
-        this.hometown       = reqBody.getHometown();
-        this.sidoCode       = reqBody.getSidoCode();
-        this.sigunguCode    = reqBody.getSigunguCode();
-        this.foundationYmd  = reqBody.getFoundationYmd();
-        this.introduction   = reqBody.getIntroduction();
-        this.teamRegularExercises = reqBody.getTeamRegularExercises();
-        this.teamLogoImage  = teamLogoImage;
+    public TeamCommand toCommand( Long userSeq, MultipartFile teamLogoImage ) {
+        return TeamCommand.builder()
+                .leaderUserSeq( userSeq )
+                .teamName( teamName )
+                .hometown( hometown )
+                .sidoCode( sidoCode )
+                .sigunguCode( sigunguCode )
+                .foundationYmd( foundationYmd )
+                .introduction( introduction )
+                .teamRegularExercises( null == teamRegularExercises ? Collections.emptyList() : teamRegularExercises )
+                .teamLogoImage( teamLogoImage )
+                .build();
     }
 }

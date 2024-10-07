@@ -1,9 +1,11 @@
 package com.threeNerds.basketballDiary.mvc.team.domain;
 
 import com.threeNerds.basketballDiary.constant.code.type.HomeAwayCode;
+import com.threeNerds.basketballDiary.constant.code.type.TeamAuthCode;
 import com.threeNerds.basketballDiary.mvc.game.domain.GameJoinTeam;
+import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember;
 import com.threeNerds.basketballDiary.mvc.myTeam.dto.TeamInfoDTO;
-import com.threeNerds.basketballDiary.mvc.team.controller.request.RegisterTeamRequest;
+
 import lombok.*;
 
 import java.time.LocalDate;
@@ -51,18 +53,15 @@ public class Team {
         return this.leaderUserSeq.equals( userSeq );
     }
 
-    public static Team create( RegisterTeamRequest teamDTO, String teamImagePath ) {
-        LocalDate now = LocalDate.now(ZoneId.of("Asia/Seoul"));
-        return Team.builder()
-                    .teamName(      teamDTO.getTeamName() )
-                    .hometown(      teamDTO.getHometown() )
-                    .foundationYmd( teamDTO.getFoundationYmd() )
-                    .introduction(  teamDTO.getIntroduction() )
-                    .teamImagePath( teamImagePath )
-                    .leaderUserSeq( teamDTO.getLeaderUserSeq() )
-                    .regDate(       now )
-                    .updateDate(    now )
-                    .build();
+    public TeamMember createLeader() {
+        String currentYmd = LocalDate.now().toString().replace("-", "");
+        return TeamMember.builder()
+                .teamSeq(       teamSeq )
+                .userSeq(       leaderUserSeq )
+                .teamAuthCode(  TeamAuthCode.LEADER.getCode() )
+                .joinYmd(       currentYmd )
+                .withdrawalYn(  "N" )
+                .build();
     }
 
     public Team ofUpdate( TeamInfoDTO teamInfo, String teamImagePath ) {
