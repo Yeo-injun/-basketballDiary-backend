@@ -1,7 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.game.service.dto;
 
 import com.threeNerds.basketballDiary.constant.code.type.GameRecordStateCode;
-import com.threeNerds.basketballDiary.mvc.game.dto.QuarterAllTeamsRecordsDTO;
+import com.threeNerds.basketballDiary.mvc.game.mapper.dto.QuarterAllTeamsRecordsDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

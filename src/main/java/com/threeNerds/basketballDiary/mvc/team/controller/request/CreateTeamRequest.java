@@ -1,6 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.team.controller.request;
 
-import com.threeNerds.basketballDiary.mvc.team.dto.TeamRegularExerciseDTO;
+import com.threeNerds.basketballDiary.mvc.team.mapper.dto.TeamRegularExerciseDTO;
 import com.threeNerds.basketballDiary.mvc.team.service.dto.TeamCommand;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

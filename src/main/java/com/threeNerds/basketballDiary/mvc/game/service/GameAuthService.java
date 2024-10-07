@@ -4,10 +4,10 @@ import com.threeNerds.basketballDiary.auth.constant.AuthLevel;
 import com.threeNerds.basketballDiary.auth.constant.AuthType;
 import com.threeNerds.basketballDiary.constant.code.type.GameRecordAuthCode;
 import com.threeNerds.basketballDiary.mvc.game.domain.*;
-import com.threeNerds.basketballDiary.mvc.game.dto.GameRecorderCandidateDTO;
-import com.threeNerds.basketballDiary.mvc.game.dto.GameRecorderDTO;
-import com.threeNerds.basketballDiary.mvc.game.repository.*;
-import com.threeNerds.basketballDiary.mvc.game.repository.dto.GameRecorderRepository;
+import com.threeNerds.basketballDiary.mvc.game.domain.repository.GameRecordAuthRepository;
+import com.threeNerds.basketballDiary.mvc.game.mapper.dto.GameRecorderCandidateDTO;
+import com.threeNerds.basketballDiary.mvc.game.mapper.dto.GameRecorderDTO;
+import com.threeNerds.basketballDiary.mvc.game.mapper.GameRecorderMapper;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 public class GameAuthService {
 
     private final GameRecordAuthRepository gameRecordAuthRepo;
-    private final GameRecorderRepository gameRecorderRepo;
+    private final GameRecorderMapper gameRecorderRepo;
 
     /**
      * 2022.01.04

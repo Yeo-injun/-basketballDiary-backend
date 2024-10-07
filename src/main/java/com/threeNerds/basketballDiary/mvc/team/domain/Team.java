@@ -3,8 +3,7 @@ package com.threeNerds.basketballDiary.mvc.team.domain;
 import com.threeNerds.basketballDiary.constant.code.type.HomeAwayCode;
 import com.threeNerds.basketballDiary.constant.code.type.TeamAuthCode;
 import com.threeNerds.basketballDiary.mvc.game.domain.GameJoinTeam;
-import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember;
-import com.threeNerds.basketballDiary.mvc.myTeam.dto.TeamInfoDTO;
+import com.threeNerds.basketballDiary.mvc.team.mapper.dto.TeamInfoDTO;
 
 import lombok.*;
 

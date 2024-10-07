@@ -1,6 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.game.controller.response;
 
-import com.threeNerds.basketballDiary.mvc.game.dto.PlayerInfoDTO;
+import com.threeNerds.basketballDiary.mvc.game.mapper.dto.PlayerInfoDTO;
 import lombok.Getter;
 
 import java.util.List;

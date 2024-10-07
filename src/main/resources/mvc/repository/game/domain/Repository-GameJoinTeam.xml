@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.threeNerds.basketballDiary.mvc.game.domain.repository.GameJoinTeamRepository">
+
+    <sql id="SelectDomainProperties">
+        SELECT GAME_JOIN_TEAM_SEQ
+             , GAME_SEQ
+             , TEAM_SEQ
+             , TEAM_NAME
+             , HOME_AWAY_CODE
+          FROM GAME_JOIN_TEAM
+         WHERE 1=1
+    </sql>
+
+    <select id="findGameJoinTeam" resultType="com.threeNerds.basketballDiary.mvc.game.domain.GameJoinTeam">
+        /* GameJoinTeamRepository.findGameJoinTeam */
+        <include refid="SelectDomainProperties" />
+           AND GAME_SEQ       = #{gameSeq}
+           AND HOME_AWAY_CODE = #{homeAwayCode}
+    </select>
+
+    <select id="findAllGameJoinTeam" resultType="com.threeNerds.basketballDiary.mvc.game.domain.GameJoinTeam">
+        /* GameJoinTeamRepository.findAllGameJoinTeam */
+        <include refid="SelectDomainProperties" />
+           AND GAME_SEQ = #{gameSeq}
+    </select>
+
+
+    <insert id="saveGameJoinTeam" parameterType="com.threeNerds.basketballDiary.mvc.game.domain.GameJoinTeam" useGeneratedKeys="true" keyProperty="gameJoinTeamSeq">
+        <selectKey keyProperty="gameJoinTeamSeq" order="AFTER" resultType="java.lang.Long">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        /* GameJoinTeamRepository.saveGameJoinTeam */
+        INSERT INTO
+          GAME_JOIN_TEAM (
+                GAME_SEQ
+              , TEAM_SEQ
+              , TEAM_NAME
+              , HOME_AWAY_CODE
+        )
+        VALUES (
+                #{gameSeq}
+              , #{teamSeq}
+              , #{teamName}
+              , #{homeAwayCode}
+        )
+    </insert>
+
+    <update id="updateTeamName" parameterType="com.threeNerds.basketballDiary.mvc.game.domain.GameJoinTeam" >
+        /* GameJoinTeamRepository.updateTeamName */
+        UPDATE GAME_JOIN_TEAM
+           SET TEAM_NAME = #{teamName}
+         WHERE 1=1
+           AND GAME_SEQ         = #{gameSeq}
+           AND HOME_AWAY_CODE   = #{homeAwayCode}
+    </update>
+
+
+    <delete id="deleteByGame" parameterType="Long">
+        /* GameJoinTeamRepository.deleteByGame */
+        DELETE
+          FROM GAME_JOIN_TEAM
+         WHERE GAME_SEQ = ${gameSeq}
+    </delete>
+</mapper>

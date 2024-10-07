@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.threeNerds.basketballDiary.mvc.team.mapper.TeamMapper">
+
+
+    <select id="findPaginationTeamInfo" resultType="com.threeNerds.basketballDiary.mvc.team.mapper.dto.TeamDTO">
+        /* TeamMapper.findPaginationTeamInfo */
+        SELECT *
+        FROM (
+        <include refid="sqlFindAllTeamInfo" />
+        ) ORDERS LIMIT #{pagination.rowCount} OFFSET #{pagination.offset}
+    </select>
+
+    <select id="findTotalCountTeamInfo" resultType="int">
+        /* TeamMapper.findTotalCountTeamInfo */
+        SELECT COUNT( 1 )
+          FROM (
+        <include refid="sqlFindAllTeamInfo" />
+          ) MAIN
+    </select>
+
+    <sql id="sqlFindAllTeamInfo" >
+        SELECT A.TEAM_SEQ
+             , A.LEADER_USER_SEQ
+             , A.TEAM_NAME
+             , A.TEAM_IMAGE_PATH
+             , A.HOMETOWN
+             , A.INTRODUCTION
+             , A.FOUNDATION_YMD
+             , A.REG_DATE
+             , A.UPDATE_DATE
+             , A.SIDO_CODE
+             , A.SIGUNGU_CODE
+             , (
+                SELECT COUNT( 1 )
+                  FROM TEAM_MEMBER
+                 WHERE 1=1
+                   AND WITHDRAWAL_YN != 'Y'
+                   AND TEAM_SEQ = A.TEAM_SEQ
+                 GROUP BY TEAM_SEQ
+                ) TOT_MEMBER
+          FROM TEAM A
+          LEFT JOIN TEAM_REGULAR_EXERCISE B
+            ON A.TEAM_SEQ = B.TEAM_SEQ
+         WHERE 1=1
+        <if test="teamName != null and !''.equals(teamName)">
+           AND A.TEAM_NAME LIKE CONCAT('%', IFNULL(#{teamName}, ''), '%')
+        </if>
+        <if test="sigungu != null and !''.equals(sigungu)">
+           AND A.SIGUNGU_CODE = #{sigungu}
+        </if>
+        <if test="startDay != null and !''.equals(startDay) and endDay != null and !''.equals(endDay)">
+           AND DAY_OF_THE_WEEK_CODE <![CDATA[>=]]> #{startDay}
+           AND DAY_OF_THE_WEEK_CODE <![CDATA[<=]]> #{endDay}
+        </if>
+        <if test="startTime != null and !''.equals(startTime) and endTime != null and !''.equals(endTime)">
+           AND START_TIME <![CDATA[>=]]> #{startTime}
+           AND END_TIME <![CDATA[<=]]> #{endTime}
+        </if>
+         GROUP BY A.TEAM_SEQ
+         ORDER BY A.TEAM_NAME
+    </sql>
+
+</mapper>

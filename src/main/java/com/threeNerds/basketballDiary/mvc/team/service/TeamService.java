@@ -5,13 +5,13 @@ import com.threeNerds.basketballDiary.file.ImageUploader;
 import com.threeNerds.basketballDiary.mvc.team.domain.Team;
 import com.threeNerds.basketballDiary.mvc.team.domain.TeamRegularExercise;
 
-import com.threeNerds.basketballDiary.mvc.team.dto.SearchTeamDTO;
-import com.threeNerds.basketballDiary.mvc.team.dto.TeamDTO;
-import com.threeNerds.basketballDiary.mvc.team.dto.TeamRegularExerciseDTO;
-import com.threeNerds.basketballDiary.mvc.myTeam.repository.TeamMemberRepository;
-import com.threeNerds.basketballDiary.mvc.team.repository.TeamRegularExerciseRepository;
-import com.threeNerds.basketballDiary.mvc.team.repository.TeamRepository;
-import com.threeNerds.basketballDiary.mvc.team.repository.dto.TeamInfoRepository;
+import com.threeNerds.basketballDiary.mvc.team.mapper.dto.SearchTeamDTO;
+import com.threeNerds.basketballDiary.mvc.team.mapper.dto.TeamDTO;
+import com.threeNerds.basketballDiary.mvc.team.mapper.dto.TeamRegularExerciseDTO;
+import com.threeNerds.basketballDiary.mvc.team.domain.repository.TeamMemberRepository;
+import com.threeNerds.basketballDiary.mvc.team.domain.repository.TeamRegularExerciseRepository;
+import com.threeNerds.basketballDiary.mvc.team.domain.repository.TeamRepository;
+import com.threeNerds.basketballDiary.mvc.team.mapper.TeamMapper;
 import com.threeNerds.basketballDiary.mvc.team.service.dto.TeamCommand;
 import com.threeNerds.basketballDiary.mvc.team.service.dto.TeamQuery;
 import com.threeNerds.basketballDiary.pagination.Pagination;
@@ -53,7 +53,7 @@ public class TeamService {
     private final TeamRegularExerciseRepository teamRegularExerciseRepository;
     private final TeamMemberRepository teamMemberRepository;
 
-    private final TeamInfoRepository teamInfoRepository;
+    private final TeamMapper teamMapper;
 
     /**
      * 팀 목록 조회
@@ -71,7 +71,7 @@ public class TeamService {
         );
 
         /** 팀목록 조회 */
-        List<TeamDTO> teamSearchResults = teamInfoRepository.findPaginationTeamInfo( searchTeamDTO );
+        List<TeamDTO> teamSearchResults = teamMapper.findPaginationTeamInfo( searchTeamDTO );
 
         /** 페이징DTO에 조회 결과 세팅 */
         if ( teamSearchResults.isEmpty() ) {
@@ -84,7 +84,7 @@ public class TeamService {
             teamDTO.setTeamRegularExercises( exercises );
         });
 
-        return query.buildResult( pagination.getPages( teamInfoRepository.findTotalCountTeamInfo( searchTeamDTO ) ), teamSearchResults );
+        return query.buildResult( pagination.getPages( teamMapper.findTotalCountTeamInfo( searchTeamDTO ) ), teamSearchResults );
     }
 
     /**

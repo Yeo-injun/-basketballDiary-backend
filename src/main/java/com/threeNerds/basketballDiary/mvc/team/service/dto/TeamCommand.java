@@ -1,14 +1,13 @@
 package com.threeNerds.basketballDiary.mvc.team.service.dto;
 
 import com.threeNerds.basketballDiary.mvc.team.domain.Team;
-import com.threeNerds.basketballDiary.mvc.team.dto.TeamRegularExerciseDTO;
+import com.threeNerds.basketballDiary.mvc.team.mapper.dto.TeamRegularExerciseDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.constraints.NotEmpty;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;

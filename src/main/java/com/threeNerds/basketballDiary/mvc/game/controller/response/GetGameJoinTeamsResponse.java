@@ -1,6 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.game.controller.response;
 
-import com.threeNerds.basketballDiary.mvc.game.dto.GameJoinTeamInfoDTO;
+import com.threeNerds.basketballDiary.mvc.game.mapper.dto.GameJoinTeamInfoDTO;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.GameJoinTeamQuery;
 import lombok.Getter;
 

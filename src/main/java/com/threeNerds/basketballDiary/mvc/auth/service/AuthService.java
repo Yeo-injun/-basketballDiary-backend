@@ -6,7 +6,7 @@ import com.threeNerds.basketballDiary.mvc.auth.service.dto.LoginUserQuery;
 import com.threeNerds.basketballDiary.mvc.user.domain.User;
 
 
-import com.threeNerds.basketballDiary.mvc.user.repository.UserRepository;
+import com.threeNerds.basketballDiary.mvc.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

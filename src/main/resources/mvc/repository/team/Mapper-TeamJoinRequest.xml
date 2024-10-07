@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.threeNerds.basketballDiary.mvc.team.mapper.TeamJoinRequestMapper">
+
+    <select id="findAllByMyTeam" resultType="com.threeNerds.basketballDiary.mvc.team.mapper.dto.TeamJoinRequestDTO">
+        /* TeamJoinRequestMapper.findAllByMyTeam */
+        SELECT A.TEAM_JOIN_REQUEST_SEQ
+               , A.REQUEST_DATE
+               , A.JOIN_REQUEST_STATE_CODE
+               , A.CONFIRMATION_DATE
+               , B.NAME
+               , B.EMAIL
+               , B.POSITION_CODE
+               , B.HEIGHT
+               , B.WEIGHT
+          FROM TEAM_JOIN_REQUEST A
+         INNER JOIN USER B
+            ON A.USER_SEQ = B.USER_SEQ
+         WHERE 1=1
+           AND A.TEAM_SEQ = #{teamSeq}
+           AND A.JOIN_REQUEST_TYPE_CODE = #{joinRequestTypeCode}
+           /* 요청상태코드는 대기중(01), 거절(03)인 것만 조회 가능하다. */
+        <choose>
+            <when test='"01".equals( joinRequestStateCode )'>
+           AND A.JOIN_REQUEST_STATE_CODE = '01'
+            </when>
+            <when test='"03".equals( joinRequestStateCode )'>
+           AND A.JOIN_REQUEST_STATE_CODE = '03'
+            </when>
+            <otherwise>
+           AND A.JOIN_REQUEST_STATE_CODE IN ( '01', '03' )
+            </otherwise>
+        </choose>
+    </select>
+
+
+</mapper>
