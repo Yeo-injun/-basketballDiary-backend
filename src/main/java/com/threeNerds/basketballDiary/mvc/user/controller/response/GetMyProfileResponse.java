@@ -1,6 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.user.controller.response;
 
-import com.threeNerds.basketballDiary.mvc.user.dto.MyProfileDTO;
+import com.threeNerds.basketballDiary.mvc.user.mapper.dto.MyProfileDTO;
 import lombok.Getter;
 
 @Getter

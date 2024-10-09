@@ -1,10 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.game.service.dto;
 
-import com.threeNerds.basketballDiary.constant.code.type.HomeAwayCode;
-import com.threeNerds.basketballDiary.exception.CustomException;
-import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
-import com.threeNerds.basketballDiary.mvc.game.dto.PlayerInfoDTO;
-import com.threeNerds.basketballDiary.mvc.game.dto.QuarterTeamEntryDTO;
+import com.threeNerds.basketballDiary.mvc.game.mapper.dto.PlayerInfoDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

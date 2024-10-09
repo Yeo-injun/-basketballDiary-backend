@@ -5,12 +5,12 @@ import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.mvc.game.domain.Game;
 
-import com.threeNerds.basketballDiary.mvc.game.dto.GameDetailDTO;
-import com.threeNerds.basketballDiary.mvc.game.repository.*;
+import com.threeNerds.basketballDiary.mvc.game.domain.repository.*;
+import com.threeNerds.basketballDiary.mvc.game.mapper.dto.GameDetailDTO;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.GameCreationCommand;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.GameQuery;
-import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember;
-import com.threeNerds.basketballDiary.mvc.myTeam.repository.TeamMemberRepository;
+import com.threeNerds.basketballDiary.mvc.team.domain.TeamMember;
+import com.threeNerds.basketballDiary.mvc.team.domain.repository.TeamMemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

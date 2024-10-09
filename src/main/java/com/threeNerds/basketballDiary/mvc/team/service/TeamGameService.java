@@ -3,11 +3,12 @@ package com.threeNerds.basketballDiary.mvc.team.service;
 import com.threeNerds.basketballDiary.constant.code.type.GameRecordStateCode;
 
 import com.threeNerds.basketballDiary.mvc.game.domain.*;
-import com.threeNerds.basketballDiary.mvc.game.repository.*;
-import com.threeNerds.basketballDiary.mvc.team.dto.SearchTeamGameDTO;
-import com.threeNerds.basketballDiary.mvc.team.dto.TeamGameDTO;
-import com.threeNerds.basketballDiary.mvc.team.dto.TeamGameRecordDTO;
-import com.threeNerds.basketballDiary.mvc.team.repository.dto.TeamGameRepository;
+import com.threeNerds.basketballDiary.mvc.game.domain.repository.GameJoinTeamRepository;
+import com.threeNerds.basketballDiary.mvc.game.domain.repository.QuarterTeamRecordsRepository;
+import com.threeNerds.basketballDiary.mvc.team.mapper.dto.SearchTeamGameDTO;
+import com.threeNerds.basketballDiary.mvc.team.mapper.dto.TeamGameDTO;
+import com.threeNerds.basketballDiary.mvc.team.mapper.dto.TeamGameRecordDTO;
+import com.threeNerds.basketballDiary.mvc.team.mapper.TeamGameMapper;
 import com.threeNerds.basketballDiary.mvc.team.service.dto.TeamGameQuery;
 import com.threeNerds.basketballDiary.pagination.Pagination;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +34,7 @@ public class TeamGameService {
     /**---------------------------
      * 레포지토리
      **---------------------------*/
-    private final TeamGameRepository teamGameRepository;
+    private final TeamGameMapper teamGameMapper;
 
     /** 22.11.06
      * 소속팀의 게임기록조회
@@ -50,7 +51,7 @@ public class TeamGameService {
                 .gameTypeCode( 	query.getGameTypeCode() )
                 .homeAwayCode( 	query.getHomeAwayCode() )
                 .gamePlaceName( query.getGamePlaceName() );
-        List<TeamGameDTO> teamGames = teamGameRepository.findPagingTeamGamesByTeamSeq( cond );
+        List<TeamGameDTO> teamGames = teamGameMapper.findPagingTeamGamesByTeamSeq( cond );
 
         if ( teamGames.isEmpty() ) {
             return query.buildResult( Collections.emptyList(), pagination.empty() );
@@ -74,7 +75,7 @@ public class TeamGameService {
             }
         }
 
-        return query.buildResult( teamGames, pagination.getPages( teamGameRepository.findTotalCountTeamGamesByTeamSeq( cond ) ) );
+        return query.buildResult( teamGames, pagination.getPages( teamGameMapper.findTotalCountTeamGamesByTeamSeq( cond ) ) );
     }
 
 

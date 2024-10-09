@@ -2,18 +2,17 @@ package com.threeNerds.basketballDiary.mvc.team.service;
 
 import com.threeNerds.basketballDiary.file.ImagePath;
 import com.threeNerds.basketballDiary.file.ImageUploader;
-import com.threeNerds.basketballDiary.mvc.team.controller.request.RegisterTeamRequest;
 import com.threeNerds.basketballDiary.mvc.team.domain.Team;
-import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember;
 import com.threeNerds.basketballDiary.mvc.team.domain.TeamRegularExercise;
 
-import com.threeNerds.basketballDiary.mvc.team.dto.SearchTeamDTO;
-import com.threeNerds.basketballDiary.mvc.team.dto.TeamDTO;
-import com.threeNerds.basketballDiary.mvc.team.dto.TeamRegularExerciseDTO;
-import com.threeNerds.basketballDiary.mvc.myTeam.repository.TeamMemberRepository;
-import com.threeNerds.basketballDiary.mvc.team.repository.TeamRegularExerciseRepository;
-import com.threeNerds.basketballDiary.mvc.team.repository.TeamRepository;
-import com.threeNerds.basketballDiary.mvc.team.repository.dto.TeamInfoRepository;
+import com.threeNerds.basketballDiary.mvc.team.mapper.dto.SearchTeamDTO;
+import com.threeNerds.basketballDiary.mvc.team.mapper.dto.TeamDTO;
+import com.threeNerds.basketballDiary.mvc.team.mapper.dto.TeamRegularExerciseDTO;
+import com.threeNerds.basketballDiary.mvc.team.domain.repository.TeamMemberRepository;
+import com.threeNerds.basketballDiary.mvc.team.domain.repository.TeamRegularExerciseRepository;
+import com.threeNerds.basketballDiary.mvc.team.domain.repository.TeamRepository;
+import com.threeNerds.basketballDiary.mvc.team.mapper.TeamMapper;
+import com.threeNerds.basketballDiary.mvc.team.service.dto.TeamCommand;
 import com.threeNerds.basketballDiary.mvc.team.service.dto.TeamQuery;
 import com.threeNerds.basketballDiary.pagination.Pagination;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * 소속팀에서 팀원관리 및 소속팀정보 관리 등의 업무를 수행하는 Service
@@ -55,7 +53,7 @@ public class TeamService {
     private final TeamRegularExerciseRepository teamRegularExerciseRepository;
     private final TeamMemberRepository teamMemberRepository;
 
-    private final TeamInfoRepository teamInfoRepository;
+    private final TeamMapper teamMapper;
 
     /**
      * 팀 목록 조회
@@ -73,7 +71,7 @@ public class TeamService {
         );
 
         /** 팀목록 조회 */
-        List<TeamDTO> teamSearchResults = teamInfoRepository.findPaginationTeamInfo( searchTeamDTO );
+        List<TeamDTO> teamSearchResults = teamMapper.findPaginationTeamInfo( searchTeamDTO );
 
         /** 페이징DTO에 조회 결과 세팅 */
         if ( teamSearchResults.isEmpty() ) {
@@ -86,7 +84,7 @@ public class TeamService {
             teamDTO.setTeamRegularExercises( exercises );
         });
 
-        return query.buildResult( pagination.getPages( teamInfoRepository.findTotalCountTeamInfo( searchTeamDTO ) ), teamSearchResults );
+        return query.buildResult( pagination.getPages( teamMapper.findTotalCountTeamInfo( searchTeamDTO ) ), teamSearchResults );
     }
 
     /**
@@ -94,22 +92,20 @@ public class TeamService {
      * @return Long
      */
     @Transactional
-    public void createTeam( RegisterTeamRequest teamDTO ) {
+    public void createTeam( TeamCommand command ) {
 
-        String uploadUrl = imageUploader.upload( ImagePath.Type.TEAM_LOGO, teamDTO.getTeamLogoImage() );
+        String uploadUrl = imageUploader.upload( ImagePath.Type.TEAM_LOGO, command.getTeamLogoImage() );
 
         /** 팀정보 저장  - seq생성 */
-        Team newTeam = Team.create( teamDTO, uploadUrl );
-        teamRepository.saveTeam(newTeam);
+        Team newTeam = command.createTeam( uploadUrl );
+        teamRepository.saveTeam( newTeam );
 
-        /** 팀장 팀멤버로 등록 */
-        TeamMember newMember = TeamMember.createLeader( newTeam );
-        teamMemberRepository.saveTeamMember(newMember);
+        /** 팀장 등록 */
+        teamMemberRepository.saveTeamMember( newTeam.createLeader() );
 
         /** 팀 정기운동 정보 저장 - 없으면 비어있는 리스트로 처리 */
         Long newTeamSeq = newTeam.getTeamSeq();
-        List<TeamRegularExerciseDTO> teamRegularExerciseList = Optional.ofNullable(teamDTO.getTeamRegularExercises())
-                                                                        .orElseGet(() -> Collections.emptyList());
+        List<TeamRegularExerciseDTO> teamRegularExerciseList = command.getTeamRegularExercises();
         teamRegularExerciseList.forEach(exercise -> {
             TeamRegularExercise newExercise = TeamRegularExercise.create(newTeamSeq, exercise);
             teamRegularExerciseRepository.saveTeamRegularExercise(newExercise);

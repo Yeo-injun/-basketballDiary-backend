@@ -1,7 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.game.controller.response;
 
 import com.threeNerds.basketballDiary.http.ResponseJsonBody;
-import com.threeNerds.basketballDiary.mvc.game.dto.GameRecorderDTO;
+import com.threeNerds.basketballDiary.mvc.game.mapper.dto.GameRecorderDTO;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.GameRecorderQuery;
 import lombok.Getter;
 

@@ -5,7 +5,7 @@ import com.threeNerds.basketballDiary.constant.code.type.QuarterCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import com.threeNerds.basketballDiary.mvc.game.domain.Game;
-import com.threeNerds.basketballDiary.mvc.game.dto.TeamQuarterRecordsDTO;
+import com.threeNerds.basketballDiary.mvc.game.mapper.dto.TeamQuarterRecordsDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

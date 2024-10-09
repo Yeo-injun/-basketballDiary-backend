@@ -1,7 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.game.service.dto;
 
 import com.threeNerds.basketballDiary.auth.constant.AuthLevel;
-import com.threeNerds.basketballDiary.mvc.game.dto.QuarterTeamEntryDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

@@ -1,6 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.game.service.dto;
 
-import com.threeNerds.basketballDiary.mvc.game.dto.GameRecorderDTO;
+import com.threeNerds.basketballDiary.mvc.game.mapper.dto.GameRecorderDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

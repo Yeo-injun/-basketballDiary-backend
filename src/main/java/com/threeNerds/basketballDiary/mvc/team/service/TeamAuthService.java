@@ -4,12 +4,10 @@ import com.threeNerds.basketballDiary.auth.constant.AuthLevel;
 import com.threeNerds.basketballDiary.auth.constant.AuthType;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
-import com.threeNerds.basketballDiary.mvc.myTeam.domain.TeamMember;
-import com.threeNerds.basketballDiary.mvc.myTeam.repository.TeamMemberRepository;
-import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.TeamAuthCommand;
-import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.TeamAuthDTO;
+import com.threeNerds.basketballDiary.mvc.team.domain.TeamMember;
+import com.threeNerds.basketballDiary.mvc.team.domain.repository.TeamMemberRepository;
+import com.threeNerds.basketballDiary.mvc.team.service.dto.TeamAuthCommand;
 import com.threeNerds.basketballDiary.mvc.team.service.dto.TeamAuthQuery;
-import com.threeNerds.basketballDiary.mvc.team.service.dto.TeamQuery;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -40,7 +38,7 @@ public class TeamAuthService {
      **--------------------------------------*/
     private final TeamMemberRepository teamMemberRepo;
     
-    public TeamAuthDTO getAllTeamAuthInfo( TeamAuthQuery query ) {
+    public TeamAuthQuery.Result getAllTeamAuthInfo( TeamAuthQuery query ) {
 
         Long userSeq = query.getUserSeq();
         TeamMember teamMemberParam = TeamMember.builder()
@@ -50,11 +48,11 @@ public class TeamAuthService {
         List<TeamMember> joinTeamList = teamMemberRepo.findAllJoinTeamsByUserSeq( teamMemberParam );
         Map< Long, AuthLevel > teamAuthMap = joinTeamList.stream()
                                                     .collect( Collectors.toMap(
-                                                                TeamMember::getTeamSeq,
-                                                                item -> AuthLevel.of( AuthType.TEAM, Integer.parseInt( item.getTeamAuthCode() ) )
-                                                            )
-                                                );
-        return TeamAuthDTO.ofJoinTeam( userSeq, teamAuthMap );
+                                                                                TeamMember::getTeamSeq,
+                                                                                item -> AuthLevel.of( AuthType.TEAM, Integer.parseInt( item.getTeamAuthCode() ) )
+                                                                                )
+                                                    );
+        return query.buildResult( teamAuthMap );
     }
 
     /**

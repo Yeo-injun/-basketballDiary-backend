@@ -2,11 +2,9 @@ package com.threeNerds.basketballDiary.mvc.team.controller;
 
 import com.threeNerds.basketballDiary.auth.Auth;
 
-import com.threeNerds.basketballDiary.mvc.myTeam.service.MyTeamAuthService;
-import com.threeNerds.basketballDiary.mvc.myTeam.service.dto.TeamAuthDTO;
 import com.threeNerds.basketballDiary.mvc.team.controller.docs.ApiDocs021;
 import com.threeNerds.basketballDiary.mvc.team.controller.docs.ApiDocs052;
-import com.threeNerds.basketballDiary.mvc.team.controller.request.RegisterTeamRequest;
+import com.threeNerds.basketballDiary.mvc.team.controller.request.CreateTeamRequest;
 import com.threeNerds.basketballDiary.mvc.team.controller.response.SearchTeamGamesResponse;
 import com.threeNerds.basketballDiary.mvc.team.controller.response.SearchTeamsResponse;
 import com.threeNerds.basketballDiary.mvc.team.service.TeamAuthService;
@@ -70,7 +68,6 @@ public class TeamController {
                             .endTime(   endTime )
                             .pageNo(    pageNo )
                             .build();
-
         return ResponseEntity.ok().body( new SearchTeamsResponse( teamService.searchTeams( query ) ) );
     }
 
@@ -83,22 +80,18 @@ public class TeamController {
     public ResponseEntity<Void> createTeam(
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,
             @RequestPart( required = false ) MultipartFile teamLogoImage,
-            @RequestPart @Valid RegisterTeamRequest teamInfo
+            @RequestPart @Valid CreateTeamRequest teamInfo
     ) {
         Long loginUserSeq = sessionUser.getUserSeq();
-        teamService.createTeam( new RegisterTeamRequest(
-                loginUserSeq,
-                teamInfo,
-                teamLogoImage
-        ) );
+        teamService.createTeam( teamInfo.toCommand( loginUserSeq, teamLogoImage ) );
 
-        /** 소속팀 권한정보 update */
-        TeamAuthDTO authTeamInfo = teamAuthService.getAllTeamAuthInfo(
+        /** 세션의 소속팀 권한정보 update */
+        TeamAuthQuery.Result authResult = teamAuthService.getAllTeamAuthInfo(
                 TeamAuthQuery.builder()
                         .userSeq( loginUserSeq )
                         .build()
         );
-        sessionUser.setAuthTeams( authTeamInfo.getAuthTeams() );
+        sessionUser.setAuthTeams( authResult.getAuthTeams() );
         return ResponseEntity.ok().build();
     }
 

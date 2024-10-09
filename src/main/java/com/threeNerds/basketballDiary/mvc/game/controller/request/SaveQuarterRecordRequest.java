@@ -1,6 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.game.controller.request;
 
-import com.threeNerds.basketballDiary.mvc.game.dto.SavePlayerRecordDTO;
+import com.threeNerds.basketballDiary.mvc.game.mapper.dto.SavePlayerRecordDTO;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.QuarterRecordCommand;
 import lombok.Getter;
 

@@ -1,22 +1,16 @@
 package com.threeNerds.basketballDiary.mvc.game.service;
 
-import com.threeNerds.basketballDiary.constant.code.type.GameRecordStateCode;
 import com.threeNerds.basketballDiary.constant.code.type.HomeAwayCode;
 import com.threeNerds.basketballDiary.constant.code.type.QuarterCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import com.threeNerds.basketballDiary.mvc.game.domain.*;
 
-import com.threeNerds.basketballDiary.mvc.game.dto.*;
-import com.threeNerds.basketballDiary.mvc.game.dto.QuarterAllTeamsRecordsDTO;
-import com.threeNerds.basketballDiary.mvc.game.dto.QuarterTeamRecordsDTO;
+import com.threeNerds.basketballDiary.mvc.game.domain.repository.*;
+import com.threeNerds.basketballDiary.mvc.game.mapper.dto.*;
 
 
-import com.threeNerds.basketballDiary.mvc.game.dto.PlayerQuarterRecordDTO;
-import com.threeNerds.basketballDiary.mvc.game.dto.TeamQuarterRecordsDTO;
-import com.threeNerds.basketballDiary.mvc.game.dto.SavePlayerRecordDTO;
-import com.threeNerds.basketballDiary.mvc.game.repository.*;
-import com.threeNerds.basketballDiary.mvc.game.repository.dto.GameRecordManagerRepository;
+import com.threeNerds.basketballDiary.mvc.game.mapper.GameRecordMapper;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.*;
 
 import lombok.RequiredArgsConstructor;
@@ -39,7 +33,7 @@ public class GameRecordManagerService {
     private final QuarterTeamRecordsRepository quarterTeamRecordsRepository;
     private final QuarterPlayerRecordsRepository quarterPlayerRecordsRepository;
 
-    private final GameRecordManagerRepository gameRecordManagerRepository;
+    private final GameRecordMapper gameRecordManagerRepository;
 
     /**
      * 22.11.06

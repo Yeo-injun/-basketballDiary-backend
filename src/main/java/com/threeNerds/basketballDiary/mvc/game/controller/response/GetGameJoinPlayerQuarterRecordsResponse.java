@@ -1,7 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.game.controller.response;
 
 import com.threeNerds.basketballDiary.constant.code.type.QuarterCode;
-import com.threeNerds.basketballDiary.mvc.game.dto.PlayerQuarterRecordDTO;
+import com.threeNerds.basketballDiary.mvc.game.mapper.dto.PlayerQuarterRecordDTO;
 import lombok.Getter;
 
 import java.util.List;
