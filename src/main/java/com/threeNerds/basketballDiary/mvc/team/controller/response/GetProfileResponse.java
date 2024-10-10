@@ -42,7 +42,7 @@ public class GetProfileResponse {
     /* 가입일자 */
     private String joinYmd;
     /* 경기참여횟수 */
-    private Integer totGame;
+    private Integer totalGameCount;
 
      public GetProfileResponse( ProfileQuery.Result result ) {
         this.teamMemberSeq          = result.getTeamMemberSeq();
@@ -62,6 +62,6 @@ public class GetProfileResponse {
         this.weight                 = result.getWeight();
         this.backNumber             = result.getBackNumber();
         this.joinYmd                = result.getJoinYmd();
-        this.totGame                = result.getTotGame();
+        this.totalGameCount         = result.getTotGame();
     }
 }
