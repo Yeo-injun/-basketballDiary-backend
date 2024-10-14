@@ -29,17 +29,21 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional
 public class MyTeamProfileService {
+    /**--------------------------------------
+     * Components
+     **--------------------------------------*/
+    private final ImageUploader imageUploader;
 
     /**--------------------------------------
      * Repository
      **--------------------------------------*/
     private final TeamMemberRepository teamMemberRepository;
-    private final TeamMemberMapper myTeamRepository;
 
     /**--------------------------------------
-     * Components
+     * Mapper
      **--------------------------------------*/
-    private final ImageUploader imageUploader;
+    private final TeamMemberMapper teamMemberMapper;
+
 
     /**
      * 소속팀 프로필 조회
@@ -47,7 +51,7 @@ public class MyTeamProfileService {
      */
     public ProfileQuery.Result getProfile( ProfileQuery query ) {
         ProfileDTO profileParam = ProfileDTO.ofParam( query.getUserSeq(), query.getTeamSeq() );
-        ProfileDTO profile = myTeamRepository.findProfileByUserSeqAndTeamSeq( profileParam );
+        ProfileDTO profile = teamMemberMapper.findProfileByUserSeqAndTeamSeq( profileParam );
         return query.buildResult( profile );
     }
 

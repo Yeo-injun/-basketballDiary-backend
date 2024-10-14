@@ -20,7 +20,7 @@ public class GetProfileResponse {
     private String teamAuthCodeName;
 
     /* 프로필 이미지 경로 */
-    private String memberImagePath;
+    private String profileImageUrl;
     /* 선수유형코드 */
     private String playerTypeCode;
     /* 선수유형코드명 */
@@ -51,7 +51,7 @@ public class GetProfileResponse {
         this.teamName               = result.getTeamName();
         this.teamAuthCode           = result.getTeamAuthCode();
         this.teamAuthCodeName       = result.getTeamAuthCodeName();
-        this.memberImagePath        = result.getMemberImagePath();
+        this.profileImageUrl        = result.getMemberImagePath();
         this.playerTypeCode         = result.getPlayerTypeCode();
         this.playerTypeCodeName     = result.getPlayerTypeCodeName();
         this.positionCode           = result.getPositionCode();
