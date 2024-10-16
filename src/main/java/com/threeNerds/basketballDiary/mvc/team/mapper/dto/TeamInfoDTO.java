@@ -2,8 +2,10 @@ package com.threeNerds.basketballDiary.mvc.team.mapper.dto;
 
 import com.threeNerds.basketballDiary.mvc.team.domain.Team;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class TeamInfoDTO {
 
     /* 팀 pk */

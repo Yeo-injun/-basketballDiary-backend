@@ -24,7 +24,7 @@
                  WHERE 1=1
                    AND GJT.TEAM_SEQ = B.TEAM_SEQ
                    AND USER_SEQ = A.USER_SEQ
-                 GROUP BY GJP.GAME_JOIN_TEAM_SEQ
+                 GROUP BY GJP.USER_SEQ
                 ) AS "TOTAL_GAME_COUNT"
              , B.MEMBER_IMAGE_PATH   AS "PROFILE_IMAGE_URL"
           FROM USER A
