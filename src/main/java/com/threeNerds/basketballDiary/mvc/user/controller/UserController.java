@@ -1,8 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.user.controller;
 
 import com.threeNerds.basketballDiary.auth.Auth;
-import com.threeNerds.basketballDiary.mvc.user.controller.docs.ApiDocs006;
-import com.threeNerds.basketballDiary.mvc.user.controller.docs.ApiDocs034;
+import com.threeNerds.basketballDiary.mvc.user.controller.docs.*;
 import com.threeNerds.basketballDiary.mvc.user.controller.request.UpdateMyProfileRequest;
 import com.threeNerds.basketballDiary.mvc.user.controller.response.GetUsersExcludingTeamMembersResponse;
 import com.threeNerds.basketballDiary.mvc.user.service.dto.MembershipCommand;
@@ -49,8 +48,8 @@ public class UserController {
      * API006 사용자 검색 ( 팀원 제외 )
      * 23.05.07 여인준 : 팀원 제외하고 조회되게끔 변경
      */
-    @Auth
     @ApiDocs006
+    @Auth
     @GetMapping("/excludeTeam/{teamSeq}")
     public ResponseEntity<?> searchUsersExcludingTeamMembers  (
             @PathVariable
@@ -102,6 +101,7 @@ public class UserController {
     /**
      * API029 회원가입
      */
+    @ApiDocs029
     @PostMapping("/signUp")
     public ResponseEntity<Void> signUp (
             @RequestBody @Valid
@@ -114,6 +114,7 @@ public class UserController {
     /**
      * API028 회원탈퇴
      */
+    @ApiDocs028
     @Auth
     @DeleteMapping  // cf. 일반적인 HTTP spec에서는 DELETE 메소드는 RequestBody를 지원하지 않음. 이에 따라 Spring @DeleteMapping에서는 @RequestBody를 지원하지 않음.
     public ResponseEntity<Void> withdrawalMembership(
@@ -136,6 +137,7 @@ public class UserController {
     /**
      * API025 회원 프로필 조회
      */
+    @ApiDocs025
     @Auth
     @GetMapping("/profile")
     public ResponseEntity<GetMyProfileResponse> getMyProfile(
@@ -150,6 +152,7 @@ public class UserController {
     /**
      * API026 회원 프로필 수정
      */
+    @ApiDocs026
     @Auth
     @PostMapping("/profile")
     public ResponseEntity<?> updateMyProfile(
@@ -165,6 +168,7 @@ public class UserController {
     /**
      * API027 비밀번호 변경
      */
+    @ApiDocs027
     @Auth
     @PostMapping("/password")
     public ResponseEntity<Void> updatePassword(

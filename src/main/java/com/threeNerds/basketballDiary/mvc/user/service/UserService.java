@@ -140,7 +140,7 @@ public class UserService {
     public void updateMyProfile( ProfileCommand profile ) {
         boolean isSuccessUpdateProfile = userRepository.updateProfile( User.ofUpdate( profile ) ) == 1;
         if ( !isSuccessUpdateProfile ) {
-            throw new CustomException( SystemErrorType.NOT_FOUND_USER_FOR_UPDATE );
+            throw new CustomException( DomainErrorType.USER_NOT_FOUND );
         }
     }
 
