@@ -36,6 +36,11 @@ import java.util.*;
  * 2022.02.24 강창기 : 소속팀 정보 삭제 구현
  * 2022.02.26 강창기 : 소속팀 운영진 조회 구현
  * 2022.02.27 강창기 : 소속팀 팀원 조회 구현
+ * // TODO Service분리 검토
+ * - TeamMemberService
+ *  소속팀의 팀원정보 조회 및 제어
+ * - TeamService
+ *  팀단위 정보 조회 및 제어 ( 소속팀 목록, 소속팀 상세 조회 등 )
  * </pre>
  */
 
@@ -53,17 +58,21 @@ public class MyTeamService {
     /**------------------------------------
      * Repository
      *-------------------------------------*/
-    private final TeamMemberMapper myTeamRepository;
     private final TeamRepository teamRepository;
     private final TeamMemberRepository teamMemberRepository;
     private final TeamRegularExerciseRepository teamRegularExerciseRepository;
+
+    /**------------------------------------
+     * Mapper
+     *-------------------------------------*/
+    private final TeamMemberMapper teamMemberMapper;
 
     /**
      * 소속팀 운영진 목록 조회
      */
     public TeamMemberQuery.Result getManagers( TeamMemberQuery query ) {
         Long teamSeq = query.getTeamSeq();
-        List<MemberDTO> managerList = myTeamRepository.findAllManagerByTeamSeq( teamSeq );
+        List<MemberDTO> managerList = teamMemberMapper.findAllManagersByTeamSeq( teamSeq );
         return query.buildResult( managerList );
     }
 
@@ -73,37 +82,27 @@ public class MyTeamService {
      * @return List<MemberDTO>
      */
     public TeamMemberQuery.Result getTeamMembers( TeamMemberQuery query ) {
-        Pagination pagination = Pagination.of( query.getPageNo() );
+        Pagination pagination       = Pagination.of( query.getPageNo() );
+        SearchMemberDTO searchCond  = new SearchMemberDTO( pagination, query.getTeamSeq() );
+        List<MemberDTO> teamMembers = teamMemberMapper.findPaginationTeamMembers( searchCond );
 
-        MemberDTO searchMemebrCond = new MemberDTO()
-                .teamSeq( query.getTeamSeq() )
-                .pagination( pagination );
-
-        // 소속팀은 팀장과 운영진을 제외하므로, 팀원 정보가 존재하지 않더라도 404 처리하지 않는다.
-        List<MemberDTO> resultMembers = myTeamRepository.findPagingMemberByTeamSeq( searchMemebrCond );
-
-        /** 페이징DTO에 조회 결과 세팅 */
-        if ( resultMembers.isEmpty() ) {
+        /** 조회 결과 세팅 */
+        if ( teamMembers.isEmpty() ) {
             return query.buildResult( pagination.empty(), Collections.emptyList() );
         }
-        return query.buildResult( pagination.getPages( resultMembers.get(0).getTotalCount() ), resultMembers );
+        return query.buildResult( pagination.getPages( teamMemberMapper.findTotalCountTeamMembers( searchCond ) ), teamMembers );
     }
 
     public TeamMemberQuery.Result searchAllTeamMembers( TeamMemberQuery query ) {
-        // TODO 화면에서 페이징 처리가 안되어 있음.
-        Pagination pagination = Pagination.of( query.getPageNo() );
-        MemberDTO searchMemberCond = new MemberDTO()
-                                        .teamSeq(       query.getTeamSeq() )
-                                        .pagination(    pagination )
-                                        .userName(      query.getPlayerName() );
+        Pagination pagination           = Pagination.of( query.getPageNo() );
+        SearchMemberDTO searchCond      = new SearchMemberDTO( pagination, query.getTeamSeq(), query.getPlayerName() );
+        List<MemberDTO> teamMembers   = teamMemberMapper.findPaginationAllTeamMembers( searchCond );
 
-        List<MemberDTO> resultMembers = myTeamRepository.findAllTeamMemberPaging( searchMemberCond );
-
-        /** 페이징DTO에 조회 결과 세팅 */
-        if ( resultMembers.isEmpty() ) {
+        /** 조회 결과 세팅 */
+        if ( teamMembers.isEmpty() ) {
             return query.buildResult( pagination.empty(), Collections.emptyList() );
         }
-        return query.buildResult( pagination.getPages( resultMembers.get(0).getTotalCount() ), resultMembers );
+        return query.buildResult( pagination.getPages( teamMemberMapper.findTotalCountAllTeamMembers( searchCond ) ), teamMembers );
     }
 
     /**
@@ -117,7 +116,7 @@ public class MyTeamService {
                                                 .pagination( pagination );
 
         /** 소속팀 목록 조회 */
-        List<MyTeamDTO> myTeams = myTeamRepository.findPagingMyTeams( searchTeamParam );
+        List<MyTeamDTO> myTeams = teamMemberMapper.findPagingMyTeams( searchTeamParam );
 
         /** 페이징DTO에 조회 결과 세팅 */
         if ( myTeams.isEmpty()) {

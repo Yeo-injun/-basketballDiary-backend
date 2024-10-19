@@ -40,18 +40,22 @@ import java.util.List;
 @Transactional
 public class UserService {
 
-    /** 도메인 레포지토리 */
+    /**--------------------------------------
+     * Repository
+     **--------------------------------------*/
     private final UserRepository userRepository;
 
-    /** 조회용 레포지토리 */
-    private final UserMapper userQueryRepository;
-    private final UserProfileMapper profileQueryRepository;
+    /**--------------------------------------
+     * Mapper
+     **--------------------------------------*/
+    private final UserMapper userMapper;
+    private final UserProfileMapper userProfileMapper;
 
     /**
      * 회원 조회
      * - 소속 팀에 속하지 않은 회원
      */
-    public UserQuery.Result getUsersExcludingTeamMembers( UserQuery query ) {
+    public UserQuery.Result searchUsersExcludingTeamMembers( UserQuery query ) {
         Pagination pagination = Pagination.of( query.getPageNo(), 5 );
 
         UserQueryCondDTO inqCond = new UserQueryCondDTO()
@@ -60,7 +64,7 @@ public class UserService {
                 .userName(  query.getUserName() )
                 .email(     query.getEmail() );
 
-        List<UserDTO> usersWithoutTeamMember = userQueryRepository.findPaginationUsersWithoutTeamMembers( inqCond );
+        List<UserDTO> usersWithoutTeamMember = userMapper.findPaginationUsersWithoutTeamMembers( inqCond );
         if ( usersWithoutTeamMember.isEmpty() ) {
             return query.buildResult(
                 pagination.getPages( 0 ),
@@ -68,7 +72,7 @@ public class UserService {
             );
         }
         return query.buildResult(
-            pagination.getPages( userQueryRepository.findTotalCountUsersWithoutTeamMembers( inqCond ) ),
+            pagination.getPages( userMapper.findTotalCountUsersWithoutTeamMembers( inqCond ) ),
             usersWithoutTeamMember
         );
     }
@@ -121,7 +125,7 @@ public class UserService {
      * 프로필 조회
      */
     public MyProfileDTO getMyProfile( Long userSeq ) {
-        MyProfileDTO profile = profileQueryRepository.findMyProfile( userSeq );
+        MyProfileDTO profile = userProfileMapper.findMyProfile( userSeq );
 
         if ( null == profile ) {
             throw new CustomException( DomainErrorType.USER_NOT_FOUND );
