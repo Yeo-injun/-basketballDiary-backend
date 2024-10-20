@@ -33,7 +33,7 @@ public enum DomainErrorType implements ErrorMessageType {
     NOT_FOUND_HOME_TEAM(NOT_FOUND, "홈팀 정보가 존재하지 않습니다."),
     NOT_FOUND_AWAY_TEAM(NOT_FOUND, "어웨이팀 정보가 존재하지 않습니다."),
     NOT_FOUND_REJECT_INVITATION( NOT_FOUND, "거절할 팀초대정보가 존재하지 않습니다." ),
-    USER_NOT_FOUND(NOT_FOUND, "해당 사용자를 찾을 수 없습니다"),
+    USER_NOT_FOUND(NOT_FOUND, "사용자를 찾을 수 없습니다."),
     NO_EXIST_PASSWORD(NOT_FOUND, "비밀번호를 입력해주시기 바랍니다."),
     NO_JOIN_TEAM_MEMBER(NOT_FOUND, "팀에 소속되지 않은 팀원입니다."),
 
