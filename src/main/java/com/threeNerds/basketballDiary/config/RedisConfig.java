@@ -12,6 +12,7 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 @EnableRedisHttpSession(maxInactiveIntervalInSeconds = 1800)  // 세션 유효 시간 설정 (30분)
 public class RedisConfig {
 
+    // 참고자료 : https://ksh-coding.tistory.com/128#2.%20%EC%9D%98%EC%A1%B4%EC%84%B1%20%EC%84%A4%EC%A0%95-1
     @Value("${spring.data.redis.host}")
     private String redisHost;
 
