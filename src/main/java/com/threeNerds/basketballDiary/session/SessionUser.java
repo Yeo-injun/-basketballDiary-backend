@@ -3,11 +3,12 @@ package com.threeNerds.basketballDiary.session;
 import com.threeNerds.basketballDiary.auth.constant.AuthLevel;
 import lombok.Getter;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 @Getter
-public class SessionUser {
+public class SessionUser implements Serializable {
 
     private final Long userSeq;
     private final String userId;
