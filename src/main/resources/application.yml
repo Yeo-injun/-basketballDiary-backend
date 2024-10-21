@@ -30,8 +30,8 @@ spring:
   # redis 설정
   data:
     redis:
-      host: 127.0.0.1
-      port: 6379
+      host: changkeeroom.iptime.org
+      port: 16379
 
   jpa:
     show-sql: true
