@@ -22,6 +22,18 @@ spring:
     username: basketdiary
     password: basket5199
 
+  # spring session 설정 ( 저장소를 redis로 )
+  session:
+    store-type: redis # @EnableRedisHttpSession를 활성화하여 SpringSessionRepositoryFilter에 등록
+    redis:
+      namespace: basketDairyApp:session
+  # redis 설정
+  data:
+    redis:
+      host: changkeeroom.iptime.org
+      port: 16379
+      password: basketball2022-local
+
   jpa:
     show-sql: true
     hibernate:

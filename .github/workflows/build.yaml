@@ -33,4 +33,4 @@ jobs:
           url: ${{ secrets.JENKINS_URL }}
           user: ${{ secrets.JENKINS_USER }}
           token: ${{ secrets.JENKINS_USER_TOKEN }}
-          job: ${{ secrets.JENKINS_JOB }}
+          job: ${{ secrets.JENKINS_JOB }} # Jenkins에서 실행할 Job 이름 (Jenkins와 일치)
