@@ -2,6 +2,7 @@ package com.threeNerds.basketballDiary.mvc.team.controller;
 
 import com.threeNerds.basketballDiary.auth.Auth;
 
+import com.threeNerds.basketballDiary.mvc.team.controller.docs.ApiDocs019;
 import com.threeNerds.basketballDiary.mvc.team.controller.docs.ApiDocs021;
 import com.threeNerds.basketballDiary.mvc.team.controller.docs.ApiDocs052;
 import com.threeNerds.basketballDiary.mvc.team.controller.request.CreateTeamRequest;
@@ -49,6 +50,7 @@ public class TeamController {
     /**
      * API019 : 팀 목록 조회
      */
+    @ApiDocs019
     @GetMapping
     public ResponseEntity<SearchTeamsResponse> searchTeams(
             @RequestParam(name = "team-name"  , required = false) String teamName,
