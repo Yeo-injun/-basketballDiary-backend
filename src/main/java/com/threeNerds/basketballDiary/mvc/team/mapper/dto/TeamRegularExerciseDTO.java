@@ -7,8 +7,6 @@ import lombok.Getter;
 public class TeamRegularExerciseDTO {
     /* PK */
     private Long teamRegularExerciseSeq;
-    /* FK: 팀Seq */
-    private Long teamSeq;
     /* 요일코드 */
     private String dayOfTheWeekCode;
     /* 요일코드명 */

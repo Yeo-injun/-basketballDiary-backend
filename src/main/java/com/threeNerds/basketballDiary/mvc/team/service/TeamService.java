@@ -5,6 +5,7 @@ import com.threeNerds.basketballDiary.file.ImageUploader;
 import com.threeNerds.basketballDiary.mvc.team.domain.Team;
 import com.threeNerds.basketballDiary.mvc.team.domain.TeamRegularExercise;
 
+import com.threeNerds.basketballDiary.mvc.team.mapper.TeamRegularExerciseMapper;
 import com.threeNerds.basketballDiary.mvc.team.mapper.dto.SearchTeamDTO;
 import com.threeNerds.basketballDiary.mvc.team.mapper.dto.TeamDTO;
 import com.threeNerds.basketballDiary.mvc.team.mapper.dto.TeamRegularExerciseDTO;
@@ -50,10 +51,15 @@ public class TeamService {
      * Repository
      *-------------------------------------*/
     private final TeamRepository teamRepository;
-    private final TeamRegularExerciseRepository teamRegularExerciseRepository;
     private final TeamMemberRepository teamMemberRepository;
+    private final TeamRegularExerciseRepository teamRegularExerciseRepository;
 
+
+    /**------------------------------------
+     * Mapper
+     *-------------------------------------*/
     private final TeamMapper teamMapper;
+    private final TeamRegularExerciseMapper teamRegularExerciseMapper;
 
     /**
      * 팀 목록 조회
@@ -79,9 +85,9 @@ public class TeamService {
         }
 
         /** 팀들의 정기운동시간 조회 및 세팅 */
-        teamSearchResults.forEach(teamDTO -> {
-            List<TeamRegularExerciseDTO> exercises = teamRegularExerciseRepository.findByTeamSeq( teamDTO.getTeamSeq() );
-            teamDTO.setTeamRegularExercises( exercises );
+        teamSearchResults.forEach( teamDTO -> {
+            Long teamSeq = teamDTO.getTeamSeq();
+            teamDTO.setTeamRegularExercises( teamRegularExerciseMapper.findAllExerciseByTeamSeq( teamSeq ) );
         });
 
         return query.buildResult( pagination.getPages( teamMapper.findTotalCountTeamInfo( searchTeamDTO ) ), teamSearchResults );
@@ -91,7 +97,6 @@ public class TeamService {
      * 팀 생성
      * @return Long
      */
-    @Transactional
     public void createTeam( TeamCommand command ) {
 
         String uploadUrl = imageUploader.upload( ImagePath.Type.TEAM_LOGO, command.getTeamLogoImage() );
@@ -106,9 +111,17 @@ public class TeamService {
         /** 팀 정기운동 정보 저장 - 없으면 비어있는 리스트로 처리 */
         Long newTeamSeq = newTeam.getTeamSeq();
         List<TeamRegularExerciseDTO> teamRegularExerciseList = command.getTeamRegularExercises();
-        teamRegularExerciseList.forEach(exercise -> {
-            TeamRegularExercise newExercise = TeamRegularExercise.create(newTeamSeq, exercise);
-            teamRegularExerciseRepository.saveTeamRegularExercise(newExercise);
+        teamRegularExerciseList.forEach( exercise -> {
+            teamRegularExerciseRepository.saveTeamRegularExercise(
+                TeamRegularExercise.builder()
+                        .teamSeq(               newTeamSeq )
+                        .dayOfTheWeekCode(      exercise.getDayOfTheWeekCode() )
+                        .startTime(             exercise.getStartTime() )
+                        .endTime(               exercise.getEndTime() )
+                        .exercisePlaceAddress(  exercise.getExercisePlaceAddress() )
+                        .exercisePlaceName(     exercise.getExercisePlaceName() )
+                        .build()
+            );
         });
     }
 }
