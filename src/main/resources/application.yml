@@ -1,4 +1,6 @@
-## File 업로드 경로 설정
+##---------------------------
+# File 유형별 설정
+##----------------------------
 file:
   image:
     path:
@@ -11,8 +13,9 @@ file:
     path:
       root:
 
-
-
+##---------------------------
+# Spring 설정
+##----------------------------
 spring:
   datasource:
     ## log4jdbc를 위한 url 및 driver-class-name 변경 (2022.02.26)
@@ -33,7 +36,6 @@ spring:
       host: changkeeroom.iptime.org
       port: 16379
       password: basketball2022-local
-
   jpa:
     show-sql: true
     hibernate:
@@ -42,13 +44,24 @@ spring:
       hibernate:
         #     show_sql: true
         format_sql: true
-
   ## HttpRequest Multipart 설정
   servlet:
     multipart:
       max-file-size: 2MB
       max-request-size: 5MB
 
+##---------------------------
+# Spring-APIDocs 설정
+##----------------------------
+spring-doc:
+  swagger-ui:
+    # swagger-ui 접근 경로
+    path: /swagger-custom-ui.html
+
+
+##---------------------------
+# MyBatis 설정
+##----------------------------
 mybatis:
   configuration:
     multiple-result-sets-enabled: false
@@ -63,6 +76,9 @@ mybatis:
   mapper-locations:
     - classpath:mvc/repository/**/*.xml
 
+##---------------------------
+# Server 설정
+##----------------------------
 server:
   port: 18080
   servlet:
@@ -70,7 +86,7 @@ server:
       timeout: 1800
       tracking-modes: cookie
       cookie:
-        name: basketballD
+        name: basketballDiary-LOC
         # sameSite 설정을 위한 속성값 - sameSite의 기본값은 lax로 제한적으로만 cookie가 세팅됨.
         # sameSite = none으로 하고, secure속성값을 추가해야함!
         # 참고 : https://yousrain.tistory.com/23, https://velog.io/@kwakwoohyun/%EC%9D%B4%EC%8A%88%EC%B2%98%EB%A6%AC-spring-boot-local-cookie
@@ -82,11 +98,10 @@ server:
         http-only: true
         path: /
 
+##---------------------------
+# Logging 설정
+##----------------------------
 logging.level:
   org.hibernate.SQL: debug
   org.hibernate.type: trace
 
-springdoc:
-  swagger-ui:
-    # swagger-ui 접근 경로
-    path: /swagger-custom-ui.html
