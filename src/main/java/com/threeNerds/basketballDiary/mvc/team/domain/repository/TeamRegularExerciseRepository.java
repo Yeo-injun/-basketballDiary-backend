@@ -12,8 +12,6 @@ public interface TeamRegularExerciseRepository {
     /**********
      * SELECT
      **********/
-    @Deprecated
-    List<TeamRegularExerciseDTO> findByTeamSeq(Long teamSeq);
     List<TeamRegularExercise> find( TeamRegularExercise teamRegularExercise );
 
     /**********
