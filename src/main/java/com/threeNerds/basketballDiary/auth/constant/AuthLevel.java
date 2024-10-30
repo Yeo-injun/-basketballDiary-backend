@@ -1,6 +1,5 @@
 package com.threeNerds.basketballDiary.auth.constant;
 
-import com.threeNerds.basketballDiary.constant.code.CodeType;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.SystemErrorType;
 import lombok.Getter;
@@ -20,23 +19,23 @@ public enum AuthLevel {
      * - ADMIN : 관리자
      * - ROOT : 슈퍼 관리자
      *---------------------------*/
-    MEMBER(         AuthType.USER, "일반회원"       , 0 ),
-    ADMIN(          AuthType.USER, "관리자"        , 90),      // 모든 권한 유형보다 높은 수준을 가짐
-    ROOT(           AuthType.USER, "최상위관리자"   , 91),      // 시스템내 최고 권한 수준을 가짐
+    MEMBER(         "user", "일반회원"       , 0 ),
+    ADMIN(          "user", "관리자"        , 90),      // 모든 권한 유형보다 높은 수준을 가짐
+    ROOT(           "user", "최상위관리자"   , 91),      // 시스템내 최고 권한 수준을 가짐
     
     /*---------------------------
      * 권한유형 : 소속팀 권한
      *---------------------------*/
-    TEAM_MEMBER(    AuthType.TEAM, "팀원"     , 1 ),
-    TEAM_MANAGER(   AuthType.TEAM, "팀관리자"  , 2 ),
-    TEAM_LEADER(    AuthType.TEAM, "팀장"     , 3 ),
+    TEAM_MEMBER(    "team", "팀원"     , 1 ),
+    TEAM_MANAGER(   "team", "팀관리자"  , 2 ),
+    TEAM_LEADER(    "team", "팀장"     , 3 ),
 
     /*---------------------------
      * 권한유형 : 경기기록 권한
      * cf. 권한수준이 낮을수록 더 많은 권한을 가짐.
      *---------------------------*/
-    GAME_CREATOR(    AuthType.GAME_RECORD, "경기생성자"  , 1 ),
-    GAME_RECORDER(   AuthType.GAME_RECORD, "경기기록자"  , 2 );
+    GAME_CREATOR(    "gameRecord", "경기생성자"  , 1 ),
+    GAME_RECORDER(   "gameRecord", "경기기록자"  , 2 );
 
     private final String type;
     private final String name;

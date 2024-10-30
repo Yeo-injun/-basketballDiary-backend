@@ -1,7 +1,6 @@
 package com.threeNerds.basketballDiary.auth;
 
 import com.threeNerds.basketballDiary.auth.constant.AuthLevel;
-import com.threeNerds.basketballDiary.auth.constant.AuthType;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.SystemErrorType;
 import com.threeNerds.basketballDiary.session.SessionUser;
@@ -53,8 +52,8 @@ public class AuthChecker {
             return true;
         }
         switch ( requiredAuth.type() ) {
-            case AuthType.TEAM          : return checkTeamAuth( request );
-            case AuthType.GAME_RECORD   : return checkGameAuth( request );
+            case "team"          : return checkTeamAuth( request );
+            case "gameRecoder"   : return checkGameAuth( request );
             default:    return true; // TODO 임시처리... 기본값 및 로직 처리를 어떻게 할지 고민
         }
     }
