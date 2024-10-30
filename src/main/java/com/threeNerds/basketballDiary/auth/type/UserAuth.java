@@ -7,7 +7,7 @@ import lombok.Getter;
 import java.util.Arrays;
 
 @Getter
-public enum TeamAuth implements AuthType {
+public enum UserAuth implements AuthType {
     /**
      * 특정권한유형을 갖게될 경우 해당 권한 유형의 level은 1부터 시작한다.
      * level이 높아질수록 더 많은 권한을 가져간다.
@@ -19,30 +19,22 @@ public enum TeamAuth implements AuthType {
      * - ADMIN : 관리자
      * - ROOT : 슈퍼 관리자
      *---------------------------*/
-    NONE( "팀원아님", -1 ),
-    TEAM_MEMBER( "팀원"      , 1    ),
-    TEAM_MANAGER(  "팀관리자" , 2   ),      // 모든 권한 유형보다 높은 수준을 가짐
-    TEAM_LEADER(   "팀장"   , 3   )      // 시스템내 최고 권한 수준을 가짐
+    MEMBER( "일반회원"       , 0 ),
+    ADMIN(  "관리자"        , 90),      // 모든 권한 유형보다 높은 수준을 가짐
+    ROOT(   "최상위관리자"   , 91)      // 시스템내 최고 권한 수준을 가짐
     ;
     private final String type;
     private final String name;
     private final int level;
 
-    TeamAuth( String name, int level ) {
-        this.type   = "team";
-        this.name   = name;
-        this.level  = level;
+    UserAuth( String name, int level ) {
+        this.type = "user";
+        this.name = name;
+        this.level = level;
     }
 
-    public boolean isPermissionGranted( Integer userAuthLevel ) {
-        if ( null == userAuthLevel ) {
-            return false;
-        }
-        return userAuthLevel >= this.level;
-    }
-    
     // 권한유형에 맞는 권한수준을 찾아서 AuthLevel 타입으로 리턴
-    public static TeamAuth of( int authLevel ) {
+    public static UserAuth of( int authLevel ) {
         return Arrays.stream( values() )
                 .filter( item -> item.getLevel() == authLevel )
                 .findAny()
