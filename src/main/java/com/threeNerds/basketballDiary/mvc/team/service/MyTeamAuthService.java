@@ -1,7 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.team.service;
 
 import com.threeNerds.basketballDiary.auth.constant.AuthLevel;
-import com.threeNerds.basketballDiary.auth.constant.AuthType;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 
@@ -51,7 +50,7 @@ public class MyTeamAuthService {
         Map< Long, AuthLevel > teamAuthMap = joinTeamList.stream()
                                                     .collect( Collectors.toMap(
                                                                 TeamMember::getTeamSeq,
-                                                                item -> AuthLevel.of( AuthType.TEAM, Integer.parseInt( item.getTeamAuthCode() ) )
+                                                                item -> AuthLevel.of( "team", Integer.parseInt( item.getTeamAuthCode() ) )
                                                             )
                                                 );
         return TeamAuthDTO.ofJoinTeam( userInfo.getUserSeq(), teamAuthMap );

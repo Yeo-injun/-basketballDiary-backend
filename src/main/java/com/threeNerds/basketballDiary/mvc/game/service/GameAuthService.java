@@ -1,7 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.game.service;
 
 import com.threeNerds.basketballDiary.auth.constant.AuthLevel;
-import com.threeNerds.basketballDiary.auth.constant.AuthType;
 import com.threeNerds.basketballDiary.constant.code.type.GameRecordAuthCode;
 import com.threeNerds.basketballDiary.mvc.game.domain.*;
 import com.threeNerds.basketballDiary.mvc.game.domain.repository.GameRecordAuthRepository;
@@ -85,7 +84,7 @@ public class GameAuthService {
         Map< Long, AuthLevel > authGames = gameRecordAuthRepo.findAuthList( query.getUserSeq() ).stream()
                 .collect( Collectors.toMap(
                                 GameAuth::getGameSeq,
-                                item -> AuthLevel.of( AuthType.GAME_RECORD, Integer.parseInt( item.getGameRecordAuthCode() ) )
+                                item -> AuthLevel.of( "gameRecorder", Integer.parseInt( item.getGameRecordAuthCode() ) )
                         )
                 );
         return query.buildResult( authGames );
