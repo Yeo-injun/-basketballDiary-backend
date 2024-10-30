@@ -2,6 +2,7 @@ package com.threeNerds.basketballDiary.auth;
 
 import com.threeNerds.basketballDiary.auth.constant.AuthLevel;
 
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -18,4 +19,5 @@ public @interface Auth {
      * - game : 경기권한을 체크하는 것 ( 경기기록생성자, 경기기록자 )
      */
     String type() default "user";
+
 }

@@ -34,8 +34,8 @@ public enum AuthLevel {
      * 권한유형 : 경기기록 권한
      * cf. 권한수준이 낮을수록 더 많은 권한을 가짐.
      *---------------------------*/
-    GAME_CREATOR(    "gameRecord", "경기생성자"  , 1 ),
-    GAME_RECORDER(   "gameRecord", "경기기록자"  , 2 );
+    GAME_CREATOR(    "gameRecorder", "경기생성자"  , 1 ),
+    GAME_RECORDER(   "gameRecorder", "경기기록자"  , 2 );
 
     private final String type;
     private final String name;

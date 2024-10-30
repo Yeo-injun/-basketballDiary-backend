@@ -1,5 +1,8 @@
 package com.threeNerds.basketballDiary.auth;
 
+import com.threeNerds.basketballDiary.auth.annotation.AllowedFor;
+import com.threeNerds.basketballDiary.auth.annotation.RequiredLogin;
+import com.threeNerds.basketballDiary.auth.type.TeamAuth;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.SystemErrorType;
 import com.threeNerds.basketballDiary.session.util.SessionUtil;
@@ -26,6 +29,9 @@ public class AuthInterceptor implements HandlerInterceptor {
         HandlerMethod hm = (HandlerMethod) handler;
         loggingRequestInfo( request, hm );
 
+        if ( checkNewPattern( hm, request ) ) {
+            return true;
+        }
         /** 1. @Auth 가 없는 경우 - 인증이 별도로 필요없음 */
         Auth requiredAuth = hm.getMethodAnnotation( Auth.class );
         if ( null == requiredAuth ) {
@@ -38,7 +44,7 @@ public class AuthInterceptor implements HandlerInterceptor {
         }
 
         /** 소속팀 권한 체크 */
-        AuthChecker checker = AuthChecker.ofSession( requiredAuth );
+        AuthChecker checker = new AuthChecker( requiredAuth, SessionUtil.getSessionUser() );
         if ( checker.checkAuth( request ) ) {
             return true;
         }
@@ -63,5 +69,28 @@ public class AuthInterceptor implements HandlerInterceptor {
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
 
+    }
+
+
+    private boolean checkNewPattern( HandlerMethod hm, HttpServletRequest request ) {
+        boolean requiredLogin = hm.getMethodAnnotation( RequiredLogin.class ) != null;
+        if ( !requiredLogin ) {
+            return true;
+        }
+        /** 2. @Auth가 있는 경우 - 세션이 있는지 확인 */
+        if ( !SessionUtil.isLogin() ) {
+            throw new CustomException( SystemErrorType.LOGIN_REQUIRED );
+        }
+
+        AllowedFor requiredAuth = hm.getMethodAnnotation( AllowedFor.class );
+        // 요구되는 권한 없으면 통과
+        if ( null == requiredAuth ) {
+            return true;
+        }
+        TeamAuthChecker checker = new TeamAuthChecker( requiredAuth.type(), SessionUtil.getSessionUser() );
+        if ( checker.checkAuth( request ) ) {
+            return true;
+        }
+        throw new CustomException( SystemErrorType.UNAUTHORIZED_ACCESS );
     }
 }
