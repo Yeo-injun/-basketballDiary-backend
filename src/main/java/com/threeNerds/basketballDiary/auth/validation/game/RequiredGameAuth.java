@@ -1,19 +1,19 @@
-package com.threeNerds.basketballDiary.auth.annotation;
+package com.threeNerds.basketballDiary.auth.validation.game;
 
 
-import com.threeNerds.basketballDiary.auth.type.TeamAuth;
+import com.threeNerds.basketballDiary.auth.validation.RequiredLogin;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+@RequiredLogin
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-@RequiredLogin
-public @interface AllowedFor {
+public @interface RequiredGameAuth {
 
-    TeamAuth type() default TeamAuth.NONE;
+    GameAuth type() default GameAuth.NONE;
 
 
 }

@@ -1,10 +1,9 @@
 package com.threeNerds.basketballDiary.session;
 
-import com.threeNerds.basketballDiary.auth.constant.AuthLevel;
+import com.threeNerds.basketballDiary.auth.validation.game.GameAuth;
 import lombok.Getter;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Map;
 
 @Getter
@@ -19,41 +18,31 @@ public class SessionUser implements Serializable {
 
     private SessionUser(
         Long userSeq, String userId,
-        Map< Long, AuthLevel > authTeams,
-        Map< Long, AuthLevel > authGames
+        Map< Long, Integer > authTeams,
+        Map< Long, Integer > authGames
     ) {
         this.userSeq = userSeq;
         this.userId = userId;
-        this.authTeams = convertAuthLevelToInt( authTeams );
-        this.authGames = convertAuthLevelToInt( authGames );
+        this.authTeams = authTeams;
+        this.authGames = authGames;
    }
 
-   // AuthLevel 타입을 정수형으로 변환하여 권한Map을 생성
-   private Map< Long, Integer > convertAuthLevelToInt( Map<Long, AuthLevel > authMaps ) {
-       Map< Long, Integer > resultAuthMap = new HashMap<>();
-       if ( null == authMaps ) {
-           return resultAuthMap;
-       }
-       authMaps.forEach( ( key, authLevel ) -> {
-           resultAuthMap.put( key, authLevel.getLevel() );
-       } );
-       return resultAuthMap;
-   }
+
 
     public static SessionUser createWithAuth(
             Long userSeq, String userId,
-            Map< Long, AuthLevel > authTeams,       // 소속팀을 기준으로 권한수준을 관리
-            Map< Long, AuthLevel > authGames        // 경기를 기준으로 권한수준 관리
+            Map< Long, Integer > authTeams,       // 소속팀을 기준으로 권한수준을 관리
+            Map< Long, Integer > authGames        // 경기를 기준으로 권한수준 관리
     ) {
         return new SessionUser( userSeq, userId, authTeams, authGames );
     }
 
-    public void setAuthTeams( Map< Long, AuthLevel > authTeams ) {
-        this.authTeams = convertAuthLevelToInt( authTeams );
+    public void setAuthTeams( Map< Long, Integer > authTeams ) {
+        this.authTeams = authTeams;
     }
 
     public void addGameCreatorAuth( Long gameSeq ) {
-        this.authGames.put( gameSeq, AuthLevel.GAME_CREATOR.getLevel() );
+        this.authGames.put( gameSeq, GameAuth.GAME_CREATOR.getLevel() );
     }
 
 }

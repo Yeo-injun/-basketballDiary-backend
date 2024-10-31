@@ -1,6 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.user.controller;
 
-import com.threeNerds.basketballDiary.auth.Auth;
+import com.threeNerds.basketballDiary.auth.validation.RequiredLogin;
 import com.threeNerds.basketballDiary.mvc.team.service.MyTeamAuthService;
 
 import com.threeNerds.basketballDiary.mvc.user.controller.docs.*;
@@ -43,7 +43,7 @@ public class AuthUserController {
      *  22.03.29 인준 : 권한어노테이션 추가
      **/
     @ApiDocs022
-    @Auth
+    @RequiredLogin
     @GetMapping("/joinRequestsTo")
     public ResponseEntity<?> getJoinRequests(
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession
@@ -59,7 +59,7 @@ public class AuthUserController {
      *  22.03.29 인준 : 권한어노테이션 추가
      **/
     @ApiDocs020
-    @Auth
+    @RequiredLogin
     @PostMapping("/joinRequestTo/{teamSeq}")
     public ResponseEntity<Void> sendRequest(
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession,
@@ -74,7 +74,7 @@ public class AuthUserController {
      *  22.03.29 인준 : 권한어노테이션 추가
      **/
     @ApiDocs023
-    @Auth
+    @RequiredLogin
     @DeleteMapping("/joinRequestsTo/{teamJoinRequestSeq}")
     public ResponseEntity<?> cancelRequest(
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession,
@@ -89,7 +89,7 @@ public class AuthUserController {
      *  22.03.29 인준 : 권한어노테이션 추가
      **/
     @ApiDocs024
-    @Auth
+    @RequiredLogin
     @PutMapping("/joinRequestsFrom/{teamJoinRequestSeq}/approval")
     public ResponseEntity<?> approveTeamInvitation(
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession,
@@ -109,7 +109,7 @@ public class AuthUserController {
      *  22.03.29 인준 : 권한어노테이션 추가
      **/
     @ApiDocs033
-    @Auth
+    @RequiredLogin
     @PutMapping("/joinRequestsFrom/{teamJoinRequestSeq}/rejection")
     public ResponseEntity<?> rejectTeamInvitation(
             @SessionAttribute(value=LOGIN_USER, required = false) SessionUser userSession,
@@ -126,7 +126,7 @@ public class AuthUserController {
      *  22.03.29 인준 : 권한어노테이션 추가
      **/
     @ApiDocs032
-    @Auth
+    @RequiredLogin
     @GetMapping("/joinRequestsFrom")
     public ResponseEntity<?> getTeamInvitations(
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession

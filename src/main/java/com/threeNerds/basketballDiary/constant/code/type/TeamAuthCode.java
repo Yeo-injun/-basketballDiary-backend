@@ -1,6 +1,6 @@
 package com.threeNerds.basketballDiary.constant.code.type;
 
-import com.threeNerds.basketballDiary.auth.constant.AuthLevel;
+import com.threeNerds.basketballDiary.auth.validation.team.TeamAuth;
 import com.threeNerds.basketballDiary.constant.code.CodeType;
 import com.threeNerds.basketballDiary.constant.code.CodeTypeUtil;
 import lombok.Getter;
@@ -9,9 +9,9 @@ import lombok.Getter;
 @Getter
 public enum TeamAuthCode implements CodeType {
 
-    LEADER(     "팀장"     , Integer.toString( AuthLevel.TEAM_LEADER.getLevel() ) ),
-    MANAGER(    "관리자"    , Integer.toString( AuthLevel.TEAM_MANAGER.getLevel() ) ),
-    TEAM_MEMBER("일반팀원"  , Integer.toString( AuthLevel.TEAM_MEMBER.getLevel() ) );
+    LEADER(     "팀장"     , Integer.toString( TeamAuth.TEAM_LEADER.getLevel() ) ),
+    MANAGER(    "관리자"    , Integer.toString( TeamAuth.TEAM_LEADER.getLevel() ) ),
+    TEAM_MEMBER("일반팀원"  , Integer.toString( TeamAuth.TEAM_LEADER.getLevel() ) );
 
     private final String name;
     private final String code;
