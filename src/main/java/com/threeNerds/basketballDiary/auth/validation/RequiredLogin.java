@@ -1,4 +1,4 @@
-package com.threeNerds.basketballDiary.auth.annotation;
+package com.threeNerds.basketballDiary.auth.validation;
 
 
 import java.lang.annotation.ElementType;

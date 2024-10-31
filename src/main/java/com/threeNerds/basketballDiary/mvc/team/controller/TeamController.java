@@ -1,7 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.team.controller;
 
-import com.threeNerds.basketballDiary.auth.Auth;
-
+import com.threeNerds.basketballDiary.auth.validation.RequiredLogin;
 import com.threeNerds.basketballDiary.mvc.team.controller.docs.ApiDocs019;
 import com.threeNerds.basketballDiary.mvc.team.controller.docs.ApiDocs021;
 import com.threeNerds.basketballDiary.mvc.team.controller.docs.ApiDocs052;
@@ -77,7 +76,7 @@ public class TeamController {
      * API021 : 팀 생성
      */
     @ApiDocs021
-    @Auth
+    @RequiredLogin
     @PostMapping
     public ResponseEntity<Void> createTeam(
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,

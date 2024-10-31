@@ -1,5 +1,6 @@
-package com.threeNerds.basketballDiary.auth.type;
+package com.threeNerds.basketballDiary.auth.validation.team;
 
+import com.threeNerds.basketballDiary.auth.AuthType;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.SystemErrorType;
 import lombok.Getter;
@@ -34,19 +35,22 @@ public enum TeamAuth implements AuthType {
         this.level  = level;
     }
 
-    public boolean isPermissionGranted( Integer userAuthLevel ) {
-        if ( null == userAuthLevel ) {
+    public boolean isPermissionGranted( AuthType userAuth ) {
+        if ( null == userAuth ) {
             return false;
         }
-        return userAuthLevel >= this.level;
+        return userAuth.getLevel() >= this.level;
     }
     
-    // 권한유형에 맞는 권한수준을 찾아서 AuthLevel 타입으로 리턴
-    public static TeamAuth of( int authLevel ) {
+    // 권한수준에 따른 TeamAuth객체 리턴
+    public static TeamAuth of( Integer authLevel ) {
+        if ( null == authLevel ) {
+            return TeamAuth.NONE;
+        }
         return Arrays.stream( values() )
                 .filter( item -> item.getLevel() == authLevel )
                 .findAny()
-                .orElseThrow( () -> new CustomException( SystemErrorType.NOT_FOUND_VALID_AUTH_INFO ) );
+                .orElseGet( () -> TeamAuth.NONE );
     }
 
 }

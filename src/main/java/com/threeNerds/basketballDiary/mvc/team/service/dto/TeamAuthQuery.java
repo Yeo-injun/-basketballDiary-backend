@@ -1,6 +1,5 @@
 package com.threeNerds.basketballDiary.mvc.team.service.dto;
 
-import com.threeNerds.basketballDiary.auth.constant.AuthLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,14 +18,14 @@ public class TeamAuthQuery {
     @Getter
     public class Result {
         // 소속팀을 기준으로 권한수준을 관리
-        Map<Long, AuthLevel> authTeams;
+        Map<Long, Integer> authTeams;
 
-        Result( Map< Long, AuthLevel > authTeams ) {
+        Result( Map< Long, Integer > authTeams ) {
             this.authTeams = authTeams;
         }
     }
 
-    public Result buildResult( Map<Long, AuthLevel > authTeams ) {
+    public Result buildResult( Map<Long, Integer > authTeams ) {
         return new Result( authTeams );
     }
 }
