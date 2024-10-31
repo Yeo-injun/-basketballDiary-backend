@@ -1,11 +1,11 @@
 package com.threeNerds.basketballDiary.mvc.user.controller;
 
 import com.threeNerds.basketballDiary.auth.validation.RequiredLogin;
-import com.threeNerds.basketballDiary.mvc.team.service.MyTeamAuthService;
 
+import com.threeNerds.basketballDiary.mvc.team.service.TeamAuthService;
+import com.threeNerds.basketballDiary.mvc.team.service.dto.TeamAuthQuery;
 import com.threeNerds.basketballDiary.mvc.user.controller.docs.*;
 import com.threeNerds.basketballDiary.mvc.user.mapper.dto.JoinRequestDTO;
-import com.threeNerds.basketballDiary.mvc.team.service.dto.TeamAuthDTO;
 import com.threeNerds.basketballDiary.mvc.user.service.UserTeamJoinService;
 import com.threeNerds.basketballDiary.mvc.user.service.dto.JoinRequestCommand;
 import com.threeNerds.basketballDiary.mvc.user.service.dto.JoinRequestQuery;
@@ -32,7 +32,7 @@ import static com.threeNerds.basketballDiary.session.util.SessionUtil.LOGIN_USER
 )
 public class AuthUserController {
 
-    private final MyTeamAuthService myTeamAuthService;
+    private final TeamAuthService teamAuthService;
 
     private final UserTeamJoinService userTeamJoinService;
 
@@ -97,8 +97,16 @@ public class AuthUserController {
     ) {
         userTeamJoinService.approveInvitation( TeamInvitationCommand.ofApproval( teamJoinRequestSeq, userSession.getUserSeq() ) );
 
-        /** 세션 팀 권한 정보 update */
-        TeamAuthDTO teamAuthInfo = myTeamAuthService.getAllTeamAuthInfo( TeamAuthDTO.of( userSession.getUserSeq() ) );
+        /** 세션 팀 권한 정보 update
+         * TODO Redis로 이전한 이후 세팅값이 정상적으로 반영되는지 확인 필요
+         *  >> Redis 서버에 정보 업데이트 되도록 처리 요망
+         *  >> 별도 처리없이도 반영되는 것으로 확인... 원리는? 어떻게 가능하지?
+         **/
+        TeamAuthQuery.Result teamAuthInfo = teamAuthService.getAllTeamAuthInfo(
+                                                TeamAuthQuery.builder()
+                                                        .userSeq( userSession.getUserSeq() )
+                                                        .build()
+        );
         userSession.setAuthTeams( teamAuthInfo.getAuthTeams() );
         return ResponseEntity.ok().build();
     }

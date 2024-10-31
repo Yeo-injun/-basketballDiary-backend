@@ -10,8 +10,8 @@ import lombok.Getter;
 public enum TeamAuthCode implements CodeType {
 
     LEADER(     "팀장"     , Integer.toString( TeamAuth.TEAM_LEADER.getLevel() ) ),
-    MANAGER(    "관리자"    , Integer.toString( TeamAuth.TEAM_LEADER.getLevel() ) ),
-    TEAM_MEMBER("일반팀원"  , Integer.toString( TeamAuth.TEAM_LEADER.getLevel() ) );
+    MANAGER(    "관리자"    , Integer.toString( TeamAuth.TEAM_MANAGER.getLevel() ) ),
+    TEAM_MEMBER("일반팀원"  , Integer.toString( TeamAuth.TEAM_MEMBER.getLevel() ) );
 
     private final String name;
     private final String code;

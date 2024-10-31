@@ -9,10 +9,7 @@ import com.threeNerds.basketballDiary.mvc.team.controller.response.*;
 import com.threeNerds.basketballDiary.mvc.team.mapper.dto.TeamInfoDTO;
 import com.threeNerds.basketballDiary.mvc.team.controller.docs.*;
 import com.threeNerds.basketballDiary.mvc.team.mapper.dto.TeamRegularExerciseDTO;
-import com.threeNerds.basketballDiary.mvc.team.service.MyTeamAuthService;
-import com.threeNerds.basketballDiary.mvc.team.service.MyTeamJoinService;
-import com.threeNerds.basketballDiary.mvc.team.service.MyTeamProfileService;
-import com.threeNerds.basketballDiary.mvc.team.service.MyTeamService;
+import com.threeNerds.basketballDiary.mvc.team.service.*;
 import com.threeNerds.basketballDiary.mvc.team.service.dto.*;
 import com.threeNerds.basketballDiary.session.SessionUser;
 import lombok.RequiredArgsConstructor;
@@ -54,8 +51,9 @@ public class MyTeamController {
     /**--------------------------------------
      * Repository
      **--------------------------------------*/
+    private final TeamAuthService teamAuthService;
+
     private final MyTeamService myTeamService;
-    private final MyTeamAuthService myTeamAuthService;
     private final MyTeamJoinService myTeamJoinService;
     private final MyTeamProfileService myTeamProfileService;
 
@@ -128,7 +126,7 @@ public class MyTeamController {
             @PathVariable Long teamSeq,
             @PathVariable Long teamMemberSeq
     ) {
-        myTeamAuthService.appointManager(
+        teamAuthService.appointManager(
             TeamAuthCommand.builder()
                 .teamSeq(       teamSeq )
                 .teamMemberSeq( teamMemberSeq )
@@ -147,7 +145,7 @@ public class MyTeamController {
             @PathVariable Long teamSeq,
             @PathVariable Long teamMemberSeq
     ) {
-        myTeamAuthService.dismissManager(
+        teamAuthService.dismissManager(
             TeamAuthCommand.builder()
                 .teamSeq(       teamSeq )
                 .teamMemberSeq( teamMemberSeq )
@@ -166,7 +164,7 @@ public class MyTeamController {
             @PathVariable Long teamSeq,
             @PathVariable Long teamMemberSeq
     ) {
-        myTeamAuthService.dismissTeamMember(
+        teamAuthService.dismissTeamMember(
             TeamAuthCommand.builder()
                     .teamSeq(       teamSeq )
                     .teamMemberSeq( teamMemberSeq )
