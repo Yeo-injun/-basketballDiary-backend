@@ -2,6 +2,8 @@ package com.threeNerds.basketballDiary.auth;
 
 import com.threeNerds.basketballDiary.auth.validation.RequiredLogin;
 import com.threeNerds.basketballDiary.auth.validation.LoginChecker;
+import com.threeNerds.basketballDiary.auth.validation.game.GameAuthChecker;
+import com.threeNerds.basketballDiary.auth.validation.game.RequiredGameAuth;
 import com.threeNerds.basketballDiary.auth.validation.team.RequiredTeamAuth;
 import com.threeNerds.basketballDiary.auth.validation.team.TeamAuthChecker;
 import com.threeNerds.basketballDiary.session.SessionUser;
@@ -22,9 +24,13 @@ public class AuthorizationCheckerFactory {
         SessionUser userSession = SessionUtil.getSessionUser();
         RequiredTeamAuth teamAuth = handler.getMethodAnnotation( RequiredTeamAuth.class );
         if ( null != teamAuth ) {
-            return Optional.of( new TeamAuthChecker( teamAuth.type(), userSession ) );
+            return Optional.of( new TeamAuthChecker( teamAuth.type(), userSession.getAuthTeams() ) );
         }
 
+        RequiredGameAuth gameAuth = handler.getMethodAnnotation( RequiredGameAuth.class );
+        if ( null != gameAuth ) {
+            return Optional.of( new GameAuthChecker( gameAuth.type(), userSession.getAuthGames() ) );
+        }
         // 로그인 여부를 검증해야 하는지 확인 - 로그인 여부를 검증하는 checker 생성
         RequiredLogin requiredLogin = handler.getMethodAnnotation( RequiredLogin.class );
         if ( null != requiredLogin ) {

@@ -13,20 +13,20 @@ import java.util.Map;
 @NoArgsConstructor
 public class GameAuthQuery {
     Long userSeq;
-    Map< Long, Integer > authGames;
+    Map< String, String > authGames;
 
     @Getter
     public class Result {
         private final Long userSeq;
-        private final Map< Long, Integer > authGames;
+        private final Map< String, String > authGames;
 
-        Result( Long userSeq, Map< Long, Integer > authGames ) {
+        Result( Long userSeq, Map< String, String > authGames ) {
             this.userSeq    = userSeq;
             this.authGames  = authGames;
         }
     }
 
-    public GameAuthQuery.Result buildResult( Map< Long, Integer > authGames ) {
+    public GameAuthQuery.Result buildResult( Map< String, String > authGames ) {
         return new GameAuthQuery.Result( this.userSeq, authGames );
     }
 }

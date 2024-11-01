@@ -1,5 +1,6 @@
 package com.threeNerds.basketballDiary.constant.code.type;
 
+import com.threeNerds.basketballDiary.auth.validation.game.GameAuth;
 import com.threeNerds.basketballDiary.constant.code.CodeType;
 import com.threeNerds.basketballDiary.constant.code.CodeTypeUtil;
 import lombok.Getter;
@@ -8,8 +9,8 @@ import java.util.Arrays;
 
 @Getter
 public enum GameRecordAuthCode implements CodeType {
-    CREATOR("게임생성자", "01"),
-    RECORDER("입력권한자", "02");
+    CREATOR(    "게임생성자" , GameAuth.GAME_CREATOR.getLevel() ),
+    RECORDER(   "입력권한자" , GameAuth.GAME_RECORDER.getLevel() );
 
     private final String name;
     private final String code;
