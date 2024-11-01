@@ -20,35 +20,34 @@ public enum TeamAuth implements AuthType {
      * - ADMIN : 관리자
      * - ROOT : 슈퍼 관리자
      *---------------------------*/
-    NONE( "팀원아님", -1 ),
-    TEAM_MEMBER( "팀원"      , 1    ),
-    TEAM_MANAGER(  "팀관리자" , 2   ),      // 모든 권한 유형보다 높은 수준을 가짐
-    TEAM_LEADER(   "팀장"   , 3   )      // 시스템내 최고 권한 수준을 가짐
+    NONE(           "팀원아님", "-1" ),
+    TEAM_MEMBER(    "팀원"      , "1"    ),
+    TEAM_MANAGER(   "팀관리자" , "2"   ),      // 모든 권한 유형보다 높은 수준을 가짐
+    TEAM_LEADER(    "팀장"   , "3"   )      // 시스템내 최고 권한 수준을 가짐
     ;
-    private final String type;
-    private final String name;
-    private final int level;
 
-    TeamAuth( String name, int level ) {
-        this.type   = "team";
+    private final String name;
+    private final String level;
+
+    TeamAuth( String name, String level ) {
         this.name   = name;
         this.level  = level;
     }
 
+    @Override
     public boolean isPermissionGranted( AuthType userAuth ) {
-        if ( null == userAuth ) {
-            return false;
-        }
-        return userAuth.getLevel() >= this.level;
+        int userAuthLevel       = Integer.parseInt( userAuth.getLevel() );
+        int requiredAuthLevel   = Integer.parseInt( this.level );
+        return requiredAuthLevel <= userAuthLevel;
     }
     
     // 권한수준에 따른 TeamAuth객체 리턴
-    public static TeamAuth of( Integer authLevel ) {
+    public static TeamAuth ofLevel( String authLevel ) {
         if ( null == authLevel ) {
             return TeamAuth.NONE;
         }
         return Arrays.stream( values() )
-                .filter( item -> item.getLevel() == authLevel )
+                .filter( item -> item.getLevel().equals( authLevel ) )
                 .findAny()
                 .orElseGet( () -> TeamAuth.NONE );
     }

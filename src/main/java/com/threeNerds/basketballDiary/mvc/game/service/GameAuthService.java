@@ -80,12 +80,13 @@ public class GameAuthService {
      * @author 여인준
      */
     public GameAuthQuery.Result getGameAuthInfo( GameAuthQuery query ) {
-        Map< Long, Integer > authGames = gameRecordAuthRepo.findAuthList( query.getUserSeq() ).stream()
+        Map< String, String > authGames = gameRecordAuthRepo.findAuthList( query.getUserSeq() )
+                .stream()
                 .collect( Collectors.toMap(
-                                GameAuth::getGameSeq,
-                                item -> Integer.parseInt( item.getGameRecordAuthCode() )
-                        )
-                );
+                            item -> String.valueOf( item.getGameSeq() ),
+                            GameAuth::getGameRecordAuthCode
+                ));
+
         return query.buildResult( authGames );
     }
 

@@ -13,7 +13,7 @@ public class GetAuthInfoResponse {
     private String userId;
 
     private Map< Long, Integer > authTeams;    // 팀을 기준으로 권한수준 관리
-    private Map< Long, Integer > authGames;    // 경기를 기준으로 권한수준 관리
+    private Map< String, String > authGames;    // 경기를 기준으로 권한수준 관리
 
     public GetAuthInfoResponse( SessionUser userSession ) {
         if ( null == userSession ) {

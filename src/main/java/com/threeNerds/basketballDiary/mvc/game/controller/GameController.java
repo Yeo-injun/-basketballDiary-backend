@@ -330,7 +330,6 @@ public class GameController {
      * TODO cf. 현재는 개별 서비스가 독립된 트랜잭션...
      */
     @ApiDocs053
-    @RequiredGameAuth( type = GameAuth.GAME_CREATOR )
     @PostMapping
     public ResponseEntity<CreateGameResponse> createGame (
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,

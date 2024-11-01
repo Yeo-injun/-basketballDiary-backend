@@ -7,5 +7,6 @@ public interface AuthType {
         return true;
     }
 
-    int getLevel();
+    String getName();
+    String getLevel();
 }

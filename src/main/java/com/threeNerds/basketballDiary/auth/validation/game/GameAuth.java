@@ -1,8 +1,6 @@
 package com.threeNerds.basketballDiary.auth.validation.game;
 
 import com.threeNerds.basketballDiary.auth.AuthType;
-import com.threeNerds.basketballDiary.exception.CustomException;
-import com.threeNerds.basketballDiary.exception.error.SystemErrorType;
 import lombok.Getter;
 
 import java.util.Arrays;
@@ -13,27 +11,35 @@ public enum GameAuth implements AuthType {
      * 권한유형 : 경기기록 권한
      * cf. 권한수준이 낮을수록 더 많은 권한을 가짐.
      *---------------------------*/
-    NONE(               "기록자아님" , -1 ),
-    GAME_CREATOR(       "경기생성자" , 1 ),
-    GAME_RECORDER(      "경기기록자" , 2 )
+    NONE(               "기록자아님" , "99" ),
+    GAME_CREATOR(       "경기생성자" , "01" ),
+    GAME_RECORDER(      "경기기록자" , "02" )
     ;
 
-    private final String type;
     private final String name;
-    private final int level;
+    private final String level;
 
-    GameAuth( String name, int level ) {
-        this.type = "gameRecorder";
-        this.name = name;
-        this.level = level;
+    GameAuth( String name, String level ) {
+        this.name   = name;
+        this.level  = level;
     }
 
-    // 권한유형에 맞는 권한수준을 찾아서 AuthLevel 타입으로 리턴
-    public static GameAuth of( int authLevel ) {
+    @Override
+    public boolean isPermissionGranted( AuthType userAuth ) {
+        int userAuthLevel       = Integer.parseInt( userAuth.getLevel() );
+        int requiredAuthLevel   = Integer.parseInt( this.level );
+        return requiredAuthLevel >=  userAuthLevel;
+    }
+
+    // 권한유형에 맞는 권한수준을 찾아서 해당되는 권한 유형으로 리턴
+    public static GameAuth ofLevel( String authLevel ) {
+        if ( null == authLevel ) {
+            return GameAuth.NONE;
+        }
         return Arrays.stream( values() )
-                .filter( item -> item.getLevel() == authLevel )
+                .filter( item -> item.getLevel().equals( authLevel )  )
                 .findAny()
-                .orElseThrow( () -> new CustomException( SystemErrorType.NOT_FOUND_VALID_AUTH_INFO ) );
+                .orElseGet( () -> GameAuth.NONE );
     }
 
 }
