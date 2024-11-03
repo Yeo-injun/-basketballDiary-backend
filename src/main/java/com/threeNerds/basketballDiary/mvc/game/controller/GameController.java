@@ -1,8 +1,8 @@
 package com.threeNerds.basketballDiary.mvc.game.controller;
 
 import com.threeNerds.basketballDiary.auth.validation.RequiredLogin;
-import com.threeNerds.basketballDiary.auth.validation.game.GameAuth;
-import com.threeNerds.basketballDiary.auth.validation.game.RequiredGameAuth;
+import com.threeNerds.basketballDiary.auth.validation.type.GameAuth;
+import com.threeNerds.basketballDiary.auth.validation.RequiredGameAuth;
 import com.threeNerds.basketballDiary.constant.code.type.HomeAwayCode;
 import com.threeNerds.basketballDiary.mvc.game.controller.docs.*;
 import com.threeNerds.basketballDiary.mvc.game.controller.request.*;

@@ -1,9 +1,7 @@
-package com.threeNerds.basketballDiary.auth.validation;
+package com.threeNerds.basketballDiary.auth;
 
-import com.threeNerds.basketballDiary.auth.AuthorizationChecker;
-import com.threeNerds.basketballDiary.auth.AuthorizationStatus;
-import com.threeNerds.basketballDiary.exception.error.ErrorMessageType;
-import com.threeNerds.basketballDiary.exception.error.SystemErrorType;
+import com.threeNerds.basketballDiary.auth.exception.AuthorizationException;
+import com.threeNerds.basketballDiary.auth.exception.NotAllowedAuthException;
 import com.threeNerds.basketballDiary.session.util.SessionUtil;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,8 +19,8 @@ public class LoginChecker implements AuthorizationChecker {
             }
 
             @Override
-            public ErrorMessageType getErrorMessage() {
-                return SystemErrorType.LOGIN_REQUIRED;
+            public AuthorizationException getException() {
+                return new NotAllowedAuthException( "REQUIRED_LOGIN", "로그인이 필요합니다." );
             }
         };
     }

@@ -1,11 +1,8 @@
 package com.threeNerds.basketballDiary.auth;
 
 import com.threeNerds.basketballDiary.auth.validation.RequiredLogin;
-import com.threeNerds.basketballDiary.auth.validation.LoginChecker;
-import com.threeNerds.basketballDiary.auth.validation.game.GameAuthChecker;
-import com.threeNerds.basketballDiary.auth.validation.game.RequiredGameAuth;
-import com.threeNerds.basketballDiary.auth.validation.team.RequiredTeamAuth;
-import com.threeNerds.basketballDiary.auth.validation.team.TeamAuthChecker;
+import com.threeNerds.basketballDiary.auth.validation.RequiredGameAuth;
+import com.threeNerds.basketballDiary.auth.validation.RequiredTeamAuth;
 import com.threeNerds.basketballDiary.session.SessionUser;
 import com.threeNerds.basketballDiary.session.util.SessionUtil;
 import org.springframework.web.method.HandlerMethod;

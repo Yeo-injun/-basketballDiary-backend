@@ -1,6 +1,5 @@
-package com.threeNerds.basketballDiary.auth.validation.game;
+package com.threeNerds.basketballDiary.auth.validation.type;
 
-import com.threeNerds.basketballDiary.auth.AuthType;
 import lombok.Getter;
 
 import java.util.Arrays;

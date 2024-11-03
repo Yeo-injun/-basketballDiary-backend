@@ -1,4 +1,4 @@
-package com.threeNerds.basketballDiary.auth;
+package com.threeNerds.basketballDiary.auth.validation.type;
 
 
 public interface AuthType {
