@@ -88,7 +88,7 @@ public class GameController {
      * @author 여인준
      */
     @ApiDocs067
-    @RequiredLogin
+    @RequiredGameAuth( type = GameAuth.GAME_RECORDER )
     @PostMapping("/{gameSeq}/homeAwayCode/{homeAwayCode}/player")
     public ResponseEntity< URI > addGameJoinPlayer(
             @PathVariable(name = "gameSeq") Long gameSeq,
@@ -133,7 +133,7 @@ public class GameController {
      * @author 강창기
      */
     @ApiDocs038
-    @RequiredLogin
+    @RequiredGameAuth( type = GameAuth.GAME_RECORDER )
     @PutMapping("/{gameSeq}/quarters/{quarterCode}")
     public ResponseEntity< Void > saveQuarterRecord(
             @PathVariable(name = "gameSeq") Long gameSeq,
