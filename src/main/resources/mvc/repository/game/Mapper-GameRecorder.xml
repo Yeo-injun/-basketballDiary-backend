@@ -40,6 +40,7 @@
                    AND HOME_AWAY_CODE = GJP.HOME_AWAY_CODE
                 ) AS TEAM_NAME
              , U.USER_SEQ
+             , GJP.GAME_JOIN_PLAYER_SEQ
              , GRA.GAME_RECORD_AUTH_CODE
              , U.NAME AS USER_NAME
              , U.POSITION_CODE

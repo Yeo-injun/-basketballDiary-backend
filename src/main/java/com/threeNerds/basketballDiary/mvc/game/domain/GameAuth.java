@@ -28,10 +28,11 @@ public class GameAuth {
                 .gameRecordAuthCode(    GameRecordAuthCode.CREATOR.getCode() )
                 .build();
     }
-    public static GameAuth ofRecorder( Long gameSeq, Long userSeq ) {
+    public static GameAuth ofRecorder( Long gameSeq, Long userSeq, Long gameJoinPlayerSeq ) {
         return GameAuth.builder()
                 .gameSeq( gameSeq )
                 .userSeq( userSeq )
+                .gameJoinPlayerSeq(     gameJoinPlayerSeq )
                 .gameRecordAuthCode( GameRecordAuthCode.RECORDER.getCode() )
                 .build();
     }

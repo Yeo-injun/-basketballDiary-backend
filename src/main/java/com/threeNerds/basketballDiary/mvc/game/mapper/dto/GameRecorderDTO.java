@@ -11,6 +11,7 @@ public class GameRecorderDTO {
     private Long gameRecordAuthSeq;
     private Long teamSeq;
     private Long userSeq;
+    private Long gameJoinPlayerSeq;
     private String playerTypeCode;
     private String playerTypeCodeName;
     private String teamName;
