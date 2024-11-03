@@ -1,6 +1,6 @@
 package com.threeNerds.basketballDiary.constant.code.type;
 
-import com.threeNerds.basketballDiary.auth.validation.team.TeamAuth;
+import com.threeNerds.basketballDiary.auth.validation.type.TeamAuth;
 import com.threeNerds.basketballDiary.constant.code.CodeType;
 import com.threeNerds.basketballDiary.constant.code.CodeTypeUtil;
 import lombok.Getter;

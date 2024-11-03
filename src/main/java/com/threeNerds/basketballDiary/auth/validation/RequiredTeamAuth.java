@@ -1,7 +1,7 @@
-package com.threeNerds.basketballDiary.auth.validation.team;
+package com.threeNerds.basketballDiary.auth.validation;
 
 
-import com.threeNerds.basketballDiary.auth.validation.RequiredLogin;
+import com.threeNerds.basketballDiary.auth.validation.type.TeamAuth;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

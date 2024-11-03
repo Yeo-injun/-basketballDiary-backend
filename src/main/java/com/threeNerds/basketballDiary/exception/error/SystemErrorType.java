@@ -38,7 +38,6 @@ public enum SystemErrorType implements ErrorMessageType {
     NOT_FOUND_VALID_AUTH_INFO( INTERNAL_SERVER_ERROR, "유효한 권한정보를 찾는데 실패하였습니다." ),
     ERROR_IN_PROCESS_FILE( INTERNAL_SERVER_ERROR, "파일처리중 오류가 발생했습니다." ),
     ERROR_IN_TEAM_AUTH_CHECK(  INTERNAL_SERVER_ERROR, "요청한 URL은 팀권한을 체크할 수 없습니다." ),
-    ERROR_IN_GAME_AUTH_CHECK(  INTERNAL_SERVER_ERROR, "요청한 URL은 경기 권한을 체크할 수 없습니다." )
     ;
 
     private final HttpStatus httpStatus;
