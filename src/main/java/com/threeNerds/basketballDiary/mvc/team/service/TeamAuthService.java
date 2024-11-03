@@ -1,7 +1,5 @@
 package com.threeNerds.basketballDiary.mvc.team.service;
 
-import com.threeNerds.basketballDiary.auth.constant.AuthLevel;
-import com.threeNerds.basketballDiary.auth.constant.AuthType;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import com.threeNerds.basketballDiary.mvc.team.domain.TeamMember;
@@ -46,10 +44,10 @@ public class TeamAuthService {
                                         .build();
         // 소속된 팀 목록 조회
         List<TeamMember> joinTeamList = teamMemberRepo.findAllJoinTeamsByUserSeq( teamMemberParam );
-        Map< Long, AuthLevel > teamAuthMap = joinTeamList.stream()
+        Map< Long, Integer > teamAuthMap = joinTeamList.stream()
                                                     .collect( Collectors.toMap(
                                                                                 TeamMember::getTeamSeq,
-                                                                                item -> AuthLevel.of( AuthType.TEAM, Integer.parseInt( item.getTeamAuthCode() ) )
+                                                                                item -> Integer.parseInt( item.getTeamAuthCode() )
                                                                                 )
                                                     );
         return query.buildResult( teamAuthMap );

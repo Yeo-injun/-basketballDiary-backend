@@ -1,8 +1,6 @@
 package com.threeNerds.basketballDiary.auth;
 
 import com.threeNerds.basketballDiary.exception.CustomException;
-import com.threeNerds.basketballDiary.exception.error.SystemErrorType;
-import com.threeNerds.basketballDiary.session.util.SessionUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.method.HandlerMethod;
@@ -11,6 +9,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 
 @Slf4j
 public class AuthInterceptor implements HandlerInterceptor {
@@ -21,28 +20,22 @@ public class AuthInterceptor implements HandlerInterceptor {
         if ( !( handler instanceof HandlerMethod ) ) {
             return true;
         }
-
         /** Request 로깅 */
         HandlerMethod hm = (HandlerMethod) handler;
         loggingRequestInfo( request, hm );
 
-        /** 1. @Auth 가 없는 경우 - 인증이 별도로 필요없음 */
-        Auth requiredAuth = hm.getMethodAnnotation( Auth.class );
-        if ( null == requiredAuth ) {
+        Optional< AuthorizationChecker > nullableChecker = AuthorizationCheckerFactory.build( hm );
+        if ( nullableChecker.isEmpty() ) {
+            // 권한 검증할 checker가 없으면 접근가능하도록 처리
             return true;
         }
-
-        /** 2. @Auth가 있는 경우 - 세션이 있는지 확인 */
-        if ( !SessionUtil.isLogin() ) {
-            throw new CustomException( SystemErrorType.LOGIN_REQUIRED );
-        }
-
-        /** 소속팀 권한 체크 */
-        AuthChecker checker = AuthChecker.ofSession( requiredAuth );
-        if ( checker.checkAuth( request ) ) {
+        // 생성된 checker로 요청에 대한 권한 체크 수행
+        AuthorizationChecker checker    = nullableChecker.get();
+        AuthorizationStatus status      = checker.checkAuthStatus( request );
+        if ( status.isPermission() ) {
             return true;
         }
-        throw new CustomException( SystemErrorType.UNAUTHORIZED_ACCESS );
+        throw new CustomException( status.getErrorMessage() );
     }
 
     // 요청정보 로깅
@@ -64,4 +57,5 @@ public class AuthInterceptor implements HandlerInterceptor {
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
 
     }
+
 }

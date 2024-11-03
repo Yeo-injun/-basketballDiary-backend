@@ -1,9 +1,9 @@
 package com.threeNerds.basketballDiary.mvc.game.controller;
 
-import com.threeNerds.basketballDiary.auth.constant.AuthLevel;
-import com.threeNerds.basketballDiary.auth.constant.AuthType;
+import com.threeNerds.basketballDiary.auth.validation.RequiredLogin;
+import com.threeNerds.basketballDiary.auth.validation.game.GameAuth;
+import com.threeNerds.basketballDiary.auth.validation.game.RequiredGameAuth;
 import com.threeNerds.basketballDiary.constant.code.type.HomeAwayCode;
-import com.threeNerds.basketballDiary.auth.Auth;
 import com.threeNerds.basketballDiary.mvc.game.controller.docs.*;
 import com.threeNerds.basketballDiary.mvc.game.controller.request.*;
 import com.threeNerds.basketballDiary.mvc.game.controller.response.*;
@@ -88,7 +88,7 @@ public class GameController {
      * @author 여인준
      */
     @ApiDocs067
-    @Auth
+    @RequiredLogin
     @PostMapping("/{gameSeq}/homeAwayCode/{homeAwayCode}/player")
     public ResponseEntity< URI > addGameJoinPlayer(
             @PathVariable(name = "gameSeq") Long gameSeq,
@@ -110,7 +110,7 @@ public class GameController {
      * @author 여인준
      */
     @ApiDocs068
-    @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_RECORDER )
+    @RequiredGameAuth( type = GameAuth.GAME_RECORDER )
     @DeleteMapping("/{gameSeq}/homeAwayCode/{homeAwayCode}/players/{gameJoinPlayerSeq}")
     public ResponseEntity< Void > deleteGameJoinPlayers(
             @PathVariable(name = "gameSeq" ) Long gameSeq,
@@ -133,7 +133,7 @@ public class GameController {
      * @author 강창기
      */
     @ApiDocs038
-    @Auth
+    @RequiredLogin
     @PutMapping("/{gameSeq}/quarters/{quarterCode}")
     public ResponseEntity< Void > saveQuarterRecord(
             @PathVariable(name = "gameSeq") Long gameSeq,
@@ -151,7 +151,7 @@ public class GameController {
      * 23.02.19(일) 인준 - API url 수정 (gameJoinTeamSeq를 화면에서 계속 가지고 있는 것이 번거롭기 때문)
      */
     @ApiDocs040
-    @Auth
+    @RequiredLogin
     @GetMapping("/{gameSeq}/quarters/{quarterCode}/entry")
     public ResponseEntity<?> getGameEntry (
             @PathVariable("gameSeq") Long gameSeq,
@@ -175,7 +175,7 @@ public class GameController {
      * @author 여인준
      */
     @ApiDocs064
-    @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_RECORDER )
+    @RequiredGameAuth( type = GameAuth.GAME_RECORDER )
     @PostMapping("/{gameSeq}/quarters/{quarterCode}")
     public ResponseEntity< Void > createGameQuarterBasicInfo (
             @PathVariable(name = "gameSeq") Long gameSeq,
@@ -197,7 +197,7 @@ public class GameController {
      * @author 여인준
      **/
     @ApiDocs041
-    @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_CREATOR )
+    @RequiredGameAuth( type = GameAuth.GAME_CREATOR )
     @DeleteMapping("/{gameSeq}/quarters/{quarterCode}")
     public ResponseEntity< Void > deleteGameQuarter(
             @PathVariable("gameSeq") Long gameSeq,
@@ -218,7 +218,7 @@ public class GameController {
      * @author 강창기
      */
     @ApiDocs043
-    @Auth
+    @RequiredLogin
     @GetMapping("/{gameSeq}/quarters/{quarterCode}/players")
     public ResponseEntity<?> getGameJoinPlayerQuarterRecords(
         @PathVariable(name = "gameSeq") Long gameSeq,
@@ -243,7 +243,7 @@ public class GameController {
      * API044 상대팀 목록 조회
      */
     @ApiDocs044
-    @Auth
+    @RequiredLogin
     @GetMapping("/opponents")
     public ResponseEntity<?> searchOpponents(
             @RequestParam(name = "sidoCode", required = false) String sidoCode,
@@ -266,7 +266,7 @@ public class GameController {
      * API046 경기 기초 정보 조회
      */
     @ApiDocs046
-    @Auth
+    @RequiredLogin
     @GetMapping("{gameSeq}/info")
     public ResponseEntity< GetGameBasicInfoResponse > getGameBasicInfo(
             @PathVariable(name = "gameSeq") Long gameSeq
@@ -283,7 +283,7 @@ public class GameController {
      * API047 경기 참가팀 조회
      */
     @ApiDocs047
-    @Auth
+    @RequiredLogin
     @GetMapping("{gameSeq}/teams")
     public ResponseEntity<?> getGameJoinTeamsInfo(
             @PathVariable(name = "gameSeq") Long gameSeq,
@@ -306,7 +306,7 @@ public class GameController {
      * @author 강창기
      */
     @ApiDocs048
-    @Auth
+    @RequiredLogin
     @GetMapping("/{gameSeq}/quarters/{quarterCode}")
     public ResponseEntity<?> getGameQuarterRecords(
             @PathVariable(name = "gameSeq") Long gameSeq,
@@ -330,7 +330,6 @@ public class GameController {
      * TODO cf. 현재는 개별 서비스가 독립된 트랜잭션...
      */
     @ApiDocs053
-    @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_CREATOR )
     @PostMapping
     public ResponseEntity<CreateGameResponse> createGame (
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser sessionUser,
@@ -361,7 +360,7 @@ public class GameController {
      * @author 이성주
      */
     @ApiDocs050
-    @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_CREATOR )
+    @RequiredGameAuth( type = GameAuth.GAME_CREATOR )
     @PostMapping("/{gameSeq}/confirmation")
     public ResponseEntity<?> confirmGame(
             @PathVariable("gameSeq") Long gameSeq
@@ -374,7 +373,7 @@ public class GameController {
      * API051 경기 삭제하기
      */
     @ApiDocs051
-    @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_CREATOR )
+    @RequiredGameAuth( type = GameAuth.GAME_CREATOR )
     @DeleteMapping("/{gameSeq}")
     public ResponseEntity<?> deleteGame(
             @PathVariable(name = "gameSeq") Long gameSeq
@@ -387,7 +386,7 @@ public class GameController {
      * API055 경기기록원 조회
      */
     @ApiDocs055
-    @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_RECORDER )
+    @RequiredGameAuth( type = GameAuth.GAME_RECORDER )
     @GetMapping("/{gameSeq}/recorders")
     public ResponseEntity<?> getGameRecorders(
             @PathVariable("gameSeq") Long gameSeq
@@ -406,7 +405,7 @@ public class GameController {
      * @author injun
      */
     @ApiDocs056
-    @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_CREATOR )
+    @RequiredGameAuth( type = GameAuth.GAME_CREATOR )
     @PostMapping("/{gameSeq}/recorders")
     public ResponseEntity<?> saveGameRecorders(
             @PathVariable("gameSeq") Long gameSeq,
@@ -422,7 +421,7 @@ public class GameController {
      * @author injun
      */
     @ApiDocs057
-    @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_RECORDER )
+    @RequiredGameAuth( type = GameAuth.GAME_RECORDER )
     @GetMapping("/{gameSeq}/recorders/candidates")
     public ResponseEntity<?> getGameRecorderCandidates(
             @PathVariable(name = "gameSeq") Long gameSeq,
@@ -442,7 +441,7 @@ public class GameController {
      * 22.12.15(목) @ReauestBody부분 Request클래스로 대체
      */
     @ApiDocs060
-    @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_RECORDER )
+    @RequiredGameAuth( type = GameAuth.GAME_RECORDER )
     @PostMapping("/{gameSeq}/entry")
     public ResponseEntity<?> saveQuarterEntryInfo(
             @PathVariable(name = "gameSeq") Long gameSeq,
@@ -456,7 +455,7 @@ public class GameController {
      * API061 경기 참가 선수 전체 조회
      */
     @ApiDocs061
-    @Auth
+    @RequiredLogin
     @GetMapping("/{gameSeq}/players")
     public ResponseEntity<?> getAllGameJoinPlayers(
             @PathVariable(name = "gameSeq") Long gameSeq
@@ -483,7 +482,7 @@ public class GameController {
      * - 페이징 처리 적용 완료
      */
     @ApiDocs066
-    @Auth
+    @RequiredLogin
     @GetMapping("/{gameSeq}/homeAwayCode/{homeAwayCode}/players")
     public ResponseEntity< GetGameJoinPlayersResponse > getGameJoinPlayersWithPaging(
         @PathVariable(name = "gameSeq")         Long gameSeq,
@@ -512,7 +511,7 @@ public class GameController {
      * 23.01.11(수) 누락된 로직 추가 - 게임기록상태코드 업데이트
      */
     @ApiDocs062
-    @Auth( type = AuthType.GAME_RECORD, level = AuthLevel.GAME_CREATOR )
+    @RequiredGameAuth( type = GameAuth.GAME_CREATOR )
     @PostMapping("/{gameSeq}/gameJoinTeams")
     public ResponseEntity< Void > confirmGameJoinTeam (
             @PathVariable(name = "gameSeq") Long gameSeq,
@@ -529,7 +528,7 @@ public class GameController {
      * 23.01.25(수) 여인준 - API Body 수정
      */
     @ApiDocs063
-    @Auth
+    @RequiredLogin
     @GetMapping("/{gameSeq}/quarters")
     public ResponseEntity<?> getGameAllRecords (
             @PathVariable(name = "gameSeq") Long gameSeq

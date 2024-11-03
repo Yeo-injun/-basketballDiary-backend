@@ -10,8 +10,8 @@ import com.threeNerds.basketballDiary.mvc.auth.service.AuthService;
 import com.threeNerds.basketballDiary.mvc.auth.service.dto.LoginUserQuery;
 import com.threeNerds.basketballDiary.mvc.game.service.GameAuthService;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.GameAuthQuery;
-import com.threeNerds.basketballDiary.mvc.team.service.MyTeamAuthService;
-import com.threeNerds.basketballDiary.mvc.team.service.dto.TeamAuthDTO;
+import com.threeNerds.basketballDiary.mvc.team.service.TeamAuthService;
+import com.threeNerds.basketballDiary.mvc.team.service.dto.TeamAuthQuery;
 import com.threeNerds.basketballDiary.session.SessionUser;
 import com.threeNerds.basketballDiary.session.util.SessionUtil;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -47,7 +47,7 @@ import static com.threeNerds.basketballDiary.session.util.SessionUtil.LOGIN_USER
 public class AuthController {
 
     private final AuthService authService;
-    private final MyTeamAuthService myTeamAuthService;
+    private final TeamAuthService teamAuthService;
     private final GameAuthService gameAuthService;
 
     /**
@@ -75,14 +75,18 @@ public class AuthController {
         Long loginUserSeq               = loginUser.getUserSeq();
 
         /** 소속팀 권한정보 조회 */
-        TeamAuthDTO teamAuthInfo = myTeamAuthService.getAllTeamAuthInfo(TeamAuthDTO.of(loginUserSeq));
+        TeamAuthQuery.Result teamAuthInfo = teamAuthService.getAllTeamAuthInfo(
+                                                TeamAuthQuery.builder()
+                                                    .userSeq( loginUserSeq )
+                                                    .build()
+        );
 
         /** 경기 권한정보 조회 */
         GameAuthQuery.Result gameAuthInfo = gameAuthService.getGameAuthInfo(
-                                            GameAuthQuery.builder()
-                                                .userSeq( loginUserSeq )
-                                                .build()
-                                       );
+                                                GameAuthQuery.builder()
+                                                    .userSeq( loginUserSeq )
+                                                    .build()
+       );
 
         /** 세션 정보 생성 및 저장 */
         SessionUser sessionUser = SessionUser.createWithAuth(

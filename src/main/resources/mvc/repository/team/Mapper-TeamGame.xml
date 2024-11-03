@@ -21,7 +21,7 @@
     </select>
 
     <sql id="sqlFindAllTeamGamesByTeamSeq" >
-        SELECT G.GAME_SEQ
+        SELECT DISTINCT G.GAME_SEQ         /* 자체전 경기는 홈팀, 어웨이팀 정보가 GAME_JOIN_TEAM에 각가 쌓여서 실제 경기는 하나지만 JOIN결과로 한 경기에 두개의 결과가 조회되는 오류 해결 */
              , G.GAME_RECORD_STATE_CODE
              , G.GAME_TYPE_CODE
              , G.GAME_YMD

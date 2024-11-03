@@ -1,6 +1,6 @@
 package com.threeNerds.basketballDiary.mvc.user.controller;
 
-import com.threeNerds.basketballDiary.auth.Auth;
+import com.threeNerds.basketballDiary.auth.validation.RequiredLogin;
 import com.threeNerds.basketballDiary.mvc.user.controller.docs.*;
 import com.threeNerds.basketballDiary.mvc.user.controller.request.UpdateMyProfileRequest;
 import com.threeNerds.basketballDiary.mvc.user.controller.response.GetUsersExcludingTeamMembersResponse;
@@ -49,7 +49,7 @@ public class UserController {
      * 23.05.07 여인준 : 팀원 제외하고 조회되게끔 변경
      */
     @ApiDocs006
-    @Auth
+    @RequiredLogin
     @GetMapping("/excludeTeam/{teamSeq}")
     public ResponseEntity<?> searchUsersExcludingTeamMembers  (
             @PathVariable
@@ -115,7 +115,7 @@ public class UserController {
      * API028 회원탈퇴
      */
     @ApiDocs028
-    @Auth
+    @RequiredLogin
     @DeleteMapping  // cf. 일반적인 HTTP spec에서는 DELETE 메소드는 RequestBody를 지원하지 않음. 이에 따라 Spring @DeleteMapping에서는 @RequestBody를 지원하지 않음.
     public ResponseEntity<Void> withdrawalMembership(
             @SessionAttribute( value = LOGIN_USER, required = false )
@@ -138,7 +138,7 @@ public class UserController {
      * API025 회원 프로필 조회
      */
     @ApiDocs025
-    @Auth
+    @RequiredLogin
     @GetMapping("/profile")
     public ResponseEntity<GetMyProfileResponse> getMyProfile(
             @SessionAttribute(value = LOGIN_USER, required = false)
@@ -153,7 +153,7 @@ public class UserController {
      * API026 회원 프로필 수정
      */
     @ApiDocs026
-    @Auth
+    @RequiredLogin
     @PostMapping("/profile")
     public ResponseEntity<?> updateMyProfile(
             @SessionAttribute(value = LOGIN_USER,required = false)
@@ -169,7 +169,7 @@ public class UserController {
      * API027 비밀번호 변경
      */
     @ApiDocs027
-    @Auth
+    @RequiredLogin
     @PostMapping("/password")
     public ResponseEntity<Void> updatePassword(
             @SessionAttribute(value = LOGIN_USER,required = false)

@@ -6,6 +6,7 @@ import com.threeNerds.basketballDiary.file.ImagePath;
 import com.threeNerds.basketballDiary.file.ImageUploader;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.TeamMemberQuery;
 import com.threeNerds.basketballDiary.mvc.team.domain.repository.TeamMemberRepository;
+import com.threeNerds.basketballDiary.mvc.team.mapper.TeamRegularExerciseMapper;
 import com.threeNerds.basketballDiary.mvc.team.mapper.dto.*;
 import com.threeNerds.basketballDiary.mvc.team.service.dto.MyTeamCommand;
 import com.threeNerds.basketballDiary.mvc.team.service.dto.MyTeamInfoCommand;
@@ -66,6 +67,7 @@ public class MyTeamService {
      * Mapper
      *-------------------------------------*/
     private final TeamMemberMapper teamMemberMapper;
+    private final TeamRegularExerciseMapper teamRegularExerciseMapper;
 
     /**
      * 소속팀 운영진 목록 조회
@@ -123,9 +125,9 @@ public class MyTeamService {
             return query.buildResult( Collections.emptyList(), pagination.empty() );
         }
         /** 팀들의 정기운동시간 조회 및 세팅 */
-        myTeams.forEach( myTeamInfo -> {
-            List<TeamRegularExerciseDTO> exercises = teamRegularExerciseRepository.findByTeamSeq( myTeamInfo.getTeamSeq() );
-            myTeamInfo.setTeamRegularExercises( exercises );
+        myTeams.forEach( info -> {
+            Long teamSeq = info.getTeamSeq();
+            info.setTeamRegularExercises( teamRegularExerciseMapper.findAllExerciseByTeamSeq( teamSeq ) );
         });
 
         return query.buildResult( myTeams, pagination.getPages( myTeams.get(0).getTotalCount() ) );
@@ -143,7 +145,7 @@ public class MyTeamService {
         return query.buildResult(
                 new TeamInfoDTO( team ),
                 teamMemberRepository.findAllTeamMembersByTeamSeq( teamSeq ).size(),
-                teamRegularExerciseRepository.findByTeamSeq( teamSeq )
+                teamRegularExerciseMapper.findAllExerciseByTeamSeq( teamSeq )
         );
     }
 

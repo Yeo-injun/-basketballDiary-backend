@@ -11,7 +11,7 @@ public class LoginResponse {
     private String userId;
 
     private Map< Long, Integer > authTeams;
-    private Map< Long, Integer > authGames;
+    private Map< String, String > authGames;
 
     public LoginResponse( SessionUser userSession ) {
         this.userSeq    = userSession.getUserSeq();
