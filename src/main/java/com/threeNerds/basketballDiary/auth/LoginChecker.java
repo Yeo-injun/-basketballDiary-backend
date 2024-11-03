@@ -2,6 +2,7 @@ package com.threeNerds.basketballDiary.auth;
 
 import com.threeNerds.basketballDiary.auth.exception.AuthorizationException;
 import com.threeNerds.basketballDiary.auth.exception.NotAllowedAuthException;
+import com.threeNerds.basketballDiary.auth.exception.RequiredLoginException;
 import com.threeNerds.basketballDiary.session.util.SessionUtil;
 
 import javax.servlet.http.HttpServletRequest;
@@ -11,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
  * -
  */
 public class LoginChecker implements AuthorizationChecker {
-    public AuthorizationStatus checkAuthStatus(HttpServletRequest request ) {
+    public AuthorizationStatus checkAuthStatus( HttpServletRequest request ) {
         return new AuthorizationStatus() {
             @Override
             public boolean isPermission() {
@@ -20,7 +21,7 @@ public class LoginChecker implements AuthorizationChecker {
 
             @Override
             public AuthorizationException getException() {
-                return new NotAllowedAuthException( "REQUIRED_LOGIN", "로그인이 필요합니다." );
+                return new RequiredLoginException();
             }
         };
     }
