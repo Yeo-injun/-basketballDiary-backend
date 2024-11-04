@@ -1,11 +1,9 @@
 package com.threeNerds.basketballDiary.constant.code.type;
 
-import com.threeNerds.basketballDiary.auth.validation.game.GameAuth;
+import com.threeNerds.basketballDiary.auth.validation.type.GameAuth;
 import com.threeNerds.basketballDiary.constant.code.CodeType;
 import com.threeNerds.basketballDiary.constant.code.CodeTypeUtil;
 import lombok.Getter;
-
-import java.util.Arrays;
 
 @Getter
 public enum GameRecordAuthCode implements CodeType {

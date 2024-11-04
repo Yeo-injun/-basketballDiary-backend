@@ -1,9 +1,9 @@
-package com.threeNerds.basketballDiary.auth.validation.game;
+package com.threeNerds.basketballDiary.auth;
 
-import com.threeNerds.basketballDiary.auth.AuthorizationChecker;
-import com.threeNerds.basketballDiary.auth.AuthorizationStatus;
-import com.threeNerds.basketballDiary.exception.error.ErrorMessageType;
-import com.threeNerds.basketballDiary.exception.error.SystemErrorType;
+import com.threeNerds.basketballDiary.auth.exception.AuthCheckException;
+import com.threeNerds.basketballDiary.auth.exception.AuthorizationException;
+import com.threeNerds.basketballDiary.auth.exception.NotAllowedAuthException;
+import com.threeNerds.basketballDiary.auth.validation.type.GameAuth;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerMapping;
 
@@ -52,8 +52,8 @@ public class GameAuthChecker implements AuthorizationChecker {
             }
 
             @Override
-            public ErrorMessageType getErrorMessage() {
-                return SystemErrorType.ERROR_IN_TEAM_AUTH_CHECK;
+            public AuthorizationException getException() {
+                return new AuthCheckException( "요청에 대해 경기 정보를 식별할 수 없어 권한을 체크할 수 없습니다." );
             }
         };
     }
@@ -68,8 +68,8 @@ public class GameAuthChecker implements AuthorizationChecker {
             }
 
             @Override
-            public ErrorMessageType getErrorMessage() {
-                return SystemErrorType.UNAUTHORIZED_ACCESS;
+            public AuthorizationException getException() {
+                return new NotAllowedAuthException( "해당 요청을 처리할 수 있는 경기 기록 권한을 가지고 있지 않습니다." );
             }
         };
     }

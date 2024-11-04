@@ -62,7 +62,7 @@ public class GameAuthService {
         /** 화면에서 받은 대상을 경기 기록원으로 추가한다. */
         gameRecorders.stream()
                 .filter(    i -> GameRecordAuthCode.RECORDER.getCode().equals( i.getGameRecordAuthCode() ) )
-                .map(       i -> GameAuth.ofRecorder( gameSeq, i.getUserSeq() ) )
+                .map(       i -> GameAuth.ofRecorder( gameSeq, i.getUserSeq(), i.getGameJoinPlayerSeq() ) )
                 .forEach(   gameRecordAuthRepo::saveGameAuth );
     }
 

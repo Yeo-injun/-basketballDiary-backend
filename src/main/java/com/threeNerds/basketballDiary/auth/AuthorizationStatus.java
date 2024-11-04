@@ -1,13 +1,10 @@
 package com.threeNerds.basketballDiary.auth;
 
-
-import com.threeNerds.basketballDiary.exception.error.ErrorMessageType;
-
-import java.util.function.Supplier;
+import com.threeNerds.basketballDiary.auth.exception.AuthCheckException;
+import com.threeNerds.basketballDiary.auth.exception.AuthorizationException;
 
 public interface AuthorizationStatus {
     boolean isPermission();
-
-    ErrorMessageType getErrorMessage();
+    AuthorizationException getException();
 
 }

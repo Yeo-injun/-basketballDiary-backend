@@ -1,6 +1,6 @@
 package com.threeNerds.basketballDiary.session;
 
-import com.threeNerds.basketballDiary.auth.validation.game.GameAuth;
+import com.threeNerds.basketballDiary.auth.validation.type.GameAuth;
 import lombok.Getter;
 
 import java.io.Serializable;

@@ -1,8 +1,8 @@
 package com.threeNerds.basketballDiary.mvc.team.controller;
 
-import com.threeNerds.basketballDiary.auth.validation.team.RequiredTeamAuth;
+import com.threeNerds.basketballDiary.auth.validation.RequiredTeamAuth;
 import com.threeNerds.basketballDiary.auth.validation.RequiredLogin;
-import com.threeNerds.basketballDiary.auth.validation.team.TeamAuth;
+import com.threeNerds.basketballDiary.auth.validation.type.TeamAuth;
 import com.threeNerds.basketballDiary.constant.code.type.JoinRequestStateCode;
 import com.threeNerds.basketballDiary.mvc.game.service.dto.TeamMemberQuery;
 import com.threeNerds.basketballDiary.mvc.team.controller.response.*;
