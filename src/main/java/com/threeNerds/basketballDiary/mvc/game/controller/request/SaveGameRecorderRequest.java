@@ -9,15 +9,15 @@ import java.util.List;
 
 
 @Getter
-public class SaveGameRecordersRequest {
+public class SaveGameRecorderRequest {
 
     @NotNull
-    private List<GameRecorderDTO> gameRecorders;
+    private GameRecorderDTO gameRecorder;
 
-    public GameRecorderCommand toCommand(Long gameSeq) {
+    public GameRecorderCommand toCommand( Long gameSeq ) {
         return GameRecorderCommand.builder()
                 .gameSeq(       gameSeq )
-                .gameRecorders( this.gameRecorders )
+                .gameRecorder(  this.gameRecorder )
                 .build();
     }
 
