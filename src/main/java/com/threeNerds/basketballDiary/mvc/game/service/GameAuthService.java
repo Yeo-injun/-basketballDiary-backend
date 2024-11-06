@@ -1,7 +1,10 @@
 package com.threeNerds.basketballDiary.mvc.game.service;
 
 import com.threeNerds.basketballDiary.constant.code.type.GameRecordAuthCode;
+import com.threeNerds.basketballDiary.exception.CustomException;
+import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import com.threeNerds.basketballDiary.mvc.game.domain.*;
+import com.threeNerds.basketballDiary.mvc.game.domain.repository.GameJoinPlayerRepository;
 import com.threeNerds.basketballDiary.mvc.game.domain.repository.GameRecordAuthRepository;
 import com.threeNerds.basketballDiary.mvc.game.mapper.dto.GameRecorderCandidateDTO;
 import com.threeNerds.basketballDiary.mvc.game.mapper.dto.GameRecorderDTO;
@@ -27,7 +30,15 @@ import java.util.stream.Collectors;
 @Transactional
 public class GameAuthService {
 
+    /**
+     * Repository
+     */
+    private final GameJoinPlayerRepository gameJoinPlayerRepo;
     private final GameRecordAuthRepository gameRecordAuthRepo;
+
+    /**
+     * Mapper
+     */
     private final GameRecorderMapper gameRecorderRepo;
 
     /**
@@ -51,19 +62,27 @@ public class GameAuthService {
      * @author 여인준
      */
     // TODO 경기권한 테이블을 참조하지 않고 경기참가선수 테이블에 경기권한 컬럼을 추가하여 경기기록원 임명하도록 수정
-    public void saveGameRecorders( GameRecorderCommand command ) {
+    public void saveGameRecorder( GameRecorderCommand command ) {
         Long gameSeq                        = command.getGameSeq();
-        List<GameRecorderDTO> gameRecorders = command.getGameRecorders();
+        GameRecorderDTO gameRecorderInput   = command.getGameRecorder();
+        Long gameJoinPlayerSeq              = gameRecorderInput.getGameJoinPlayerSeq();
 
-
-        /** 기존 경기기록원 권한을 전체 제거 - 경기생성자는 삭제 대상에서 제외 */
-        gameRecordAuthRepo.deleteRecordAuth( gameSeq );
-
-        /** 화면에서 받은 대상을 경기 기록원으로 추가한다. */
-        gameRecorders.stream()
-                .filter(    i -> GameRecordAuthCode.RECORDER.getCode().equals( i.getGameRecordAuthCode() ) )
-                .map(       i -> GameAuth.ofRecorder( gameSeq, i.getUserSeq(), i.getGameJoinPlayerSeq() ) )
-                .forEach(   gameRecordAuthRepo::saveGameAuth );
+        GameJoinPlayer playerParam = GameJoinPlayer.builder()
+                                        .gameJoinPlayerSeq( gameJoinPlayerSeq )
+                                        .build();
+        GameJoinPlayer player = gameJoinPlayerRepo.findPlayer( playerParam );
+        // 경기참가선수인지 확인
+        if ( null == player ) {
+            throw new CustomException( DomainErrorType.NO_EXIST_GAME_JOIN_PLAYER );
+        }
+        // 경기기록권한을 이미 가지고 있는지 확인
+        // TODO 메세지 개선. 자체전인 경우 고려하여 case처리 요망
+        if ( !player.isJoinInGame( gameSeq ) ) {
+            throw new CustomException( DomainErrorType.ONLY_RECORD_BY_GAME_JOIN_PLAYER );
+        }
+        // 경기기록권한 부여
+        GameAuth gameRecorder = player.toGameRecorder();
+        gameRecordAuthRepo.saveGameAuth( gameRecorder );
     }
 
     public void createCreatorAuth( GameAuthCommand command ) {

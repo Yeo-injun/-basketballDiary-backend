@@ -63,6 +63,18 @@ public class GameJoinPlayer {
         return true;
     }
 
+    public boolean isJoinInGame( Long gameSeq ) {
+        if ( null == this.gameSeq ) {
+            return false;
+        }
+        return this.gameSeq.equals( gameSeq );
+    }
+
+    // TODO DB변경하면 GameJoinPlayer를 리턴하는 것으로 변경 예정
+    public GameAuth toGameRecorder() {
+        return GameAuth.ofRecorder( this.gameSeq, this.userSeq, this.gameJoinPlayerSeq );
+    }
+
     public static GameJoinPlayer ofCreator(
         Long gameSeq, Long gameJoinTeamSeq,
         User user, TeamMember teamMember

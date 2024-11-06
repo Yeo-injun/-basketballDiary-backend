@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
 
 @Getter
 @Builder
@@ -14,5 +13,5 @@ import java.util.List;
 @NoArgsConstructor
 public class GameRecorderCommand {
     private Long gameSeq;
-    private List<GameRecorderDTO> gameRecorders;
+    private GameRecorderDTO gameRecorder;
 }
