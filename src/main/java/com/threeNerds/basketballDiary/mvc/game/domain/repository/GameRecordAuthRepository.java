@@ -12,7 +12,9 @@ public interface GameRecordAuthRepository {
     /**********
      * SELECT
      **********/
-    List<GameAuth> findAuthList( Long userSeq );
+    GameAuth findAuth(GameAuth gameRecorder);
+    List<GameAuth> findAllAuthList( Long userSeq );
+    List<GameAuth> findAllAuthByGameSeq( Long gameSeq );
 
     /**********
      * INSERT
@@ -35,5 +37,6 @@ public interface GameRecordAuthRepository {
      * 게임 기록자 권한목록만 삭제
      */
     int deleteRecordAuth( Long gameSeq );
+
 }
 

@@ -43,7 +43,7 @@ public class GameAuthService {
 
     /**
      * 2022.01.04
-     * 경기 관리자 조회 ( 경기 생성자, 경기 기록원 등 )
+     * 경기기록원 조회 ( 경기 생성자, 경기 기록원 등 )
      * @author 이성주
      */
     // TODO 경기권한 테이블을 참조하지 않고 경기참가선수 테이블에 경기권한 컬럼을 추가하여 경기기록원을 조회
@@ -75,10 +75,13 @@ public class GameAuthService {
         if ( null == player ) {
             throw new CustomException( DomainErrorType.NO_EXIST_GAME_JOIN_PLAYER );
         }
-        // 경기기록권한을 이미 가지고 있는지 확인
-        // TODO 메세지 개선. 자체전인 경우 고려하여 case처리 요망
         if ( !player.isJoinInGame( gameSeq ) ) {
             throw new CustomException( DomainErrorType.ONLY_RECORD_BY_GAME_JOIN_PLAYER );
+        }
+        // 경기기록권한을 이미 가지고 있는지 확인
+        List<GameAuth> permittedGameRecoreders = gameRecordAuthRepo.findAllAuthByGameSeq( gameSeq );
+        if ( player.hasGameRecordAuth( permittedGameRecoreders )) {
+            throw new CustomException( DomainErrorType.ALREADY_EXIST_RECORD_AUTH );
         }
         // 경기기록권한 부여
         GameAuth gameRecorder = player.toGameRecorder();
@@ -99,7 +102,7 @@ public class GameAuthService {
      * @author 여인준
      */
     public GameAuthQuery.Result getGameAuthInfo( GameAuthQuery query ) {
-        Map< String, String > authGames = gameRecordAuthRepo.findAuthList( query.getUserSeq() )
+        Map< String, String > authGames = gameRecordAuthRepo.findAllAuthList( query.getUserSeq() )
                 .stream()
                 .collect( Collectors.toMap(
                             item -> String.valueOf( item.getGameSeq() ),
@@ -108,8 +111,6 @@ public class GameAuthService {
 
         return query.buildResult( authGames );
     }
-
-
 
     /**
      * 경기기록원 후보 조회

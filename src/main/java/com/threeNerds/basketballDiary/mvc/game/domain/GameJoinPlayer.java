@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Getter
 @Builder
@@ -68,6 +69,16 @@ public class GameJoinPlayer {
             return false;
         }
         return this.gameSeq.equals( gameSeq );
+    }
+
+    public boolean hasGameRecordAuth( List<GameAuth> permittedGameRecoreders ) {
+        Optional<GameAuth> gameRecordAuth = permittedGameRecoreders.stream()
+                                                .filter( i -> {
+                                                    return i.getGameSeq().equals( this.gameSeq )
+                                                        && i.getUserSeq().equals( this.userSeq );
+                                                })
+                                                .findAny();
+        return gameRecordAuth.isPresent();
     }
 
     // TODO DB변경하면 GameJoinPlayer를 리턴하는 것으로 변경 예정
@@ -170,4 +181,6 @@ public class GameJoinPlayer {
                 .email( email )
                 .build();
     }
+
+
 }
