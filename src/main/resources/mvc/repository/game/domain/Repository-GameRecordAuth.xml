@@ -13,9 +13,27 @@
         WHERE 1=1
     </sql>
 
+    <select id="findAuth" resultType="com.threeNerds.basketballDiary.mvc.game.domain.GameAuth" >
+        /* GameAuthRepository.findAuth */
+        <include refid="GameAuthSelect"/>
+        <choose>
+            <when test='gameRecordAuthSeq != null and "".equals( gameRecordAuthSeq )'>
+         AND GAME_RECORD_AUTH_SEQ = #{gameRecordAuthSeq}    /* 경기참가선수Seq */
+            </when>
+            <otherwise>
+         AND GAME_JOIN_PLAYER_SEQ = #{gameJoinPlayerSeq}    /* 경기참가선수Seq */
+            </otherwise>
+        </choose>
+    </select>
 
-    <select id="findAuthList" resultType="com.threeNerds.basketballDiary.mvc.game.domain.GameAuth" >
-        /* GameAuthRepository.findAuthList */
+    <select id="findAllAuthByGameSeq" resultType="com.threeNerds.basketballDiary.mvc.game.domain.GameAuth" >
+        /* GameAuthRepository.findAllAuthByGameSeq */
+        <include refid="GameAuthSelect"/>
+         AND GAME_SEQ = #{gameSeq}    /* 경기Seq */
+    </select>
+
+    <select id="findAllAuthList" resultType="com.threeNerds.basketballDiary.mvc.game.domain.GameAuth" >
+        /* GameAuthRepository.findAllAuthList */
         <include refid="GameAuthSelect"/>
           AND USER_SEQ = #{userSeq}    /* 사용자Seq */
     </select>

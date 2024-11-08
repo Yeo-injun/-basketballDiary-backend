@@ -406,14 +406,16 @@ public class GameController {
      */
     @ApiDocs056
     @RequiredGameAuth( type = GameAuth.GAME_CREATOR )
-    @PostMapping("/{gameSeq}/recorders")
-    public ResponseEntity<?> saveGameRecorders(
+    @PostMapping("/{gameSeq}/recorder")
+    public ResponseEntity<?> saveGameRecorder(
             @PathVariable("gameSeq") Long gameSeq,
-            @RequestBody @Valid SaveGameRecordersRequest request
+            @RequestBody @Valid SaveGameRecorderRequest request
     ) {
-        gameAuthService.saveGameRecorders( request.toCommand( gameSeq ) );
+        gameAuthService.saveGameRecorder( request.toCommand( gameSeq ) );
         return RESPONSE_OK;
     }
+
+    // TODO 경기기록원 삭제 API추가 요망
 
     /**
      * API057 경기기록원 후보 조회 ( TODO API명칭 변경 사항 반영 요망 )
