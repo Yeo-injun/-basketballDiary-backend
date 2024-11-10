@@ -415,7 +415,16 @@ public class GameController {
         return RESPONSE_OK;
     }
 
-    // TODO 경기기록원 삭제 API추가 요망
+    @ApiDocs069
+    @RequiredGameAuth( type = GameAuth.GAME_CREATOR )
+    @PostMapping("/{gameSeq}/recorder/{gameRecordAuthSeq}")
+    public ResponseEntity<?> saveGameRecorder(
+            @PathVariable("gameSeq") Long gameSeq,
+            @PathVariable("gameRecordAuthSeq") Long gameRecordAuthSeq
+    ) {
+        // TODO 삭제 서비스 구현 예정
+        return RESPONSE_OK;
+    }
 
     /**
      * API057 경기기록원 후보 조회 ( TODO API명칭 변경 사항 반영 요망 )
