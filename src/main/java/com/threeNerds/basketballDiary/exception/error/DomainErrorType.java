@@ -54,6 +54,7 @@ public enum DomainErrorType implements ErrorMessageType {
     INSUFFICIENT_GAME_JOIN_TEAMS( FORBIDDEN, "경기에 참가하는 팀의 수가 부족합니다."),
     ALREADY_EXIST_QUARTER_RECORDS(FORBIDDEN, "이미 쿼터기록이 입력되고 있어 선수 추가가 불가합니다."),
     ALREADY_EXIST_RECORD_AUTH(FORBIDDEN, "이미 경기기록권한을 가지고 있습니다."),
+    CANT_REMOVE_GAME_RECORD_AUTH( FORBIDDEN, "기록권한을 가진 경기가 아닙니다." ),
 
 
     /** 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재 */

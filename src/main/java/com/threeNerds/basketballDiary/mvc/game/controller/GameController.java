@@ -400,7 +400,7 @@ public class GameController {
     }
 
     /**
-     * API056 경기기록원 저장
+     * API056 경기기록 권한 저장 ( 단건 )
      * @since 24.04.21 (일)
      * @author injun
      */
@@ -415,14 +415,24 @@ public class GameController {
         return RESPONSE_OK;
     }
 
+    /**
+     * API069 경기기록 권한 삭제 ( 단건 )
+     * @since 24.04.21 (일)
+     * @author injun
+     */
     @ApiDocs069
     @RequiredGameAuth( type = GameAuth.GAME_CREATOR )
     @PostMapping("/{gameSeq}/recorder/{gameRecordAuthSeq}")
-    public ResponseEntity<?> saveGameRecorder(
+    public ResponseEntity<?> deleteGameRecorder(
             @PathVariable("gameSeq") Long gameSeq,
             @PathVariable("gameRecordAuthSeq") Long gameRecordAuthSeq
     ) {
-        // TODO 삭제 서비스 구현 예정
+        gameAuthService.deleteGameRecorder(
+                GameRecorderCommand.builder()
+                        .gameSeq( gameSeq )
+                        .gameRecordAuthSeq( gameRecordAuthSeq )
+                        .build()
+        );
         return RESPONSE_OK;
     }
 

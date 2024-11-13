@@ -88,6 +88,19 @@ public class GameAuthService {
         gameRecordAuthRepo.saveGameAuth( gameRecorder );
     }
 
+    public void deleteGameRecorder( GameRecorderCommand command ) {
+        Long gameSeq              = command.getGameSeq();
+        Long gameRecordAuthSeq    = command.getGameRecordAuthSeq();
+        GameAuth authParam = GameAuth.builder()
+                                    .gameRecordAuthSeq( gameRecordAuthSeq )
+                                    .build();
+        GameAuth deleteAuth = gameRecordAuthRepo.findAuth( authParam );
+        if ( !deleteAuth.enableDelete( gameSeq ) ) {
+            throw new CustomException( DomainErrorType.CANT_REMOVE_GAME_RECORD_AUTH );
+        }
+        gameRecordAuthRepo.deleteGameAuthByAuthSeq( gameRecordAuthSeq );
+    }
+
     public void createCreatorAuth( GameAuthCommand command ) {
         /** 경기기록 권한 부여 - 생성자로 */
         GameAuth gameCreator = GameAuth.ofCreator( command.getGameSeq(), command.getUserSeq(), command.getGameJoinPlayerSeq() );
@@ -108,7 +121,6 @@ public class GameAuthService {
                             item -> String.valueOf( item.getGameSeq() ),
                             GameAuth::getGameRecordAuthCode
                 ));
-
         return query.buildResult( authGames );
     }
 

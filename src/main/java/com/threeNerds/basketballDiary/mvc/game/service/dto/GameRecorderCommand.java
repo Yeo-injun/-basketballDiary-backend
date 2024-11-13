@@ -13,5 +13,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class GameRecorderCommand {
     private Long gameSeq;
+    private Long gameRecordAuthSeq;
     private GameRecorderDTO gameRecorder;
 }
