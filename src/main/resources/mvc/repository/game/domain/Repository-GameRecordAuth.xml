@@ -17,7 +17,7 @@
         /* GameAuthRepository.findAuth */
         <include refid="GameAuthSelect"/>
         <choose>
-            <when test='gameRecordAuthSeq != null and "".equals( gameRecordAuthSeq )'>
+            <when test='gameRecordAuthSeq != null and !"".equals( gameRecordAuthSeq )'>
          AND GAME_RECORD_AUTH_SEQ = #{gameRecordAuthSeq}    /* 경기참가선수Seq */
             </when>
             <otherwise>

@@ -422,7 +422,7 @@ public class GameController {
      */
     @ApiDocs069
     @RequiredGameAuth( type = GameAuth.GAME_CREATOR )
-    @PostMapping("/{gameSeq}/recorder/{gameRecordAuthSeq}")
+    @DeleteMapping("/{gameSeq}/recorder/{gameRecordAuthSeq}")
     public ResponseEntity<?> deleteGameRecorder(
             @PathVariable("gameSeq") Long gameSeq,
             @PathVariable("gameRecordAuthSeq") Long gameRecordAuthSeq
