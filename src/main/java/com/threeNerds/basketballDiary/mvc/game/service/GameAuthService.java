@@ -3,6 +3,7 @@ package com.threeNerds.basketballDiary.mvc.game.service;
 import com.threeNerds.basketballDiary.constant.code.type.GameRecordAuthCode;
 import com.threeNerds.basketballDiary.exception.CustomException;
 import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
+import com.threeNerds.basketballDiary.exception.error.ErrorMessageType;
 import com.threeNerds.basketballDiary.mvc.game.domain.*;
 import com.threeNerds.basketballDiary.mvc.game.domain.repository.GameJoinPlayerRepository;
 import com.threeNerds.basketballDiary.mvc.game.domain.repository.GameRecordAuthRepository;
@@ -17,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static org.springframework.http.HttpStatus.FORBIDDEN;
 
 /**
  * 경기권한과 관련된 서비스를 제공한다.
@@ -95,8 +98,24 @@ public class GameAuthService {
                                     .gameRecordAuthSeq( gameRecordAuthSeq )
                                     .build();
         GameAuth deleteAuth = gameRecordAuthRepo.findAuth( authParam );
-        if ( !deleteAuth.enableDelete( gameSeq ) ) {
-            throw new CustomException( DomainErrorType.CANT_REMOVE_GAME_RECORD_AUTH );
+        GameAuth.DeleteStatus deleteStatus = deleteAuth.enableDelete( gameSeq );
+        if ( !deleteStatus.isEnable() ) {
+            throw new CustomException( new ErrorMessageType() {
+                @Override
+                public Integer getStatus() {
+                    return FORBIDDEN.value();
+                }
+
+                @Override
+                public String getCode() {
+                    return null;
+                }
+
+                @Override
+                public String getMessage() {
+                    return deleteStatus.getMessage();
+                }
+            });
         }
         gameRecordAuthRepo.deleteGameAuthByAuthSeq( gameRecordAuthSeq );
     }

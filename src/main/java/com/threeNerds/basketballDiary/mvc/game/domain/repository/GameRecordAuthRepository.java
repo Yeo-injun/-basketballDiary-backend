@@ -12,7 +12,7 @@ public interface GameRecordAuthRepository {
     /**********
      * SELECT
      **********/
-    GameAuth findAuth(GameAuth gameRecorder);
+    GameAuth findAuth( GameAuth gameRecorder );
     List<GameAuth> findAllAuthList( Long userSeq );
     List<GameAuth> findAllAuthByGameSeq( Long gameSeq );
 
