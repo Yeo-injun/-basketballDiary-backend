@@ -19,6 +19,12 @@ public class GameAuth {
     private String gameRecordAuthCode;  /* 게임기록권한코드 */
     private String regDate;             /* 등록일자 */
 
+    public boolean enableDelete( Long gameSeq ) {
+        if ( GameRecordAuthCode.RECORDER.getCode().equals( this.gameRecordAuthCode ) ) {
+            return this.gameSeq.longValue() == gameSeq.longValue();
+        }
+        return false;
+    }
 
     public static GameAuth ofCreator( Long gameSeq, Long userSeq, Long gameJoinPlayerSeq ) {
         return GameAuth.builder()
