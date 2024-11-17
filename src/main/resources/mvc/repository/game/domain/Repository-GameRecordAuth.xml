@@ -17,7 +17,7 @@
         /* GameAuthRepository.findAuth */
         <include refid="GameAuthSelect"/>
         <choose>
-            <when test='gameRecordAuthSeq != null and "".equals( gameRecordAuthSeq )'>
+            <when test='gameRecordAuthSeq != null and !"".equals( gameRecordAuthSeq )'>
          AND GAME_RECORD_AUTH_SEQ = #{gameRecordAuthSeq}    /* 경기참가선수Seq */
             </when>
             <otherwise>
@@ -59,12 +59,11 @@
         )
     </insert>
 
-    <delete id="deleteRecordAuth" parameterType="Long">
-        /* GameAuthRepository.deleteRecordAuth */
+    <delete id="deleteGameAuthByAuthSeq" parameterType="Long">
+        /* GameAuthRepository.deleteGameAuthByAuthSeq */
         DELETE
           FROM GAME_RECORD_AUTH
          WHERE 1=1
-           AND GAME_SEQ                 = #{gameSeq}
-           AND GAME_RECORD_AUTH_CODE    = '02' /* 경기기록권한코드 - 경기기록자(02), 경기생성자(01) */
+           AND GAME_RECORD_AUTH_SEQ = #{gameRecordAuthSeq}
     </delete>
 </mapper>

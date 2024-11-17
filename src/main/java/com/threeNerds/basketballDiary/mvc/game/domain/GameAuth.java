@@ -19,6 +19,31 @@ public class GameAuth {
     private String gameRecordAuthCode;  /* 게임기록권한코드 */
     private String regDate;             /* 등록일자 */
 
+    public DeleteStatus enableDelete( Long gameSeq ) {
+        if ( GameRecordAuthCode.CREATOR.getCode().equals( this.gameRecordAuthCode ) ) {
+            return DeleteStatus.DISABLE_FOR_CREATOR;
+        }
+        if ( this.gameSeq.longValue() == gameSeq.longValue() ) {
+            return DeleteStatus.ENABLE;
+        }
+        return DeleteStatus.DISABLE_FOR_NOT_IN_GAME;
+    }
+
+    @Getter
+    public enum DeleteStatus {
+        ENABLE( true, "삭제가능한 상태입니다." ),
+        DISABLE_FOR_CREATOR( false, "경기생성자는 권한을 삭제할 수 없습니다." ),
+        DISABLE_FOR_NOT_IN_GAME( false, "경기기록권한을 가진 경기가 아닙니다." )
+        ;
+
+        private boolean enable;
+        private String message;
+
+        DeleteStatus( boolean enable, String message ) {
+            this.enable     = enable;
+            this.message    = message;
+        }
+    }
 
     public static GameAuth ofCreator( Long gameSeq, Long userSeq, Long gameJoinPlayerSeq ) {
         return GameAuth.builder()
