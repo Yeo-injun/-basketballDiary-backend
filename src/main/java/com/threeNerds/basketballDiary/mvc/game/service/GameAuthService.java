@@ -26,6 +26,9 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
  * - 경기권한은 생성자(Creator)와 기록원(Recorder)으로 구분한다.
  * - 경기생성자는 기록원의 권한을 포함하며 경기를 생성/삭제하고, 경기정보를 수정하고, 경기기록 등 경기와 관련된 모든 행위를 할 수 있다.
  * - 경기기록원은 경기기록을 입력/수정만 가능하다.
+    TODO [ 검토사항 ] 경기권한 테이블을 제거하고, 경기참가선수 테이블에 경기권한 컬럼을 추가하여 경기기록관리하는 방식 검토
+        >> 변경에 따른 이점 : 경기기록권한을 가질 수 있는 대상이 경기참가선수로 제한됨 ( 물리적 구조변경에 의해서 )
+        >> 단점 : 확장성 없음...
  */
 @Service
 @Slf4j
@@ -49,9 +52,6 @@ public class GameAuthService {
      * 경기기록원 조회 ( 경기 생성자, 경기 기록원 등 )
      * @author 이성주
      */
-    // TODO 경기권한 테이블을 참조하지 않고 경기참가선수 테이블에 경기권한 컬럼을 추가하여 경기기록원을 조회
-    // TODO 현재 양쪽팀 모두에 경기참가선수 반영이 가능하여 기록권한을 부여하면 기록원이 2명으로 조회되는 오류 존재.
-    // TODO 해당 오류를 해결하기 위해 테이블의 컬럼속성으로 기록원 관리하도록 변경 예정
     public GameRecorderQuery.Result getGameRecorders( GameRecorderQuery query ) {
         List<GameRecorderDTO> recorders = gameRecorderRepo.findAllRecorders( query.getGameSeq() );
         return query.buildResult( recorders );
@@ -59,12 +59,9 @@ public class GameAuthService {
 
     /**
      * 2022.04.25
-     * 경기 기록원으로 권한 부여
-     * - 기존 경기기록원 권한 정보 전체 삭제
-     * - 화면에서 전달받은 기록원 목록 정보 insert
+     * 경기참가선수에게 경기 기록원으로 권한 부여 ( 단건 )
      * @author 여인준
      */
-    // TODO 경기권한 테이블을 참조하지 않고 경기참가선수 테이블에 경기권한 컬럼을 추가하여 경기기록원 임명하도록 수정
     public void saveGameRecorder( GameRecorderCommand command ) {
         Long gameSeq                        = command.getGameSeq();
         GameRecorderDTO gameRecorderInput   = command.getGameRecorder();
