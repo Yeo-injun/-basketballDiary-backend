@@ -2,6 +2,7 @@ package com.threeNerds.basketballDiary.file;
 
 import com.threeNerds.basketballDiary.file.exception.ExceedMaxFileSizeException;
 import com.threeNerds.basketballDiary.file.exception.NotAllowedFileExtensionException;
+import com.threeNerds.basketballDiary.file.exception.TransferFileException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,15 +27,14 @@ public class ImageUploader implements Uploader<PathType> {
 
     private final ImagePathManager imagePathManager;
 
-    // TODO 템플릿 패턴 적용해서 업로드 절차 추상화
     @Override
     public String upload( PathType path, MultipartFile input ) {
         if ( null == input || input.isEmpty() ) {
             return ""; // 이미지가 없으면 경로를 ""로 return
         }
 
-        String fileExtension = getFileExtenstion( input.getOriginalFilename() );
-        if ( !isAllowedExtenstion( fileExtension ) ) {
+        String fileExtension = getFileExtension( input.getOriginalFilename() );
+        if ( !isAllowedExtension( fileExtension ) ) {
             throw new NotAllowedFileExtensionException();
         }
 
@@ -48,8 +48,8 @@ public class ImageUploader implements Uploader<PathType> {
             // 이미지 물리적 저장
             input.transferTo( targetFile );
         } catch ( IOException e ) {
-            log.warn( "[ Fail To Save Image ]" );
-            e.printStackTrace();
+            log.warn( "[ Fail To Upload Image ] : {}",  targetFile.getPath() );
+            throw new TransferFileException( "이미지 저장에 실패했습니다." );
         }
 
         // 이미지 저장위치 리턴 : URL로
@@ -66,7 +66,7 @@ public class ImageUploader implements Uploader<PathType> {
     /**
      * 확장자 추출
      */
-    private String getFileExtenstion( String fileName ) {
+    private String getFileExtension( String fileName ) {
        int extensionSeparatorIdx = fileName.lastIndexOf( "." );
        boolean hasExtension = extensionSeparatorIdx > 0;
        if ( hasExtension ) {
@@ -78,7 +78,7 @@ public class ImageUploader implements Uploader<PathType> {
     /**
      * 업로드 가능한 이미지 파일 확장자
      */
-    private boolean isAllowedExtenstion( String fileExtension ) {
+    private boolean isAllowedExtension( String fileExtension ) {
         if ( "".equals( fileExtension ) ) {
             return false;
         }
