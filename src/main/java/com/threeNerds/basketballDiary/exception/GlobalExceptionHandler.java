@@ -1,10 +1,7 @@
 package com.threeNerds.basketballDiary.exception;
 
 import com.threeNerds.basketballDiary.exception.error.*;
-import com.threeNerds.basketballDiary.file.exception.ExceedMaxFileSizeException;
-import com.threeNerds.basketballDiary.file.exception.FileException;
-import com.threeNerds.basketballDiary.file.exception.NotAllowedFileExtensionException;
-import com.threeNerds.basketballDiary.file.exception.NotFoundFileException;
+import com.threeNerds.basketballDiary.file.exception.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
@@ -61,6 +58,16 @@ public class GlobalExceptionHandler { //extends ResponseEntityExceptionHandler {
         }
         if ( ex instanceof ExceedMaxFileSizeException ) {
             return SystemErrorResponse.toEntity( SystemErrorType.EXCEED_MAX_FILE_SIZE );
+        }
+        if ( ex instanceof TransferFileException ) {
+            return SystemErrorResponse.toEntity( new ErrorMessageType() {
+                @Override
+                public Integer getStatus() { return 500; }
+                @Override
+                public String getCode() { return "ERROR_IN_SAVE_FILE"; }
+                @Override
+                public String getMessage() { return ex.getMessage(); }
+            } );
         }
         return SystemErrorResponse.toEntity( SystemErrorType.ERROR_IN_PROCESS_FILE );
     }

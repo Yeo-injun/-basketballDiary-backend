@@ -19,16 +19,13 @@ public class ImagePath {
      * - Bean으로 등록시 생성자 주입을 통해 static 필드에 설정파일의 값을 주입
      */
     public ImagePath(
-        @Value("${file.image.path.root}") String PATH_ROOT,
         @Value("${file.image.path.team-profile}") String PATH_TEAM_PROFILE,
         @Value("${file.image.path.team-logo}") String PATH_TEAM_LOGO
     ) {
-        ImagePath.PATH_ROOT         = PATH_ROOT;
         ImagePath.PATH_TEAM_PROFILE = PATH_TEAM_PROFILE;
         ImagePath.PATH_TEAM_LOGO    = PATH_TEAM_LOGO;
     }
 
-    private static String PATH_ROOT;
     private static String PATH_TEAM_PROFILE;
     private static String PATH_TEAM_LOGO;
 
@@ -43,7 +40,6 @@ public class ImagePath {
      * OuterClass의 static 필드는 EnumType 참조 전에 주입되어야 EnumType이 초기화시 정상적으로 해당 값을 반영한다.
      **/
     public enum Type implements PathType {
-        ROOT( PATH_ROOT ),
         TEAM_PROFILE( PATH_TEAM_PROFILE ),
         TEAM_LOGO( PATH_TEAM_LOGO );
         private final String path;
@@ -53,12 +49,8 @@ public class ImagePath {
 
         @Override
         public String getFullPath() {
-            return PATH_ROOT + this.path + "/" + LocalDate.now().format( DateTimeFormatter.ofPattern( "yyyyMMdd" ) );
+            return this.path + "/" + LocalDate.now().format( DateTimeFormatter.ofPattern( "yyyyMMdd" ) );
         }
-    }
-
-    public static String getRootPath() {
-        return PATH_ROOT;
     }
 
 }

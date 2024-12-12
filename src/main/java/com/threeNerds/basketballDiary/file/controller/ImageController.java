@@ -37,7 +37,10 @@ public class ImageController {
      * 파일로 저장된 이미지 조회
      * >> /image 이하로 오는 모든 request는 해당 메소드에 매핑됨.
      * >> /image 이하의 url이 이미지 저장경로를 의미
-     * TODO 해당 메소드는 Local용으로 서버에서는 Nginx가 직접 정적자원을 return
+     *
+     * 24.12.09 확인 결과
+     * DEV환경에서는 nginx에서 dev호스트도메인:80/imgae로 오는 요청을
+     * WAS로 라우팅하여 처리중. 즉 해당 Controller에서 요청을 처리하게 됨.
      */
     @GetMapping("/**")
     public ResponseEntity<Resource> getImage( HttpServletRequest request ) throws MalformedURLException {

@@ -1,6 +1,7 @@
 package com.threeNerds.basketballDiary.file;
 
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -9,10 +10,13 @@ import java.io.File;
 @Component
 public class ImagePathManager implements PathManager {
 
+    @Value("${file.image.path.root}")
+    private String PATH_ROOT;
+
     public File makeDir( PathType pathType ) {
 
         // 저장경로 설정
-        File targetPath = new File( pathType.getFullPath() );
+        File targetPath = new File( PATH_ROOT + pathType.getFullPath() );
 
         // 저장경로 물리적 생성
         targetPath.mkdirs();
@@ -28,7 +32,7 @@ public class ImagePathManager implements PathManager {
      */
     @Override
     public String toPath( String url ) {
-        return ImagePath.getRootPath() + url;
+        return PATH_ROOT + url;
     }
 
     /**
@@ -39,7 +43,7 @@ public class ImagePathManager implements PathManager {
     @Override
     public String toURL( File file ) {
         String fileURL = file.toURI().getPath();
-        String rootURL = new File( ImagePath.getRootPath() ).toURI().getPath();
+        String rootURL = new File( PATH_ROOT ).toURI().getPath();
         return fileURL.replace( rootURL , "/" );
     }
 
