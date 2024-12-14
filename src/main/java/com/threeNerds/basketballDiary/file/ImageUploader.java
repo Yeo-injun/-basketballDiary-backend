@@ -3,7 +3,6 @@ package com.threeNerds.basketballDiary.file;
 import com.threeNerds.basketballDiary.file.exception.ExceedMaxFileSizeException;
 import com.threeNerds.basketballDiary.file.exception.NotAllowedFileExtensionException;
 import com.threeNerds.basketballDiary.file.exception.TransferFileException;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -11,10 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Stream;
 
 
 @Component

@@ -1,6 +1,5 @@
 package com.threeNerds.basketballDiary.mvc.team.mapper.dto;
 
-import com.threeNerds.basketballDiary.mvc.team.mapper.dto.TeamRegularExerciseDTO;
 import lombok.Getter;
 import org.springframework.web.multipart.MultipartFile;
 
