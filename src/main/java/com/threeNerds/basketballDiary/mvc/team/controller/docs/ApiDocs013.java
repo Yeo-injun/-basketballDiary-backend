@@ -13,7 +13,7 @@ import static java.lang.annotation.ElementType.METHOD;
 @Retention( RetentionPolicy.RUNTIME )
 @Operation(
     summary     = "[ API013 ] 소속팀 탈퇴하기",
-    description = "소속팀을 탈퇴한다.<br>"
+    description = "소속팀을 탈퇴상태로 변경한다. ( 물리적 삭제는 하지 않는다. )<br>"
                 + "[ 참고사항 ]<br>"
                 + "1. 소속팀을 탈퇴해도 소속팀으로 뛰었던 경기기록은 유지된다.<br>",
     responses   = {

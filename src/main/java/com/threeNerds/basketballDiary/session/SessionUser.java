@@ -9,6 +9,13 @@ import java.util.Map;
 @Getter
 public class SessionUser implements Serializable {
 
+    /**
+     * 객체를 직렬화할때 해당 필드의 값이 존재하면 해당 값으로 비교함.
+     * 값을 명시적으로 지정해주지 않을 경우 객체가 변경될때마다 새로운 버전의 serialVersionUID가 생성되기 떄문에
+     * 직렬화 오류 발생함.
+     */
+    private final static long serialVersionUID = 7292294246495273976L;
+
     private final Long userSeq;
     private final String userId;
 
@@ -44,6 +51,10 @@ public class SessionUser implements Serializable {
     public void addGameCreatorAuth( Long gameSeq ) {
         String gameSeqString = Long.toString( gameSeq );
         this.authGames.put( gameSeqString, GameAuth.GAME_CREATOR.getLevel() );
+    }
+
+    public void removeTeamAuth( Long teamSeq ) {
+        this.authTeams.remove( teamSeq );
     }
 
 }
