@@ -83,6 +83,10 @@ public class TeamMember {
         return teamSeq.equals( this.teamSeq );
     }
 
+    public boolean checkLeaderAuth() {
+        return TeamAuthCode.LEADER.getCode().equals( this.teamAuthCode );
+    }
+
     public boolean checkManagerAuth() {
         return TeamAuthCode.MANAGER.getCode().equals( this.teamAuthCode );
     }
