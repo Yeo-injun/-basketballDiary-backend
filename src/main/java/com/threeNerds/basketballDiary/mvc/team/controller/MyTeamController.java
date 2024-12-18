@@ -12,6 +12,7 @@ import com.threeNerds.basketballDiary.mvc.team.mapper.dto.TeamRegularExerciseDTO
 import com.threeNerds.basketballDiary.mvc.team.service.*;
 import com.threeNerds.basketballDiary.mvc.team.service.dto.*;
 import com.threeNerds.basketballDiary.session.SessionUser;
+import com.threeNerds.basketballDiary.session.util.SessionUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -310,22 +311,22 @@ public class MyTeamController {
 
 
     /**
-     * API013 소속팀 탈퇴하기 ( 프로필 삭제 )
-     * TODO FrontEnd에서 호출 하지 않음. >> 탈퇴기능 만들기..
+     * API013 소속팀 탈퇴하기
      */
     @ApiDocs013
     @RequiredTeamAuth( type = TeamAuth.TEAM_MEMBER )
-    @DeleteMapping("/{teamSeq}/profile")
-    public ResponseEntity<?> removeProfile(
+    @PatchMapping("/{teamSeq}/withdrawal")
+    public ResponseEntity<?> withdrawTeam(
             @SessionAttribute(value = LOGIN_USER, required = false) SessionUser userSession,
             @PathVariable Long teamSeq
     ) {
-        myTeamProfileService.removeProfile(
+        myTeamProfileService.withdrawTeam(
             ProfileCommand.builder()
                     .userSeq(       userSession.getUserSeq() )
                     .teamSeq(       teamSeq )
                     .build()
         );
+        userSession.removeTeamAuth( teamSeq );
         return RESPONSE_OK;
     }
 

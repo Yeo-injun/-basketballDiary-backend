@@ -55,6 +55,7 @@ public enum DomainErrorType implements ErrorMessageType {
     ALREADY_EXIST_QUARTER_RECORDS(FORBIDDEN, "이미 쿼터기록이 입력되고 있어 선수 추가가 불가합니다."),
     ALREADY_EXIST_RECORD_AUTH(FORBIDDEN, "이미 경기기록권한을 가지고 있습니다."),
     CANT_REMOVE_GAME_RECORD_AUTH( FORBIDDEN, "기록권한을 가진 경기가 아닙니다." ),
+    TEAM_LEADER_CANT_WITHDRAW( FORBIDDEN, "팀장은 팀탈퇴를 할 수 없습니다." ),
 
 
     /** 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재 */

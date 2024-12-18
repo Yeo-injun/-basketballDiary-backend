@@ -1,5 +1,7 @@
 package com.threeNerds.basketballDiary.mvc.team.service;
 
+import com.threeNerds.basketballDiary.exception.CustomException;
+import com.threeNerds.basketballDiary.exception.error.DomainErrorType;
 import com.threeNerds.basketballDiary.file.ImagePath;
 import com.threeNerds.basketballDiary.file.ImageUploader;
 import com.threeNerds.basketballDiary.mvc.team.domain.TeamMember;
@@ -83,12 +85,19 @@ public class MyTeamProfileService {
     }
 
     // 소속팀 탈퇴하기
-    public void removeProfile( ProfileCommand command ) {
-        // TODO 테스트 필요
-        TeamMember deleteTeamMember = TeamMember.builder()
+    // => 체크사항 : 팀가입요청, 선수초대시 탈퇴한 이력이 있는 팀인 경우 기존 팀원이력을 승계할 것인지, 아닌지 정의 필요.
+    public void withdrawTeam( ProfileCommand command ) {
+        TeamMember teamMemberParam = TeamMember.builder()
                                         .userSeq( command.getUserSeq() )
                                         .teamSeq( command.getTeamSeq() )
                                         .build();
-        teamMemberRepository.deleteTeamMemberByUserSeqAndTeamSeq( deleteTeamMember );
+        TeamMember teamMember = teamMemberRepository.findTeamMemberByUserAndTeamSeq( teamMemberParam );
+        if ( null == teamMember ) {
+            throw new CustomException( DomainErrorType.NO_JOIN_TEAM_MEMBER );
+        }
+        if ( teamMember.checkLeaderAuth() ) {
+            throw new CustomException( DomainErrorType.TEAM_LEADER_CANT_WITHDRAW );
+        }
+        teamMemberRepository.updateWithdrawalState( teamMember.toWithdrawal() );
     }
 }
