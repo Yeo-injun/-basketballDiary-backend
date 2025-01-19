@@ -33,7 +33,7 @@ spring:
     # cf. docker container 실행시 두 container가 같은 network로 지정돼 있어야 함.
     redis:
       host: basketballDiary-redis-prd
-      port: 36379
+      port: 6379
       password: basketball2022-redis-prd2024
 
 ##---------------------------
