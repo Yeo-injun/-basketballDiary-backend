@@ -17,7 +17,7 @@ spring:
   session:
     store-type: redis # @EnableRedisHttpSession를 활성화하여 SpringSessionRepositoryFilter에 등록
     redis:
-      namespace: basketDairyApp:session
+      namespace: basketballDiary:session
   # redis 설정
   data:
     # docker-container간 통신을 위해서 container이름을 host명으로 반영
