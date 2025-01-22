@@ -19,23 +19,27 @@ file:
 spring:
   datasource:
     ## log4jdbc를 위한 url 및 driver-class-name 변경 (2022.02.26)
-    ## url: jdbc:log4jdbc:mysql://basketdiary.cefnc9yxtv6y.ap-northeast-2.rds.amazonaws.com/basketdiary
     url: jdbc:log4jdbc:mysql://changkeeroom.iptime.org:53306/basketdiary
     driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
     username: basketdiary
     password: basket5199
+# TODO 개발DB 이전 세팅 후 주석 제거
+#    url: jdbc:log4jdbc:mysql://23ggs.mooo.com:13306/basketballDiary-dev
+#    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+#    username: APP-USER
+#    password: basketball-2021-dev
 
   # spring session 설정 ( 저장소를 redis로 )
   session:
     store-type: redis # @EnableRedisHttpSession를 활성화하여 SpringSessionRepositoryFilter에 등록
     redis:
-      namespace: basketDairyApp:session
+      namespace: basketballDiary:session
   # redis 설정
   data:
     redis:
-      host: changkeeroom.iptime.org
+      host: 23ggs.mooo.com
       port: 16379
-      password: basketball2022-local
+      password: basketball2022-redis-dev2024
   jpa:
     show-sql: true
     hibernate:
