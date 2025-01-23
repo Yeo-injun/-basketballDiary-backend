@@ -42,7 +42,6 @@ spring:
       ddl-auto: update
     properties:
       hibernate:
-        #     show_sql: true
         format_sql: true
   ## HttpRequest Multipart 설정
   servlet:
