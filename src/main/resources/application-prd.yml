@@ -13,10 +13,9 @@ file:
 # Spring 설정
 ##----------------------------
 spring:
+  # DB설정
   datasource:
-    ## 운영환경 DB별도 세팅 요망 ( 24.10.28 기준 같은 세팅값 )
     ## log4jdbc를 위한 url 및 driver-class-name 변경 (2022.02.26)
-    ## url: jdbc:log4jdbc:mysql://basketdiary.cefnc9yxtv6y.ap-northeast-2.rds.amazonaws.com/basketdiary
     url: jdbc:log4jdbc:mysql://23ggs.mooo.com:33306/basketballDiary-prd
     driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
     username: APP-USER
