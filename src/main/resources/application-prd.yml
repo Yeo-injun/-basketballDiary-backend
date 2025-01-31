@@ -16,7 +16,7 @@ spring:
   # DB설정
   datasource:
     ## log4jdbc를 위한 url 및 driver-class-name 변경 (2022.02.26)
-    url: jdbc:log4jdbc:mysql://23ggs.mooo.com:33306/basketballDiary-prd
+    url: jdbc:log4jdbc:mysql://basketball-diary.mooo.com:33306/basketballDiary-prd
     driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
     username: APP-USER
     password: basketball-2021-prd
@@ -31,8 +31,8 @@ spring:
     # docker-container간 통신을 위해서 container이름을 host명으로 반영
     # cf. docker container 실행시 두 container가 같은 network로 지정돼 있어야 함.
     redis:
-      host: basketball-redis-prd
-      port: 6379
+      host: basketball-prd-redis
+      port: 36379
       password: basketball2022-redis-prd2024
 
 ##---------------------------
