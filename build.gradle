@@ -53,29 +53,3 @@ test {
 jar{
 	enabled = false
 }
-
-ext {
-	profile = (!project.hasProperty('profile') || !profile) ? 'dev' : profile
-}
-
-jib {
-	from {
-		image = 'adoptopenjdk/openjdk11:alpine-jre'
-	}
-	to {
-		image = "elien940318/basketdiary"
-		tags = ["latest"]
-	}
-	container {
-		// jvmFlags는 jvm실행시 전달할 명령어들을 String List로 관리
-		jvmFlags = [
-//				"-Xms128m",
-//				"-Xmx512m",
-//				"-Xdebug",
-//				"-XshowSettings:vm",
-				"-Dspring.profiles.active=" + profile
-		]
-		ports = ["18080"]
-		creationTime = 'USE_CURRENT_TIMESTAMP'
-	}
-}
