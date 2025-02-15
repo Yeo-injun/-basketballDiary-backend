@@ -69,7 +69,6 @@ public class AuthController {
     public ResponseEntity< LoginResponse > login(
             @RequestBody @Valid LoginRequest request
     ) {
-        log.info("======= Try login =======");
         /** 로그인 정보 확인 */
         LoginUserQuery.Result loginUser = authService.login( request.toQuery() );
         Long loginUserSeq               = loginUser.getUserSeq();
@@ -110,7 +109,6 @@ public class AuthController {
     @ApiDocs031
     @PostMapping("/logout")
     public ResponseEntity< Void > logout(HttpSession session) {
-        log.info("로그아웃");
         session.invalidate();
         return ResponseEntity.ok().build();
     }
